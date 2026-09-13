@@ -1,0 +1,90 @@
+% Primary sources for Systems From Scratch.
+%
+% The rule (CLAUDE.md §5): every factual claim about hardware behaviour cites either a
+% measurement in bench/results/ or a primary source here — a specification, a datasheet, a
+% vendor manual, or a paper. Textbooks appear only in a chapter's "Where to go next", never as
+% the source of its content.
+%
+% Specifications are revised. A chapter that depends on a version-specific detail must pin the
+% revision it consulted in the citation itself; see ERRATA.md.
+
+@misc{riscv-isa-unprivileged,
+  title        = {The {RISC-V} Instruction Set Manual, Volume {I}: Unprivileged Architecture},
+  author       = {{RISC-V International}},
+  howpublished = {\url{https://riscv.org/technical/specifications/}},
+  note         = {Ratified specification. Cite the revision you consulted.}
+}
+
+@misc{riscv-isa-privileged,
+  title        = {The {RISC-V} Instruction Set Manual, Volume {II}: Privileged Architecture},
+  author       = {{RISC-V International}},
+  howpublished = {\url{https://riscv.org/technical/specifications/}},
+  note         = {Defines the machine and supervisor modes, CSRs, Sv39 paging and the trap
+                  mechanism the xv6 chapters rely on.}
+}
+
+@misc{riscv-sbi,
+  title        = {{RISC-V} Supervisor Binary Interface Specification},
+  author       = {{RISC-V International}},
+  howpublished = {\url{https://github.com/riscv-non-isa/riscv-sbi-doc}},
+  note         = {The PMU extension is how Linux reaches the hardware performance counters on
+                  this board; ch00 checks that the firmware provides it.}
+}
+
+@misc{riscv-psabi,
+  title        = {{RISC-V} {ELF} {psABI} Specification},
+  author       = {{RISC-V International}},
+  howpublished = {\url{https://github.com/riscv-non-isa/riscv-elf-psabi-doc}},
+  note         = {The calling convention, register roles and LP64D data model that ch04 reads
+                  out of real disassembly.}
+}
+
+@misc{sifive-u74,
+  title        = {{SiFive} {U74} Core Complex Manual},
+  author       = {{SiFive, Inc.}},
+  howpublished = {\url{https://www.sifive.com/documentation}},
+  note         = {The core in the JH7110. Pipeline structure, cache organisation and the
+                  hardware performance monitor.}
+}
+
+@misc{starfive-jh7110,
+  title        = {{JH7110} and {VisionFive} 2 Documentation},
+  author       = {{StarFive Technology}},
+  howpublished = {\url{https://doc-en.rvspace.org/}},
+  note         = {Vendor documentation for the SoC and the board. Where the book and this
+                  documentation disagree, the book cites its own measurement and says so.}
+}
+
+@misc{xv6-riscv-source,
+  title        = {xv6-riscv},
+  author       = {Cox, Russ and Kaashoek, M. Frans and Morris, Robert},
+  organization = {{MIT PDOS}},
+  howpublished = {\url{https://github.com/mit-pdos/xv6-riscv}},
+  note         = {MIT licence. Short excerpts are quoted with attribution; the book's own
+                  changes ship as patches under xv6/patches/, never as a copied tree.}
+}
+
+@misc{elf-abi,
+  title        = {System {V} Application Binary Interface},
+  author       = {{The Santa Cruz Operation}},
+  note         = {The {ELF} object file format, its sections and its program headers. The
+                  RISC-V processor supplement is \cite{riscv-psabi}.}
+}
+
+@misc{perf-event-open,
+  title        = {{perf\_event\_open(2)} --- {Linux} manual page},
+  author       = {{Linux man-pages project}},
+  howpublished = {\url{https://man7.org/linux/man-pages/man2/perf_event_open.2.html}},
+  note         = {What perf is actually asking the kernel for, and which of it is hardware.}
+}
+
+@inproceedings{mytkowicz2009wrong,
+  title     = {Producing Wrong Data Without Doing Anything Obviously Wrong!},
+  author    = {Mytkowicz, Todd and Diwan, Amer and Hauswirth, Matthias and Sweeney, Peter F.},
+  booktitle = {Proceedings of the 14th International Conference on Architectural Support for
+               Programming Languages and Operating Systems (ASPLOS)},
+  year      = {2009},
+  publisher = {ACM},
+  note      = {Measurement bias: link order and environment size moving results more than the
+               optimisation under study. Chapter 14's starting point.}
+}

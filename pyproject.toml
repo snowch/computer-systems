@@ -1,0 +1,55 @@
+[project]
+name = "systems-from-scratch"
+version = "0.0.0"
+description = "Tooling and benchmark harness for the Systems From Scratch book"
+authors = [{ name = "Chris Snow" }]
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+
+[tool.setuptools.packages.find]
+include = ["bench*"]
+
+[tool.ruff]
+exclude = [".git", ".github", ".venv", "__pycache__", "_build", "build", "dist", "xv6/xv6-riscv"]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "SIM",  # flake8-simplify
+]
+ignore = [
+    "E501",   # line length is the formatter's job
+    "E402",   # module-level import not at top (scripts insert ROOT on sys.path first)
+    "B008",   # function call in argument defaults
+    "SIM108", # a ternary is not always clearer in teaching code
+]
+fixable = ["ALL"]
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint.isort]
+known-first-party = ["bench"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = [
+    "board: needs the VisionFive 2 Lite. Timing runs only; skipped anywhere else.",
+    "xv6: needs qemu-system-riscv64 and the xv6 submodule. Skipped when either is absent.",
+    "riscv: needs an RV64 execution path — the board, or qemu-riscv64 user mode in CI.",
+    "problem: a chapter problem for the reader to solve. Fails until solved, which is the point;\n         CI deselects these with -m 'not problem' and checks the scaffolding instead.",
+]
+# So `pytest` works in a fresh clone with no install step: the repo root holds bench/.
+pythonpath = ["."]

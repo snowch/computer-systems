@@ -1,0 +1,5 @@
+# Lint and test tooling. Versions verified 2026-09-13, and the `ruff` pin must match
+# .pre-commit-config.yaml so local hooks and CI cannot disagree about what is formatted.
+ruff==0.15.8
+pytest==9.0.2
+pre-commit==4.6.2

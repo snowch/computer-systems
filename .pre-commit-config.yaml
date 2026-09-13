@@ -1,0 +1,30 @@
+# Install: pip install pre-commit && pre-commit install
+# Run manually: pre-commit run --all-files
+#
+# The ruff version matches requirements-dev.txt, so a hook and CI can never disagree about what
+# is formatted.
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.8
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+        exclude: ^xv6/xv6-riscv/
+      - id: ruff-format
+        exclude: ^xv6/xv6-riscv/
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-ast
+      - id: check-yaml
+        exclude: ^\.github/workflows/
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=500]   # a kernel image or a perf.data file does not belong in git
+      - id: trailing-whitespace
+        exclude: ^xv6/xv6-riscv/|\.patch$
+      - id: end-of-file-fixer
+        exclude: ^xv6/xv6-riscv/|\.patch$
+      - id: debug-statements
