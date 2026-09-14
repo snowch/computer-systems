@@ -80,6 +80,13 @@ echo "== the page tables still have the shape the book prints =="
 # the kernel counts by walking — and refuses to stamp or pass if the two stop agreeing.
 python3 -m bench.run_pagetable --check
 
+echo "== the fault census still costs what the book prints =="
+# ch08's exchange rate: pages allocated and faults taken, under each of the kernel's two
+# allocation policies. The workload fixes every quantity and prints them, and the runner refuses
+# a census that disagrees with the program, one latched from a different process, or one in which
+# the handler declined a fault.
+python3 -m bench.run_faults --check
+
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check
 

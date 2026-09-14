@@ -1026,6 +1026,85 @@ def address_space_cost(result: str) -> str:
     return _svg(width, verdict_y + 92, body, "What an address space costs to describe")
 
 
+def fault_decision(result: str) -> str:
+    """What the kernel does with a fault, and the one question that decides it.
+
+    Drawn because the shape is the argument. A page fault is not an error report; it is the
+    hardware calling a function of the kernel's choosing at the exact moment a particular address
+    is touched, and handing it the address. Everything interesting that is built on faults is
+    built by changing the test in the middle box.
+
+    The counts come from the stamped result, so the figure cannot claim a workload the
+    measurement does not support.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    run = load_result(result)["summary"]["faultload"]
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "A page fault is a question the kernel gets to answer",
+        "The hardware supplies the address. What happens next is entirely policy.",
+    )
+
+    stages = [
+        ("touch", "a load or a store"),
+        ("fault", "walk stopped"),
+        ("stval", "the address"),
+        ("below sz?", "the only test"),
+    ]
+    row_y = margin + 62
+    parts, _ = chain(margin, row_y, stages, box_width=142, box_height=52, gap=26)
+    body += parts
+
+    # The two answers, and what each costs in this run.
+    branch_y = row_y + 112
+    outcomes = [
+        (
+            "yes",
+            "allocate a page, map it, and re-run the instruction that faulted",
+            f"{run['lazy_pages']} pages this run",
+        ),
+        (
+            "no",
+            "the process asked for an address it never requested: kill it",
+            f"{run['refused']} this run",
+        ),
+    ]
+    box_w = (width - 2 * margin - 28) / 2
+    for index, (answer, what, count) in enumerate(outcomes):
+        box_x = margin + index * (box_w + 28)
+        body.append(_rect(box_x, branch_y, box_w, 92, fill=PANEL))
+        body.append(_text(box_x + 16, branch_y + 28, answer, size=14, weight="700"))
+        body.append(_text(box_x + 16, branch_y + 52, what, size=12, fill=MUTED))
+        body.append(_mono(box_x + 16, branch_y + 76, count))
+        body.append(_arrow(margin + 3 * 168 + 71, row_y + 52, box_x + box_w / 2, branch_y - 4))
+
+    note_y = branch_y + 132
+    body.append(
+        _text(
+            margin,
+            note_y,
+            "Unlike a system call, the faulting instruction runs again.",
+            size=13.5,
+            weight="700",
+        )
+    )
+    body += footnote(
+        margin,
+        note_y + 42,
+        width - 2 * margin,
+        [
+            "Change the test and you get a different feature from the same hook: copy-on-write, a "
+            "guard page, a page fetched from disk.",
+            "This chapter measures one of them. The others are named in the text and not "
+            "measured, which is not the same as being free.",
+        ],
+    )
+    return _svg(width, note_y + 92, body, "What a kernel does with a page fault")
+
+
 #: fragment name -> the function that draws it
 DIAGRAMS = {
     "ch00-targets": two_target_map,
@@ -1037,4 +1116,5 @@ DIAGRAMS = {
     "ch06-trap-path": trap_path,
     "ch07-walk": sv39_walk,
     "ch07-address-spaces": address_space_cost,
+    "ch08-decision": fault_decision,
 }

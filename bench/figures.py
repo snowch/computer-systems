@@ -30,6 +30,7 @@ from bench import tables
 from bench.diagrams import (
     address_space_cost,
     dispatch_table,
+    fault_decision,
     sections_to_segments,
     stack_frame,
     struct_padding,
@@ -263,6 +264,20 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         draw=address_space_cost,
         alt="init's two clusters of mapped pages, and the chain of tables each one forces.",
         result="pagetable-xv6",
+    ),
+    # -- ch08 ---------------------------------------------------------------------------
+    "ch08-decision": Diagram(
+        draw=fault_decision,
+        alt="A page fault, the one test that decides what happens, and the two outcomes.",
+        result="faults-xv6",
+    ),
+    "ch08-exchange": Table(
+        render=tables.fault_exchange_table,
+        result="faults-xv6",
+    ),
+    "ch08-causes": Table(
+        render=tables.fault_causes_table,
+        result="faults-xv6",
     ),
     "ch00-board": Table(
         render=tables.board_identity_table,

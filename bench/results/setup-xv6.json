@@ -11,7 +11,7 @@
     "memory": "128M",
     "note": "structural facts only \u2014 QEMU models no timing (ch00)"
   },
-  "generated_at": "2026-09-14T20:46:45+00:00",
+  "generated_at": "2026-09-14T21:00:13+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",
@@ -38,7 +38,7 @@
     "cpus_requested": 3,
     "endian": "little",
     "harts": 3,
-    "kernel_bytes": 283320,
+    "kernel_bytes": 292464,
     "layouts": [
       {
         "align": 4,
@@ -101,7 +101,7 @@
         "size": 8
       }
     ],
-    "user_programs": 23,
+    "user_programs": 24,
     "world": "xv6"
   },
   "target": "xv6",

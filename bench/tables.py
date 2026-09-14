@@ -435,3 +435,37 @@ def sv39_geometry_table(name: str) -> str:
         ["One level-2 entry covers", f"{sv39['spans']['2']} bytes", "512 of those"],
     ]
     return render_table(["", "Value", "Where it comes from"], rows)
+
+
+def fault_exchange_table(name: str) -> str:
+    """What laziness saved, and what it cost to save it.
+
+    Both columns of the trade in one place, because quoting either alone is how the feature gets
+    described as free. Pages are what a policy saves; faults are what it spends.
+    """
+    run = load_result(name)["summary"]["faultload"]
+    rows = [
+        ["Pages requested with `sbrklazy`", run["asked_lazy"]],
+        ["…of those, pages ever touched", run["touched_lazy"]],
+        ["…so pages never allocated at all", run["pages_never_allocated"]],
+        ["Entries into the kernel that cost", run["load_faults"] + run["store_faults"]],
+        ["Pages requested with `sbrk`", run["asked_eager"]],
+        ["…of those, pages allocated", run["asked_eager"]],
+        ["Pages `exec` allocated before `main` ran", run["eager_pages_before_main"]],
+    ]
+    return render_table(["What the workload did", "Pages"], rows)
+
+
+def fault_causes_table(name: str) -> str:
+    """Which fault each page arrived on, and how many the kernel declined.
+
+    The hardware reports a load fault and a store fault as different causes. Whether a kernel uses
+    the distinction is a separate question, and this table is how you find out what this one does.
+    """
+    run = load_result(name)["summary"]["faultload"]
+    rows = [
+        ["Load page fault", "13", run["load_faults"]],
+        ["Store page fault", "15", run["store_faults"]],
+        ["Faults the handler declined", "—", run["refused"]],
+    ]
+    return render_table(["Cause", "`scause`", "Count"], rows)

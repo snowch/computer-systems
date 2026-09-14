@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 422" width="780" height="422" role="img">
+  <title>What a kernel does with a page fault</title>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1a1a1a"/></marker></defs>
+  <rect width="780" height="422" fill="#ffffff"/>
+  <text x="24" y="36" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1a1a1a" text-anchor="start">A page fault is a question the kernel gets to answer</text>
+  <text x="24" y="56" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">The hardware supplies the address. What happens next is entirely policy.</text>
+  <rect x="24" y="86" width="142" height="52" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="95.0" y="108" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1a1a1a" text-anchor="middle">touch</text>
+  <text x="95.0" y="125" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="middle">a load or a store</text>
+  <line x1="172" y1="112.0" x2="186" y2="112.0" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <rect x="192" y="86" width="142" height="52" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="263.0" y="108" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1a1a1a" text-anchor="middle">fault</text>
+  <text x="263.0" y="125" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="middle">walk stopped</text>
+  <line x1="340" y1="112.0" x2="354" y2="112.0" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <rect x="360" y="86" width="142" height="52" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="431.0" y="108" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1a1a1a" text-anchor="middle">stval</text>
+  <text x="431.0" y="125" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="middle">the address</text>
+  <line x1="508" y1="112.0" x2="522" y2="112.0" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <rect x="528" y="86" width="142" height="52" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="599.0" y="108" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1a1a1a" text-anchor="middle">below sz?</text>
+  <text x="599.0" y="125" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="middle">the only test</text>
+  <rect x="24.0" y="198" width="352.0" height="92" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="40.0" y="226" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="start">yes</text>
+  <text x="40.0" y="250" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">allocate a page, map it, and re-run the instruction that faulted</text>
+  <text x="40.0" y="274" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">17 pages this run</text>
+  <line x1="599" y1="138" x2="200.0" y2="194" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <rect x="404.0" y="198" width="352.0" height="92" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="420.0" y="226" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="start">no</text>
+  <text x="420.0" y="250" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">the process asked for an address it never requested: kill it</text>
+  <text x="420.0" y="274" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">0 this run</text>
+  <line x1="599" y1="138" x2="580.0" y2="194" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <text x="24" y="330" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#1a1a1a" text-anchor="start">Unlike a system call, the faulting instruction runs again.</text>
+  <line x1="24" y1="350" x2="756" y2="350" stroke="#c9ced6"/>
+  <text x="24" y="372" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">Change the test and you get a different feature from the same hook: copy-on-write, a guard page, a page fetched from disk.</text>
+  <text x="24" y="390" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">This chapter measures one of them. The others are named in the text and not measured, which is not the same as being free.</text>
+</svg>

@@ -349,6 +349,44 @@ different problems.
   xv6 book is not cited, and the chapter sends the reader to `vm.c` rather than to any commentary
   on it.
 
+## ch08 · Page Faults as a Feature
+
+**Closest in subject.** The xv6 book's chapter on traps and page faults; MIT 6.1810's lazy-
+allocation and copy-on-write labs, which set exactly the two features this subject suggests;
+*Operating Systems: Three Easy Pieces* on paging mechanisms and swapping; and the demand-paging
+section of any OS text.
+
+**How this differs, and the care taken.** This is the chapter where the obvious exercises are two
+famous assignments, so both are deliberately not set — and the reason is not only originality.
+
+- **The chapter implements no policy, because this kernel already has both.** The xv6 revision
+  used here ships `sbrk` and `sbrklazy` and lets a program choose per call. So there was nothing
+  to build, "implement lazy allocation" cannot be an exercise, and the patch is counters only. The
+  book's contribution is the question neither policy answers about itself.
+- **The organising idea is the exchange rate, which the comparable material omits.** Laziness is
+  almost always described by its saving. This chapter puts both sides of the trade in one table:
+  pages never allocated, against entries into the kernel bought with them, for one workload chosen
+  to bracket the trade rather than to demonstrate a win.
+- **Copy-on-write is named, explained as one more test on the same hook, and explicitly not
+  measured.** That is stated in "What this cannot tell you" rather than quietly skipped, because
+  naming a mechanism and pricing it are different things. It is also why no exercise here asks for
+  a COW fork.
+- **The second cost is this book's own emphasis.** Laziness moves a failure from the return value
+  of a call, where a program can handle it, to an ordinary store, where it cannot — which is why
+  an overcommitting system needs something to kill processes with. The chapter derives it, and
+  problem 8.3 makes the reader compute it.
+- **The problems are the handler's decisions, lifted out of the kernel.** 8.1 is the bytes-against-
+  pages trap, with overlapping and unordered runs. 8.2's nine cases include the two a handler
+  written from the happy path gets wrong — the exact boundary, and a page that is already mapped,
+  where allocating would map a blank page over live data. 8.3 is the failure-visibility question.
+  All answers follow from what the test itself constructed; nothing is stored, and the patch
+  decides nothing, so it hands the reader no answer.
+- **Determinism is by construction.** `faultload` fixes and prints every quantity, the kernel
+  counts independently, and the runner refuses a result in which they disagree, one latched from
+  the wrong process, or one in which the handler declined a fault. That machinery is this book's
+  and exists because ch06 was got wrong first.
+- **Citations are primary only**: the RISC-V privileged specification and xv6's own source.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the
