@@ -335,7 +335,11 @@ on the board and stamped; nothing here may come from an emulator.
   should not matter; a run long enough to throttle, with the clock recorded alongside the result
   so the reader can see the floor move.
 - **Problems.** Build a timing harness against a specification; find the bias in a supplied
-  benchmark; make a wrong benchmark right.
+  benchmark; make a wrong benchmark right; **take one piece of the book's own setup advice and
+  test it** — ch00 says to prefer Ethernet over WiFi because the radio's driver does interrupt
+  work on the cores being measured, and says outright that it has not measured this. Measure it.
+  A reader who can falsify a claim the book makes about its own tooling has the skill the chapter
+  is for, and the answer is genuinely unknown to the author.
 
 #### ch15 · The Memory Hierarchy — target `host`
 
