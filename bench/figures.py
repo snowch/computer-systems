@@ -366,6 +366,22 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         result="measuring-host",
         pending=f"The bias experiment has not been run yet: {BOARD} (`bench/results/measuring-host.json`).",
     ),
+    # -- ch15 ---------------------------------------------------------------------------
+    "ch15-levels": Table(
+        render=tables.hierarchy_levels_table,
+        result="hierarchy-host",
+        pending=f"The hierarchy has not been probed yet: {BOARD} (`bench/results/hierarchy-host.json`).",
+    ),
+    "ch15-line": Table(
+        render=tables.hierarchy_line_table,
+        result="hierarchy-host",
+        pending=f"The line size has not been measured yet: {BOARD} (`bench/results/hierarchy-host.json`).",
+    ),
+    "ch15-vendor": Table(
+        render=tables.hierarchy_vendor_table,
+        result="hierarchy-host",
+        pending=f"Nothing has been measured to compare the datasheet with yet: {BOARD} (`bench/results/hierarchy-host.json`).",
+    ),
     "ch00-board": Table(
         render=tables.board_identity_table,
         result="setup-host",

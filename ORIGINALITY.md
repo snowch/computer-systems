@@ -602,6 +602,39 @@ without number.
 - **Citations are primary only**: the measurement-bias paper and the Linux manual pages. The
   benchmarking textbooks are not cited at all.
 
+## ch15 · The Memory Hierarchy
+
+**Closest in subject.** *What Every Programmer Should Know About Memory* (Drepper); *Computer
+Systems: A Programmer's Perspective* chapter 6, including its memory-mountain figure; *Performance
+Analysis and Tuning on Modern CPUs* on the memory subsystem; and the lmbench and MemLat
+microbenchmark literature. The pointer-chase latency probe is long-standing folklore.
+
+**How this differs, and the care taken.**
+
+- **The chapter's job is set by ch13 rather than by the topic.** It exists to explain a specific
+  earlier prediction failing, and it closes by judging that prediction — the extra load was never
+  the difference; the difference is that one program can overlap its accesses and the other
+  cannot. That arc belongs to this book.
+- **Deliberately not a memory mountain.** The obvious figure here is the two-dimensional
+  size-against-stride surface that CS:APP made famous, and it is not used. The three experiments
+  are separate one-dimensional curves, each answering one question, and the reason is this book's
+  policy that a figure must show a mechanism rather than a landscape.
+- **The instrument's shape is argued rather than assumed.** A dependent chase measures latency and
+  an independent walk measures parallelism; the chapter says which it built and why, and says that
+  every number it produces is therefore a worst case.
+- **The TLB section is ch07's cost, in ch07's own terms.** Three levels of page table become three
+  extra memory accesses, and the counter-intuitive consequence — data fitting in cache while
+  translations do not — is drawn out because this book has already made the reader build the walk.
+- **The vendor comparison is a stated policy, not a check.** Where the datasheet and the
+  measurement disagree, the book prints the measurement and discusses the disagreement, which
+  ch00 established and this is the first chapter to exercise.
+- **The problems are curve-reading rather than fact-recall**, graded against synthetic curves the
+  tests construct — including one that drifts upward without stepping, and one flat stride curve
+  whose correct answer is that it has none. Verified against references kept outside the
+  repository.
+- **Citations are primary only**: the SoC documentation and the core's technical reference manual.
+  Drepper and CS:APP are not cited, here or anywhere.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the

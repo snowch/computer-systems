@@ -663,3 +663,40 @@ def bias_table(name: str) -> str:
         for padding, run in sorted(bias.items(), key=lambda kv: int(kv[0]))
     ]
     return render_table(["What was changed", "Fastest", "Median"], rows)
+
+
+def hierarchy_levels_table(name: str) -> str:
+    """Latency against working-set size. The steps are the levels, and they were not looked up."""
+    rows = [
+        [f"{point['bytes'] // 1024} KiB", f"{point['ns']} ns"]
+        for point in load_result(name)["summary"]["sizes"]
+    ]
+    return render_table(["Working set", "Nanoseconds per dependent load"], rows)
+
+
+def hierarchy_line_table(name: str) -> str:
+    """Latency against stride. The step is the line size, and it is the same for every level."""
+    rows = [
+        [f"{point['bytes']} bytes", f"{point['ns']} ns"]
+        for point in load_result(name)["summary"]["stride"]
+    ]
+    return render_table(["Stride", "Nanoseconds per dependent load"], rows)
+
+
+def hierarchy_vendor_table(name: str) -> str:
+    """What the machine said, beside what the vendor said.
+
+    They are allowed to disagree, and where they do the measurement wins — a specification is a
+    claim about a product line and a measurement is a statement about the silicon in front of you.
+    """
+    measured = load_result(name)["summary"]["derived"]
+    rows = [
+        [label, f"{measured[key]}", measured[f"{key}_vendor"]]
+        for label, key in (
+            ("Cache line", "line_bytes"),
+            ("First level", "l1_bytes"),
+            ("Second level", "l2_bytes"),
+            ("Last level", "l3_bytes"),
+        )
+    ]
+    return render_table(["", "Measured", "Vendor's figure"], rows)
