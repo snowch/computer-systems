@@ -57,12 +57,78 @@ and no pipeline. Watching a program in a debugger tells you what it *does*. Only
 tells you what it *costs*. Chapter 13 puts the same program through both and makes the gap
 concrete.
 
-The two targets do not share an instruction set, and that is deliberate rather than untidy. The
-kernel small enough to read in an afternoon is a RISC-V kernel. The hardware whose performance
-counters actually work — where a profiler can sample, and where there is a vector unit to
-measure — is an ARM one. Chapter 0 shows the evidence behind that choice. Only three chapters
-read disassembly; everything else is method, and method does not have an architecture. If the
-concepts only worked on one instruction set, they would not be worth learning.
+### Why they do not share an instruction set
+
+The kernel small enough to read in an afternoon is a RISC-V kernel. The hardware whose counters
+actually work is an ARM one. Those are different machines, and pretending otherwise would mean
+lying about one of them.
+
+Part III needs `perf` to do two separate things: **count** events over a run, and **sample** —
+interrupt the program thousands of times a second to ask where it is. Sampling needs the counters
+to raise an interrupt when they overflow. On ARM that is a standard part of the performance
+monitoring unit. On RISC-V it is an optional extension, and a 2025 study of the three RISC-V cores
+you can actually buy found that none of them wins:
+
+| | SiFive U74 | T-Head C910 | SpacemiT X60 |
+|---|---|---|---|
+| Out-of-order | No | Yes | No |
+| Vector extension | **None** | 0.7.1 (draft) | RVV 1.0 |
+| **Counter-overflow interrupt** | **No** | Yes | Limited |
+| Upstream Linux support | Yes | Partial | **No** |
+
+Read down the columns. Choosing RISC-V for Part III would have made two of its eight chapters
+unmeasurable — one needs sampling, one needs a vector unit — on boards that are hard to buy, with
+firmware that has broken `perf` between distribution releases. A Raspberry Pi costs none of that.
+
+### What the split buys
+
+It would be easy to present that as a regrettable compromise. It is not, and the honest version is
+more interesting.
+
+This book's argument is *use the instrument that can answer your question, and know what each
+instrument cannot tell you*. Chapter after chapter applies that to caches, to profilers, to
+emulators. Applying it to the book's own construction gives exactly this arrangement. Three things
+follow that a single-architecture book could not offer.
+
+**The concepts are visibly not about an instruction set.** A book that stays on one architecture
+has to *assert* that its ideas generalise. This one demonstrates it, by having them survive a
+change of architecture in front of you.
+
+**You get two memory models instead of one.** Chapter 10 teaches RISC-V's; chapter 18 measures
+ARM's, which is also weak and differently specified. A reader shown only one would reasonably
+conclude that model *is* memory ordering. Shown two, you learn it is a family, that a fence is an
+architecture-specific spelling of an architecture-independent need, and that store buffers and
+coherence are what actually transfer.
+
+**Chapter 13 gets harder in the way that matters.** Three things differ between watching a program
+under xv6 and profiling it on real hardware: emulation against hardware, one kernel against
+another, one instruction set against another. Attributing a difference to the wrong one is the
+commonest way to be confidently wrong about performance, and that chapter is where you practise
+separating them.
+
+Only three chapters read disassembly at all. The rest is method, and method does not have an
+architecture.
+
+### One argument, not two tutorials
+
+**Part III is not a second book. It is Part II's chapters asked again as questions about time.**
+Every chapter in it names the earlier chapter whose cost it measures, in its own header:
+
+| When Part III asks | You already learned the mechanism in |
+|---|---|
+| ch15 — where is the data, and what does each step out cost? | ch02 layout and alignment, ch07 address translation |
+| ch16 — what did that cost? | ch04 what the compiler emitted |
+| ch17 — what is the core doing between fetch and finish? | ch04 the instructions themselves |
+| ch18 — what do four cores cost each other? | ch10 locks, fences and ordering |
+| ch19 — what does Linux charge for this? | ch06 traps, ch08 faults, ch11 switches |
+
+So you never arrive at a Part III chapter cold. You arrive knowing the mechanism completely and
+needing only the price — a better position than either half could put you in alone, and the reason
+the book is arranged this way rather than as theory followed by benchmarks.
+
+Three Part III chapters have no counterpart, deliberately: ch14 teaches measurement itself, ch20 is
+about the whole machine rather than any one mechanism, and ch21 concerns hardware Part II never had
+reason to describe.
 
 ## How the numbers work
 

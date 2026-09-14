@@ -26,39 +26,27 @@ later as something that looks like a bug in the material. So this chapter ends w
 interrogates the machine you are sitting at and tells you which of the book's two targets it can
 currently run, and with two measurements that record what those targets actually are.
 
-## Two targets, and why it has to be two
+## Two targets, and what the repository does about it
 
-```{figure} _figures/ch00-targets.svg
-:alt: The xv6 and host targets side by side, with what each can and cannot answer.
-:width: 100%
+The preface makes the case for the arrangement; this is the operational version of it.
 
-The division of labour. Every chapter declares which target it uses, and every figure records
-which one produced it.
-```
+**`xv6`** is the MIT teaching kernel under `qemu-system-riscv64`: a complete operating system in
+about nine thousand lines, which you can stop mid-trap and inspect. Parts I and II live there, and
+so does everything the book says about *what a program does*.
 
-**`xv6`** is the MIT teaching kernel, running under `qemu-system-riscv64`. It is a complete
-operating system — processes, page tables, traps, a file system with a write-ahead log — in about
-nine thousand lines. You can stop the whole machine in the middle of a trap and print a page
-table. Parts I and II live here, and so does everything the book says about *what a program does*.
+**`host`** is a small Linux machine on the desk, reached over SSH — a Raspberry Pi 5 in this book.
+Everything about *what a program costs* is measured there, natively. Part III lives there.
 
-**`host`** is a small Linux machine on the desk, reached over SSH — a **Raspberry Pi 5** in this
-book. Everything about *what a program costs* is measured there, natively. Part III lives here.
+The one thing worth repeating from the preface, because every later chapter depends on it: QEMU is
+a functional emulator. It computes what the instructions compute and models nothing else — no
+cache, no branch predictor, no store buffer, no pipeline, no memory latency. Ask it how long a loop
+took and it will answer, and the answer describes the laptop QEMU was running on and the
+translation strategy it happened to pick.
 
-The two do not share an instruction set. That is deliberate, it was bought with two chapters, and
-the next section is the argument for it.
-
-The split is the book's central argument rather than a convenience. QEMU is a functional
-emulator: it computes what the instructions compute, and it models nothing else. There is no
-cache in it, no branch predictor, no store buffer, no pipeline, no memory latency. Ask it how
-long a loop took and it will answer, and the answer will describe the laptop QEMU was running on
-and the translation strategy it happened to pick — not the RISC-V machine you think you are
-studying.
-
-This is not a limitation to work around. It is a fact worth internalising early, because it
-generalises: almost every convenient way to observe a program changes what you are observing. A
-debugger stops it. A profiler samples it. A print statement in a loop makes the loop something
-else. The discipline this book is really teaching is knowing which of your tools is lying to you
-about which question.
+That generalises well beyond QEMU, which is why it is the first thing this book teaches: almost
+every convenient way to observe a program changes what you are observing. A debugger stops it. A
+profiler samples it. A print statement in a loop makes the loop something else. Knowing which of
+your tools is lying to you about which question is the discipline underneath all of this.
 
 So the repository enforces the split rather than trusting anyone to remember it. Every result
 file records where it was measured, and `scripts/verify-numbers.py` rejects two things outright:
@@ -81,6 +69,11 @@ in Parts I and II depends on hardware you do not have.
 
 A **Raspberry Pi 5**, 4 GB or more, **with the active cooler**. A Pi 4 you already own will do.
 
+It is an ARM machine, and Parts I and II are RISC-V. That is deliberate: `perf` has to both count
+and sample, no affordable RISC-V core does both, and choosing one would have cost two chapters of
+Part III. The preface makes that argument with the evidence behind it; this chapter is about
+getting the machine working.
+
 % number-ok: SoC specification from @rpi-bcm2712; every figure in this book comes from the machine itself
 Its SoC is a BCM2712: four Arm Cortex-A76 cores at 2.4 GHz, 64 kB of L1 instruction and data
 cache each, 512 kB of L2 per core, and 2 MB of L3 shared between them @rpi-bcm2712. Those are the
@@ -96,98 +89,6 @@ benchmark that quietly changes clock speed half way through is not a slow measur
 wrong one, and one of the more instructive ways to be wrong about a benchmark. [ch14](#ch14)
 treats thermal throttling as a measurement hazard and shows how to detect it; a cooler means you
 meet it deliberately rather than by accident in every run.
-
-The architecture deserves an explanation, because Parts I and II are RISC-V and this is not, and
-an unexplained inconsistency in a book about rigour would be a poor start.
-
-### Why the two targets do not share an instruction set
-
-Part III needs `perf` to do two different things. **Counting** — `perf stat` totalling events over
-a run — and **sampling** — `perf record` interrupting the program thousands of times a second to
-ask where it is. Sampling needs the counters to raise an interrupt when they overflow. On ARM that
-has been a standard part of the PMU for years. On RISC-V it is the Sscofpmf extension
-@riscv-sscofpmf, and support for it is thin.
-
-A 2025 study measured the three RISC-V cores you can actually buy @riscv-pmu-profiling:
-
-| | SiFive U74 | T-Head C910 | SpacemiT X60 |
-|---|---|---|---|
-| Out-of-order | No | Yes | No |
-| Vector extension | **None** | 0.7.1 (draft) | RVV 1.0 |
-| **Counter-overflow interrupt** | **No** | Yes | Limited |
-| Upstream Linux support | Yes | Partial | **No** |
-
-Read down the columns and none of them wins. The U74 counts but cannot sample and has no vector
-unit, so two chapters become unmeasurable. The C910 can sample but needs a vendor kernel. The X60
-has the vectors and struggles with `cycles` and `instructions` themselves, exposing non-standard
-counters in their place.
-
-Choosing RISC-V for Part III would therefore have cost two of its eight chapters, plus a hardware
-hunt, plus a toolchain that has broken between distro releases. A Pi costs none of that, and it is
-already on most desks.
-
-**What it costs** is instruction-set continuity — and only in the three chapters that actually
-read disassembly: [ch16](#ch16), [ch17](#ch17) and [ch21](#ch21). The other five are method, and
-method does not have an architecture.
-
-### What the split buys
-
-It would be easy to present that as a regrettable compromise. It is not, and the honest version is
-more interesting.
-
-This book's whole argument is *use the instrument that can answer your question, and know what
-each instrument cannot tell you*. Chapter after chapter applies that to caches, to profilers, to
-emulators. Applying it to the book's own construction gives exactly this arrangement: a RISC-V
-teaching kernel, because it is the most legible instrument in existence for reading an operating
-system; an ARM machine, because it is the instrument whose counters actually work. Choosing one
-architecture for both would mean lying about one of them.
-
-Three things follow that a single-architecture book could not have offered.
-
-**The concepts are visibly not about an instruction set.** A book that stayed on one architecture
-throughout has to *assert* that its ideas generalise. This one demonstrates it, in the only way
-that is convincing: by having them survive a change of architecture in front of you. The probe you
-run at the end of this chapter is the first instance — the same header, two instruction sets,
-identical answers.
-
-**You get two memory models instead of one.** [ch10](#ch10) teaches RISC-V's: `amoswap`, `fence`,
-the rules about what may be reordered. [ch18](#ch18) measures ARM's, which is also weak and
-differently specified. A reader shown only one would reasonably conclude that model *is* memory
-ordering. Shown two, you learn that "weak memory model" is a family, that a fence is an
-architecture-specific spelling of an architecture-independent need, and that store buffers and
-coherence are the things that actually transfer.
-
-**[ch13](#ch13) gets harder in the way that matters.** Three things differ between watching a
-program under xv6 and profiling it on the Pi: emulation against hardware, one kernel against
-another, and one instruction set against another. Attributing a difference to the wrong one of
-those is the commonest way to be confidently wrong about performance, and that chapter is where
-you practise separating them. The single-variable version would have been tidier and taught less.
-
-### The book is one argument, not two tutorials
-
-The device that keeps the halves together is simple, and you will see it in every Part III header.
-**Part III is not a second book. It is Part II's chapters asked again as questions about time.**
-
-| When Part III asks | You already learned the mechanism in |
-|---|---|
-| [ch15](#ch15) — where is the data, and what does each step out cost? | [ch02](#ch02) layout and alignment, [ch07](#ch07) address translation |
-| [ch16](#ch16) — what did that cost? | [ch04](#ch04) what the compiler emitted |
-| [ch17](#ch17) — what is the core doing between fetch and finish? | [ch04](#ch04) the instructions themselves |
-| [ch18](#ch18) — what do four cores cost each other? | [ch10](#ch10) locks, fences and ordering |
-| [ch19](#ch19) — what does Linux charge for this? | [ch06](#ch06) traps, [ch08](#ch08) faults, [ch11](#ch11) switches |
-
-So you never arrive at a Part III chapter cold. You arrive knowing the mechanism completely and
-needing only the price — which is a much better position than either half could put you in alone,
-and is the reason the book is arranged this way rather than as "theory, then benchmarks".
-
-Three Part III chapters have no counterpart, deliberately: [ch14](#ch14) teaches measurement
-itself, [ch20](#ch20) is about the whole machine rather than any one mechanism, and
-[ch21](#ch21) concerns hardware Part II never had reason to describe.
-
-[Appendix F](#appendix-f) is the translation you will want when you first meet AArch64 in ch16:
-registers, calling convention, loads and stores, atomics and fences, set beside their RISC-V
-equivalents. It is written as "you know this already, here it is again" rather than as a summary
-of an instruction set.
 
 ### What the machine has to do
 
@@ -236,9 +137,10 @@ into an assistant that can search the web, with your country and budget filled i
 :end-before: NICE TO HAVE
 ```
 
-That is an extract; the file also carries the RISC-V findings above, so a recommendation cannot
-walk you back into the problem this chapter just described, and it asks for a **source** for the
-`perf` claims specifically — the claim most likely to come back confidently wrong.
+That is an extract; the file also carries the RISC-V findings the preface sets out, so a
+recommendation cannot walk you back into the problem those findings describe, and it asks for a
+**source** for the `perf` claims specifically — the claim most likely to come back confidently
+wrong.
 
 :::{caution} The purchase is yours
 This book does not sell hardware, has not tested most of what a search might surface, and has no
@@ -575,7 +477,7 @@ to measure. It is the whole design. The xv6 target will never produce a timing i
 because a timing produced there would be meaningless, and a meaningless number in a table is
 worse than a missing one — a missing number announces itself.
 
-The board's table above is the other half of the same discipline. If it is showing a warning box
+The reference machine's table above is the other half of the same discipline. If it is showing a warning box
 rather than numbers, that is because the measurement has not been taken yet: nothing is estimated,
 interpolated, or carried over from a different machine. `make bench-board` refuses to run
 anywhere but the board, and `scripts/verify-numbers.py` rejects the result if it somehow arrives
@@ -647,14 +549,14 @@ separates a confident answer from a correct one.
 
 For the reference machine, Raspberry Pi's own documentation @rpi-bcm2712 gives the SoC and its
 cache hierarchy, and Arm's Cortex-A76 technical reference manual @arm-a76-trm gives the pipeline
-and the PMU events [ch17](#ch17) reads. The RISC-V hardware this chapter argued against is
+and the PMU events [ch17](#ch17) reads. The RISC-V hardware the preface argues against is
 documented at @starfive-jh7110 and @sifive-u74 if you want to follow that thread. Either way the
 caveat stands: where a document and a measurement disagree, the book prints the measurement and
 says so.
 
-The study behind this chapter's architecture decision is @riscv-pmu-profiling, and it is worth
-reading even if you never touch RISC-V — it is a good example of what it looks like to establish
-what a machine can actually do, rather than what its documentation says it has.
+The study behind that decision is @riscv-pmu-profiling, and it is worth reading even if you never
+touch RISC-V — it is a good example of what it looks like to establish what a machine can actually
+do, rather than what its documentation says it has.
 
 The xv6 source @xv6-riscv-source is worth browsing before [ch01](#ch01), without trying to
 understand it. Its authors also wrote a commentary on it, which is excellent and which this book

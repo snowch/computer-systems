@@ -310,20 +310,22 @@ def test_every_part_three_chapter_either_pairs_or_is_deliberately_standalone():
 
 
 @pytest.mark.parametrize("chapter", PAIRED, ids=[c.label for c in PAIRED])
-def test_chapter_zero_shows_the_pairing(chapter: Chapter):
-    """ch00 promises the reader that Part III re-asks Part II. The table must stay true.
+def test_the_preface_shows_the_pairing(chapter: Chapter):
+    """The preface promises the reader that Part III re-asks Part II. The table must stay true.
 
-    ch13 is the hinge rather than a Part III chapter, so it is exempt: it crosses the seam rather
-    than costing one mechanism, and ch00 discusses it in prose instead.
+    It lives in the preface rather than ch00 because it is an argument about how the book is
+    built, which a reader needs before deciding to read it — where ch00 is about getting two
+    machines working. ch13 is exempt: it crosses the seam rather than costing one mechanism, and
+    the preface discusses it in prose instead.
     """
     if chapter.label == "ch13":
         pytest.skip("ch13 is the crossing itself, not a row in the table")
-    ch00 = (ROOT / "chapters" / "ch00_prerequisites_and_setup.md").read_text()
-    section = ch00[ch00.index("### The book is one argument, not two tutorials") :]
-    assert f"[{chapter.label}](#{chapter.label})" in section, (
-        f"{chapter.label} pairs with an earlier chapter but ch00's table omits it"
+    preface = (ROOT / "index.md").read_text()
+    section = preface[preface.index("### One argument, not two tutorials") :]
+    assert chapter.label in section, (
+        f"{chapter.label} pairs with an earlier chapter but the preface's table omits it"
     )
     for label in chapter.answers:
-        assert f"[{label}](#{label})" in section, (
-            f"ch00's table does not show that {chapter.label} costs {label}"
+        assert label in section, (
+            f"the preface's table does not show that {chapter.label} costs {label}"
         )
