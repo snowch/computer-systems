@@ -86,6 +86,22 @@ build. If the number is a cited *specification* rather than a measurement — a 
 datasheet — put `% number-ok: @citekey` on the line before it, so the exemption and its reason are
 visible in review.
 
+### Say which earlier chapter your Part III chapter costs
+
+Part III is not a second book. It is Part II's chapters asked again as questions about time, and
+the thing that keeps it feeling that way is the `answers` field in `bench/outline.py`: the earlier
+chapters whose cost this one measures. It renders as an **Answers the cost of** row in the header,
+and `tests/test_book.py` checks the labels are real, point backwards, and appear in the header.
+
+Write the chapter to earn that row. Open by recalling the mechanism the reader already has, then
+put a price on it. Where the two targets disagree about more than the number — different
+instruction set, different memory model — say so and draw the correspondence explicitly. The
+correspondence *is* the content; a chapter that quietly pretends both halves are the same
+architecture is worse than one that makes the translation.
+
+Three Part III chapters have no counterpart by design (ch14, ch20, ch21). Any other unpaired one
+fails a test, because it is far more likely to be an oversight than a decision.
+
 ### Never let a chapter depend on the reference hardware silently
 
 Readers are told to buy a board meeting a capability spec, not a part number (`hardware/`), so

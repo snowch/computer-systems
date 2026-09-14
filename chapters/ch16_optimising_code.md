@@ -14,6 +14,7 @@ short_title: "ch16 Optimising Code"
 | **Target** | `host` — Linux on real hardware, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch15](#ch15) |
 | **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **Answers the cost of** | [ch04](#ch04) |
 :::
 
 ## The question

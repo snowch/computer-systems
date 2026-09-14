@@ -90,7 +90,37 @@ model to hardware and asks what each part of it costs. [ch13](#ch13) is the hing
 program, watched in a debugger and then profiled on the board, with the gap between the two made
 explicit.
 
-### 3.3 Measurement as a skill, not a step
+### 3.3 One book, not two: the pairing
+
+The two targets do not share an instruction set, and the book does not treat that as a seam to be
+apologised for. It is the thesis applied to the book's own construction: *use the tool that can
+answer your question, and know what each tool cannot tell you.* A RISC-V teaching kernel is the
+best available instrument for structure; an ARM machine is the best available instrument for cost.
+Picking one instrument for both would mean lying about one of them.
+
+What stops that becoming two tutorials bolted together is a structural device: **Part III is not a
+second book, it is Part II's chapters asked again as questions about time.** Each Part III chapter
+names the earlier chapter whose cost it measures, in the `answers` field of `bench/outline.py`,
+which renders as an **Answers the cost of** row in its header and is checked by
+`tests/test_book.py`.
+
+| Part III chapter | Costs what was explained in |
+|---|---|
+| ch15 The Memory Hierarchy | ch02 (layout and alignment), ch07 (address translation) |
+| ch16 Optimising Code | ch04 (what the compiler emitted) |
+| ch17 The CPU | ch04 (the instructions), now priced |
+| ch18 Memory Ordering on Real Hardware | ch10 (locks, fences, RVWMO) |
+| ch19 The OS Layer's Cost | ch06 (traps), ch08 (faults), ch11 (switches) |
+
+Three Part III chapters are deliberately unpaired and the test knows it: ch14 teaches measurement
+itself, ch20 is about the whole machine rather than one mechanism, and ch21 concerns hardware Part
+II never described. Anything else unpaired is an oversight.
+
+The reader therefore arrives at each Part III chapter already understanding the mechanism and
+needing only the price — and the crossing itself is rehearsed once, deliberately, in
+[ch13](#ch13).
+
+### 3.4 Measurement as a skill, not a step
 
 A running thread, deliberately spread out rather than confined to [ch14](#ch14): every chapter
 that produces a number also says how it could be wrong. Variance, warm-up, the observer effect,
@@ -268,8 +298,15 @@ goal is that no operating system service remains a black box.
 The hinge of the book.
 
 - **Objectives.** Take one program understood completely from Parts I and II, watch it in gdb under
-  xv6, then profile it on the board. Confront the fact that the complete structural understanding
-  predicts almost nothing about the cost — and work out which parts of the model do carry over.
+  xv6, then profile it on the reference machine. Confront the fact that the complete structural
+  understanding predicts almost nothing about the cost — and work out which parts of the model do
+  carry over.
+- **The confound, which is the lesson.** Three things differ between the two runs at once:
+  emulation versus hardware, one kernel versus another, and one instruction set versus another.
+  The chapter must name all three and then *separate* them, because attributing a difference to
+  the wrong cause is the most common way to be confidently wrong about performance. This is where
+  the reader learns the move the rest of Part III depends on, and it is a better exercise than the
+  single-variable version would have been.
 - **Code.** The bridge program, built for both targets from one source.
 - **Measurements.** Identical structural facts from both targets; the first side-by-side timing
   from the board, against QEMU's meaningless equivalent, shown deliberately.
@@ -332,7 +369,15 @@ on the board and stamped; nothing here may come from an emulator.
 #### ch18 · Memory Ordering on Real Hardware — target `host`
 
 - **Objectives.** What four cores cost each other: false sharing, cache-line ping-pong, the price
-  of atomics and fences. The same material as [ch10](#ch10), now with numbers.
+  of atomics and fences — and **a second memory model**, seen next to the first.
+- **Why this is not simply "ch10 with numbers".** [ch10](#ch10) teaches RISC-V: `amoswap`, `fence`,
+  and RVWMO. This chapter is ARM: load-exclusive/store-exclusive or LSE atomics, `dmb` and its
+  domains, and a differently specified model. That is a feature. A reader shown only one weak
+  memory model will conclude that model *is* memory ordering; shown two, they learn that "weak
+  memory model" is a family, that a fence is an architecture-specific spelling of an
+  architecture-independent need, and that the mechanism underneath — store buffers, coherence,
+  visible reordering — is what actually transfers. The chapter's job is to make the correspondence
+  explicit, not to pretend there is none.
 - **Code.** `sysfs/bench/sharing.c`, `sysfs/bench/atomics.c`.
 - **Measurements.** Throughput versus sharing distance; atomic operation cost, contended and
   uncontended; fence cost; scaling across one to four cores.
@@ -388,6 +433,10 @@ on the board and stamped; nothing here may come from an emulator.
   events exist, which are hardware, which are derived. Cannot be completed until the board runs it.
 - **D · An xv6 File Map** — what lives where, and which chapter reads it.
 - **E · Glossary** — terms with the chapter that defines them.
+- **F · AArch64 for RISC-V Readers** — a translation, not a reference. Registers and calling
+  convention, the load/store and branch forms, atomics and fences, beside their RISC-V
+  equivalents from Part I. Written for someone who has read ch04 and is about to read ch16, and
+  deliberately organised as "you know X; here it is again" rather than as an ISA summary.
 
 ---
 

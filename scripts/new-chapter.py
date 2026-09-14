@@ -43,6 +43,13 @@ STUB_MARKER = "[To write:"
 def chapter_stub(chapter: Chapter, previous: Chapter | None) -> str:
     prerequisites = f"[{previous.label}](#{previous.label})" if previous else "none"
     assumes = f"\n| **Assumes** | {chapter.assumes} |" if chapter.assumes else ""
+    answers = (
+        "\n| **Answers the cost of** | "
+        + ", ".join(f"[{label}](#{label})" for label in chapter.answers)
+        + " |"
+        if chapter.answers
+        else ""
+    )
     return f"""---
 title: "{chapter.title} [DRAFT]"
 short_title: "{chapter.label} {chapter.title}"
@@ -58,7 +65,7 @@ short_title: "{chapter.label} {chapter.title}"
 |---|---|
 | **Target** | {TARGET_LABEL[chapter.target]} |
 | **Prerequisites** | {prerequisites} |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |{assumes}
+| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |{answers}{assumes}
 :::
 
 ## The question

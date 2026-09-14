@@ -33,6 +33,14 @@ class Chapter:
     question: str
     #: Checkpoint tag, or None for a chapter that leaves no code behind (CHECKPOINTS.md).
     tag: str | None = None
+    #: Earlier chapters whose *cost* this one measures. The spine across the seam between the
+    #: two targets: Part III is not a second book, it is Part II's chapters asked again as
+    #: questions about time. A chapter that names its counterpart is a chapter the reader
+    #: arrives at already knowing the mechanism, needing only the price.
+    #:
+    #: Rendered as an "Answers the cost of" row in the chapter header, and checked by
+    #: ``tests/test_book.py`` — a label here must be a real chapter, and it must come earlier.
+    answers: tuple[str, ...] = ()
     #: What this chapter assumes about the *reference* machine, for chapters whose reading
     #: changes on different hardware. None means the chapter is hardware-neutral.
     #:
@@ -181,6 +189,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "both",
         "What does watching a program in a debugger fail to tell me about what it costs?",
         "ch13-bridge",
+        answers=("ch04", "ch06", "ch07"),
     ),
     Chapter(
         14,
@@ -199,6 +208,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "host",
         "Where is the data, and what does each extra step out cost?",
         "ch15-memory",
+        answers=("ch02", "ch07"),
         assumes="a particular cache hierarchy — the levels, sizes, line size and TLB reach "
         "are this core's. The method transfers to any machine; the numbers do not, and "
         "measuring your own is the exercise.",
@@ -211,6 +221,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "host",
         "What will the compiler do for me, and what will it never do?",
         "ch16-optimising",
+        answers=("ch04",),
     ),
     Chapter(
         17,
@@ -220,6 +231,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "host",
         "What is this core doing between fetching an instruction and finishing it?",
         "ch17-cpu",
+        answers=("ch04",),
         assumes="a specific microarchitecture. The reference is an out-of-order, 4-wide "
         "Cortex-A76; core width, branch predictor and PMU event names all differ elsewhere, "
         "and on an in-order core these experiments get easier to read, not harder.",
@@ -232,6 +244,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "host",
         "What do four cores cost each other, and what does a fence actually buy?",
         "ch18-concurrency",
+        answers=("ch10",),
         assumes="four cores, and this interconnect's coherence behaviour. A different core "
         "count moves the scaling curve without changing the mechanism; two cores make the "
         "chapter thin.",
@@ -244,6 +257,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "host",
         "What does Linux charge for the services xv6 showed me?",
         "ch19-os-cost",
+        answers=("ch06", "ch08", "ch11"),
     ),
     Chapter(
         20,
@@ -294,6 +308,7 @@ APPENDICES: tuple[Appendix, ...] = (
     Appendix("C", "perf_events", "The perf Events This Board Has"),
     Appendix("D", "xv6_file_map", "An xv6 File Map"),
     Appendix("E", "glossary", "Glossary"),
+    Appendix("F", "aarch64_for_riscv_readers", "AArch64 for RISC-V Readers"),
 )
 
 PARTS: tuple[str, ...] = (PART_I, PART_II, PART_III)

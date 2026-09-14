@@ -255,3 +255,75 @@ def test_the_hardware_advice_carries_its_caveat():
         assert "return policy" in lowered, f"{where} does not mention checking the return policy"
         assert "warranty" in lowered, f"{where} does not disclaim a warranty"
     assert "The purchase is yours and so is the risk" in notes
+
+
+# -- the spine across the seam ------------------------------------------------------------
+
+PAIRED = [chapter for chapter in CHAPTERS if chapter.answers]
+
+
+def test_some_chapters_name_the_chapter_whose_cost_they_measure():
+    """A guard on the guard. If this empties, the two halves have stopped being one book."""
+    assert PAIRED, "no chapter in bench/outline.py names an earlier chapter it costs"
+
+
+@pytest.mark.parametrize("chapter", PAIRED, ids=[c.label for c in PAIRED])
+def test_pairings_point_backwards_at_real_chapters(chapter: Chapter):
+    """A chapter can only cost something the reader has already been shown."""
+    labels = {c.label: c.number for c in CHAPTERS}
+    for label in chapter.answers:
+        assert label in labels, f"{chapter.label} names {label}, which is not a chapter"
+        assert labels[label] < chapter.number, (
+            f"{chapter.label} claims to cost {label}, which comes later — the reader would meet "
+            "the price before the mechanism"
+        )
+
+
+@pytest.mark.parametrize("chapter", PAIRED, ids=[c.label for c in PAIRED])
+def test_pairing_is_in_the_chapter_header(chapter: Chapter):
+    header = (ROOT / chapter.path).read_text()
+    assert "| **Answers the cost of** |" in header, (
+        f"{chapter.path} names a counterpart in the outline but its header does not say so — "
+        "regenerate the stub, or add the row by hand if the chapter is written"
+    )
+    for label in chapter.answers:
+        assert f"[{label}](#{label})" in header, f"{chapter.path} omits {label} from its header"
+
+
+def test_every_part_three_chapter_either_pairs_or_is_deliberately_standalone():
+    """Part III is Part II re-asked as cost questions, so an unpaired chapter needs a reason.
+
+    Three have one. ch14 teaches measurement itself and has no earlier counterpart; ch20 is about
+    the whole machine rather than one mechanism; ch21 is about hardware Part II never described.
+    Anything else unpaired is an oversight, not a decision.
+    """
+    standalone = {"ch14", "ch20", "ch21"}
+    unpaired = {
+        chapter.label
+        for chapter in CHAPTERS
+        if chapter.part == PARTS[2] and not chapter.answers and chapter.label not in standalone
+    }
+    assert not unpaired, (
+        f"these Part III chapters neither pair with an earlier chapter nor are listed as "
+        f"deliberately standalone: {sorted(unpaired)}"
+    )
+
+
+@pytest.mark.parametrize("chapter", PAIRED, ids=[c.label for c in PAIRED])
+def test_chapter_zero_shows_the_pairing(chapter: Chapter):
+    """ch00 promises the reader that Part III re-asks Part II. The table must stay true.
+
+    ch13 is the hinge rather than a Part III chapter, so it is exempt: it crosses the seam rather
+    than costing one mechanism, and ch00 discusses it in prose instead.
+    """
+    if chapter.label == "ch13":
+        pytest.skip("ch13 is the crossing itself, not a row in the table")
+    ch00 = (ROOT / "chapters" / "ch00_prerequisites_and_setup.md").read_text()
+    section = ch00[ch00.index("### The book is one argument, not two tutorials") :]
+    assert f"[{chapter.label}](#{chapter.label})" in section, (
+        f"{chapter.label} pairs with an earlier chapter but ch00's table omits it"
+    )
+    for label in chapter.answers:
+        assert f"[{label}](#{label})" in section, (
+            f"ch00's table does not show that {chapter.label} costs {label}"
+        )

@@ -126,12 +126,68 @@ Choosing RISC-V for Part III would therefore have cost two of its eight chapters
 hunt, plus a toolchain that has broken between distro releases. A Pi costs none of that, and it is
 already on most desks.
 
-**What it costs instead** is instruction-set continuity — and only in the three chapters that
-actually read disassembly: [ch16](#ch16), [ch17](#ch17) and [ch21](#ch21). The other five are
-method, and method does not have an architecture. If you learned to read RISC-V assembly in
-[ch04](#ch04) and then meet AArch64 in ch16, that is not the book failing you; it is the
-demonstration that none of this was ever about RISC-V. Concepts that only worked on one
-instruction set would not be worth the trouble of learning.
+**What it costs** is instruction-set continuity — and only in the three chapters that actually
+read disassembly: [ch16](#ch16), [ch17](#ch17) and [ch21](#ch21). The other five are method, and
+method does not have an architecture.
+
+### What the split buys
+
+It would be easy to present that as a regrettable compromise. It is not, and the honest version is
+more interesting.
+
+This book's whole argument is *use the instrument that can answer your question, and know what
+each instrument cannot tell you*. Chapter after chapter applies that to caches, to profilers, to
+emulators. Applying it to the book's own construction gives exactly this arrangement: a RISC-V
+teaching kernel, because it is the most legible instrument in existence for reading an operating
+system; an ARM machine, because it is the instrument whose counters actually work. Choosing one
+architecture for both would mean lying about one of them.
+
+Three things follow that a single-architecture book could not have offered.
+
+**The concepts are visibly not about an instruction set.** A book that stayed on one architecture
+throughout has to *assert* that its ideas generalise. This one demonstrates it, in the only way
+that is convincing: by having them survive a change of architecture in front of you. The probe you
+run at the end of this chapter is the first instance — the same header, two instruction sets,
+identical answers.
+
+**You get two memory models instead of one.** [ch10](#ch10) teaches RISC-V's: `amoswap`, `fence`,
+the rules about what may be reordered. [ch18](#ch18) measures ARM's, which is also weak and
+differently specified. A reader shown only one would reasonably conclude that model *is* memory
+ordering. Shown two, you learn that "weak memory model" is a family, that a fence is an
+architecture-specific spelling of an architecture-independent need, and that store buffers and
+coherence are the things that actually transfer.
+
+**[ch13](#ch13) gets harder in the way that matters.** Three things differ between watching a
+program under xv6 and profiling it on the Pi: emulation against hardware, one kernel against
+another, and one instruction set against another. Attributing a difference to the wrong one of
+those is the commonest way to be confidently wrong about performance, and that chapter is where
+you practise separating them. The single-variable version would have been tidier and taught less.
+
+### The book is one argument, not two tutorials
+
+The device that keeps the halves together is simple, and you will see it in every Part III header.
+**Part III is not a second book. It is Part II's chapters asked again as questions about time.**
+
+| When Part III asks | You already learned the mechanism in |
+|---|---|
+| [ch15](#ch15) — where is the data, and what does each step out cost? | [ch02](#ch02) layout and alignment, [ch07](#ch07) address translation |
+| [ch16](#ch16) — what did that cost? | [ch04](#ch04) what the compiler emitted |
+| [ch17](#ch17) — what is the core doing between fetch and finish? | [ch04](#ch04) the instructions themselves |
+| [ch18](#ch18) — what do four cores cost each other? | [ch10](#ch10) locks, fences and ordering |
+| [ch19](#ch19) — what does Linux charge for this? | [ch06](#ch06) traps, [ch08](#ch08) faults, [ch11](#ch11) switches |
+
+So you never arrive at a Part III chapter cold. You arrive knowing the mechanism completely and
+needing only the price — which is a much better position than either half could put you in alone,
+and is the reason the book is arranged this way rather than as "theory, then benchmarks".
+
+Three Part III chapters have no counterpart, deliberately: [ch14](#ch14) teaches measurement
+itself, [ch20](#ch20) is about the whole machine rather than any one mechanism, and
+[ch21](#ch21) concerns hardware Part II never had reason to describe.
+
+[Appendix F](#appendix-f) is the translation you will want when you first meet AArch64 in ch16:
+registers, calling convention, loads and stores, atomics and fences, set beside their RISC-V
+equivalents. It is written as "you know this already, here it is again" rather than as a summary
+of an instruction set.
 
 ### What the machine has to do
 
