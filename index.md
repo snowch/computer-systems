@@ -12,6 +12,10 @@ Chapter 0 is complete and the toolchain around it works end to end. Every other 
 stub carrying its target, its question and the measurements it owes you. The
 [project plan](https://github.com/snowch/computer-systems/blob/main/PLAN.md) has the outline and
 what each chapter has to produce before it loses its `[DRAFT]` marker.
+
+**[Download the whole book as a PDF](systems-from-scratch.pdf)** — every chapter and appendix in
+one file, built from the same source as this site, so the two cannot disagree about what a
+chapter says.
 :::
 
 ## The question this book keeps asking

@@ -2,6 +2,9 @@
 
 > **From bits to cycles, measured on RISC-V.**
 
+📖 **Read it: <https://snowch.github.io/computer-systems/>** ·
+📄 [Download the whole book as a PDF](https://snowch.github.io/computer-systems/systems-from-scratch.pdf)
+
 A self-study text on computer systems and performance, organised around one question at every
 layer of the stack:
 
