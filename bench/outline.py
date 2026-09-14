@@ -99,6 +99,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "both",
         "What actually happens between a source file and a result, and which of it costs anything?",
         "ch01-whole-stack",
+        reads_disassembly="riscv",
         owes="Object and section sizes at each toolchain stage (`xv6`), and instruction counts for "
         "the same program under `perf stat` (`host`).",
     ),
@@ -110,6 +111,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "xv6",
         "What is a number to this machine, and when does that answer bite?",
         "ch02-bits",
+        reads_disassembly="riscv",
         owes="Type sizes, alignments and struct layouts, and what signed overflow and shifts "
         "actually compile to.",
     ),

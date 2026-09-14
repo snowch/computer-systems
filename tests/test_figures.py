@@ -38,14 +38,14 @@ def test_table_carries_its_conditions(name: str, figure: Table):
 @pytest.mark.parametrize(("name", "figure"), DIAGRAM_FIGURES, ids=[n for n, _ in DIAGRAM_FIGURES])
 def test_diagram_is_deterministic(name: str, figure: Diagram):
     """--check can only work if drawing the same figure twice produces the same bytes."""
-    assert figure.draw() == figure.draw(), f"{name} is not reproducible"
+    assert figure.render() == figure.render(), f"{name} is not reproducible"
 
 
 @pytest.mark.parametrize(("name", "figure"), DIAGRAM_FIGURES, ids=[n for n, _ in DIAGRAM_FIGURES])
 def test_diagram_is_well_formed_svg(name: str, figure: Diagram):
     from xml.etree import ElementTree  # noqa: PLC0415
 
-    root = ElementTree.fromstring(figure.draw())
+    root = ElementTree.fromstring(figure.render())
     assert root.tag.endswith("svg")
     assert root.find("{http://www.w3.org/2000/svg}title") is not None, (
         f"{name} has no <title>; a figure nobody can hear is a figure nobody can read"

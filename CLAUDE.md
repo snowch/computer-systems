@@ -112,7 +112,16 @@ This book covers ground that existing textbooks cover. It must be **entirely ori
 
 Direct, precise, British English, active voice, short sentences. First-person plural sparingly.
 No marketing tone, no filler, no "in this chapter we will". Figures are drawn by code and must
-show a mechanism. 25–40 PDF pages per chapter.
+show a mechanism.
+
+**Length follows the material.** There is no page target, deliberately. A chapter is as long as
+what it has to convey, and no longer — ch02 has a data model to take apart and ch21 has one
+question about a vector unit, and forcing those to the same size would pad one and cramp the
+other. A chapter is finished when PLAN.md §12.3 is satisfied, never when it reaches a number.
+
+What that is not is licence to sprawl. The test is per section rather than per chapter: every
+section earns its place or comes out, and the seven-part shape (PLAN.md §12.1) applies whatever
+the length — a short chapter still owes the reader "What this cannot tell you".
 
 ## Things that will break the build
 

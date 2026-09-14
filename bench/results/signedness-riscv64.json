@@ -1,0 +1,66 @@
+{
+  "code_fingerprint": "f72e1d28a5b6ae4d",
+  "code_sources": [
+    "bench/run_disasm.py",
+    "bench/disasm.py",
+    "sysfs/lib/signedness.c",
+    "sysfs/include/sysfs/signedness.h"
+  ],
+  "conditions": {
+    "compiler": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "note": "no timing: this records what the compiler chose, not what it cost"
+  },
+  "generated_at": "2026-09-14T19:05:56+00:00",
+  "kind": "listing",
+  "machine": {
+    "arch": "riscv64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "riscv64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "signedness-riscv64",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v24",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "listings": {
+      "sysfs_signed_grows": {
+        "instructions": 2,
+        "symbol": "sysfs_signed_grows",
+        "text": "0000000000000000 <sysfs_signed_grows>:\n   0:\tli\ta0,1\n   2:\tret"
+      },
+      "sysfs_signed_quarter": {
+        "instructions": 5,
+        "symbol": "sysfs_signed_quarter",
+        "text": "000000000000000c <sysfs_signed_quarter>:\n   c:\tsraiw\ta5,a0,0x1f\n  10:\tsrliw\ta5,a5,0x1e\n  14:\taddw\ta0,a0,a5\n  16:\tsraiw\ta0,a0,0x2\n  1a:\tret"
+      },
+      "sysfs_unsigned_grows": {
+        "instructions": 3,
+        "symbol": "sysfs_unsigned_grows",
+        "text": "0000000000000004 <sysfs_unsigned_grows>:\n   4:\taddi\ta0,a0,1\n   6:\tsnez\ta0,a0\n   a:\tret"
+      },
+      "sysfs_unsigned_quarter": {
+        "instructions": 2,
+        "symbol": "sysfs_unsigned_quarter",
+        "text": "000000000000001c <sysfs_unsigned_quarter>:\n  1c:\tsrliw\ta0,a0,0x2\n  20:\tret"
+      }
+    },
+    "source": "sysfs/lib/signedness.c"
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 compiled to an object file and disassembled",
+    "flags": "-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c",
+    "objdump": "riscv64-linux-gnu-objdump -d --no-show-raw-insn --disassemble=<fn>"
+  }
+}

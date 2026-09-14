@@ -1,0 +1,76 @@
+{
+  "code_fingerprint": "f438888e21754a8e",
+  "code_sources": [
+    "bench/run_disasm.py",
+    "bench/disasm.py",
+    "sysfs/lib/addresses.c",
+    "sysfs/include/sysfs/addresses.h"
+  ],
+  "conditions": {
+    "compiler": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "note": "no timing: this records what the compiler chose, not what it cost"
+  },
+  "generated_at": "2026-09-14T19:05:56+00:00",
+  "kind": "listing",
+  "machine": {
+    "arch": "riscv64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "riscv64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "addresses-riscv64",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v24",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "listings": {
+      "sysfs_call_through": {
+        "instructions": 9,
+        "symbol": "sysfs_call_through",
+        "text": "0000000000000048 <sysfs_call_through>:\n  48:\taddi\tsp,sp,-16\n  4a:\tsd\tra,8(sp)\n  4c:\tmv\ta5,a0\n  4e:\tmv\ta0,a1\n  50:\tjalr\ta5\n  52:\tld\tra,8(sp)\n  54:\tslliw\ta0,a0,0x1\n  58:\taddi\tsp,sp,16\n  5a:\tret"
+      },
+      "sysfs_read_four": {
+        "instructions": 3,
+        "symbol": "sysfs_read_four",
+        "text": "0000000000000000 <sysfs_read_four>:\n   0:\tlw\ta0,0(a0)\n   2:\tslliw\ta0,a0,0x2\n   6:\tret"
+      },
+      "sysfs_read_four_volatile": {
+        "instructions": 8,
+        "symbol": "sysfs_read_four_volatile",
+        "text": "0000000000000008 <sysfs_read_four_volatile>:\n   8:\tlw\ta5,0(a0)\n   a:\tlw\ta3,0(a0)\n   c:\tlw\ta4,0(a0)\n   e:\tlw\ta0,0(a0)\n  10:\taddw\ta5,a5,a3\n  12:\taddw\ta5,a5,a4\n  14:\taddw\ta0,a0,a5\n  16:\tret"
+      },
+      "sysfs_sum_array": {
+        "instructions": 8,
+        "symbol": "sysfs_sum_array",
+        "text": "0000000000000018 <sysfs_sum_array>:\n  18:\tlw\ta3,0(a0)\n  1a:\tlw\ta5,4(a0)\n  1c:\tlw\ta4,8(a0)\n  1e:\tlw\ta0,12(a0)\n  20:\taddw\ta5,a5,a3\n  22:\taddw\ta5,a5,a4\n  24:\taddw\ta0,a0,a5\n  26:\tret"
+      },
+      "sysfs_sum_pointer": {
+        "instructions": 8,
+        "symbol": "sysfs_sum_pointer",
+        "text": "0000000000000028 <sysfs_sum_pointer>:\n  28:\tlw\ta3,0(a0)\n  2a:\tlw\ta5,4(a0)\n  2c:\tlw\ta4,8(a0)\n  2e:\tlw\ta0,12(a0)\n  30:\taddw\ta5,a5,a3\n  32:\taddw\ta5,a5,a4\n  34:\taddw\ta0,a0,a5\n  36:\tret"
+      },
+      "sysfs_uses_private": {
+        "instructions": 3,
+        "symbol": "sysfs_uses_private",
+        "text": "0000000000000040 <sysfs_uses_private>:\n  40:\taddiw\ta0,a0,1\n  42:\tslliw\ta0,a0,0x1\n  46:\tret"
+      }
+    },
+    "source": "sysfs/lib/addresses.c"
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 compiled to an object file and disassembled",
+    "flags": "-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c",
+    "objdump": "riscv64-linux-gnu-objdump -d --no-show-raw-insn --disassemble=<fn>"
+  }
+}

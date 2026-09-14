@@ -1,0 +1,61 @@
+{
+  "code_fingerprint": "064e7b2fad018d16",
+  "code_sources": [
+    "bench/run_disasm.py",
+    "bench/disasm.py",
+    "sysfs/lib/frames.c",
+    "sysfs/include/sysfs/frames.h"
+  ],
+  "conditions": {
+    "compiler": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "note": "no timing: this records what the compiler chose, not what it cost"
+  },
+  "generated_at": "2026-09-14T19:05:56+00:00",
+  "kind": "listing",
+  "machine": {
+    "arch": "riscv64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "riscv64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "frames-riscv64",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v24",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "listings": {
+      "sysfs_accumulates": {
+        "instructions": 32,
+        "symbol": "sysfs_accumulates",
+        "text": "0000000000000044 <sysfs_accumulates>:\n  44:\taddi\tsp,sp,-48\n  46:\tsd\tra,40(sp)\n  48:\tsd\ts2,16(sp)\n  4a:\tbeqz\ta1,7e <.L9>\n  4c:\tsd\ts0,32(sp)\n  4e:\tsd\ts1,24(sp)\n  50:\tsd\ts3,8(sp)\n  52:\tmv\ts0,a0\n  54:\tmv\ts3,a1\n  56:\tli\ts1,0\n  58:\tli\ts2,0\n\n000000000000005a <.L8>:\n  5a:\tlw\ta0,0(s0)\n  5c:\taddi\ts1,s1,1\n  5e:\taddi\ts0,s0,8\n  60:\tauipc\tra,0x0\n  64:\tjalr\tra # 60 <.L8+0x6>\n  68:\tadd\ts2,s2,a0\n  6a:\tbne\ts3,s1,5a <.L8>\n  6e:\tld\ts0,32(sp)\n  70:\tld\tra,40(sp)\n  72:\tld\ts1,24(sp)\n  74:\tld\ts3,8(sp)\n  76:\tmv\ta0,s2\n  78:\tld\ts2,16(sp)\n  7a:\taddi\tsp,sp,48\n  7c:\tret\n\n000000000000007e <.L9>:\n  7e:\tld\tra,40(sp)\n  80:\tli\ts2,0\n  82:\tmv\ta0,s2\n  84:\tld\ts2,16(sp)\n  86:\taddi\tsp,sp,48\n  88:\tret"
+      },
+      "sysfs_calls_out": {
+        "instructions": 8,
+        "symbol": "sysfs_calls_out",
+        "text": "0000000000000008 <sysfs_calls_out>:\n   8:\taddi\tsp,sp,-16\n   a:\tsd\tra,8(sp)\n   c:\tauipc\tra,0x0\n  10:\tjalr\tra # c <sysfs_calls_out+0x4>\n  14:\tld\tra,8(sp)\n  16:\taddiw\ta0,a0,1\n  18:\taddi\tsp,sp,16\n  1a:\tret"
+      },
+      "sysfs_leaf": {
+        "instructions": 3,
+        "symbol": "sysfs_leaf",
+        "text": "0000000000000000 <sysfs_leaf>:\n   0:\tmulw\ta1,a0,a1\n   4:\taddw\ta0,a0,a1\n   6:\tret"
+      }
+    },
+    "source": "sysfs/lib/frames.c"
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 compiled to an object file and disassembled",
+    "flags": "-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c",
+    "objdump": "riscv64-linux-gnu-objdump -d --no-show-raw-insn --disassemble=<fn>"
+  }
+}

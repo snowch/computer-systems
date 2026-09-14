@@ -109,7 +109,7 @@ commonest way to be confidently wrong about performance, and that chapter is whe
 separating them.
 
 Reading disassembly is a small part of the book, and this is the whole of what the split costs
-you. In Parts I and II it is RISC-V: [ch03](#ch03) and [ch04](#ch04). In Part III it is AArch64:
+you. In Parts I and II it is RISC-V: [ch01](#ch01) through [ch04](#ch04). In Part III it is AArch64:
 [ch16](#ch16), [ch17](#ch17) and [ch21](#ch21). Chapter 0 shows one small function compiled both ways, so the difference is concrete rather
 than promised, and [Appendix F](#appendix-f) is a translation between the two for the reader who
 meets the second having learned the first. Everything else is method, and method does not have an

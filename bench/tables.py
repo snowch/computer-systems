@@ -138,6 +138,160 @@ def probe_layout_table(name: str) -> str:
     )
 
 
+def stage_sizes_table(name: str) -> str:
+    """What each stage produced, in bytes and lines.
+
+    Both columns, because they disagree in a way worth noticing: the assembler's output is larger
+    in bytes than the compiler's and far smaller in lines, which is what it looks like when text
+    becomes a container format.
+    """
+    summary = load_result(name)["summary"]
+    rows = [[f"`{stage['stage']}`", stage["bytes"], stage["lines"]] for stage in summary["stages"]]
+    return render_table(["Stage", "Bytes it produced", "Lines"], rows)
+
+
+def linking_cost_table(name: str) -> str:
+    """The same program, linked two ways, and what the object still owed the linker."""
+    summary = load_result(name)["summary"]
+    rows = [
+        ["Object file, before linking", summary["stages"][2]["bytes"]],
+        ["Symbols the object left undefined", summary["undefined_in_object"]],
+        ["Linked against glibc, statically", summary["linux_program_bytes"]],
+        ["Linked by xv6, against its own user library", summary["xv6_program_bytes"]],
+        ["Symbols the program leaves undefined", summary["undefined_in_program"]],
+    ]
+    return render_table(["What", "Count"], rows)
+
+
+def frame_sizes_table(name: str) -> str:
+    """Frame size and instruction mix for each function, at both optimisation levels.
+
+    One row per function with the two levels side by side, because the comparison is the content:
+    reading down a column says what an optimiser does to memory traffic far more directly than
+    two separate tables would.
+    """
+    rows_by_symbol: dict[str, dict[str, dict]] = {}
+    for row in load_result(name)["summary"]["functions"]:
+        rows_by_symbol.setdefault(row["symbol"], {})[row["level"]] = row
+
+    rows = []
+    for symbol, levels in rows_by_symbol.items():
+        low, high = levels["-O0"], levels["-O2"]
+        rows.append(
+            [
+                f"`{symbol}`",
+                low["frame_bytes"],
+                high["frame_bytes"],
+                low["instructions"],
+                high["instructions"],
+                low["load"] + low["store"],
+                high["load"] + high["store"],
+            ]
+        )
+    return render_table(
+        [
+            "Function",
+            "Frame `-O0`",
+            "Frame `-O2`",
+            "Instructions `-O0`",
+            "Instructions `-O2`",
+            "Memory ops `-O0`",
+            "Memory ops `-O2`",
+        ],
+        rows,
+    )
+
+
+def elf_segments_table(name: str) -> str:
+    """What the loader is told to do, per program: where, how much, and how much more."""
+    programs = load_result(name)["summary"]["programs"]
+    rows = []
+    for program, facts in sorted(programs.items()):
+        for segment in facts["segments"]:
+            permissions = "".join(
+                letter if segment["flags"] & bit else "-"
+                for bit, letter in ((4, "r"), (2, "w"), (1, "x"))
+            )
+            rows.append(
+                [
+                    f"`{program}`",
+                    permissions,
+                    segment["vaddr"],
+                    segment["file_bytes"],
+                    segment["memory_bytes"],
+                    segment["memory_bytes"] - segment["file_bytes"],
+                ]
+            )
+    return render_table(
+        ["Program", "Permissions", "Loaded at", "Bytes in the file", "Bytes in memory", "Zeroed"],
+        rows,
+    )
+
+
+def elf_shape_table(name: str) -> str:
+    """How many of each thing, per program. The collapse from sections to segments is the row."""
+    programs = load_result(name)["summary"]["programs"]
+    rows = [
+        [
+            f"`{program}`",
+            len(facts["sections"]),
+            len(facts["segments"]),
+            facts["defined_symbols"],
+            facts["undefined_symbols"],
+        ]
+        for program, facts in sorted(programs.items())
+    ]
+    return render_table(
+        ["Program", "Sections", "Loadable segments", "Symbols defined", "Symbols undefined"], rows
+    )
+
+
+def trap_path_table(name: str) -> str:
+    """The two halves of the trap path, counted."""
+    path = load_result(name)["summary"]["path"]
+    rows = [
+        [
+            f"`{half}`",
+            facts["instructions"],
+            facts["register_stores"],
+            facts["register_loads"],
+            facts["csr_operations"],
+        ]
+        for half, facts in sorted(path.items())
+    ]
+    return render_table(
+        ["Half of the path", "Instructions", "Registers saved", "Registers restored", "CSR ops"],
+        rows,
+    )
+
+
+def trap_census_table(name: str) -> str:
+    """What the kernel was entered for, recording only what the workload decided."""
+    census = load_result(name)["summary"]["census"]
+    causes = {
+        2: "illegal instruction",
+        8: "system call (`ecall` from user mode)",
+        12: "instruction page fault",
+        13: "load page fault",
+        15: "store page fault",
+    }
+    rows = [
+        [
+            f"`getpid` calls the workload asked for (syscall {census['probe_syscall']})",
+            census["probe_calls_counted"],
+        ],
+        [
+            "Exception causes seen",
+            ", ".join(causes.get(c, str(c)) for c in census["exception_causes_seen"]),
+        ],
+        [
+            "Interrupt causes seen (counts deliberately not recorded)",
+            ", ".join(str(c) for c in census["interrupt_causes_seen"]),
+        ],
+    ]
+    return render_table(["What the kernel was entered for", "This run"], rows)
+
+
 def xv6_environment_table(name: str) -> str:
     """What booting the teaching kernel actually produced, as facts rather than as a claim."""
     result = load_result(name)

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 290" width="780" height="290" role="img">
+  <title>The four stages of the toolchain, and what each discards</title>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1a1a1a"/></marker></defs>
+  <rect width="780" height="290" fill="#ffffff"/>
+  <text x="24" y="36" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1a1a1a" text-anchor="start">One command, four programs</text>
+  <text x="24" y="56" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">`gcc a.c -o a` runs all of these. Each one hands the next a file you may look at.</text>
+  <rect x="24" y="70" width="142" height="46" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="95.0" y="92" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1a1a1a" text-anchor="middle">cpp</text>
+  <text x="95.0" y="109" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="middle">preprocess</text>
+  <line x1="172" y1="93.0" x2="204" y2="93.0" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <rect x="210" y="70" width="142" height="46" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="281.0" y="92" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1a1a1a" text-anchor="middle">cc1</text>
+  <text x="281.0" y="109" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="middle">compile</text>
+  <line x1="358" y1="93.0" x2="390" y2="93.0" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <rect x="396" y="70" width="142" height="46" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="467.0" y="92" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1a1a1a" text-anchor="middle">as</text>
+  <text x="467.0" y="109" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="middle">assemble</text>
+  <line x1="544" y1="93.0" x2="576" y2="93.0" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <rect x="582" y="70" width="142" height="46" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="653.0" y="92" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1a1a1a" text-anchor="middle">ld</text>
+  <text x="653.0" y="109" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="middle">link</text>
+  <text x="24" y="142" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" font-weight="700" fill="#1a1a1a" text-anchor="start">.c</text>
+  <text x="24" y="159" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="start">text you wrote</text>
+  <text x="188" y="142" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" font-weight="700" fill="#1a1a1a" text-anchor="start">.i</text>
+  <text x="188" y="159" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="start">text, includes pasted in</text>
+  <text x="374" y="142" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" font-weight="700" fill="#1a1a1a" text-anchor="start">.s</text>
+  <text x="374" y="159" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="start">assembly, decisions made</text>
+  <text x="560" y="142" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" font-weight="700" fill="#1a1a1a" text-anchor="start">.o</text>
+  <text x="560" y="159" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="start">bytes, plus holes to fill</text>
+  <text x="746" y="142" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" font-weight="700" fill="#1a1a1a" text-anchor="start">a.out</text>
+  <text x="746" y="159" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="start">bytes, no holes left</text>
+  <text x="24" y="198" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#c2410c" text-anchor="start">and what it throws away</text>
+  <text x="24" y="218" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ comments, macro names</text>
+  <text x="210" y="218" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ types, names, most of the header</text>
+  <text x="396" y="218" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ mnemonics, whitespace</text>
+  <text x="582" y="218" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ nothing — it adds</text>
+  <line x1="24" y1="238" x2="756" y2="238" stroke="#c9ced6"/>
+  <text x="24" y="260" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">Only the second box makes decisions. The first is text substitution, the third is a</text>
+  <text x="24" y="278" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">lookup table, and the fourth resolves addresses — none of them can change your loop.</text>
+</svg>

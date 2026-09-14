@@ -31,6 +31,20 @@ python3 -m pytest tests/ -q -m "not problem"
 echo "== benchmark result stamps =="
 python3 scripts/verify-numbers.py
 
+echo "== a fresh xv6 boot still gives the answers the book publishes =="
+# The complement to verify-numbers.py, and the one check it cannot perform. That script hashes
+# the *files* a result names, and the xv6 submodule commit is not a file — neither is the set of
+# patches under xv6/patches/, as far as a fingerprint over source is concerned. So bumping the
+# submodule or adding a kernel patch can change what the kernel reports while every fingerprint
+# still matches, and the book goes on publishing a number nothing produces any more.
+#
+# ch06 did exactly that: its census patch grew the kernel and its workload added a user program,
+# and the committed setup result described the kernel of five chapters earlier. This check lived
+# only in .github/workflows/quality.yml at the time, so six commits passed `make check` locally
+# while CI was red. That is the whole argument for this script being the single source of truth:
+# a check CI runs and a contributor cannot is a check that fails after the push.
+python3 -m bench.run_setup --target xv6 --check
+
 echo "== disassembly listings still match the compiler =="
 # The one artefact in the book that CI can regenerate rather than trust. A listing depends on the
 # compiler, not on the machine, so re-capturing it here asks a question no other check can: does
@@ -40,6 +54,22 @@ echo "== disassembly listings still match the compiler =="
 # compiler changed its mind — and a chapter explaining a `csel` that gcc no longer emits is
 # simply wrong. Both are fixed by `make bench-listings && make figures`.
 python3 -m bench.run_disasm --check
+
+echo "== the toolchain still produces the files ch01 counts =="
+# Same argument as the listings above: sizes and symbol counts are compiler output, not machine
+# measurements, so CI can re-derive them rather than trust the committed copy. This one also
+# builds xv6, because one of the numbers is the size of the same program linked by xv6's own
+# user library — the comparison ch01 closes on.
+python3 -m bench.run_stages --check
+python3 -m bench.run_frames --check
+python3 -m bench.run_elf --check
+
+echo "== the trap census still says what the book prints =="
+# Boots the patched kernel and re-runs ch06's workload. Only the deterministic half of the census
+# is recorded, so this is a real check rather than a coin toss: a patch that changed how many
+# system calls the shell makes would move the number, and moving it silently is the failure the
+# whole stamping scheme exists to prevent.
+python3 -m bench.run_traps --check
 
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check

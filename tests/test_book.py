@@ -430,11 +430,16 @@ def test_every_chapter_names_the_measurements_it_owes(chapter: Chapter):
     you" — and the row said *[To write: the figure this chapter produces]*, identically, in all
     twenty-one of them. A stub that names its debt is useful to a reader deciding where to wait;
     one that names a placeholder is twenty-one identical pages behind twenty-one different titles.
+
+    The debt is discharged when the chapter is written, so this applies to stubs only.
     """
-    if chapter.number == 0:
-        return  # written, and lists its results by name in its own header
-    assert chapter.owes, f"{chapter.label} has no `owes` in bench/outline.py"
-    header = (ROOT / chapter.path).read_text().split(":::", 2)[1]
+    text = (ROOT / chapter.path).read_text()
+    assert chapter.owes or chapter.number == 0, f"{chapter.label} has no `owes` in the outline"
+    if "[DRAFT]" not in text:
+        # A written chapter has discharged the debt: its header names the result files it
+        # actually produced, which is more use to a reader than the promise it replaced.
+        return
+    header = text.split(":::", 2)[1]
     assert chapter.owes in header, (
         f"{chapter.label}'s header does not carry what the outline says it owes — "
         "regenerate with `python3 scripts/new-chapter.py --all --force`"
@@ -508,3 +513,74 @@ def test_every_published_page_is_checked_for_typed_numbers():
 
     for page in ["index.md", *TOC_FILES]:
         assert page in scanned, f"{page} is published but verify-numbers.py never reads it"
+
+
+# -- figures earn their place, and get used -------------------------------------------------
+
+PAGES = ["index.md", *TOC_FILES]
+
+
+def _all_page_text() -> str:
+    return "\n".join((ROOT / page).read_text() for page in PAGES)
+
+
+def test_every_declared_figure_is_included_somewhere():
+    """A figure nobody includes is one the reader never sees, and CI still renders it forever.
+
+    The mirror of the check that every included fragment exists. Both failures are silent: one
+    leaves a hole in a chapter, the other leaves work in the repository doing nothing.
+    """
+    from bench.figures import FIGURES, Diagram  # noqa: PLC0415
+
+    text = _all_page_text()
+    orphans = []
+    for name, figure in FIGURES.items():
+        needle = f"_figures/{name}.svg" if isinstance(figure, Diagram) else f"_generated/{name}.md"
+        if needle not in text:
+            orphans.append(name)
+    assert not orphans, f"declared but included by no page: {sorted(orphans)}"
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_a_written_chapter_shows_the_reader_something(chapter: Chapter):
+    """Prose alone is not this book's format.
+
+    CLAUDE.md §7 asks for figures that show a mechanism, and a finished chapter with nothing
+    included from `bench/figures.py` has either measured nothing or drawn nothing — both of which
+    are worth failing over rather than discovering at proof stage.
+    """
+    text = (ROOT / chapter.path).read_text()
+    if "[DRAFT]" in text:
+        return
+    assert "_generated/" in text or "_figures/" in text, (
+        f"{chapter.label} is finished but includes no table, listing or diagram"
+    )
+
+
+def test_ci_runs_nothing_a_contributor_cannot_run():
+    """`make check` must be exactly what CI runs, or a check only fires after the push.
+
+    It was not. `bench.run_setup --check` lived in the workflow alone, so six commits passed
+    locally while CI was red on a result ch06's kernel patch had made stale. A check a
+    contributor cannot run is one that reports at the worst possible moment, and it is worth a
+    test rather than a convention because the drift is invisible: both files stay valid.
+
+    Two commands are exempt. `verify-setup.py` is a record of what the runner can reach rather
+    than a check — it is run with `|| true` — and `ci-check.sh` is the thing itself.
+    """
+    import yaml  # noqa: PLC0415
+
+    workflow = yaml.safe_load((ROOT / ".github" / "workflows" / "quality.yml").read_text())
+    allowed = ("verify-setup.py", "ci-check.sh")
+    smuggled = [
+        step.get("name", step["run"].strip().splitlines()[0])
+        for job in workflow["jobs"].values()
+        for step in job["steps"]
+        if "run" in step
+        and ("python3 -m bench." in step["run"] or "scripts/" in step["run"])
+        and not any(permitted in step["run"] for permitted in allowed)
+    ]
+    assert not smuggled, (
+        "these workflow steps check something scripts/ci-check.sh does not, so `make check` is "
+        f"no longer what CI runs: {smuggled}"
+    )

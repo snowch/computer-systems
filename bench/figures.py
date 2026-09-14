@@ -27,7 +27,15 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 from bench import tables
-from bench.diagrams import two_target_map
+from bench.diagrams import (
+    dispatch_table,
+    sections_to_segments,
+    stack_frame,
+    struct_padding,
+    toolchain_stages,
+    trap_path,
+    two_target_map,
+)
 
 
 @dataclass(frozen=True)
@@ -48,14 +56,30 @@ class Table:
 
 @dataclass(frozen=True)
 class Diagram:
-    """An SVG figure drawn by :mod:`bench.diagrams`."""
+    """An SVG figure drawn by :mod:`bench.diagrams`.
 
-    draw: Callable[[], str]
+    ``result`` is optional and changes what the drawing function is handed. Without it the figure
+    is a statement about a mechanism — the four stages of a toolchain, the division of labour
+    between two targets — and needs no data. With it, the function is passed the result's name and
+    draws from stamped numbers, which is how a measured layout or a latency curve gets to be a
+    picture without anybody typing a coordinate.
+
+    The distinction matters to more than tidiness: a diagram that reads a result depends on it, so
+    ``scripts/verify-numbers.py`` must know to check that result exists and is current. That is
+    what :attr:`sources` is for, and why it is not always empty.
+    """
+
+    draw: Callable[..., str]
     alt: str
+    #: The stamped result this figure draws from, if any.
+    result: str | None = None
 
     @property
     def sources(self) -> tuple[str, ...]:
-        return ()
+        return (self.result,) if self.result else ()
+
+    def render(self) -> str:
+        return self.draw(self.result) if self.result else self.draw()
 
 
 @dataclass(frozen=True)
@@ -105,6 +129,119 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         symbol="sysfs_clamp",
         # RISC-V first: it is the target the reader has already booted by this point in ch00.
         results=("shapes-riscv64", "shapes-aarch64"),
+    ),
+    # -- ch01 ---------------------------------------------------------------------------
+    "ch01-stages": Diagram(
+        draw=toolchain_stages,
+        alt="The four stages of the toolchain, what each hands on, and what each discards.",
+    ),
+    "ch01-stage-sizes": Table(
+        render=tables.stage_sizes_table,
+        result="stagewalk-riscv64",
+    ),
+    "ch01-linking": Table(
+        render=tables.linking_cost_table,
+        result="stagewalk-riscv64",
+    ),
+    "ch01-folded": Listing(
+        symbol="sysfs_sum_folded",
+        results=("stages-riscv64",),
+    ),
+    "ch01-counted": Listing(
+        symbol="sysfs_sum_counted",
+        results=("stages-riscv64",),
+    ),
+    # -- ch02 ---------------------------------------------------------------------------
+    "ch02-padding": Diagram(
+        draw=struct_padding,
+        alt="Both structs drawn byte by byte, with the bytes no member uses marked.",
+        result="setup-xv6",
+    ),
+    "ch02-signed-grows": Listing(
+        symbol="sysfs_signed_grows",
+        results=("signedness-riscv64",),
+    ),
+    "ch02-unsigned-grows": Listing(
+        symbol="sysfs_unsigned_grows",
+        results=("signedness-riscv64",),
+    ),
+    "ch02-signed-quarter": Listing(
+        symbol="sysfs_signed_quarter",
+        results=("signedness-riscv64",),
+    ),
+    "ch02-unsigned-quarter": Listing(
+        symbol="sysfs_unsigned_quarter",
+        results=("signedness-riscv64",),
+    ),
+    # -- ch03 ---------------------------------------------------------------------------
+    "ch03-dispatch": Diagram(
+        draw=dispatch_table,
+        alt="A table of function pointers, each slot holding an address of code stored elsewhere.",
+    ),
+    "ch03-plain-reads": Listing(
+        symbol="sysfs_read_four",
+        results=("addresses-riscv64",),
+    ),
+    "ch03-volatile-reads": Listing(
+        symbol="sysfs_read_four_volatile",
+        results=("addresses-riscv64",),
+    ),
+    "ch03-array-parameter": Listing(
+        symbol="sysfs_sum_array",
+        results=("addresses-riscv64",),
+    ),
+    "ch03-private-call": Listing(
+        symbol="sysfs_uses_private",
+        results=("addresses-riscv64",),
+    ),
+    "ch03-indirect-call": Listing(
+        symbol="sysfs_call_through",
+        results=("addresses-riscv64",),
+    ),
+    # -- ch04 ---------------------------------------------------------------------------
+    "ch04-frame": Diagram(
+        draw=stack_frame,
+        alt="A stack frame with the saved frame pointer and return address slots marked.",
+    ),
+    "ch04-frames": Table(
+        render=tables.frame_sizes_table,
+        result="framesizes-riscv64",
+    ),
+    "ch04-leaf": Listing(
+        symbol="sysfs_leaf",
+        results=("frames-riscv64",),
+    ),
+    "ch04-calls-out": Listing(
+        symbol="sysfs_calls_out",
+        results=("frames-riscv64",),
+    ),
+    # -- ch05 ---------------------------------------------------------------------------
+    "ch05-segments": Diagram(
+        draw=sections_to_segments,
+        alt="Eighteen ELF sections collapsing into two loadable segments.",
+        result="elf-xv6",
+    ),
+    "ch05-segment-table": Table(
+        render=tables.elf_segments_table,
+        result="elf-xv6",
+    ),
+    "ch05-shape": Table(
+        render=tables.elf_shape_table,
+        result="elf-xv6",
+    ),
+    # -- ch06 ---------------------------------------------------------------------------
+    "ch06-trap-path": Diagram(
+        draw=trap_path,
+        alt="One system call from ecall to sret, with the state movement at each end.",
+        result="traps-xv6",
+    ),
+    "ch06-path-counts": Table(
+        render=tables.trap_path_table,
+        result="traps-xv6",
+    ),
+    "ch06-census": Table(
+        render=tables.trap_census_table,
+        result="traps-xv6",
     ),
     "ch00-board": Table(
         render=tables.board_identity_table,

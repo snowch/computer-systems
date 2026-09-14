@@ -13,12 +13,12 @@ a tag in the repository yet are planned, not published.
 | Chapter | Tag | What the code does at that point |
 |---|---|---|
 | ch00 | `ch00-setup` | Both targets working; the stamping, staging and figure machinery; `sysprobe` on both targets |
-| ch01 | `ch01-whole-stack` | The toolchain stages, kept and inspectable |
-| ch02 | `ch02-bits` | `sysfs/lib/bits.c` — the bit operations, tested |
-| ch03 | `ch03-c` | The pointer and storage demonstrations, each a complete program |
-| ch04 | `ch04-asm` | `sysfs/tools/framewalk.c` — walk a stack from a frame pointer |
-| ch05 | `ch05-elf` | `sysfs/tools/elfdump.c` — an ELF reader, written not described |
-| ch06 | `ch06-traps` | First kernel patches: syscall counting and tracing |
+| ch01 | `ch01-whole-stack` | `sysfs/tools/stages.sh`, the two-route sum, and `sameanswer` on both targets |
+| ch02 | `ch02-bits` | `sysfs/lib/bits.c` — the bit operations, tested; `signedness.c`, the four functions ch02 reads |
+| ch03 | `ch03-c` | `sysfs/lib/addresses.c` — the pairs ch03 compiles against each other |
+| ch04 | `ch04-asm` | `sysfs/tools/framewalk.c` — walk a stack from a frame pointer; `sysfs/lib/frames.c` |
+| ch05 | `ch05-elf` | `sysfs/tools/elfdump.c` — an ELF reader with no `<elf.h>` in it |
+| ch06 | `ch06-traps` | First kernel patch: the per-cause trap census, printed on Ctrl-T |
 | ch07 | `ch07-vm` | Page-table dumper; `sysfs/tools/sv39.c` |
 | ch08 | `ch08-faults` | Lazy allocation and copy-on-write, with reference counting |
 | ch09 | `ch09-devices` | Per-source interrupt counters; a driver for a simple device |
