@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "a068961077522eb1",
+  "code_fingerprint": "c1a51b521449a6f7",
   "code_sources": [
     "bench/run_setup.py",
     "bench/xv6.py",
@@ -11,7 +11,7 @@
     "memory": "128M",
     "note": "structural facts only \u2014 QEMU models no timing (ch00)"
   },
-  "generated_at": "2026-09-14T11:10:06+00:00",
+  "generated_at": "2026-09-14T18:54:38+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",
@@ -25,8 +25,8 @@
   "recorded_on": {
     "arch": "x86_64",
     "cpu": {
-      "bogomips": "5599.99",
-      "model name": "Intel(R) Xeon(R) Processor @ 2.80GHz"
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
     },
     "cpus_online": "0-3",
     "kernel": "Linux 6.18.44-fc-v24",
@@ -55,7 +55,9 @@
     ],
     "offsets": {
       "declaration_order.last": 8,
-      "declaration_order.middle": 4
+      "declaration_order.middle": 4,
+      "size_order.first": 4,
+      "size_order.last": 5
     },
     "types": [
       {
@@ -99,7 +101,7 @@
         "size": 8
       }
     ],
-    "user_programs": 21,
+    "user_programs": 22,
     "world": "xv6"
   },
   "target": "xv6",

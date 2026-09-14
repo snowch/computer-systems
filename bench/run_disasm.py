@@ -54,6 +54,16 @@ SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
         "sysfs/include/sysfs/shapes.h",
         ("sysfs_clamp", "sysfs_sum"),
     ),
+    "signedness": (
+        "sysfs/lib/signedness.c",
+        "sysfs/include/sysfs/signedness.h",
+        (
+            "sysfs_signed_grows",
+            "sysfs_unsigned_grows",
+            "sysfs_signed_quarter",
+            "sysfs_unsigned_quarter",
+        ),
+    ),
     "stages": (
         "sysfs/lib/stages.c",
         "sysfs/include/sysfs/stages.h",

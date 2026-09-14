@@ -27,7 +27,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 from bench import tables
-from bench.diagrams import toolchain_stages, two_target_map
+from bench.diagrams import struct_padding, toolchain_stages, two_target_map
 
 
 @dataclass(frozen=True)
@@ -48,14 +48,30 @@ class Table:
 
 @dataclass(frozen=True)
 class Diagram:
-    """An SVG figure drawn by :mod:`bench.diagrams`."""
+    """An SVG figure drawn by :mod:`bench.diagrams`.
 
-    draw: Callable[[], str]
+    ``result`` is optional and changes what the drawing function is handed. Without it the figure
+    is a statement about a mechanism — the four stages of a toolchain, the division of labour
+    between two targets — and needs no data. With it, the function is passed the result's name and
+    draws from stamped numbers, which is how a measured layout or a latency curve gets to be a
+    picture without anybody typing a coordinate.
+
+    The distinction matters to more than tidiness: a diagram that reads a result depends on it, so
+    ``scripts/verify-numbers.py`` must know to check that result exists and is current. That is
+    what :attr:`sources` is for, and why it is not always empty.
+    """
+
+    draw: Callable[..., str]
     alt: str
+    #: The stamped result this figure draws from, if any.
+    result: str | None = None
 
     @property
     def sources(self) -> tuple[str, ...]:
-        return ()
+        return (self.result,) if self.result else ()
+
+    def render(self) -> str:
+        return self.draw(self.result) if self.result else self.draw()
 
 
 @dataclass(frozen=True)
@@ -126,6 +142,28 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "ch01-counted": Listing(
         symbol="sysfs_sum_counted",
         results=("stages-riscv64",),
+    ),
+    # -- ch02 ---------------------------------------------------------------------------
+    "ch02-padding": Diagram(
+        draw=struct_padding,
+        alt="Both structs drawn byte by byte, with the bytes no member uses marked.",
+        result="setup-xv6",
+    ),
+    "ch02-signed-grows": Listing(
+        symbol="sysfs_signed_grows",
+        results=("signedness-riscv64",),
+    ),
+    "ch02-unsigned-grows": Listing(
+        symbol="sysfs_unsigned_grows",
+        results=("signedness-riscv64",),
+    ),
+    "ch02-signed-quarter": Listing(
+        symbol="sysfs_signed_quarter",
+        results=("signedness-riscv64",),
+    ),
+    "ch02-unsigned-quarter": Listing(
+        symbol="sysfs_unsigned_quarter",
+        results=("signedness-riscv64",),
     ),
     "ch00-board": Table(
         render=tables.board_identity_table,

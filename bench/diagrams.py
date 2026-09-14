@@ -421,8 +421,115 @@ def toolchain_stages() -> str:
     )
 
 
+def struct_padding(result: str) -> str:
+    """Where the holes are, drawn from the offsets the probe measured rather than from the rules.
+
+    ch00 prints a table saying one struct is larger than the other. A table cannot show *where*
+    the extra bytes went, and that is the whole lesson: the gaps are not at the end, they are
+    wedged between members, put there so the next member can start somewhere it is allowed to.
+
+    Every offset below comes out of a stamped result, so this figure cannot drift away from the
+    measurement it illustrates — and on an ABI that lays these out differently, it redraws.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    summary = load_result(result)["summary"]
+    layouts = {entry["name"]: entry for entry in summary["layouts"]}
+    offsets = summary["offsets"]
+
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "Two structs, the same three members",
+        "Declared in a different order, and one of them pays for it.",
+    )
+
+    # The two layouts, as the machine reported them. `first` is always at zero — a struct's first
+    # member is, by definition — and the other two were measured.
+    plans = [
+        (
+            "struct sysfs_declaration_order",
+            "char first; int middle; char last;",
+            layouts["declaration_order"],
+            [
+                ("first", 0, 1),
+                ("middle", offsets["declaration_order.middle"], 4),
+                ("last", offsets["declaration_order.last"], 1),
+            ],
+        ),
+        (
+            "struct sysfs_size_order",
+            "int middle; char first; char last;",
+            layouts["size_order"],
+            [
+                ("middle", 0, 4),
+                ("first", offsets["size_order.first"], 1),
+                ("last", offsets["size_order.last"], 1),
+            ],
+        ),
+    ]
+
+    cell = 42
+    y = margin + 56
+    for title, declaration, layout, members in plans:
+        body.append(_text(margin, y, title, size=13, weight="700", family=MONO))
+        body.append(_text(margin + 330, y, declaration, size=11.5, fill=MUTED, family=MONO))
+
+        # One cell per byte. Bytes no member claims are holes, and they are what the figure is for.
+        claimed: dict[int, str] = {}
+        for name, offset, size in members:
+            for step in range(size):
+                claimed[offset + step] = name if step == 0 else "…"
+
+        row: list[tuple[str, float]] = []
+        for index in range(layout["size"]):
+            row.append((claimed.get(index, "·"), cell))
+        parts, _ = cells(margin, y + 14, row, height=34, label_size=10.5)
+        body += parts
+
+        for index in range(layout["size"]):
+            body.append(
+                _text(
+                    margin + index * cell + cell / 2,
+                    y + 62,
+                    str(index),
+                    size=10,
+                    fill=MUTED,
+                    anchor="middle",
+                )
+            )
+        body.append(
+            _text(
+                margin + layout["size"] * cell + 16,
+                y + 36,
+                f"{layout['size']} bytes, {layout['padding']} of them holes",
+                size=12,
+                fill=WARN if layout["padding"] else MUTED,
+            )
+        )
+        y += 104
+
+    body.append(_text(margin, y, "·  a byte no member uses", size=11.5, fill=MUTED))
+    foot = y + 46
+    body += footnote(
+        margin,
+        foot,
+        width - 2 * margin,
+        [
+            "Two rules produce every gap: a member starts at a multiple of its own alignment, and",
+            "a struct is a multiple of its widest member's. The compiler may not reorder members to",
+            "avoid either — C forbids it — so the order you wrote is the order you pay for.",
+        ],
+    )
+    return _svg(
+        width, int(foot + 48), body, "Where the padding goes in two orderings of the same struct"
+    )
+
+
 #: fragment name -> the function that draws it
 DIAGRAMS = {
     "ch00-targets": two_target_map,
     "ch01-stages": toolchain_stages,
+    "ch02-padding": struct_padding,
 }

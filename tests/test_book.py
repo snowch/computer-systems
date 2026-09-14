@@ -430,11 +430,16 @@ def test_every_chapter_names_the_measurements_it_owes(chapter: Chapter):
     you" — and the row said *[To write: the figure this chapter produces]*, identically, in all
     twenty-one of them. A stub that names its debt is useful to a reader deciding where to wait;
     one that names a placeholder is twenty-one identical pages behind twenty-one different titles.
+
+    The debt is discharged when the chapter is written, so this applies to stubs only.
     """
-    if chapter.number == 0:
-        return  # written, and lists its results by name in its own header
-    assert chapter.owes, f"{chapter.label} has no `owes` in bench/outline.py"
-    header = (ROOT / chapter.path).read_text().split(":::", 2)[1]
+    text = (ROOT / chapter.path).read_text()
+    assert chapter.owes or chapter.number == 0, f"{chapter.label} has no `owes` in the outline"
+    if "[DRAFT]" not in text:
+        # A written chapter has discharged the debt: its header names the result files it
+        # actually produced, which is more use to a reader than the promise it replaced.
+        return
+    header = text.split(":::", 2)[1]
     assert chapter.owes in header, (
         f"{chapter.label}'s header does not carry what the outline says it owes — "
         "regenerate with `python3 scripts/new-chapter.py --all --force`"

@@ -103,6 +103,51 @@ undergraduate systems course.
 
 ---
 
+## ch02 · Representing Information
+
+**Closest in subject.** This is the most heavily covered topic in the field. *Computer Systems: A
+Programmer's Perspective* chapter 2 is the obvious neighbour — information storage, integer
+representations, integer arithmetic — and so is every C book's chapter on types, every "what every
+programmer should know about integers" article, and the undefined-behaviour posts that circulate
+every few years.
+
+**How this differs.**
+
+- **Organised by failure, not by taxonomy.** The comparable material is a survey: here is
+  unsigned, here is two's complement, here is what overflow means, here is floating point. This
+  chapter has no survey in it. It is a list of places where the representation *leaks* — where
+  two things that look identical in C are not — and each section exists because something breaks
+  there. The chapter's own question is "when does that answer bite", and the structure is the
+  answer to it.
+- **The evidence is disassembly, not derivation.** CS:APP derives the biasing needed for signed
+  division by a power of two algebraically. This chapter compiles both divisions and reads what
+  came out, then explains the extra instructions. That is the book's method applied consistently,
+  and it produces a different chapter: the reader's takeaway is "look at the output", not "here is
+  the formula".
+- **Undefined behaviour is framed as a licence rather than a hazard.** The standard treatment
+  warns that overflow is unpredictable. This one shows a comparison being *deleted* — a function
+  returning true without examining its argument — and draws the conclusion that the danger is an
+  optimiser acting on an assumption, not a machine misbehaving. The `sysfs_signed_grows` /
+  `sysfs_unsigned_grows` pair was written for this book.
+- **The figure is drawn from a measurement.** Rather than illustrating padding with an invented
+  layout, `bench/diagrams.py` draws both structs byte by byte from offsets the probe measured, so
+  the picture cannot disagree with the table and redraws itself on a different ABI. The probe was
+  extended in this chapter's commit to report the second struct's offsets for exactly that reason.
+- **No bit-level puzzle set.** CS:APP's characteristic exercise is a puzzle with a restricted
+  operator list. This chapter's problems are: two operations checked against *properties* rather
+  than cases, a packing exercise checked by compiling the reader's ordering, and a hunt for the
+  input that breaks a plausible bounds check. The third is deliberately a *defined*-behaviour bug,
+  to make the point the chapter closes on.
+- **The operations in `sysfs/lib/bits.c` were written for this book**, and the two the problems
+  ask for are deliberately absent from it so that nothing in the repository is the answer.
+- **Floating point is deferred with a reason given**, rather than covered for completeness: xv6
+  does not save floating-point registers across a context switch, which is a decision this book
+  can point at and later chapters benefit from.
+- **Citations are primary only**: the C standard, the RISC-V unprivileged specification, and the
+  psABI.
+
+---
+
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the
 book's own additions are `xv6/apps/` (Apache-2.0) and `xv6/patches/` (diffs, MIT like what they
 patch). See `xv6/README.md` and `LICENSE-CODE`.

@@ -1,10 +1,10 @@
 {
-  "code_fingerprint": "8aa34c5a655c2b2a",
+  "code_fingerprint": "83bcba0ef705947b",
   "code_sources": [
     "bench/run_disasm.py",
     "bench/disasm.py",
-    "sysfs/lib/stages.c",
-    "sysfs/include/sysfs/stages.h"
+    "sysfs/lib/signedness.c",
+    "sysfs/include/sysfs/signedness.h"
   ],
   "conditions": {
     "compiler": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
@@ -18,7 +18,7 @@
     "measured_under": "compilation",
     "model": "riscv64 cross compiler, any machine \u2014 nothing here was executed"
   },
-  "name": "stages-riscv64",
+  "name": "signedness-riscv64",
   "recorded_on": {
     "arch": "x86_64",
     "cpu": {
@@ -33,18 +33,28 @@
   },
   "summary": {
     "listings": {
-      "sysfs_sum_counted": {
-        "instructions": 11,
-        "symbol": "sysfs_sum_counted",
-        "text": "0000000000000006 <sysfs_sum_counted>:\n   6:\tbeqz\ta0,1c <.L6>\n   8:\tslli\ta4,a0,0x20\n   c:\tsrli\ta4,a4,0x20\n   e:\tli\ta5,0\n  10:\tli\ta0,0\n\n0000000000000012 <.L5>:\n  12:\tadd\ta0,a0,a5\n  14:\taddi\ta5,a5,1\n  16:\tbne\ta5,a4,12 <.L5>\n  1a:\tret\n\n000000000000001c <.L6>:\n  1c:\tli\ta0,0\n  1e:\tret"
-      },
-      "sysfs_sum_folded": {
+      "sysfs_signed_grows": {
         "instructions": 2,
-        "symbol": "sysfs_sum_folded",
-        "text": "0000000000000000 <sysfs_sum_folded>:\n   0:\tli\ta0,2016\n   4:\tret"
+        "symbol": "sysfs_signed_grows",
+        "text": "0000000000000000 <sysfs_signed_grows>:\n   0:\tli\ta0,1\n   2:\tret"
+      },
+      "sysfs_signed_quarter": {
+        "instructions": 5,
+        "symbol": "sysfs_signed_quarter",
+        "text": "000000000000000c <sysfs_signed_quarter>:\n   c:\tsraiw\ta5,a0,0x1f\n  10:\tsrliw\ta5,a5,0x1e\n  14:\taddw\ta0,a0,a5\n  16:\tsraiw\ta0,a0,0x2\n  1a:\tret"
+      },
+      "sysfs_unsigned_grows": {
+        "instructions": 3,
+        "symbol": "sysfs_unsigned_grows",
+        "text": "0000000000000004 <sysfs_unsigned_grows>:\n   4:\taddi\ta0,a0,1\n   6:\tsnez\ta0,a0\n   a:\tret"
+      },
+      "sysfs_unsigned_quarter": {
+        "instructions": 2,
+        "symbol": "sysfs_unsigned_quarter",
+        "text": "000000000000001c <sysfs_unsigned_quarter>:\n  1c:\tsrliw\ta0,a0,0x2\n  20:\tret"
       }
     },
-    "source": "sysfs/lib/stages.c"
+    "source": "sysfs/lib/signedness.c"
   },
   "target": "xv6",
   "toolchain": {

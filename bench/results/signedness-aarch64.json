@@ -1,10 +1,10 @@
 {
-  "code_fingerprint": "8aa34c5a655c2b2a",
+  "code_fingerprint": "83bcba0ef705947b",
   "code_sources": [
     "bench/run_disasm.py",
     "bench/disasm.py",
-    "sysfs/lib/stages.c",
-    "sysfs/include/sysfs/stages.h"
+    "sysfs/lib/signedness.c",
+    "sysfs/include/sysfs/signedness.h"
   ],
   "conditions": {
     "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
@@ -18,7 +18,7 @@
     "measured_under": "compilation",
     "model": "aarch64 cross compiler, any machine \u2014 nothing here was executed"
   },
-  "name": "stages-aarch64",
+  "name": "signedness-aarch64",
   "recorded_on": {
     "arch": "x86_64",
     "cpu": {
@@ -33,18 +33,28 @@
   },
   "summary": {
     "listings": {
-      "sysfs_sum_counted": {
-        "instructions": 11,
-        "symbol": "sysfs_sum_counted",
-        "text": "0000000000000010 <sysfs_sum_counted>:\n  10:\tcbz\tw0, 34 <sysfs_sum_counted+0x24>\n  14:\tmov\tw2, w0\n  18:\tmov\tx1, #0x0                   \t// #0\n  1c:\tmov\tx0, #0x0                   \t// #0\n  20:\tadd\tx0, x0, x1\n  24:\tadd\tx1, x1, #0x1\n  28:\tcmp\tx1, x2\n  2c:\tb.ne\t20 <sysfs_sum_counted+0x10>  // b.any\n  30:\tret\n  34:\tmov\tx0, #0x0                   \t// #0\n  38:\tret"
-      },
-      "sysfs_sum_folded": {
+      "sysfs_signed_grows": {
         "instructions": 2,
-        "symbol": "sysfs_sum_folded",
-        "text": "0000000000000000 <sysfs_sum_folded>:\n   0:\tmov\tx0, #0x7e0                 \t// #2016\n   4:\tret"
+        "symbol": "sysfs_signed_grows",
+        "text": "0000000000000000 <sysfs_signed_grows>:\n   0:\tmov\tw0, #0x1                   \t// #1\n   4:\tret"
+      },
+      "sysfs_signed_quarter": {
+        "instructions": 5,
+        "symbol": "sysfs_signed_quarter",
+        "text": "0000000000000020 <sysfs_signed_quarter>:\n  20:\tcmp\tw0, #0x0\n  24:\tadd\tw1, w0, #0x3\n  28:\tcsel\tw0, w1, w0, lt\t// lt = tstop\n  2c:\tasr\tw0, w0, #2\n  30:\tret"
+      },
+      "sysfs_unsigned_grows": {
+        "instructions": 3,
+        "symbol": "sysfs_unsigned_grows",
+        "text": "0000000000000010 <sysfs_unsigned_grows>:\n  10:\tcmn\tw0, #0x1\n  14:\tcset\tw0, ne\t// ne = any\n  18:\tret"
+      },
+      "sysfs_unsigned_quarter": {
+        "instructions": 2,
+        "symbol": "sysfs_unsigned_quarter",
+        "text": "0000000000000034 <sysfs_unsigned_quarter>:\n  34:\tlsr\tw0, w0, #2\n  38:\tret"
       }
     },
-    "source": "sysfs/lib/stages.c"
+    "source": "sysfs/lib/signedness.c"
   },
   "target": "host",
   "toolchain": {

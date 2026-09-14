@@ -89,7 +89,7 @@ def main() -> int:
     for name in sorted(FIGURES):
         figure = FIGURES[name]
         if isinstance(figure, Diagram):
-            target, rendered = DIAGRAMS / f"{name}.svg", figure.draw()
+            target, rendered = DIAGRAMS / f"{name}.svg", figure.render()
         else:
             target, rendered = FRAGMENTS / f"{name}.md", None
             try:

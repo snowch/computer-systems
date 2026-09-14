@@ -96,6 +96,21 @@ static inline int sysfs_offset_of_last(void) {
   return (int)((const char *)&value.last - base);
 }
 
+/* The same question of the other ordering. Both structs are reported rather than only the
+ * wasteful one, because ch02 draws the bytes of each and a picture of where the holes are cannot
+ * be assembled from half the offsets. */
+static inline int sysfs_offset_of_size_first(void) {
+  struct sysfs_size_order value = {0, 0, 0};
+  const char *base = (const char *)&value;
+  return (int)((const char *)&value.first - base);
+}
+
+static inline int sysfs_offset_of_size_last(void) {
+  struct sysfs_size_order value = {0, 0, 0};
+  const char *base = (const char *)&value;
+  return (int)((const char *)&value.last - base);
+}
+
 /* Every fact this header knows, in one call. `world` is the caller's name for where it is
  * running: the point of the probe is that the two worlds answer identically, and a line saying
  * which one produced the answer is what lets a test check that. */
@@ -107,6 +122,8 @@ static inline int sysfs_offset_of_last(void) {
     SYSFS_PROBE_LAYOUTS(print);                                                \
     print("offset declaration_order.middle %d\n", sysfs_offset_of_middle());   \
     print("offset declaration_order.last %d\n", sysfs_offset_of_last());       \
+    print("offset size_order.first %d\n", sysfs_offset_of_size_first());       \
+    print("offset size_order.last %d\n", sysfs_offset_of_size_last());         \
     print("endian %s\n", sysfs_is_little_endian() ? "little" : "big");         \
     print("end sysprobe\n");                                                   \
   } while (0)
