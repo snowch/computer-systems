@@ -1,0 +1,96 @@
+{
+  "code_fingerprint": "6b0d8b28b94b070c",
+  "code_sources": [
+    "bench/run_loops.py",
+    "sysfs/lib/loops.c",
+    "sysfs/include/sysfs/loops.h"
+  ],
+  "conditions": {
+    "note": "instruction counts only; what the surviving differences cost needs the board"
+  },
+  "generated_at": "2026-09-14T22:06:38+00:00",
+  "kind": "listing",
+  "machine": {
+    "arch": "aarch64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "aarch64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "loops-aarch64",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v24",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "distinct_shapes": {
+      "-O0": 4,
+      "-O2": 3,
+      "-O3": 3
+    },
+    "instructions": {
+      "-O0": {
+        "sysfs_loop_everything": 102,
+        "sysfs_loop_hoisted": 31,
+        "sysfs_loop_plain": 32,
+        "sysfs_loop_reduced": 32,
+        "sysfs_loop_unrolled": 92
+      },
+      "-O2": {
+        "sysfs_loop_everything": 44,
+        "sysfs_loop_hoisted": 14,
+        "sysfs_loop_plain": 14,
+        "sysfs_loop_reduced": 14,
+        "sysfs_loop_unrolled": 38
+      },
+      "-O3": {
+        "sysfs_loop_everything": 60,
+        "sysfs_loop_hoisted": 14,
+        "sysfs_loop_plain": 14,
+        "sysfs_loop_reduced": 14,
+        "sysfs_loop_unrolled": 54
+      }
+    },
+    "listings": {
+      "sysfs_loop_everything": {
+        "instructions": 44,
+        "symbol": "sysfs_loop_everything",
+        "text": "sysfs_loop_everything at -O2: 44 instructions"
+      },
+      "sysfs_loop_hoisted": {
+        "instructions": 14,
+        "symbol": "sysfs_loop_hoisted",
+        "text": "sysfs_loop_hoisted at -O2: 14 instructions"
+      },
+      "sysfs_loop_plain": {
+        "instructions": 14,
+        "symbol": "sysfs_loop_plain",
+        "text": "sysfs_loop_plain at -O2: 14 instructions"
+      },
+      "sysfs_loop_reduced": {
+        "instructions": 14,
+        "symbol": "sysfs_loop_reduced",
+        "text": "sysfs_loop_reduced at -O2: 14 instructions"
+      },
+      "sysfs_loop_unrolled": {
+        "instructions": 38,
+        "symbol": "sysfs_loop_unrolled",
+        "text": "sysfs_loop_unrolled at -O2: 38 instructions"
+      }
+    },
+    "source": "sysfs/lib/loops.c"
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 compiled, not run",
+    "flags": "-O2 -g -Wall -Wextra at each of -O0 -O2 -O3"
+  }
+}

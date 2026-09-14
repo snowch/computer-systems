@@ -382,6 +382,16 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         result="hierarchy-host",
         pending=f"Nothing has been measured to compare the datasheet with yet: {BOARD} (`bench/results/hierarchy-host.json`).",
     ),
+    # -- ch16 ---------------------------------------------------------------------------
+    "ch16-variants": Table(
+        render=tables.loop_variants_table,
+        result="loops-aarch64",
+    ),
+    "ch16-cost": Table(
+        render=tables.loop_cost_table,
+        result="loops-host",
+        pending=f"The surviving variants have not been timed yet: {BOARD} (`bench/results/loops-host.json`).",
+    ),
     "ch00-board": Table(
         render=tables.board_identity_table,
         result="setup-host",

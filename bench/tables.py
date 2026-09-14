@@ -700,3 +700,28 @@ def hierarchy_vendor_table(name: str) -> str:
         )
     ]
     return render_table(["", "Measured", "Vendor's figure"], rows)
+
+
+def loop_variants_table(name: str) -> str:
+    """Five hand-optimisations of one loop, and what the compiler made of each.
+
+    Read across a row to see whether the source change survived; read down the `-O2` column to see
+    how many distinct programs the five sources actually are.
+    """
+    summary = load_result(name)["summary"]
+    counts = summary["instructions"]
+    levels = list(counts)
+    variants = list(counts[levels[0]])
+    rows = [
+        [f"`{v.removeprefix('sysfs_loop_')}`", *[counts[level][v] for level in levels]]
+        for v in variants
+    ]
+    rows.append(["**distinct programs**", *[summary["distinct_shapes"][level] for level in levels]])
+    return render_table(["Written as", *levels], rows)
+
+
+def loop_cost_table(name: str) -> str:
+    """What the surviving differences cost, once the board has said."""
+    run = load_result(name)["summary"]["loops"]
+    rows = [[f"`{variant}`", f"{ns} ns per element"] for variant, ns in sorted(run.items())]
+    return render_table(["Written as", "Measured"], rows)

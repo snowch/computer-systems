@@ -108,6 +108,9 @@ python3 -m bench.run_blocks --check
 echo "== both targets still agree about ch13's program =="
 python3 -m bench.run_bridge --check
 
+echo "== the compiler still makes the same of ch16's five loops =="
+python3 -m bench.run_loops --check
+
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check
 

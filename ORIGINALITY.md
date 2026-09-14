@@ -635,6 +635,37 @@ microbenchmark literature. The pointer-chase latency probe is long-standing folk
 - **Citations are primary only**: the SoC documentation and the core's technical reference manual.
   Drepper and CS:APP are not cited, here or anywhere.
 
+## ch16 · Optimising Code
+
+**Closest in subject.** *Computer Systems: A Programmer's Perspective* chapter 5, which is the
+canonical treatment of hand-optimising a loop and measuring each step; *Performance Analysis and
+Tuning on Modern CPUs* on compiler transformations; and Agner Fog's optimisation manuals.
+
+**How this differs, and the care taken.**
+
+- **CS:APP's chapter 5 applies transformations and shows each one helping. This chapter applies
+  them and finds that three of the five produced identical code.** That is the opposite
+  conclusion, it was measured rather than chosen, and the chapter is arranged around it: the
+  question is not "how do I optimise this loop" but "which of these am I doing for nothing".
+- **The backfiring case is the chapter's second finding and was not planned.** Hand-unrolling
+  produced substantially more instructions than the plain source at `-O2` and the gap widened at
+  `-O3`, because the hand-written version is harder for the compiler to analyse. The plan asked
+  for "at least one case where the optimisation does nothing"; the measurement supplied something
+  better.
+- **The figure is a real result rather than a pending one, in a Part III chapter.** Instruction
+  counts are compiler output, so CI regenerates them every push, and the chapter's claims about
+  this compiler are continuously checked against this compiler. What the surviving differences
+  cost is separated out, declared pending, and explicitly not claimed.
+- **Problems 16.1 and 16.2 are graded against the book's own stamped result**, so a future
+  compiler that changes its mind changes the right answer rather than making the book wrong. That
+  is a form this book invented for ch09 and this is its cleanest use.
+- **Problem 16.3 is graded by compiling.** Five functions, identical arithmetic, differing in what
+  becomes of the result; the test compiles them and counts, and the threshold follows the compiler
+  rather than being asserted. The two traps — a store to a variable nothing reads, which is
+  removed, and a condition that is never true, which is not — were found by running it.
+- **Citations are primary only**: the compiler's own manual page. No optimisation textbook is
+  cited.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the
