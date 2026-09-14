@@ -4,7 +4,7 @@ Three markers, one per capability. A test that needs something this machine does
 itself with a message that names what is missing, rather than failing and teaching everyone to
 ignore a red suite.
 
-    board   the VisionFive 2 Lite. Timing only, and never satisfied by an emulator.
+    board   the machine being measured. Timing only, and never satisfied by an emulator.
     xv6     qemu-system-riscv64 plus the submodule.
     riscv   any way to execute RV64 — the board natively, or user-mode QEMU in CI.
 """
@@ -29,10 +29,11 @@ def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item
     on_board = classify_machine() == "board"
     try:
         host_target = resolve_host_target()
-        riscv_path = host_target.name in {"native-riscv64", "cross-riscv64-qemu"}
-        riscv_why = host_target.why
+        # Anything but the fallback: a native board build or a cross build for one.
+        host_path = host_target.name != "native-other"
+        host_why = host_target.why
     except Exception as exc:  # noqa: BLE001 — reported, not raised, so the suite still runs
-        riscv_path, riscv_why = False, str(exc)
+        host_path, host_why = False, str(exc)
 
     for item in items:
         if "xv6" in item.keywords and xv6_problems:
@@ -40,11 +41,13 @@ def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item
         if "board" in item.keywords and not on_board:
             item.add_marker(
                 pytest.mark.skip(
-                    reason="needs the VisionFive 2 Lite; timings are never taken elsewhere"
+                    reason="needs the machine being measured; timings are never taken elsewhere"
                 )
             )
-        if "riscv" in item.keywords and not riscv_path:
-            item.add_marker(pytest.mark.skip(reason=f"no RV64 execution path here ({riscv_why})"))
+        if "hostcode" in item.keywords and not host_path:
+            item.add_marker(
+                pytest.mark.skip(reason=f"no host-target execution path here ({host_why})")
+            )
 
 
 @pytest.fixture(scope="session")

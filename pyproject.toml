@@ -48,7 +48,7 @@ addopts = "-ra"
 markers = [
     "board: needs the VisionFive 2 Lite. Timing runs only; skipped anywhere else.",
     "xv6: needs qemu-system-riscv64 and the xv6 submodule. Skipped when either is absent.",
-    "riscv: needs an RV64 execution path — the board, or qemu-riscv64 user mode in CI.",
+    "hostcode: needs a way to execute host-target code for a board architecture — the machine\n         itself, or user-mode QEMU in CI. Not satisfied by a plain x86-64 build.",
     "problem: a chapter problem for the reader to solve. Fails until solved, which is the point;\n         CI deselects these with -m 'not problem' and checks the scaffolding instead.",
 ]
 # So `pytest` works in a fresh clone with no install step: the repo root holds bench/.

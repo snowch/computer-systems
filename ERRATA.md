@@ -8,7 +8,7 @@ second is for things that are **not finished**, recorded so they are not mistake
 
 | Date | Chapter | What was wrong | Fixed in |
 |---|---|---|---|
-| — | — | Nothing yet. | — |
+| 2026-09-14 | ch00, PLAN §5 | Part III was planned on RISC-V hardware. No purchasable RISC-V core both counts and samples, so ch20 (profiling) and ch21 (vectors) would have been unmeasurable, on boards that are hard to buy. | Part III moved to AArch64; the evidence and the cost are recorded in `hardware/README.md` and PLAN §5, and the five hardware-dependent chapters say what they assume in their own headers. |
 
 When a measurement is corrected, the result file is regenerated and the fragment re-rendered in
 the same commit, so the site and the PDF cannot disagree with this table.

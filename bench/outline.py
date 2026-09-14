@@ -17,7 +17,7 @@ from dataclasses import dataclass
 #: The two execution targets, and what it means for a chapter to declare one.
 TARGET_MEANING = {
     "xv6": "runs on the xv6 teaching kernel under QEMU; answers questions about structure",
-    "host": "runs natively on the VisionFive 2 Lite; the only place a timing may be measured",
+    "host": "runs natively on real hardware; the only place a timing may be measured",
     "both": "uses both targets, and says which one every example and figure came from",
 }
 
@@ -199,9 +199,9 @@ CHAPTERS: tuple[Chapter, ...] = (
         "host",
         "Where is the data, and what does each extra step out cost?",
         "ch15-memory",
-        assumes="a particular cache hierarchy — the levels, sizes, line size and TLB "
-        "reach are this core's. The method transfers to any board; the numbers do not, "
-        "and measuring your own is the exercise.",
+        assumes="a particular cache hierarchy — the levels, sizes, line size and TLB reach "
+        "are this core's. The method transfers to any machine; the numbers do not, and "
+        "measuring your own is the exercise.",
     ),
     Chapter(
         16,
@@ -220,9 +220,9 @@ CHAPTERS: tuple[Chapter, ...] = (
         "host",
         "What is this core doing between fetching an instruction and finishing it?",
         "ch17-cpu",
-        assumes="an in-order pipeline, and the PMU events this core exposes. On an "
-        "out-of-order core the same experiments run, but the results are harder to "
-        "attribute and some come out backwards.",
+        assumes="a specific microarchitecture. The reference is an out-of-order, 4-wide "
+        "Cortex-A76; core width, branch predictor and PMU event names all differ elsewhere, "
+        "and on an in-order core these experiments get easier to read, not harder.",
     ),
     Chapter(
         18,
@@ -232,9 +232,9 @@ CHAPTERS: tuple[Chapter, ...] = (
         "host",
         "What do four cores cost each other, and what does a fence actually buy?",
         "ch18-concurrency",
-        assumes="four cores, and this interconnect's coherence behaviour. A different "
-        "core count moves the scaling curve without changing the mechanism; two cores "
-        "make the chapter thin.",
+        assumes="four cores, and this interconnect's coherence behaviour. A different core "
+        "count moves the scaling curve without changing the mechanism; two cores make the "
+        "chapter thin.",
     ),
     Chapter(
         19,
@@ -253,6 +253,10 @@ CHAPTERS: tuple[Chapter, ...] = (
         "host",
         "How do I find the bottleneck in something I did not write?",
         "ch20-profiling",
+        assumes="that perf can sample. ARM PMUs support counter-overflow interrupts as "
+        "standard, so this works on the reference machine — but most affordable RISC-V cores "
+        "do not, and a reader following Part III on one will find this the chapter they "
+        "cannot run.",
     ),
     Chapter(
         21,
@@ -260,11 +264,11 @@ CHAPTERS: tuple[Chapter, ...] = (
         "Vectors",
         PART_III,
         "host",
-        "What would vectorising buy, on a core that cannot do it?",
+        "What does vectorising actually buy, and when will the compiler do it for me?",
         None,
-        assumes="no vector unit. This is the one assumption a better board invalidates "
-        "in the reader's favour: on a core with RVV 1.0 the chapter can measure what it "
-        "otherwise only reasons about.",
+        assumes="a vector unit — NEON on the reference core. This chapter became measurable "
+        "when Part III moved to AArch64; on a RISC-V board without RVV 1.0 it reverts to "
+        "reasoning about code the compiler emits but the hardware cannot run.",
     ),
 )
 

@@ -4,7 +4,7 @@
 #
 #   xv6   — the teaching kernel under qemu-system-riscv64. Structure and semantics. Runs
 #           anywhere, including CI, and never produces a timing.
-#   host  — the StarFive VisionFive 2 Lite, natively over SSH. Every number about cost.
+#   host  — Linux on real hardware, natively over SSH. Every number about cost.
 #
 # `make bench-board` is the only target that must run on the board, and it refuses to run
 # anywhere else rather than quietly producing an emulated number (ch00).
@@ -54,10 +54,10 @@ bench-xv6:  ## Re-run every xv6-target measurement (runs anywhere QEMU does)
 	$(PYTHON) -m bench.run_setup --target xv6
 
 .PHONY: bench-board
-bench-board:  ## Re-run every host-target measurement. ON THE VISIONFIVE 2 LITE ONLY.
+bench-board:  ## Re-run every host-target measurement. ON THE MACHINE BEING MEASURED ONLY.
 	@$(PYTHON) -c 'import sys; sys.path.insert(0, "."); from bench.stamp import classify_machine; \
 	  k = classify_machine(); sys.exit(0) if k == "board" else (print(f"Refusing to run: this is a {k!r} machine, not the board.\n" \
-	  "Host-target figures are measured natively on RISC-V hardware. Emulated timings are not\n" \
+	  "Host-target figures are measured natively on the machine itself. Emulated timings are not\n" \
 	  "measurements, and the book does not print them. See ch00.", file=sys.stderr) or sys.exit(1))'
 	$(PYTHON) -m bench.run_setup --target host
 	@echo

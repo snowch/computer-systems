@@ -12,7 +12,7 @@ from tests.ch00.problem_2_abi import EXPECTED_ALIGN, EXPECTED_OFFSETS, EXPECTED_
 
 SOURCE = ROOT / "tests" / "ch00" / "abi_puzzle.c"
 
-pytestmark = pytest.mark.riscv
+pytestmark = pytest.mark.hostcode
 
 
 @pytest.fixture(scope="module")

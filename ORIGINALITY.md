@@ -32,6 +32,11 @@ started with a RISC-V SBC" vendor guides and blog posts.
   emulator and real hardware side by side and then spends its length on what the emulator must
   never be asked. That framing, and the code that enforces it
   (`bench.stamp.provenance_problems`), are the chapter's own.
+- **It argues for its own hardware choice from measured evidence.** The section explaining why the
+  two targets use different instruction sets — citing a study of RISC-V PMU support and concluding
+  against the architecture the rest of the book teaches on — is not a move any comparable setup
+  chapter makes. Setup chapters assert their prerequisites; this one shows why it has them and
+  what choosing them cost.
 - **The examples are original.** `sysfs/include/sysfs/probe.h` — one header compiled against both
   glibc and xv6's freestanding user library, reporting identical structural facts — was written
   for this book, as were the two deliberately-ordered structs used to show padding. Struct padding

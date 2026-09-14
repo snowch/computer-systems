@@ -187,7 +187,31 @@ def perf_capability() -> dict[str, Any]:
         "perf_counts": counted,
         "perf_hardware_events": hardware_events,
         "perf_note": None if readable else "perf ran but no event reached hardware",
+        "perf_can_sample": perf_can_sample(),
     }
+
+
+def perf_can_sample() -> bool:
+    """Whether ``perf record`` can sample on this board, which is a separate question.
+
+    Counting and sampling are different capabilities and a board can have the first without
+    the second. Sampling needs the counters to raise an overflow interrupt, which on RISC-V
+    means the **Sscofpmf** extension @riscv-sscofpmf; a kernel without it says so at boot and
+    then refuses to sample. The SiFive U74 does not implement it.
+
+    That is the difference between ch19, which counts, and ch20, which samples — so it is worth
+    recording as a fact about the board rather than discovering it in a chapter.
+    """
+    if not shutil.which("perf"):
+        return False
+    probe = subprocess.run(
+        ["perf", "record", "-q", "-o", "/dev/null", "--", "true"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    text = (probe.stderr + probe.stdout).lower()
+    return probe.returncode == 0 and "not supported" not in text
 
 
 def run_host() -> dict[str, Any]:
@@ -199,8 +223,8 @@ def run_host() -> dict[str, Any]:
     kind = classify_machine()
     if kind != "board":
         raise SystemExit(
-            f"--target host describes the VisionFive 2 Lite, and this is a {kind!r} machine.\n"
-            "Run it over SSH on the board:  make bench-board\n"
+            f"--target host describes the machine being measured, and this is a {kind!r} one.\n"
+            "Run it over SSH on the machine being measured:  make bench-board\n"
             "Nothing here can be measured by emulation; see ch00 for why."
         )
 

@@ -128,7 +128,7 @@ def two_target_map() -> str:
         _text(
             margin,
             50,
-            "Every chapter declares which one it uses, and every number says which one produced it.",
+            "Different machines, and different instruction sets. The mechanisms transfer; the numbers do not.",
             size=12.5,
             fill=MUTED,
         )
@@ -158,13 +158,13 @@ def two_target_map() -> str:
         margin + panel_w + gap,
         top,
         panel_w,
-        "VisionFive 2 Lite, native",
+        "Linux on real hardware",
         "target: host — what the program costs",
         [
             "cycles and instructions retired",
             "cache and TLB miss rates",
             "branch mispredictions",
-            "the cost of a system call",
+            "where the time went, by sampling",
             "what four cores do to each other",
         ],
         [

@@ -23,13 +23,13 @@ sys.path.insert(0, str(ROOT))
 
 from bench.outline import APPENDICES, CHAPTERS, Appendix, Chapter  # noqa: E402
 
-#: How a chapter's header names its target. Deliberately not a product name for `host`: ch00
-#: states the hardware requirement as a capability, and a header naming one board would be wrong
-#: for every reader who bought a different one — which was the state of all nine host chapters
-#: until this was fixed.
+#: How a chapter's header names its target. Deliberately neither a product name nor an
+#: architecture for `host`: ch00 states the requirement as a capability, and a header naming one
+#: board would be wrong for every reader who bought a different one — which was the state of all
+#: nine host chapters until it was caught.
 TARGET_LABEL = {
     "xv6": "`xv6` — the teaching kernel under QEMU",
-    "host": "`host` — a RISC-V board, natively ([hardware](#ch00))",
+    "host": "`host` — Linux on real hardware, natively ([hardware](#ch00))",
     "both": "`xv6` and `host` — every example says which",
 }
 

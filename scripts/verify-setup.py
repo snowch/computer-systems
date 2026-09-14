@@ -12,7 +12,7 @@ reach yet rather than as a broken setup.
 Run it on the Mac and on the board. They will report different things, and that is the answer:
 
     Mac / laptop / CI    xv6 target only    — structure, semantics, gdb
-    VisionFive 2 Lite    both targets       — and the only place a timing may be measured
+    A Pi or similar      both targets       — and the only place a timing may be measured
 """
 
 from __future__ import annotations
@@ -135,7 +135,7 @@ def check_xv6_target(report: Report) -> bool:
 
 def check_host_target(report: Report) -> bool:
     """Is this the board? If not, say what this machine can and cannot stand in for."""
-    print("\nTarget `host` — the VisionFive 2 Lite, natively (every number about cost)")
+    print("\nTarget `host` — Linux on real hardware, natively (every number about cost)")
     kind = classify_machine()
     report.facts["machine_kind"] = kind
 
@@ -169,13 +169,14 @@ def check_host_target(report: Report) -> bool:
     explanation = {
         "qemu": "this is a Linux guest inside QEMU, which models no cache and no pipeline",
         "qemu-user": "this is user-mode emulation: real RV64 instructions, invented timing",
-        "other": f"this is a {platform.machine()} machine, not RISC-V hardware",
+        "other": f"this is a {platform.machine()} machine, not one of the architectures the "
+        "book measures on",
     }[kind]
     report.say(WARN, f"not the board: {explanation}")
     report.say(
         WARN,
-        "target `host`: read-only here. Every figure in Part III is measured natively on a "
-        "RISC-V board over SSH; `make bench-board` refuses to run anywhere else.",
+        "target `host`: read-only here. Every figure in Part III is measured natively on the "
+        "machine itself over SSH; `make bench-board` refuses to run anywhere else.",
     )
     report.say(WARN, "  what a board has to be able to do, and how to find one: hardware/README.md")
 
@@ -187,15 +188,15 @@ def check_host_target(report: Report) -> bool:
     ):
         report.say(
             OK,
-            "RV64 correctness path available (cross compiler + user-mode QEMU): every host "
-            "example can be built and its answers checked here, just never timed",
+            "host-target correctness path available (cross compiler + user-mode QEMU): every "
+            "host example can be built and its answers checked here, just never timed",
         )
         report.facts["riscv_correctness_path"] = True
     else:
         report.say(
             WARN,
-            "no RV64 correctness path: install a cross compiler and qemu-user-static to run "
-            "host-target tests off the board",
+            "no host-target correctness path: install gcc-aarch64-linux-gnu and "
+            "qemu-user-static to run host-target tests off the machine",
         )
         report.facts["riscv_correctness_path"] = False
 
@@ -204,11 +205,12 @@ def check_host_target(report: Report) -> bool:
 
 
 def check_perf(report: Report) -> None:
-    """Does perf reach hardware counters on this board?
+    """Does perf reach hardware counters on this machine?
 
-    On RISC-V the counters arrive through the SBI PMU extension, so this depends on the firmware
-    as much as on the core. It is the one capability Part III cannot work around, which is why
-    chapter 0 checks it rather than assuming it.
+    The one capability Part III cannot work around, which is why ch00 checks it rather than
+    assuming it. On ARM the usual failure is a kernel that was never told the PMU exists; on
+    RISC-V the counters arrive through the firmware's SBI PMU extension, so the answer depends on
+    the firmware as much as on the core.
     """
     if not shutil.which("perf"):
         report.say(
@@ -232,14 +234,43 @@ def check_perf(report: Report) -> None:
     if counted and all(value > 0 for value in counted.values()):
         report.say(OK, f"perf reads hardware counters: {counted}")
         report.facts["perf"] = counted
+        check_sampling(report)
     else:
         report.say(FAIL, "perf ran but no event reached hardware (<not supported>)")
         report.say(
             WARN,
-            "  check that the kernel has CONFIG_RISCV_PMU_SBI and that OpenSBI exposes the PMU "
-            "extension; ch00 has the details",
+            "  on ARM check the device tree has a PMU node (dmesg | grep -i pmu); on RISC-V "
+            "check CONFIG_RISCV_PMU_SBI and the firmware's SBI PMU extension. ch00 has both",
         )
         report.block("perf cannot read counters on this board")
+
+
+def check_sampling(report: Report) -> None:
+    """Counting is not sampling, and a board can do the first without the second.
+
+    ``perf record`` needs the counters to raise an overflow interrupt, which on RISC-V means the
+    Sscofpmf extension. Without it the kernel says so at boot and refuses to sample. This is not
+    a failure — most of Part III counts rather than samples — but ch20 is about sampling, so the
+    reader is better told here than three hundred pages in.
+    """
+    probe = subprocess.run(
+        ["perf", "record", "-q", "-o", "/dev/null", "--", "true"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    text = (probe.stderr + probe.stdout).lower()
+    can_sample = probe.returncode == 0 and "not supported" not in text
+    report.facts["perf_can_sample"] = can_sample
+    if can_sample:
+        report.say(OK, "perf can sample (`perf record`) — ch20 works fully on this board")
+    else:
+        report.say(
+            WARN,
+            "perf counts but cannot sample (`perf record`). This needs the Sscofpmf extension, "
+            "which the SiFive U74 does not have. Everything in Part III that counts is fine; "
+            "ch20 says what it cannot show you.",
+        )
 
 
 def check_book_tooling(report: Report) -> None:
@@ -301,7 +332,7 @@ def main() -> int:
     elif xv6_ready:
         print(
             "The xv6 target is ready: Parts I and II run here in full.\n"
-            "Part III is measured on the VisionFive 2 Lite; set it up when you reach ch13."
+            "Part III is measured on real hardware; set one up before you reach ch13 (hardware/)."
         )
     elif host_ready:
         print(

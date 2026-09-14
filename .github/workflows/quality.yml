@@ -28,17 +28,21 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Install the RISC-V toolchain
-        # Three packages, three jobs:
-        #   gcc-riscv64-linux-gnu   builds the xv6 kernel and cross-builds host-target examples
+      - name: Install the cross toolchains
+        # Four packages, because the two targets no longer share an architecture:
+        #   gcc-riscv64-linux-gnu   builds the xv6 kernel (the `xv6` target is RISC-V)
         #   qemu-system-misc        provides qemu-system-riscv64, which boots xv6
-        #   qemu-user-static        runs a cross-built RV64 binary on this x86-64 runner, which
+        #   gcc-aarch64-linux-gnu   cross-builds host-target examples for the reference
+        #                           architecture of Part III
+        #   qemu-user-static        runs those cross-built binaries on this x86-64 runner, which
         #                           is how every host-target example gets its *correctness*
         #                           checked here. Timings are never taken in CI — the runner is
-        #                           not the board, and bench/stamp.py refuses to pretend it is.
+        #                           not the reference machine, and bench/stamp.py refuses to
+        #                           pretend it is.
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq gcc-riscv64-linux-gnu qemu-system-misc qemu-user-static
+          sudo apt-get install -y -qq gcc-riscv64-linux-gnu gcc-aarch64-linux-gnu \
+                                     qemu-system-misc qemu-user-static
 
       - name: Install MyST CLI (pinned)
         # Required, not optional: without it ci-check.sh cannot run `myst build --strict`, and a

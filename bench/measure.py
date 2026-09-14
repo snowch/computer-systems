@@ -11,8 +11,8 @@ There are three ways to execute the book's ``host``-target C, and only one of th
 ============================  ===================================  =================
 How                           What it is good for                  Timing?
 ============================  ===================================  =================
-Natively on the board         everything the book claims            **yes**
-Cross-compiled, ``qemu-user`` RV64 semantics: ABI, sizes, encoding   no
+Natively on the machine       everything the book claims            **yes**
+Cross-compiled, ``qemu-user`` target semantics: ABI, sizes, encoding no
 Natively on a laptop          C portability, test logic             no
 ============================  ===================================  =================
 
@@ -33,6 +33,7 @@ the distribution that justifies it.
 
 from __future__ import annotations
 
+import platform
 import shutil
 import statistics
 import subprocess
@@ -43,13 +44,26 @@ from typing import Any
 
 from bench.stamp import ROOT, classify_machine, compiler_version, flags_string
 
-#: Optimisation and architecture flags the book builds with unless a chapter says otherwise.
-#: ``-march=rv64gc`` matches the U74: the general-purpose extensions plus compressed
-#: instructions, and no vector unit, because this core does not have one (ch21).
-DEFAULT_FLAGS: tuple[str, ...] = ("-O2", "-g", "-march=rv64gc", "-mabi=lp64d", "-Wall", "-Wextra")
+#: Flags every build starts from, whatever it is building for.
+COMMON_FLAGS: tuple[str, ...] = ("-O2", "-g", "-Wall", "-Wextra")
+
+#: Architecture flags, by target architecture.
+#:
+#: AArch64 gets none: the baseline is armv8-a and naming a specific core would bake the
+#: reference machine into every binary, which is exactly the mistake ch00 stopped making about
+#: boards. RISC-V gets an explicit ``-march``/``-mabi`` because the toolchain's default varies by
+#: distribution, and a silently different ABI is a very confusing way to lose an afternoon.
+ARCH_FLAGS: dict[str, tuple[str, ...]] = {
+    "aarch64": (),
+    "riscv64": ("-march=rv64gc", "-mabi=lp64d"),
+}
 
 #: What a laptop or CI runner can be asked to build when the point is the C and not the ISA.
-PORTABLE_FLAGS: tuple[str, ...] = ("-O2", "-g", "-Wall", "-Wextra")
+PORTABLE_FLAGS: tuple[str, ...] = COMMON_FLAGS
+
+
+def flags_for(arch: str) -> tuple[str, ...]:
+    return (*COMMON_FLAGS, *ARCH_FLAGS.get(arch, ()))
 
 
 class ToolchainMissingError(RuntimeError):
@@ -86,37 +100,44 @@ class HostTarget:
 def resolve_host_target(prefer_portable: bool = False) -> HostTarget:
     """Decide how ``host``-target C can be built and run on this machine.
 
-    The order matters. Real hardware first, because if the board is here that is always the right
-    answer; then cross-compilation with user-mode emulation, which gets RV64 semantics onto an
-    x86-64 CI runner; then the plain native compiler, which gets the test logic exercised and
-    nothing else.
+    Order matters. Real hardware first, because if a board is here that is always the right
+    answer — and note that it does not matter *which* board: a Raspberry Pi and a VisionFive 2
+    are both places a timing means something, and both are recorded by name in the result.
+
+    Then cross-compilation with user-mode emulation, which gets the reference architecture's
+    semantics onto an x86-64 CI runner. AArch64 is tried before RISC-V because ch00's reference
+    machine is a Pi; the RISC-V path stays because Parts I and II need that toolchain anyway and
+    a reader following Part III on a RISC-V board should have their examples checked too.
+
+    Then the plain native compiler, which exercises the test logic and nothing else.
     """
     if classify_machine() == "board":
+        arch = platform.machine()
         return HostTarget(
-            name="native-riscv64",
+            name=f"native-{arch}",
             cc="gcc",
-            flags=DEFAULT_FLAGS,
+            flags=flags_for(arch),
             trustworthy_for_timing=True,
-            why="running natively on RISC-V hardware",
+            why=f"running natively on {arch} hardware",
         )
 
-    cross = shutil.which("riscv64-linux-gnu-gcc")
-    emulator = shutil.which("qemu-riscv64-static") or shutil.which("qemu-riscv64")
-    if cross and emulator:
-        return HostTarget(
-            name="cross-riscv64-qemu",
-            cc="riscv64-linux-gnu-gcc",
-            # -static, and only here. User-mode QEMU runs the binary against the *host* file
-            # system, so a dynamically linked RV64 executable asks for an RV64
-            # ld-linux-riscv64-lp64d.so.1 that an x86-64 machine does not have. Linking
-            # statically sidesteps the loader entirely. It is also a reminder of what this row
-            # is for: nobody would time a statically linked binary against a dynamic one and
-            # call it the same experiment, and nothing here is timed.
-            flags=(*DEFAULT_FLAGS, "-static"),
-            runner=(emulator,),
-            trustworthy_for_timing=False,
-            why="user-mode emulation: real RV64 instructions, invented timing",
-        )
+    for arch, prefix in (("aarch64", "aarch64-linux-gnu-"), ("riscv64", "riscv64-linux-gnu-")):
+        cross = shutil.which(f"{prefix}gcc")
+        emulator = shutil.which(f"qemu-{arch}-static") or shutil.which(f"qemu-{arch}")
+        if cross and emulator:
+            return HostTarget(
+                name=f"cross-{arch}-qemu",
+                cc=f"{prefix}gcc",
+                # -static, and only here. User-mode QEMU runs the binary against the *host* file
+                # system, so a dynamically linked binary asks for a loader an x86-64 machine does
+                # not have. Linking statically sidesteps it. It is also a reminder of what this
+                # row is for: nobody would time a statically linked binary against a dynamic one
+                # and call it the same experiment, and nothing here is timed.
+                flags=(*flags_for(arch), "-static"),
+                runner=(emulator,),
+                trustworthy_for_timing=False,
+                why=f"user-mode emulation: real {arch} instructions, invented timing",
+            )
 
     if prefer_portable or shutil.which("cc"):
         return HostTarget(
@@ -124,12 +145,13 @@ def resolve_host_target(prefer_portable: bool = False) -> HostTarget:
             cc="cc",
             flags=PORTABLE_FLAGS,
             trustworthy_for_timing=False,
-            why="not a RISC-V machine: this checks the C, not the architecture",
+            why=f"a {platform.machine()} machine, not the reference architecture: this checks "
+            "the C, not the hardware",
         )
 
     raise ToolchainMissingError(
-        "no usable C compiler. Install one, or on a laptop install "
-        "gcc-riscv64-linux-gnu and qemu-user-static to run the RV64 correctness path."
+        "no usable C compiler. Install one, or on a laptop install gcc-aarch64-linux-gnu and "
+        "qemu-user-static to run the host-target correctness path."
     )
 
 

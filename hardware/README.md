@@ -1,67 +1,121 @@
-# Choosing a board
+# Choosing a machine
 
-Part III of *Systems From Scratch* is measured on real RISC-V hardware. This directory says
-what that hardware has to be able to do, and hands you a prompt for working out what to buy.
+Part III of *Systems From Scratch* is measured on real hardware. This directory says what that
+hardware has to be able to do, why it is an ARM machine rather than a RISC-V one, and how to
+check the thing you bought.
 
-## Why the book does not name one board
+## The short version
 
-It used to. The problem is that a book outlives a product listing: while this page was being
-written, a linked retailer listing for the reference board went out of stock, and the exact
-variant originally specified — a cut-down "Lite" model — turned out to be hard to buy in the UK
-at all. A book that hard-codes a SKU is a book with a broken first chapter within a year.
+A **Raspberry Pi 5** (4 GB or more) **with the active cooler**. A Pi 4 or Pi 400 you already own
+works too.
 
-So the requirements below are stated as **capabilities**, which are stable, and the shopping is
-delegated to something that knows what today's stock is. What makes that safe rather than
-hopeful is that nothing depends on the recommendation being right: `scripts/verify-setup.py`
-interrogates the board you actually bought and tells you whether it can do the job.
+| | |
+|---|---|
+| SoC | Broadcom BCM2712 |
+| Cores | 4 × Arm Cortex-A76 @ 2.4 GHz, out-of-order |
+| Cache | 64 kB L1 I and D per core; 512 kB L2 per core; 2 MB shared L3 |
+| RAM | 4, 8 or 16 GB LPDDR4X |
+| Storage | microSD, or NVMe via the M.2 HAT |
+| `perf` | Counts and samples. `armv8_cortex_a76` PMU, events under `/sys/bus/event_source/devices/` |
 
-## What the board has to do
+Those are the vendor's figures @rpi-bcm2712. The book does not repeat them: ch15 measures that
+cache hierarchy and compares what it finds against them, which is more useful than either number
+alone.
+
+**The cooler matters.** A Pi 5 throttles under sustained load, and a benchmark whose clock changes
+part-way through is not slow, it is wrong. ch14 treats throttling as a measurement hazard and
+shows how to catch it; a cooler means you meet it deliberately rather than in every single run.
+
+That is a change from an earlier plan, and the reason is worth a section of its own, because it is
+the kind of decision a book should show its working for.
+
+## Why not RISC-V, when Parts I and II are RISC-V?
+
+The book's two targets no longer share an instruction set. That looks like an inconsistency, so
+here is the evidence that produced it.
+
+Part III needs `perf` to do two different things: **count** events over a run (`perf stat`) and
+**sample** where a program is thousands of times a second (`perf record`). Sampling needs the
+counters to raise an interrupt when they overflow. On ARM that has been a standard PMU feature
+for years. On RISC-V it is the Sscofpmf extension @riscv-sscofpmf, and support is thin.
+
+A 2025 study measured the three RISC-V cores you can actually buy @riscv-pmu-profiling:
+
+| | SiFive U74 | T-Head C910 | SpacemiT X60 |
+|---|---|---|---|
+| Boards | VisionFive 2, Milk-V Mars, Star64 | Lichee Pi 4A | Banana Pi BPI-F3, Milk-V Jupiter |
+| Out-of-order | No | Yes | No |
+| Vector extension | **None** | 0.7.1 (draft) | RVV 1.0 |
+| **Counter-overflow interrupt** | **No** | Yes | Limited |
+| Upstream Linux support | Yes | Partial | **No** |
+
+> "The SiFive U74, despite better upstream Linux integration, lacks both vector extensions and
+> overflow interrupt support, severely limiting traditional performance analysis approaches."
+
+Read down that table and no column wins. The U74 counts but cannot sample and has no vectors —
+so ch20 and ch21 become unmeasurable. The C910 can sample but needs a vendor kernel and is
+out-of-order. The X60 has the vectors and struggles with `cycles` and `instructions` themselves,
+exposing non-standard counters such as `u_mode_cycle` instead. Even SiFive's own flagship P550 is
+reported not to support `core_clock_cycles`. On top of that, a VisionFive 2 Ubuntu release
+regressed `perf` to "not counted" through a firmware change, and the boards are hard to buy.
+
+So staying on RISC-V would have cost **two of Part III's eight chapters**, plus a hardware hunt,
+plus tooling that breaks between distro releases. A Raspberry Pi costs none of those things.
+
+**What it costs instead** is instruction-set continuity between Part II and Part III — and only
+in the three chapters that actually read disassembly (ch16, ch17, ch21). The other five are
+method, and method does not have an architecture. A reader who learned RISC-V assembly in Part I
+and then reads AArch64 in ch16 is not being failed by the book; they are being shown that the
+concepts were never about RISC-V. That is worth more than the tidiness it replaces.
+
+## What the machine has to do
 
 | | Requirement | Why |
 |---|---|---|
-| **Must** | RV64GC (`rv64imafdc`) application processor running Linux, reachable over SSH | The ISA read in a debugger in Part I is the ISA measured in Part III — no translation in your head |
-| **Must** | `perf stat -e cycles,instructions -- true` returns real counts | Part III is not possible without it. **The one requirement with no workaround** |
-| **Must** | 4 GB RAM (8 GB preferred), 2 cores (4+ preferred) | ch18 measures what cores cost each other |
-| **Prefer** | An in-order core, SiFive U74 family or similar | ch17 and ch18 explain microarchitecture by measuring it, and an in-order core makes the effects legible |
-| **Prefer** | In production, still receiving distro images | An abandoned vendor kernel is where `perf` support goes to die |
-| **Nice** | M.2 NVMe | Builds and ch12 are much less tedious |
-| **Nice** | RVV 1.0 vector support | ch21 currently reasons about vectorisation because the reference hardware has no vector unit |
-| **Nice** | 3.3 V UART header | For watching a boot that never reaches the network |
+| **Must** | AArch64 or RV64 running Linux, reachable over SSH | |
+| **Must** | `perf stat -e cycles,instructions -- true` returns real counts | Part III is not possible without it |
+| **Must** | `perf record` can sample | ch20 is entirely sampling. Counting and sampling are different capabilities |
+| **Must** | 4 GB RAM, 4 cores | ch18 measures what cores cost each other |
+| **Nice** | NVMe or a fast SSD | Builds and ch12 are much less tedious |
+| **Nice** | A SIMD unit the compiler targets — NEON, or RVV 1.0 | ch21 measures vectorisation |
+| **Nice** | An in-order core | Not required, and the reference is out-of-order. In-order cores make ch17 and ch18 easier to read |
 
-The counter requirement is the one to be suspicious about. On RISC-V the counters are reached
-through the firmware's SBI PMU extension rather than directly, so whether `perf` works is a
-property of the shipped software image as much as of the silicon — and a datasheet saying the
-core has a hardware performance monitor tells you nothing about whether you can read it.
+## If you already own a RISC-V board
 
-## Finding one
+Keep it — Parts I and II are RISC-V and it is a perfectly good machine for the rest. For Part III
+it will run everything that counts (ch14 through ch19), and the two chapters it cannot do say so
+in their own headers: ch20 needs sampling and ch21 needs a vector unit. Your figures will differ
+from the committed ones either way, which is expected.
 
-Paste [`find-a-board.txt`](find-a-board.txt) into an LLM that can search the web, filling in
-your country and budget. It states the requirements above in a form something else can shop
-against, and it asks for a source for the `perf` claim specifically, because that is the claim
-most likely to be confidently wrong.
+## Finding something else
+
+If Raspberry Pis are hard to get where you are, paste [`find-a-board.txt`](find-a-board.txt) into
+an assistant that can search the web, with your country and budget filled in. It states the
+requirements above in a form something else can shop against, and carries the RISC-V findings so
+a recommendation cannot walk you back into the problem this section describes.
 
 Treat what comes back as a shortlist, not an answer.
 
 ## Before you buy — this is your decision
 
 This book does not sell hardware, has not tested most of what it might point you at, and has no
-relationship with any vendor. The prompt above hands your requirements to a third-party tool
-whose answers nobody here checks: availability and prices change constantly, listings go out of
-stock (one did while this page was being written), and a language model will sometimes state a
-board's `perf` support with far more confidence than its evidence supports.
+relationship with any vendor. The prompt hands your requirements to a third-party tool whose
+answers nobody here checks: availability and prices change, listings go out of stock, and a
+language model will sometimes state a machine's `perf` support with far more confidence than its
+evidence supports.
 
-So treat whatever comes back as a lead to verify, not a recommendation to act on. Check the
-retailer, the current price and the return policy yourself before spending anything.
+So treat whatever comes back as a lead to verify. Check the retailer, the current price and the
+return policy yourself before spending anything.
 
-**The purchase is yours and so is the risk.** Nothing here is a warranty that any board will work
-for you, or that it can be returned if it does not. `LICENSE` and `LICENSE-CODE` disclaim
+**The purchase is yours and so is the risk.** Nothing here is a warranty that any machine will
+work for you, or that it can be returned if it does not. `LICENSE` and `LICENSE-CODE` disclaim
 warranties for the prose and the code alike, and that extends to anything on this page.
 
 One practical consequence worth acting on. **The requirement you cannot check before it arrives
-is the one that matters most**: whether `perf` reads hardware counters depends on the firmware
-and the distro image rather than on the chip alone, so no product listing can honestly promise
-it. Buy from somewhere that accepts returns, and run the check below the day the board arrives
-rather than the week you reach Part III.
+is the one that matters most**: whether `perf` reads hardware counters depends on the kernel and
+the device tree rather than on the chip alone, so no product listing can honestly promise it. Buy
+from somewhere that accepts returns, and run the check below the day it arrives rather than the
+week you reach Part III.
 
 ## Then verify, because that is the point
 
@@ -69,31 +123,28 @@ rather than the week you reach Part III.
 python3 scripts/verify-setup.py
 ```
 
-On the board it reads the device tree and `/proc/cpuinfo`, prints the ISA string and the core's
-vendor and architecture IDs, and runs the `perf` check — distinguishing "counted" from "counted
-something greater than zero", because some configurations report a zero rather than an error and
-a zero will happily propagate into a table.
+On the machine it reads the device tree and `/proc/cpuinfo`, prints what the core says it is, and
+tests **counting and sampling separately** — because a machine can do the first without the
+second, and because some configurations report a zero rather than an error, and a zero will
+happily propagate into a table.
 
-If that script is happy, the board works, whatever anyone recommended. If it is not, no amount
+If that script is happy, the machine works, whatever anyone recommended. If it is not, no amount
 of specification says otherwise.
+
+## Which chapters depend on the reference machine
+
+Most do not. Five do, and each says so in its own header:
+
+| Chapter | Assumes | On different hardware |
+|---|---|---|
+| ch15 — The Memory Hierarchy | A particular cache hierarchy | The numbers change entirely. Measuring your own is the exercise |
+| ch17 — The CPU | An out-of-order, 4-wide Cortex-A76 | Width, predictor and event names differ. An in-order core is *easier* to read |
+| ch18 — Memory Ordering on Real Hardware | Four cores, and this interconnect | The scaling curve moves, the mechanism does not |
+| ch20 — Whole-Machine Profiling | That `perf` can **sample** | Works on any mainline ARM machine. The chapter most RISC-V boards cannot run |
+| ch21 — Vectors | A vector unit — NEON here | On a RISC-V board without RVV 1.0 it reverts to reasoning |
 
 ## The reference machine
 
-The figures committed in this repository were measured on a **StarFive VisionFive 2 Lite**
-(JH7110S, 4× SiFive U74) unless a result says otherwise — and every result does say, because
-each one stamps the board model, ISA string and core IDs of the machine that produced it.
-
-So your numbers will differ from the committed ones, and that is expected rather than a problem.
-The book is about ratios, mechanisms and method, and those transfer.
-
-Four chapters do depend on properties of this core, and each says so in its own header:
-
-| Chapter | Assumes | On a different board |
-|---|---|---|
-| ch15 — The Memory Hierarchy | A particular cache hierarchy | The numbers change entirely. Measuring your own is the exercise |
-| ch17 — The CPU | An in-order pipeline, and this core's PMU events | Experiments still run; out-of-order results are harder to attribute |
-| ch18 — Memory Ordering on Real Hardware | Four cores, and this interconnect | The scaling curve moves, the mechanism does not. Two cores make it thin |
-| ch21 — Vectors | **No vector unit** | With RVV 1.0 you can measure what the chapter only reasons about |
-
-Worth reading before you buy: a two-core board makes ch18 thin, and a vector-capable one makes
-ch21 better than it is for the author.
+Figures committed in this repository were measured on the machine each result names — every one
+stamps the model, the core and the kernel that produced it. Your numbers will differ. The book is
+about ratios, mechanisms and method, and those transfer.

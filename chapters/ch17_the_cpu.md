@@ -11,10 +11,10 @@ short_title: "ch17 The CPU"
 
 | | |
 |---|---|
-| **Target** | `host` — a RISC-V board, natively ([hardware](#ch00)) |
+| **Target** | `host` — Linux on real hardware, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch16](#ch16) |
 | **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
-| **Assumes** | an in-order pipeline, and the PMU events this core exposes. On an out-of-order core the same experiments run, but the results are harder to attribute and some come out backwards. |
+| **Assumes** | a specific microarchitecture. The reference is an out-of-order, 4-wide Cortex-A76; core width, branch predictor and PMU event names all differ elsewhere, and on an in-order core these experiments get easier to read, not harder. |
 :::
 
 ## The question
