@@ -66,6 +66,18 @@ SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
             "sysfs_call_through",
         ),
     ),
+    "pipeline": (
+        "sysfs/lib/pipeline.c",
+        "sysfs/include/sysfs/pipeline.h",
+        (
+            "sysfs_sum_chain1",
+            "sysfs_sum_chain2",
+            "sysfs_sum_chain4",
+            "sysfs_sum_chain8",
+            "sysfs_count_over",
+            "sysfs_count_over_calling",
+        ),
+    ),
     "bridge": (
         "sysfs/lib/bridge.c",
         "sysfs/include/sysfs/bridge.h",

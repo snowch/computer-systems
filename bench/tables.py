@@ -725,3 +725,51 @@ def loop_cost_table(name: str) -> str:
     run = load_result(name)["summary"]["loops"]
     rows = [[f"`{variant}`", f"{ns} ns per element"] for variant, ns in sorted(run.items())]
     return render_table(["Written as", "Measured"], rows)
+
+
+def pipeline_shapes_table(name: str) -> str:
+    """What the core is given: instructions, branches, and branches the compiler removed."""
+    shapes = load_result(name)["summary"]["shapes"]
+    order = (
+        "sysfs_sum_chain1",
+        "sysfs_sum_chain2",
+        "sysfs_sum_chain4",
+        "sysfs_sum_chain8",
+        "sysfs_count_over",
+        "sysfs_count_over_calling",
+    )
+    rows = [
+        [
+            f"`{n.removeprefix('sysfs_')}`",
+            shapes[n]["instructions"],
+            shapes[n]["conditional_branches"],
+            shapes[n]["if_converted"],
+        ]
+        for n in order
+    ]
+    return render_table(["", "Instructions", "Conditional branches", "Branches removed"], rows)
+
+
+def pipeline_cost_table(name: str) -> str:
+    """What the core did with it, once the board has said."""
+    run = load_result(name)["summary"]
+    rows = [
+        [f"`{variant.removeprefix('sysfs_')}`", f"{data['ns']} ns", f"{data['ipc']:.2f}"]
+        for variant, data in sorted(run["variants"].items())
+    ]
+    return render_table(["", "Nanoseconds per element", "Instructions per cycle"], rows)
+
+
+def mispredict_table(name: str) -> str:
+    """Misprediction rate against how predictable the data is, and the cost derived from it."""
+    run = load_result(name)["summary"]["branches"]
+    rows = [
+        [
+            f"{point['predictable_percent']}% predictable",
+            f"{point['mispredict_percent']:.1f}%",
+            f"{point['ns']} ns",
+        ]
+        for point in run["points"]
+    ]
+    rows.append(["**derived cost of one mispredict**", "", f"{run['derived_cost_ns']:.1f} ns"])
+    return render_table(["Data", "Mispredicted", "Per element"], rows)

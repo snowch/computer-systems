@@ -111,6 +111,9 @@ python3 -m bench.run_bridge --check
 echo "== the compiler still makes the same of ch16's five loops =="
 python3 -m bench.run_loops --check
 
+echo "== the compiler still leaves ch17 a branch to measure =="
+python3 -m bench.run_pipeline --check
+
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check
 

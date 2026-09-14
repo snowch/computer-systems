@@ -1,0 +1,76 @@
+{
+  "code_fingerprint": "7538aee9619eed16",
+  "code_sources": [
+    "bench/run_disasm.py",
+    "bench/disasm.py",
+    "sysfs/lib/pipeline.c",
+    "sysfs/include/sysfs/pipeline.h"
+  ],
+  "conditions": {
+    "compiler": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "note": "no timing: this records what the compiler chose, not what it cost"
+  },
+  "generated_at": "2026-09-14T22:11:00+00:00",
+  "kind": "listing",
+  "machine": {
+    "arch": "riscv64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "riscv64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "pipeline-riscv64",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v24",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "listings": {
+      "sysfs_count_over": {
+        "instructions": 13,
+        "symbol": "sysfs_count_over",
+        "text": "00000000000001ce <sysfs_count_over>:\n 1ce:\tblez\ta1,1ec <.L44>\n 1d2:\tslli\ta1,a1,0x3\n 1d4:\tmv\ta5,a0\n 1d6:\tadd\ta3,a0,a1\n 1da:\tli\ta0,0\n\n00000000000001dc <.L43>:\n 1dc:\tld\ta4,0(a5)\n 1de:\taddi\ta5,a5,8\n 1e0:\tslt\ta4,a2,a4\n 1e4:\tadd\ta0,a0,a4\n 1e6:\tbne\ta3,a5,1dc <.L43>\n 1ea:\tret\n\n00000000000001ec <.L44>:\n 1ec:\tli\ta0,0\n 1ee:\tret"
+      },
+      "sysfs_count_over_calling": {
+        "instructions": 25,
+        "symbol": "sysfs_count_over_calling",
+        "text": "00000000000001f0 <sysfs_count_over_calling>:\n 1f0:\tblez\ta1,22a <.L50>\n 1f4:\taddi\tsp,sp,-32\n 1f6:\tslli\ta1,a1,0x3\n 1f8:\tsd\ts0,16(sp)\n 1fa:\tsd\ts1,8(sp)\n 1fc:\tsd\ts2,0(sp)\n 1fe:\tmv\ts0,a0\n 200:\tadd\ts1,a0,a1\n 204:\tsd\tra,24(sp)\n 206:\tmv\ts2,a2\n 208:\tli\ta0,0\n\n000000000000020a <.L49>:\n 20a:\tld\ta5,0(s0)\n 20c:\tbge\ts2,a5,218 <.L48>\n 210:\tauipc\tra,0x0\n 214:\tjalr\tra # 210 <.L49+0x6>\n\n0000000000000218 <.L48>:\n 218:\taddi\ts0,s0,8\n 21a:\tbne\ts0,s1,20a <.L49>\n 21e:\tld\tra,24(sp)\n 220:\tld\ts0,16(sp)\n 222:\tld\ts1,8(sp)\n 224:\tld\ts2,0(sp)\n 226:\taddi\tsp,sp,32\n 228:\tret\n\n000000000000022a <.L50>:\n 22a:\tli\ta0,0\n 22c:\tret"
+      },
+      "sysfs_sum_chain1": {
+        "instructions": 12,
+        "symbol": "sysfs_sum_chain1",
+        "text": "0000000000000004 <sysfs_sum_chain1>:\n   4:\tblez\ta1,1e <.L6>\n   8:\tslli\ta1,a1,0x3\n   a:\tmv\ta5,a0\n   c:\tadd\ta3,a0,a1\n  10:\tli\ta0,0\n\n0000000000000012 <.L5>:\n  12:\tld\ta4,0(a5)\n  14:\taddi\ta5,a5,8\n  16:\tadd\ta0,a0,a4\n  18:\tbne\ta5,a3,12 <.L5>\n  1c:\tret\n\n000000000000001e <.L6>:\n  1e:\tli\ta0,0\n  20:\tret"
+      },
+      "sysfs_sum_chain2": {
+        "instructions": 33,
+        "symbol": "sysfs_sum_chain2",
+        "text": "0000000000000022 <sysfs_sum_chain2>:\n  22:\tli\ta5,1\n  24:\tbge\ta5,a1,70 <.L13>\n  28:\taddi\ta5,a1,-2\n  2c:\tsrli\ta5,a5,0x1\n  2e:\tslli\ta3,a5,0x4\n  32:\taddi\tt1,a0,16\n  36:\tadd\tt1,t1,a3\n  38:\tmv\ta4,a0\n  3a:\tli\ta2,0\n  3c:\tli\ta3,0\n\n000000000000003e <.L10>:\n  3e:\tld\ta7,0(a4)\n  42:\tld\ta6,8(a4)\n  46:\taddi\ta4,a4,16\n  48:\tadd\ta3,a3,a7\n  4a:\tadd\ta2,a2,a6\n  4c:\tbne\ta4,t1,3e <.L10>\n  50:\taddi\ta5,a5,1\n  52:\tslli\ta5,a5,0x1\n\n0000000000000054 <.L9>:\n  54:\tbge\ta5,a1,6a <.L11>\n  58:\tslli\ta5,a5,0x3\n  5a:\tslli\ta1,a1,0x3\n  5c:\tadd\ta5,a5,a0\n  5e:\tadd\ta0,a0,a1\n\n0000000000000060 <.L12>:\n  60:\tld\ta4,0(a5)\n  62:\taddi\ta5,a5,8\n  64:\tadd\ta3,a3,a4\n  66:\tbne\ta0,a5,60 <.L12>\n\n000000000000006a <.L11>:\n  6a:\tadd\ta0,a3,a2\n  6e:\tret\n\n0000000000000070 <.L13>:\n  70:\tli\ta5,0\n  72:\tli\ta2,0\n  74:\tli\ta3,0\n  76:\tj\t54 <.L9>"
+      },
+      "sysfs_sum_chain4": {
+        "instructions": 43,
+        "symbol": "sysfs_sum_chain4",
+        "text": "0000000000000078 <sysfs_sum_chain4>:\n  78:\tli\ta5,3\n  7a:\tbge\ta5,a1,de <.L21>\n  7e:\taddi\ta4,a1,-4\n  82:\tsrli\ta4,a4,0x2\n  84:\taddi\ta3,a0,32\n  88:\tslli\tt6,a4,0x5\n  8c:\tadd\tt6,t6,a3\n  8e:\tmv\ta5,a0\n  90:\tli\ta2,0\n  92:\tli\ta6,0\n  94:\tli\ta7,0\n  96:\tli\ta3,0\n\n0000000000000098 <.L18>:\n  98:\tld\tt5,0(a5)\n  9c:\tld\tt4,8(a5)\n  a0:\tld\tt3,16(a5)\n  a4:\tld\tt1,24(a5)\n  a8:\taddi\ta5,a5,32\n  ac:\tadd\ta3,a3,t5\n  ae:\tadd\ta7,a7,t4\n  b0:\tadd\ta6,a6,t3\n  b2:\tadd\ta2,a2,t1\n  b4:\tbne\tt6,a5,98 <.L18>\n  b8:\taddi\ta5,a4,1\n  bc:\tslli\ta5,a5,0x2\n\n00000000000000be <.L17>:\n  be:\tbge\ta5,a1,d4 <.L19>\n  c2:\tslli\ta5,a5,0x3\n  c4:\tslli\ta1,a1,0x3\n  c6:\tadd\ta5,a5,a0\n  c8:\tadd\ta0,a0,a1\n\n00000000000000ca <.L20>:\n  ca:\tld\ta4,0(a5)\n  cc:\taddi\ta5,a5,8\n  ce:\tadd\ta3,a3,a4\n  d0:\tbne\ta0,a5,ca <.L20>\n\n00000000000000d4 <.L19>:\n  d4:\tadd\ta3,a3,a7\n  d6:\tadd\ta3,a3,a6\n  d8:\tadd\ta0,a3,a2\n  dc:\tret\n\n00000000000000de <.L21>:\n  de:\tli\ta5,0\n  e0:\tli\ta2,0\n  e2:\tli\ta6,0\n  e4:\tli\ta7,0\n  e6:\tli\ta3,0\n  e8:\tj\tbe <.L17>"
+      },
+      "sysfs_sum_chain8": {
+        "instructions": 93,
+        "symbol": "sysfs_sum_chain8",
+        "text": "00000000000000ea <sysfs_sum_chain8>:\n  ea:\tli\ta5,7\n  ec:\tbge\ta5,a1,192 <.L29>\n  f0:\taddi\ta3,a1,-8\n  f4:\taddi\tsp,sp,-48\n  f6:\tsrli\ta3,a3,0x3\n  f8:\taddi\ta4,a0,64\n  fc:\tsd\ts5,0(sp)\n  fe:\tslli\ts5,a3,0x6\n 102:\tadd\ts5,s5,a4\n 104:\tsd\ts0,40(sp)\n 106:\tsd\ts1,32(sp)\n 108:\tsd\ts2,24(sp)\n 10a:\tsd\ts3,16(sp)\n 10c:\tsd\ts4,8(sp)\n 10e:\tmv\ta5,a0\n 110:\tli\ta2,0\n 112:\tli\ta6,0\n 114:\tli\ta7,0\n 116:\tli\tt1,0\n 118:\tli\tt3,0\n 11a:\tli\tt4,0\n 11c:\tli\tt5,0\n 11e:\tli\ta4,0\n\n0000000000000120 <.L26>:\n 120:\tld\ts4,0(a5)\n 124:\tld\ts3,8(a5)\n 128:\tld\ts2,16(a5)\n 12c:\tld\ts1,24(a5)\n 12e:\tld\ts0,32(a5)\n 130:\tld\tt2,40(a5)\n 134:\tld\tt0,48(a5)\n 138:\tld\tt6,56(a5)\n 13c:\taddi\ta5,a5,64\n 140:\tadd\ta4,a4,s4\n 142:\tadd\tt5,t5,s3\n 144:\tadd\tt4,t4,s2\n 146:\tadd\tt3,t3,s1\n 148:\tadd\tt1,t1,s0\n 14a:\tadd\ta7,a7,t2\n 14c:\tadd\ta6,a6,t0\n 14e:\tadd\ta2,a2,t6\n 150:\tbne\ts5,a5,120 <.L26>\n 154:\taddi\ta5,a3,1\n 158:\tslli\ta5,a5,0x3\n 15a:\tbge\ta5,a1,170 <.L27>\n 15e:\tslli\ta5,a5,0x3\n 160:\tslli\ta1,a1,0x3\n 162:\tadd\ta5,a5,a0\n 164:\tadd\ta0,a0,a1\n\n0000000000000166 <.L28>:\n 166:\tld\ta3,0(a5)\n 168:\taddi\ta5,a5,8\n 16a:\tadd\ta4,a4,a3\n 16c:\tbne\ta0,a5,166 <.L28>\n\n0000000000000170 <.L27>:\n 170:\tadd\ta5,a4,t5\n 174:\tadd\ta5,a5,t4\n 176:\tadd\ta5,a5,t3\n 178:\tld\ts0,40(sp)\n 17a:\tadd\ta5,a5,t1\n 17c:\tadd\ta5,a5,a7\n 17e:\tadd\ta5,a5,a6\n 180:\tld\ts1,32(sp)\n 182:\tld\ts2,24(sp)\n 184:\tld\ts3,16(sp)\n 186:\tld\ts4,8(sp)\n 188:\tld\ts5,0(sp)\n 18a:\tadd\ta0,a5,a2\n 18e:\taddi\tsp,sp,48\n 190:\tret\n\n0000000000000192 <.L29>:\n 192:\tli\ta5,0\n 194:\tli\ta2,0\n 196:\tli\ta6,0\n 198:\tli\ta7,0\n 19a:\tli\tt1,0\n 19c:\tli\tt3,0\n 19e:\tli\tt4,0\n 1a0:\tli\tt5,0\n 1a2:\tli\ta4,0\n 1a4:\tbge\ta5,a1,1ba <.L35>\n 1a8:\tslli\ta5,a5,0x3\n 1aa:\tslli\ta1,a1,0x3\n 1ac:\tadd\ta5,a5,a0\n 1ae:\tadd\ta0,a0,a1\n\n00000000000001b0 <.L36>:\n 1b0:\tld\ta3,0(a5)\n 1b2:\taddi\ta5,a5,8\n 1b4:\tadd\ta4,a4,a3\n 1b6:\tbne\ta0,a5,1b0 <.L36>\n\n00000000000001ba <.L35>:\n 1ba:\tadd\ta5,a4,t5\n 1be:\tadd\ta5,a5,t4\n 1c0:\tadd\ta5,a5,t3\n 1c2:\tadd\ta5,a5,t1\n 1c4:\tadd\ta5,a5,a7\n 1c6:\tadd\ta5,a5,a6\n 1c8:\tadd\ta0,a5,a2\n 1cc:\tret"
+      }
+    },
+    "source": "sysfs/lib/pipeline.c"
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 compiled to an object file and disassembled",
+    "flags": "-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c",
+    "objdump": "riscv64-linux-gnu-objdump -d --no-show-raw-insn --disassemble=<fn>"
+  }
+}

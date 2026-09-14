@@ -392,6 +392,21 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         result="loops-host",
         pending=f"The surviving variants have not been timed yet: {BOARD} (`bench/results/loops-host.json`).",
     ),
+    # -- ch17 ---------------------------------------------------------------------------
+    "ch17-shapes": Table(
+        render=tables.pipeline_shapes_table,
+        result="pipeline-shapes",
+    ),
+    "ch17-ilp": Table(
+        render=tables.pipeline_cost_table,
+        result="pipeline-host",
+        pending=f"The chains have not been timed yet: {BOARD} (`bench/results/pipeline-host.json`).",
+    ),
+    "ch17-branches": Table(
+        render=tables.mispredict_table,
+        result="pipeline-host",
+        pending=f"The predictor has not been measured yet: {BOARD} (`bench/results/pipeline-host.json`).",
+    ),
     "ch00-board": Table(
         render=tables.board_identity_table,
         result="setup-host",

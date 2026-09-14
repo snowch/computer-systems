@@ -666,6 +666,36 @@ Tuning on Modern CPUs* on compiler transformations; and Agner Fog's optimisation
 - **Citations are primary only**: the compiler's own manual page. No optimisation textbook is
   cited.
 
+## ch17 · The CPU
+
+**Closest in subject.** *Performance Analysis and Tuning on Modern CPUs* on the out-of-order
+pipeline and top-down analysis; Agner Fog's microarchitecture manual; *Computer Architecture: A
+Quantitative Approach* on ILP and branch prediction; and the multiple-accumulator example, which
+is folklore and appears in CS:APP chapter 5 among many others.
+
+**How this differs, and the care taken.**
+
+- **The chapter opens by failing, and that is the content.** It set out to measure branch
+  misprediction and found the compiler had replaced the branch with a conditional increment, so
+  there was nothing to mispredict. The finding is stamped, CI checks it still holds, and the
+  chapter is arranged around it — a measurement of branch prediction on that loop would have
+  produced a number about something else entirely.
+- **Problem 17.1 records that this book predicted wrongly**, in the stub the reader edits. Inviting
+  the reader to beat the author at a prediction the author got wrong is not a form the comparable
+  material uses.
+- **The accumulator example is used against instruction counts rather than for speed.** Its point
+  here is that the shortest program is the slowest, which closes ch16's explicit deferral; the
+  instruction counts that make that visible are stamped and regenerated rather than asserted.
+- **Problem 17.2's model is presented with its own limit.** The formula predicts more accumulators
+  are always better; the stub and the scaffolding test both say what actually stops it — register
+  pressure, which is nowhere in the formula — because a model that is right about what it models
+  and silent about what limits it is the usual kind.
+- **Derived counters are given a section and a labelling rule.** The cost of a mispredict is a
+  slope rather than a measurement, the table says "derived" in its own row, and the chapter states
+  the general policy for PMU events that are computed rather than counted. That discipline is this
+  book's.
+- **Citations are primary only**: the core's technical reference manual and `perf list`.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the
