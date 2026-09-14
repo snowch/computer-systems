@@ -57,8 +57,9 @@ not a spec sheet.
 
 **The two targets do not share an instruction set, and that is deliberate.** The kernel small
 enough to read in an afternoon is a RISC-V kernel; the hardware whose counters work is an ARM
-one. `hardware/README.md` shows the evidence. Only three chapters read disassembly; the rest is
-method, and method does not have an architecture.
+one. `hardware/README.md` shows the evidence. Three chapters depend on reading disassembly (ch04,
+ch16, ch17) and ch00 shows one function compiled both ways; the rest is method, and method does
+not have an architecture.
 
 ```bash
 make xv6-qemu      # boot the teaching kernel
@@ -79,6 +80,10 @@ the repository.
 Where a measurement has not been taken, the book shows a box saying so — never a placeholder
 number. Where the hardware cannot answer a question at all, the chapter says that and shows the
 reasoning it used instead.
+
+Machine code is stamped the same way and gets one thing timings cannot have: because a listing
+depends on the compiler rather than on the machine, CI re-runs `objdump` on every push and fails
+if a single instruction in any chapter has changed.
 
 ## Problems
 

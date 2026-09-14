@@ -14,6 +14,7 @@ short_title: "ch19 The OS Layer's Cost on Real Hardware"
 | **Target** | `host` — Linux on real hardware, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch18](#ch18) |
 | **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **Answers the cost of** | [ch06](#ch06), [ch08](#ch08), [ch11](#ch11) |
 :::
 
 ## The question

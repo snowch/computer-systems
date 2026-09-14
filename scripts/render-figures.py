@@ -23,8 +23,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from bench.figures import FIGURES, Diagram, Table  # noqa: E402
-from bench.tables import conditions  # noqa: E402
+from bench.figures import FIGURES, Diagram, Listing, Table  # noqa: E402
+from bench.tables import conditions, listing, listing_label  # noqa: E402
 
 FRAGMENTS = ROOT / "chapters" / "_generated"
 DIAGRAMS = ROOT / "chapters" / "_figures"
@@ -54,6 +54,28 @@ def render_table(name: str, figure: Table) -> str:
     return "\n".join([BANNER, "", body, "", caption, ""])
 
 
+def render_listing(figure: Listing) -> str:
+    """One block per architecture: what it is, the objdump output, and where it came from.
+
+    Each block carries its own conditions line because each came from a different compiler, and a
+    single line underneath both would have to pick one of them to be about.
+
+    No headings. A fragment is included in the middle of a chapter, and a heading here would put a
+    figure's internals into the table of contents and change the section numbering around it.
+    """
+    blocks = [BANNER]
+    for name in figure.results:
+        blocks += [
+            "",
+            listing_label(name, figure.symbol),
+            "",
+            listing(name, figure.symbol),
+            "",
+            conditions(name),
+        ]
+    return "\n".join([*blocks, ""])
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="verify instead of writing")
@@ -71,12 +93,15 @@ def main() -> int:
         else:
             target, rendered = FRAGMENTS / f"{name}.md", None
             try:
-                rendered = render_table(name, figure)
+                if isinstance(figure, Listing):
+                    rendered = render_listing(figure)
+                else:
+                    rendered = render_table(name, figure)
             except FileNotFoundError as exc:
                 print(f"  MISSING RESULT for {name}: {exc}")
                 stale.append(name)
                 continue
-            if figure.pending is not None:
+            if getattr(figure, "pending", None) is not None:
                 pending += 1
 
         if args.check:

@@ -63,6 +63,46 @@ def conditions(name: str) -> str:
     )
 
 
+def listing(name: str, symbol: str) -> str:
+    """One function's disassembly, fenced, from a committed ``kind: listing`` result.
+
+    The fence is tagged ``asm`` so the site highlights it; the PDF renderer takes the language
+    from the same place. Nothing else is done to the text. What objdump printed is what the reader
+    sees, which is the only version of this that survives them running the command themselves.
+    """
+    result = load_result(name)
+    if result.get("kind") != "listing":
+        raise ValueError(f"{name} is a {result.get('kind')!r} result, not a listing")
+    listings = result["summary"]["listings"]
+    if symbol not in listings:
+        raise KeyError(
+            f"{name} has no listing for {symbol!r}; it has "
+            f"{', '.join(sorted(listings)) or 'none'}. Add it to SYMBOLS in bench/run_disasm.py."
+        )
+    return "```asm\n" + listings[symbol]["text"] + "\n```"
+
+
+def listing_instructions(name: str, symbol: str) -> int:
+    """How many instructions that listing contains, for prose that counts them."""
+    return load_result(name)["summary"]["listings"][symbol]["instructions"]
+
+
+def listing_label(name: str, symbol: str) -> str:
+    """The line above a listing: what it is, which architecture, and how long it came out.
+
+    Assembled from the result rather than typed, like everything else here. The instruction count
+    in particular: it is the figure a chapter comparing two architectures most wants to quote, and
+    a hand-typed one would be the first thing to go stale.
+    """
+    result = load_result(name)
+    arch = result["machine"]["arch"]
+    count = listing_instructions(name, symbol)
+    return (
+        f"**`{symbol}` compiled for {arch}** — the `{result['target']}` target's instruction set, "
+        f"{count} instructions."
+    )
+
+
 # -- the renderers chapters ask for -------------------------------------------------------
 
 
@@ -115,26 +155,77 @@ def xv6_environment_table(name: str) -> str:
     return render_table(["What", "This boot"], rows)
 
 
+#: ``/proc/cpuinfo`` key -> the label this table gives it, in the order the rows appear.
+#:
+#: Both architectures are listed because the reference machine is an ARM one and a reader
+#: following Part III on a RISC-V board is supported. A key absent from this mapping is still
+#: printed, under its own name: a table that silently dropped something the kernel reported would
+#: be a table you could not trust to be complete, which is the opposite of what it is for.
+CORE_IDENTITY_LABELS = {
+    # RISC-V
+    "isa": "ISA string",
+    "uarch": "Microarchitecture",
+    "mmu": "MMU",
+    "mvendorid": "`mvendorid`",
+    "marchid": "`marchid`",
+    "mimpid": "`mimpid`",
+    # ARM
+    "cpu implementer": "CPU implementer",
+    "cpu architecture": "CPU architecture",
+    "cpu variant": "CPU variant",
+    "cpu part": "CPU part",
+    "cpu revision": "CPU revision",
+    "features": "Features",
+    # anywhere
+    "model name": "Model name",
+}
+
+#: Reported by the kernel, and not a measurement of anything: a calibration loop whose result
+#: depends on the kernel's own timing code. Skipped by name rather than quietly, so that the
+#: decision is visible to anyone wondering where it went.
+CORE_IDENTITY_SKIP = ("bogomips",)
+
+
+def core_identity_rows(cpu: dict[str, Any]) -> list[list[Any]]:
+    """What the running kernel says this core is, whichever architecture it is."""
+    known = [
+        [label, cpu[key]] for key, label in CORE_IDENTITY_LABELS.items() if cpu.get(key) is not None
+    ]
+    extra = [
+        [key, value]
+        for key, value in sorted(cpu.items())
+        if key not in CORE_IDENTITY_LABELS and key not in CORE_IDENTITY_SKIP
+    ]
+    return known + extra
+
+
 def board_identity_table(name: str) -> str:
     """The board's account of itself, read from the running machine rather than a datasheet.
 
     A spec sheet describes a product line. ``/proc/cpuinfo`` describes the silicon that produced
     the numbers in every other table in Part III, which is the one that matters when two of them
     disagree.
+
+    Nothing here is architecture-specific, deliberately. The reference machine is an ARM one and a
+    RISC-V board reports an entirely different set of fields; a table hard-coded to either would
+    print a column of dashes on the other and look like a broken measurement rather than a
+    different machine.
     """
     result = load_result(name)
     summary = result["summary"]
     machine = result["machine"]
-    cpu = machine.get("cpu", {})
-    rows = [
+    rows: list[list[Any]] = [
         ["Board (device tree)", machine.get("model")],
         ["Kernel", machine.get("kernel")],
-        ["ISA string", cpu.get("isa")],
-        ["Microarchitecture", cpu.get("uarch")],
-        ["`mvendorid` / `marchid` / `mimpid`", summary.get("ids")],
-        ["Harts online", machine.get("cpus_online")],
-        ["Compiler", result.get("toolchain", {}).get("cc")],
+        ["Cores online", machine.get("cpus_online")],
+        ["Native compiler", result.get("toolchain", {}).get("cc")],
+    ]
+    rows += core_identity_rows(machine.get("cpu", {}))
+    rows += [
+        # The two capabilities Part III is built on, and they are separate questions: a core can
+        # count perfectly well and be unable to sample at all. ch00 says why.
         ["`perf stat` reads hardware counters", summary.get("perf_counters_readable")],
         ["Cycle counter event", summary.get("perf_cycles_event")],
+        ["`perf record` can sample", summary.get("perf_can_sample")],
     ]
     return render_table(["What", "This board"], rows)

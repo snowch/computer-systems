@@ -10,4 +10,4 @@
 | Kernel image size (bytes) | 276112 |
 | Byte order | little |
 
-*Conditions: target `xv6`; qemu virt (-machine virt -bios none); QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18); xv6-riscv @ 9e3161a; riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `xv6's own CFLAGS (-O -march=rv64gc -std=gnu99 -ffreestanding)`; 2026-09-14. Source: `bench/results/setup-xv6.json`, code hash `cc057d8695223e0c`.*
+*Conditions: target `xv6`; qemu virt (-machine virt -bios none); QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18); xv6-riscv @ 9e3161a; riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `xv6's own CFLAGS (-O -march=rv64gc -std=gnu99 -ffreestanding)`; 2026-09-14. Source: `bench/results/setup-xv6.json`, code hash `21325ff3c8abdd41`.*

@@ -53,6 +53,10 @@ xv6-clean:  ## Delete the staging tree; the submodule is never touched
 bench-xv6:  ## Re-run every xv6-target measurement (runs anywhere QEMU does)
 	$(PYTHON) -m bench.run_setup --target xv6
 
+.PHONY: bench-listings
+bench-listings:  ## Re-capture every disassembly listing (needs both cross compilers)
+	$(PYTHON) -m bench.run_disasm
+
 .PHONY: bench-board
 bench-board:  ## Re-run every host-target measurement. ON THE MACHINE BEING MEASURED ONLY.
 	@$(PYTHON) -c 'import sys; sys.path.insert(0, "."); from bench.stamp import classify_machine; \
@@ -65,7 +69,7 @@ bench-board:  ## Re-run every host-target measurement. ON THE MACHINE BEING MEAS
 	@echo "  $(PYTHON) scripts/render-figures.py && git add bench/results chapters/_generated"
 
 .PHONY: figures
-figures:  ## Re-render every table and diagram from committed results
+figures:  ## Re-render every table, listing and diagram from committed results
 	$(PYTHON) scripts/render-figures.py
 
 # -- the book ----------------------------------------------------------------------------

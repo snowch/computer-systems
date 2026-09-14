@@ -19,7 +19,7 @@ These are stated in the chapters that have them as well; this is the index.
 
 | What | Where | Why, and what would close it |
 |---|---|---|
-| The board has not reported | `ch00-board` figure, `bench/figures.py` | `bench/results/setup-host.json` does not exist yet. Run `make bench-board` on the VisionFive 2 Lite, commit the result, and remove the `pending=` marker. |
+| The board has not reported | `ch00-board` figure, `bench/figures.py` | `bench/results/setup-host.json` does not exist yet. Run `make bench-board` on the reference machine, commit the result, and remove the `pending=` marker. |
 | Appendix C is empty | `appendices/appendix_c_perf_events.md` | The `perf` events this board has are a property of the board and its firmware, not something to look up. It is generated from the board once M1 lands (PLAN.md §11). |
 | Specifications are cited without a revision | `references.bib` | The entries name the specification and its publisher but pin no revision, because none of the current content depends on a version-specific detail. Any chapter that comes to depend on one must pin the revision it consulted in the citation itself. |
 | Vendor documentation URLs | `references.bib` (`starfive-jh7110`, `sifive-u74`) | Vendor documentation portals are reorganised. Check each against the copy actually consulted when the chapter citing it is written, and record the document title and date rather than relying on the link. |

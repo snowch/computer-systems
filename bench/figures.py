@@ -58,11 +58,32 @@ class Diagram:
         return ()
 
 
+@dataclass(frozen=True)
+class Listing:
+    """One function's machine code, on every architecture the book shows it on.
+
+    Not a table and not a drawing: a fenced block of objdump output, taken from a ``kind: listing``
+    result (``bench/disasm.py``). It is here for the same reason tables are — so that a chapter
+    cannot show machine code that no compiler produced, and so that CI notices when the compiler
+    stops producing it.
+
+    ``results`` is ordered, and the order is editorial: the architectures appear in the sequence
+    the surrounding prose discusses them.
+    """
+
+    symbol: str
+    results: tuple[str, ...]
+
+    @property
+    def sources(self) -> tuple[str, ...]:
+        return self.results
+
+
 #: The board runs Part III. Repeating the instruction in every pending reason would be noise, so
 #: it lives here and each entry says what specifically is missing.
 BOARD = "run `make bench-board` on the reference machine and commit the result"
 
-FIGURES: dict[str, Table | Diagram] = {
+FIGURES: dict[str, Table | Diagram | Listing] = {
     # -- ch00 ---------------------------------------------------------------------------
     "ch00-targets": Diagram(
         draw=two_target_map,
@@ -80,12 +101,22 @@ FIGURES: dict[str, Table | Diagram] = {
         render=tables.probe_layout_table,
         result="setup-xv6",
     ),
+    "ch00-clamp": Listing(
+        symbol="sysfs_clamp",
+        # RISC-V first: it is the target the reader has already booted by this point in ch00.
+        results=("shapes-riscv64", "shapes-aarch64"),
+    ),
     "ch00-board": Table(
         render=tables.board_identity_table,
         result="setup-host",
         pending=f"The board has not reported yet: {BOARD} (`bench/results/setup-host.json`).",
     ),
 }
+
+
+#: Every figure kind. A renderer that meets something not in here should fail rather than skip:
+#: a figure silently missing from a chapter is the failure this whole pipeline exists to prevent.
+KINDS = (Table, Diagram, Listing)
 
 
 def cited_results() -> set[str]:

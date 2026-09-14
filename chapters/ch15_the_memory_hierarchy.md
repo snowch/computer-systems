@@ -14,6 +14,7 @@ short_title: "ch15 The Memory Hierarchy"
 | **Target** | `host` — Linux on real hardware, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch14](#ch14) |
 | **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **Answers the cost of** | [ch02](#ch02), [ch07](#ch07) |
 | **Assumes** | a particular cache hierarchy — the levels, sizes, line size and TLB reach are this core's. The method transfers to any machine; the numbers do not, and measuring your own is the exercise. |
 :::
 

@@ -2,9 +2,9 @@
 # Exactly what CI runs. Run it before pushing.
 #
 # CI invokes this same script, so the two cannot drift (PLAN.md §9). Nothing here needs the
-# VisionFive 2 Lite: board-only tests skip themselves, and every host-target example is compiled
-# for RV64 and executed under user-mode QEMU, which checks that it is correct and says nothing
-# about what it costs.
+# reference machine: board-only tests skip themselves, and every host-target example is
+# cross-compiled and executed under user-mode QEMU, which checks that it is correct and says
+# nothing about what it costs.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -30,6 +30,16 @@ python3 -m pytest tests/ -q -m "not problem"
 
 echo "== benchmark result stamps =="
 python3 scripts/verify-numbers.py
+
+echo "== disassembly listings still match the compiler =="
+# The one artefact in the book that CI can regenerate rather than trust. A listing depends on the
+# compiler, not on the machine, so re-capturing it here asks a question no other check can: does
+# the toolchain a reader is told to install still emit the instructions the chapters discuss?
+#
+# A failure is not noise. Either the source moved without the listing being re-rendered, or the
+# compiler changed its mind — and a chapter explaining a `csel` that gcc no longer emits is
+# simply wrong. Both are fixed by `make bench-listings && make figures`.
+python3 -m bench.run_disasm --check
 
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check

@@ -12,10 +12,13 @@ exactly like a right one, and the reader has no way to tell.
    core plus the runner's own sources, so editing the code invalidates the number instead of
    quietly contradicting it. Comparing commit *times* instead cannot tell an unrelated new file
    from a change to the thing being measured, and is wrong in both directions.
-4. **Provenance matches the target.** A ``host`` number must have been measured natively on
-   RISC-V hardware, and an ``xv6`` result must not contain a timing at all. This is the rule that
-   protects the book's central claim: QEMU will answer a question about nanoseconds, and the
-   answer is fiction, so the repository does not allow one to be recorded.
+4. **Provenance matches the target and the kind.** A ``host`` number must have been measured
+   natively on the reference machine, and an ``xv6`` result must not contain a timing at all. This
+   is the rule that protects the book's central claim: QEMU will answer a question about
+   nanoseconds, and the answer is fiction, so the repository does not allow one to be recorded.
+   Disassembly listings are exempt from the first half — instructions do not depend on which
+   computer ran the compiler — and are held to their own rules instead, which is what stops the
+   exemption from becoming a way round the board.
 5. **A pending figure whose result has landed is an error.** Otherwise a measurement gets taken
    and the book goes on saying it is missing.
 6. **No measured figure is typed into chapter prose**, where regenerating results would silently

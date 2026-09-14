@@ -39,13 +39,17 @@ Jupyter Book 2, whose CLI is `mystmd`. Pinned in `package.json` (npm), **not** i
 make check          # ./scripts/ci-check.sh — exactly what CI runs
 make book           # live preview
 make xv6-qemu       # boot the teaching kernel
+make bench-listings # re-capture the disassembly the chapters quote
 python3 scripts/verify-setup.py
 ```
 
 ## The four invariants
 
 1. **No code pasted into prose.** `{literalinclude}` with `:start-at:` / `:end-before:` text
-   anchors, never `:lines:`, pointing at real files.
+   anchors, never `:lines:`, pointing at real files. **Disassembly too** — it cannot be quoted
+   from the tree because no compiler has run yet, so it is captured as a stamped `kind: listing`
+   result (`bench/run_disasm.py`, `make bench-listings`) and rendered as a `Listing` figure.
+   Unlike a timing, CI re-captures every listing on each push and fails if one instruction moved.
 2. **No numbers typed into prose.** Every figure comes from a stamped JSON in `bench/results/`,
    declared in `bench/figures.py`, rendered to `chapters/_generated/` and `chapters/_figures/` by
    `scripts/render-figures.py`, and included. Chapters contain **no executable cells**. A cited

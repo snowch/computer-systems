@@ -6,11 +6,14 @@ import re
 
 import pytest
 
-from bench.figures import FIGURES, Diagram, Table
-from bench.tables import conditions, render_table
+from bench import stamp
+from bench.figures import FIGURES, KINDS, Diagram, Listing, Table
+from bench.stamp import build_result, load_result, write_result
+from bench.tables import board_identity_table, conditions, listing, listing_label, render_table
 
 TABLE_FIGURES = [(name, fig) for name, fig in FIGURES.items() if isinstance(fig, Table)]
 DIAGRAM_FIGURES = [(name, fig) for name, fig in FIGURES.items() if isinstance(fig, Diagram)]
+LISTING_FIGURES = [(name, fig) for name, fig in FIGURES.items() if isinstance(fig, Listing)]
 
 
 @pytest.mark.parametrize(("name", "figure"), TABLE_FIGURES, ids=[n for n, _ in TABLE_FIGURES])
@@ -73,3 +76,156 @@ def test_pending_fragments_contain_no_numbers():
         assert not re.search(r"\b\d+(?:\.\d+)?\s*(?:ns|us|ms|s|cycles|%)\b", text), (
             f"{name} is pending but its fragment shows a figure"
         )
+
+
+# -- listings -------------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(("name", "figure"), LISTING_FIGURES, ids=[n for n, _ in LISTING_FIGURES])
+def test_listing_renders_from_every_result_it_names(name: str, figure: Listing):
+    for result in figure.results:
+        block = listing(result, figure.symbol)
+        assert block.startswith("```asm"), f"{name}/{result} is not a fenced assembly block"
+        assert f"<{figure.symbol}>:" in block, f"{name}/{result} does not contain its own symbol"
+
+
+@pytest.mark.parametrize(("name", "figure"), LISTING_FIGURES, ids=[n for n, _ in LISTING_FIGURES])
+def test_listing_label_is_read_rather_than_typed(name: str, figure: Listing):
+    """Including the instruction count, which is the figure a chapter is most tempted to type."""
+    for result in figure.results:
+        label = listing_label(result, figure.symbol)
+        arch = load_result(result)["machine"]["arch"]
+        assert arch in label
+        assert figure.symbol in label
+        assert "instructions" in label
+
+
+@pytest.mark.parametrize(("name", "figure"), LISTING_FIGURES, ids=[n for n, _ in LISTING_FIGURES])
+def test_listing_results_are_listings(name: str, figure: Listing):
+    """A listing figure reading a measurement would publish a number as if it were machine code."""
+    for result in figure.results:
+        assert load_result(result)["kind"] == "listing"
+
+
+@pytest.mark.parametrize(("name", "figure"), LISTING_FIGURES, ids=[n for n, _ in LISTING_FIGURES])
+def test_listing_shows_each_architecture_once(name: str, figure: Listing):
+    arches = [load_result(result)["machine"]["arch"] for result in figure.results]
+    assert len(arches) == len(set(arches)), f"{name} shows {arches} — one of them twice"
+
+
+@pytest.mark.parametrize(("name", "figure"), LISTING_FIGURES, ids=[n for n, _ in LISTING_FIGURES])
+def test_listing_architectures_share_a_compiler_version(name: str, figure: Listing):
+    """ch00 tells the reader the two listings came from the same version of the same compiler.
+
+    That is true of the committed results and need not stay true: regenerate them on a machine
+    whose two cross compilers are a release apart and the sentence quietly becomes false while
+    every other check stays green. This is the one that notices.
+    """
+    versions = {load_result(result)["toolchain"]["cc"].split()[-1] for result in figure.results}
+    assert len(versions) == 1, f"{name} compares listings from gcc {sorted(versions)}"
+
+
+def test_listing_refuses_a_measurement():
+    with pytest.raises(ValueError, match="not a listing"):
+        listing("setup-xv6", "sysfs_clamp")
+
+
+def test_listing_names_the_symbols_it_has():
+    with pytest.raises(KeyError, match="sysfs_clamp"):
+        listing("shapes-aarch64", "no_such_function")
+
+
+def test_every_figure_has_a_renderer():
+    """A figure kind the renderer does not know would vanish from a chapter silently."""
+    for name, figure in FIGURES.items():
+        assert isinstance(figure, KINDS), (
+            f"{name} is a {type(figure).__name__}, which nothing renders"
+        )
+
+
+# -- the board table, on a board the author does not have ------------------------------------
+
+#: What each architecture's kernel reports about its own core. Both are in the shape
+#: ``/proc/cpuinfo`` actually uses; neither machine is attached to CI, so the only way to know
+#: the table works on both is to hand it both.
+CPUINFO = {
+    "aarch64": {
+        "cpu implementer": "0x41",
+        "cpu architecture": "8",
+        "cpu part": "0xd0b",
+        "cpu revision": "1",
+        "features": "fp asimd evtstrm aes pmull crc32 atomics",
+        "bogomips": "108.00",
+    },
+    "riscv64": {
+        "isa": "rv64imafdc_zicntr",
+        "uarch": "sifive,u74-mc",
+        "mmu": "sv39",
+        "mvendorid": "0x489",
+        "marchid": "0x8000000000000007",
+        "mimpid": "0x4210427",
+    },
+}
+
+
+@pytest.fixture
+def board_result(tmp_path, monkeypatch):
+    """Write a plausible `setup-host` for one architecture and point the loader at it."""
+
+    def make(arch: str):
+        payload = build_result(
+            name="setup-host",
+            target="host",
+            summary={
+                "perf_counters_readable": True,
+                "perf_cycles_event": "cycles",
+                "perf_can_sample": arch == "aarch64",
+            },
+            code_sources=["bench/run_setup.py"],
+            toolchain={"cc": "gcc (test) 13.3.0", "flags": "-O2"},
+            machine={
+                "kind": "board",
+                "arch": arch,
+                "measured_under": "native",
+                "model": f"a {arch} board",
+                "kernel": "Linux 6.6",
+                "cpus_online": "0-3",
+                "cpu": CPUINFO[arch],
+            },
+        )
+        write_result(payload, results_dir=tmp_path)
+        monkeypatch.setattr(stamp, "RESULTS_DIR", tmp_path)
+        return payload
+
+    return make
+
+
+@pytest.mark.parametrize("arch", sorted(CPUINFO))
+def test_board_table_describes_either_architecture(arch: str, board_result):
+    """The reference machine is ARM; a reader may follow Part III on a RISC-V board.
+
+    A table hard-coded to one of them prints a column of dashes on the other, which reads as a
+    broken measurement rather than a different machine. This is the check that the author, who
+    has neither board to hand, can still run.
+    """
+    board_result(arch)
+    table = board_identity_table("setup-host")
+    assert "—" not in table, f"the {arch} table has an empty cell:\n{table}"
+    for value in CPUINFO[arch].values():
+        if value == "108.00":
+            continue  # bogomips is deliberately skipped
+        assert value in table, f"{arch}: {value!r} is missing from the table"
+
+
+def test_board_table_skips_bogomips(board_result):
+    """It is a kernel calibration loop, not a fact about the core."""
+    board_result("aarch64")
+    assert "108.00" not in board_identity_table("setup-host")
+
+
+def test_board_table_reports_counting_and_sampling_separately(board_result):
+    """ch00's central claim about the hardware: a core can count and still not sample."""
+    board_result("riscv64")
+    table = board_identity_table("setup-host")
+    assert "| `perf stat` reads hardware counters | yes |" in table
+    assert "| `perf record` can sample | no |" in table

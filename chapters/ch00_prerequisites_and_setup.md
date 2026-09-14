@@ -13,7 +13,8 @@ short_title: "ch00 Prerequisites and Setup"
 |---|---|
 | **Target** | `xv6` and `host` — every example says which |
 | **Prerequisites** | none |
-| **What it measures** | That both targets work, and exactly what they are: `bench/results/setup-xv6.json` and `bench/results/setup-host.json` |
+| **What it measures** | That both targets work, and exactly what they are: `bench/results/setup-xv6.json`, `bench/results/setup-host.json` |
+| **What it captures** | What the compiler emits for each architecture: `bench/results/shapes-riscv64.json`, `bench/results/shapes-aarch64.json` — listings, not measurements |
 :::
 
 ## The question
@@ -26,39 +27,27 @@ later as something that looks like a bug in the material. So this chapter ends w
 interrogates the machine you are sitting at and tells you which of the book's two targets it can
 currently run, and with two measurements that record what those targets actually are.
 
-## Two targets, and why it has to be two
+## Two targets, and what the repository does about it
 
-```{figure} _figures/ch00-targets.svg
-:alt: The xv6 and host targets side by side, with what each can and cannot answer.
-:width: 100%
+The preface makes the case for the arrangement; this is the operational version of it.
 
-The division of labour. Every chapter declares which target it uses, and every figure records
-which one produced it.
-```
+**`xv6`** is the MIT teaching kernel under `qemu-system-riscv64`: a complete operating system in
+about nine thousand lines, which you can stop mid-trap and inspect. Parts I and II live there, and
+so does everything the book says about *what a program does*.
 
-**`xv6`** is the MIT teaching kernel, running under `qemu-system-riscv64`. It is a complete
-operating system — processes, page tables, traps, a file system with a write-ahead log — in about
-nine thousand lines. You can stop the whole machine in the middle of a trap and print a page
-table. Parts I and II live here, and so does everything the book says about *what a program does*.
+**`host`** is a small Linux machine on the desk, reached over SSH — a Raspberry Pi 5 in this book.
+Everything about *what a program costs* is measured there, natively. Part III lives there.
 
-**`host`** is a small Linux machine on the desk, reached over SSH — a **Raspberry Pi 5** in this
-book. Everything about *what a program costs* is measured there, natively. Part III lives here.
+The one thing worth repeating from the preface, because every later chapter depends on it: QEMU is
+a functional emulator. It computes what the instructions compute and models nothing else — no
+cache, no branch predictor, no store buffer, no pipeline, no memory latency. Ask it how long a loop
+took and it will answer, and the answer describes the laptop QEMU was running on and the
+translation strategy it happened to pick.
 
-The two do not share an instruction set. That is deliberate, it was bought with two chapters, and
-the next section is the argument for it.
-
-The split is the book's central argument rather than a convenience. QEMU is a functional
-emulator: it computes what the instructions compute, and it models nothing else. There is no
-cache in it, no branch predictor, no store buffer, no pipeline, no memory latency. Ask it how
-long a loop took and it will answer, and the answer will describe the laptop QEMU was running on
-and the translation strategy it happened to pick — not the RISC-V machine you think you are
-studying.
-
-This is not a limitation to work around. It is a fact worth internalising early, because it
-generalises: almost every convenient way to observe a program changes what you are observing. A
-debugger stops it. A profiler samples it. A print statement in a loop makes the loop something
-else. The discipline this book is really teaching is knowing which of your tools is lying to you
-about which question.
+That generalises well beyond QEMU, which is why it is the first thing this book teaches: almost
+every convenient way to observe a program changes what you are observing. A debugger stops it. A
+profiler samples it. A print statement in a loop makes the loop something else. Knowing which of
+your tools is lying to you about which question is the discipline underneath all of this.
 
 So the repository enforces the split rather than trusting anyone to remember it. Every result
 file records where it was measured, and `scripts/verify-numbers.py` rejects two things outright:
@@ -81,6 +70,11 @@ in Parts I and II depends on hardware you do not have.
 
 A **Raspberry Pi 5**, 4 GB or more, **with the active cooler**. A Pi 4 you already own will do.
 
+It is an ARM machine, and Parts I and II are RISC-V. That is deliberate: `perf` has to both count
+and sample, no affordable RISC-V core does both, and choosing one would have cost two chapters of
+Part III. The preface makes that argument with the evidence behind it; this chapter is about
+getting the machine working.
+
 % number-ok: SoC specification from @rpi-bcm2712; every figure in this book comes from the machine itself
 Its SoC is a BCM2712: four Arm Cortex-A76 cores at 2.4 GHz, 64 kB of L1 instruction and data
 cache each, 512 kB of L2 per core, and 2 MB of L3 shared between them @rpi-bcm2712. Those are the
@@ -96,42 +90,6 @@ benchmark that quietly changes clock speed half way through is not a slow measur
 wrong one, and one of the more instructive ways to be wrong about a benchmark. [ch14](#ch14)
 treats thermal throttling as a measurement hazard and shows how to detect it; a cooler means you
 meet it deliberately rather than by accident in every run.
-
-The architecture deserves an explanation, because Parts I and II are RISC-V and this is not, and
-an unexplained inconsistency in a book about rigour would be a poor start.
-
-### Why the two targets do not share an instruction set
-
-Part III needs `perf` to do two different things. **Counting** — `perf stat` totalling events over
-a run — and **sampling** — `perf record` interrupting the program thousands of times a second to
-ask where it is. Sampling needs the counters to raise an interrupt when they overflow. On ARM that
-has been a standard part of the PMU for years. On RISC-V it is the Sscofpmf extension
-@riscv-sscofpmf, and support for it is thin.
-
-A 2025 study measured the three RISC-V cores you can actually buy @riscv-pmu-profiling:
-
-| | SiFive U74 | T-Head C910 | SpacemiT X60 |
-|---|---|---|---|
-| Out-of-order | No | Yes | No |
-| Vector extension | **None** | 0.7.1 (draft) | RVV 1.0 |
-| **Counter-overflow interrupt** | **No** | Yes | Limited |
-| Upstream Linux support | Yes | Partial | **No** |
-
-Read down the columns and none of them wins. The U74 counts but cannot sample and has no vector
-unit, so two chapters become unmeasurable. The C910 can sample but needs a vendor kernel. The X60
-has the vectors and struggles with `cycles` and `instructions` themselves, exposing non-standard
-counters in their place.
-
-Choosing RISC-V for Part III would therefore have cost two of its eight chapters, plus a hardware
-hunt, plus a toolchain that has broken between distro releases. A Pi costs none of that, and it is
-already on most desks.
-
-**What it costs instead** is instruction-set continuity — and only in the three chapters that
-actually read disassembly: [ch16](#ch16), [ch17](#ch17) and [ch21](#ch21). The other five are
-method, and method does not have an architecture. If you learned to read RISC-V assembly in
-[ch04](#ch04) and then meet AArch64 in ch16, that is not the book failing you; it is the
-demonstration that none of this was ever about RISC-V. Concepts that only worked on one
-instruction set would not be worth the trouble of learning.
 
 ### What the machine has to do
 
@@ -180,9 +138,10 @@ into an assistant that can search the web, with your country and budget filled i
 :end-before: NICE TO HAVE
 ```
 
-That is an extract; the file also carries the RISC-V findings above, so a recommendation cannot
-walk you back into the problem this chapter just described, and it asks for a **source** for the
-`perf` claims specifically — the claim most likely to come back confidently wrong.
+That is an extract; the file also carries the RISC-V findings the preface sets out, so a
+recommendation cannot walk you back into the problem those findings describe, and it asks for a
+**source** for the `perf` claims specifically — the claim most likely to come back confidently
+wrong.
 
 :::{caution} The purchase is yours
 This book does not sell hardware, has not tested most of what a search might surface, and has no
@@ -437,9 +396,10 @@ python3 scripts/verify-setup.py
 
 It reports each target separately, because most machines can run one of them. On a laptop it
 confirms the cross compiler, QEMU, the submodule and a usable debugger, then explains that the
-`host` target is read-only here and says whether an RV64 correctness path is available. On the
-board it reads the device tree and `/proc/cpuinfo`, prints the ISA string and the core's vendor
-and architecture IDs, and checks that `perf` reaches hardware.
+`host` target is read-only here and says whether a cross-built correctness path is available. On
+the machine itself it reads the device tree and `/proc/cpuinfo`, prints whatever that kernel says
+identifies the core — an implementer and part number on ARM, an ISA string and three
+implementation IDs on RISC-V — and checks that `perf` reaches hardware.
 
 Notice what it does *not* do: look anything up. Every fact it prints is read from the machine in
 front of it. A specification describes a product line; `/proc/cpuinfo` describes the silicon that
@@ -448,7 +408,8 @@ one it measured.
 
 ### The same program in both worlds
 
-The last check is the most interesting one, because it produces this chapter's first real result.
+Two checks remain, and they are the interesting ones. The first produces this chapter's first real
+result.
 
 `sysfs/include/sysfs/probe.h` asks the machine a handful of questions it can answer without a
 library: how big is each scalar type, where may it start, what does the compiler do to a struct,
@@ -472,6 +433,67 @@ Run it in both worlds:
 make bench-xv6                                   # boots xv6, runs the probe, stamps the result
 python3 -m pytest tests/test_xv6.py -q           # asserts the two targets agree
 ```
+
+### The same function in two instruction sets
+
+The probe compares two C *implementations*. The other half of the comparison is what the two
+machines are actually told to do, and it is worth seeing once, now, while the question is still
+"does my setup work" rather than "why is this slow".
+
+Here is a function with no cleverness in it at all:
+
+```{literalinclude} ../sysfs/lib/shapes.c
+:language: c
+:start-at: /* Two conditionals and three exits
+:end-before: /* A loop with a carried dependency
+```
+
+Compiled for each of the book's two architectures, at the same optimisation level, by the same
+version of the same compiler — the conditions line under each listing says exactly which:
+
+```{include} _generated/ch00-clamp.md
+```
+
+Read the second comparison in each. AArch64 settles it with `csel` — compute both candidates,
+select one, never branch. RV64GC cannot: there is no conditional select in `rv64gc`
+@riscv-isa-unprivileged, which is what xv6 and every RISC-V example here are built for, so the same
+decision has to be a branch and the function comes out with three separate exits.
+
+That is a real difference and you should resist the obvious conclusion about it. Nothing above
+says which is faster. A predicted branch is nearly free and an unpredictable one is not; `csel`
+pays a fixed price either way and creates a dependency the branch does not have. Which wins
+depends on the data, and finding out takes a machine — [ch16](#ch16) and [ch17](#ch17) are where
+that happens. Here it is enough to have seen that the choice exists.
+
+Two smaller things in the same listings, both worth checking yourself:
+
+```bash
+make bench-listings                                   # leaves both object files in sysfs/build/
+riscv64-linux-gnu-readelf -rW sysfs/build/shapes-riscv64.o
+aarch64-linux-gnu-readelf -rW sysfs/build/shapes-aarch64.o
+```
+
+The RISC-V listing has `.L4` and `.L6` sitting *inside* the function, and the first command says
+why: there is a relocation for every branch in it, naming those labels. The assembler did not
+settle its own branch distances, because the linker is still allowed to shorten instructions —
+RISC-V calls that relaxation @riscv-psabi — and a distance settled before that would be wrong
+afterwards. The AArch64 object has no relocations in its text at all; its assembler knew the
+answers and the labels were discarded. The same job, divided differently between the assembler and
+the linker.
+
+The second thing is `sext.w`, which RISC-V emits on each path and AArch64 does not emit anywhere:
+one keeps a 32-bit `int` in a 64-bit register and has to say so, the other has a 32-bit view of the
+register and uses it. Neither is in the C. Both are the kind of thing [ch04](#ch04) is for.
+
+:::{note} None of that was typed
+`bench/run_disasm.py` compiled `sysfs/lib/shapes.c` for each architecture, ran `objdump` on the
+object file, and wrote a stamped result. The block above is rendered from those results, and CI
+regenerates both on every push and fails if one instruction differs.
+
+It can do that because a listing depends on the compiler and not on the machine — so unlike every
+number in Part III, this one is checked automatically, every time. Both halves of that sentence
+matter, and [ch14](#ch14) is about the half that cannot be.
+:::
 
 ## What we measured
 
@@ -519,7 +541,7 @@ to measure. It is the whole design. The xv6 target will never produce a timing i
 because a timing produced there would be meaningless, and a meaningless number in a table is
 worse than a missing one — a missing number announces itself.
 
-The board's table above is the other half of the same discipline. If it is showing a warning box
+The reference machine's table above is the other half of the same discipline. If it is showing a warning box
 rather than numbers, that is because the measurement has not been taken yet: nothing is estimated,
 interpolated, or carried over from a different machine. `make bench-board` refuses to run
 anywhere but the board, and `scripts/verify-numbers.py` rejects the result if it somehow arrives
@@ -591,14 +613,14 @@ separates a confident answer from a correct one.
 
 For the reference machine, Raspberry Pi's own documentation @rpi-bcm2712 gives the SoC and its
 cache hierarchy, and Arm's Cortex-A76 technical reference manual @arm-a76-trm gives the pipeline
-and the PMU events [ch17](#ch17) reads. The RISC-V hardware this chapter argued against is
+and the PMU events [ch17](#ch17) reads. The RISC-V hardware the preface argues against is
 documented at @starfive-jh7110 and @sifive-u74 if you want to follow that thread. Either way the
 caveat stands: where a document and a measurement disagree, the book prints the measurement and
 says so.
 
-The study behind this chapter's architecture decision is @riscv-pmu-profiling, and it is worth
-reading even if you never touch RISC-V — it is a good example of what it looks like to establish
-what a machine can actually do, rather than what its documentation says it has.
+The study behind that decision is @riscv-pmu-profiling, and it is worth reading even if you never
+touch RISC-V — it is a good example of what it looks like to establish what a machine can actually
+do, rather than what its documentation says it has.
 
 The xv6 source @xv6-riscv-source is worth browsing before [ch01](#ch01), without trying to
 understand it. Its authors also wrote a commentary on it, which is excellent and which this book

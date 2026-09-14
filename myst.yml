@@ -78,6 +78,7 @@ project:
         - file: appendices/appendix_c_perf_events.md
         - file: appendices/appendix_d_xv6_file_map.md
         - file: appendices/appendix_e_glossary.md
+        - file: appendices/appendix_f_aarch64_for_riscv_readers.md
 
 site:
   template: book-theme

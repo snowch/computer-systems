@@ -1,0 +1,55 @@
+{
+  "code_fingerprint": "2daf2cda3d954bb1",
+  "code_sources": [
+    "bench/run_disasm.py",
+    "bench/disasm.py",
+    "sysfs/lib/shapes.c",
+    "sysfs/include/sysfs/shapes.h"
+  ],
+  "conditions": {
+    "compiler": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "note": "no timing: this records what the compiler chose, not what it cost"
+  },
+  "generated_at": "2026-09-14T09:44:02+00:00",
+  "kind": "listing",
+  "machine": {
+    "arch": "riscv64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "riscv64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "shapes-riscv64",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v24",
+    "kind": "other",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "listings": {
+      "sysfs_clamp": {
+        "instructions": 10,
+        "symbol": "sysfs_clamp",
+        "text": "0000000000000000 <sysfs_clamp>:\n   0:\tblt\ta0,a1,18 <.L4>\n   4:\tmv\ta1,a0\n   6:\tblt\ta2,a0,10 <.L6>\n   a:\tsext.w\ta0,a1\n   e:\tret\n\n0000000000000010 <.L6>:\n  10:\tmv\ta1,a2\n  12:\tsext.w\ta0,a1\n  16:\tret\n\n0000000000000018 <.L4>:\n  18:\tmv\ta0,a1\n  1a:\tret"
+      },
+      "sysfs_sum": {
+        "instructions": 12,
+        "symbol": "sysfs_sum",
+        "text": "000000000000001c <sysfs_sum>:\n  1c:\tbeqz\ta1,34 <.L10>\n  1e:\tslli\ta1,a1,0x2\n  20:\tmv\ta5,a0\n  22:\tadd\ta3,a0,a1\n  26:\tli\ta0,0\n\n0000000000000028 <.L9>:\n  28:\tlw\ta4,0(a5)\n  2a:\taddi\ta5,a5,4\n  2c:\tadd\ta0,a0,a4\n  2e:\tbne\ta5,a3,28 <.L9>\n  32:\tret\n\n0000000000000034 <.L10>:\n  34:\tli\ta0,0\n  36:\tret"
+      }
+    },
+    "source": "sysfs/lib/shapes.c"
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 compiled to an object file and disassembled",
+    "flags": "-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c",
+    "objdump": "riscv64-linux-gnu-objdump -d --no-show-raw-insn --disassemble=<fn>"
+  }
+}

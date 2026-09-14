@@ -90,7 +90,37 @@ model to hardware and asks what each part of it costs. [ch13](#ch13) is the hing
 program, watched in a debugger and then profiled on the board, with the gap between the two made
 explicit.
 
-### 3.3 Measurement as a skill, not a step
+### 3.3 One book, not two: the pairing
+
+The two targets do not share an instruction set, and the book does not treat that as a seam to be
+apologised for. It is the thesis applied to the book's own construction: *use the tool that can
+answer your question, and know what each tool cannot tell you.* A RISC-V teaching kernel is the
+best available instrument for structure; an ARM machine is the best available instrument for cost.
+Picking one instrument for both would mean lying about one of them.
+
+What stops that becoming two tutorials bolted together is a structural device: **Part III is not a
+second book, it is Part II's chapters asked again as questions about time.** Each Part III chapter
+names the earlier chapter whose cost it measures, in the `answers` field of `bench/outline.py`,
+which renders as an **Answers the cost of** row in its header and is checked by
+`tests/test_book.py`.
+
+| Part III chapter | Costs what was explained in |
+|---|---|
+| ch15 The Memory Hierarchy | ch02 (layout and alignment), ch07 (address translation) |
+| ch16 Optimising Code | ch04 (what the compiler emitted) |
+| ch17 The CPU | ch04 (the instructions), now priced |
+| ch18 Memory Ordering on Real Hardware | ch10 (locks, fences, RVWMO) |
+| ch19 The OS Layer's Cost | ch06 (traps), ch08 (faults), ch11 (switches) |
+
+Three Part III chapters are deliberately unpaired and the test knows it: ch14 teaches measurement
+itself, ch20 is about the whole machine rather than one mechanism, and ch21 concerns hardware Part
+II never described. Anything else unpaired is an oversight.
+
+The reader therefore arrives at each Part III chapter already understanding the mechanism and
+needing only the price — and the crossing itself is rehearsed once, deliberately, in
+[ch13](#ch13).
+
+### 3.4 Measurement as a skill, not a step
 
 A running thread, deliberately spread out rather than confined to [ch14](#ch14): every chapter
 that produces a number also says how it could be wrong. Variance, warm-up, the observer effect,
@@ -268,8 +298,15 @@ goal is that no operating system service remains a black box.
 The hinge of the book.
 
 - **Objectives.** Take one program understood completely from Parts I and II, watch it in gdb under
-  xv6, then profile it on the board. Confront the fact that the complete structural understanding
-  predicts almost nothing about the cost — and work out which parts of the model do carry over.
+  xv6, then profile it on the reference machine. Confront the fact that the complete structural
+  understanding predicts almost nothing about the cost — and work out which parts of the model do
+  carry over.
+- **The confound, which is the lesson.** Three things differ between the two runs at once:
+  emulation versus hardware, one kernel versus another, and one instruction set versus another.
+  The chapter must name all three and then *separate* them, because attributing a difference to
+  the wrong cause is the most common way to be confidently wrong about performance. This is where
+  the reader learns the move the rest of Part III depends on, and it is a better exercise than the
+  single-variable version would have been.
 - **Code.** The bridge program, built for both targets from one source.
 - **Measurements.** Identical structural facts from both targets; the first side-by-side timing
   from the board, against QEMU's meaningless equivalent, shown deliberately.
@@ -278,7 +315,7 @@ The hinge of the book.
 
 ### Part III — Where the cycles go
 
-Target `host` throughout: the VisionFive 2 Lite, natively. Every figure in this part is measured
+Target `host` throughout: the reference machine, natively. Every figure in this part is measured
 on the board and stamped; nothing here may come from an emulator.
 
 #### ch14 · Measuring — target `host`
@@ -332,7 +369,15 @@ on the board and stamped; nothing here may come from an emulator.
 #### ch18 · Memory Ordering on Real Hardware — target `host`
 
 - **Objectives.** What four cores cost each other: false sharing, cache-line ping-pong, the price
-  of atomics and fences. The same material as [ch10](#ch10), now with numbers.
+  of atomics and fences — and **a second memory model**, seen next to the first.
+- **Why this is not simply "ch10 with numbers".** [ch10](#ch10) teaches RISC-V: `amoswap`, `fence`,
+  and RVWMO. This chapter is ARM: load-exclusive/store-exclusive or LSE atomics, `dmb` and its
+  domains, and a differently specified model. That is a feature. A reader shown only one weak
+  memory model will conclude that model *is* memory ordering; shown two, they learn that "weak
+  memory model" is a family, that a fence is an architecture-specific spelling of an
+  architecture-independent need, and that the mechanism underneath — store buffers, coherence,
+  visible reordering — is what actually transfers. The chapter's job is to make the correspondence
+  explicit, not to pretend there is none.
 - **Code.** `sysfs/bench/sharing.c`, `sysfs/bench/atomics.c`.
 - **Measurements.** Throughput versus sharing distance; atomic operation cost, contended and
   uncontended; fence cost; scaling across one to four cores.
@@ -388,6 +433,10 @@ on the board and stamped; nothing here may come from an emulator.
   events exist, which are hardware, which are derived. Cannot be completed until the board runs it.
 - **D · An xv6 File Map** — what lives where, and which chapter reads it.
 - **E · Glossary** — terms with the chapter that defines them.
+- **F · AArch64 for RISC-V Readers** — a translation, not a reference. Registers and calling
+  convention, the load/store and branch forms, atomics and fences, beside their RISC-V
+  equivalents from Part I. Written for someone who has read ch04 and is about to read ch16, and
+  deliberately organised as "you know X; here it is again" rather than as an ISA summary.
 
 ---
 
@@ -482,15 +531,16 @@ The code lives in the **same repository** as the book, so a chapter and its code
 computer-systems/
 ├── sysfs/                  # the companion C library and tools, built up across the book
 │   ├── include/sysfs/      # headers, shared between the two targets
-│   ├── lib/                # bits.c (ch02), timing.c (ch14), ...
+│   ├── lib/                # shapes.c (the functions ch04 reads), bits.c (ch02), timing.c (ch14)
 │   ├── tools/              # elfdump, framewalk, sysprobe, profile.sh
 │   └── bench/              # the host-target microbenchmarks (Part III)
 ├── bench/                  # the book's Python tooling
 │   ├── outline.py          # the book's shape, machine-readable
 │   ├── stamp.py            # what a result must carry, and where it may come from
 │   ├── measure.py          # building and running C; repetition and statistics
+│   ├── disasm.py           # objdump output as a stamped artefact
 │   ├── xv6.py              # staging, building and driving the teaching kernel
-│   ├── figures.py          # every table and diagram, declared once
+│   ├── figures.py          # every table, listing and diagram, declared once
 │   ├── tables.py           # results to markdown
 │   ├── diagrams.py         # figures, drawn by code, as deterministic SVG
 │   ├── run_*.py            # the runners that produce results
@@ -521,17 +571,39 @@ Chapter text quotes code from the working tree with MyST's `{literalinclude}`, a
 them. `tests/test_book.py` fails a chapter that uses `:lines:`. Code is never pasted into prose:
 copy-pasted code goes stale within two chapters.
 
+**Machine code is the one thing that cannot be quoted from the tree**, because it does not exist
+there until a compiler has run. Chapters 4, 16 and 17 need it anyway, so `bench/disasm.py`
+compiles a named function to an object file, disassembles it with the matching `objdump`, and
+writes the output as a stamped result — see §6.3.
+
 ### 6.3 How numbers get into the book
 
 1. A runner under `bench/run_*.py` produces a result and writes it to `bench/results/<name>.json`
    via `bench.stamp.write_result`, which stamps target, machine, kernel, toolchain, flags, and a
    content hash over `CORE_SOURCES` plus the runner's own sources.
 2. Each figure is declared once in `bench/figures.py` and rendered to `chapters/_generated/*.md`
-   (tables) or `chapters/_figures/*.svg` (diagrams) by `scripts/render-figures.py`. Chapters pull
-   them in with `{include}` and `{figure}`.
-3. Two CI guards: `scripts/verify-numbers.py` (every cited result exists, carries its stamps,
-   matches the code checked in, and was measured somewhere it was allowed to be measured) and
-   `scripts/render-figures.py --check` (every committed fragment still matches the results).
+   (tables and listings) or `chapters/_figures/*.svg` (diagrams) by `scripts/render-figures.py`.
+   Chapters pull them in with `{include}` and `{figure}`.
+3. Three CI guards: `scripts/verify-numbers.py` (every cited result exists, carries its stamps,
+   matches the code checked in, and was produced somewhere it was allowed to be produced),
+   `scripts/render-figures.py --check` (every committed fragment still matches the results), and
+   `python3 -m bench.run_disasm --check` (every listing is still what this compiler emits).
+
+**Listings are a second kind of result.** A result declares a `kind`: almost all are
+`measurement`, and disassembly is a `listing`. The two need opposite provenance rules, which is
+why the distinction exists rather than being a naming convention:
+
+| | `measurement` | `listing` |
+|---|---|---|
+| Depends on | the machine it ran on | the compiler that produced it |
+| A `host` one requires | the reference machine, natively | nothing — any machine with the cross compiler |
+| May contain a duration | yes, on `host` | **never**, on either target |
+| CI can regenerate it | no | **yes, and does, on every push** |
+
+The last row is the payoff and the third row is its price. Exempting listings from the board rule
+would otherwise be a one-word way round the check the whole scheme rests on, so
+`bench.stamp.provenance_problems` holds a listing to its own shape: no timing keys anywhere in it,
+`measured_under: compilation`, and a summary containing nothing but listings.
 
 **Chapters contain no executable cells.** Rendering figures by executing code during the book
 build makes every deploy depend on a toolchain, and here it would make the deploy depend on a
@@ -552,8 +624,11 @@ carrying a cost unit and fails the build. A cited specification is allowed, mark
 ### 6.4 Correctness testing
 
 - Every `xv6` example is exercised by booting the kernel under QEMU in CI.
-- Every `host` example is cross-compiled for RV64 and run under user-mode QEMU in CI. Correctness
-  only — and the flags differ from the board's, which the chapter says wherever it matters.
+- Every `host` example is cross-compiled for the reference architecture and run under user-mode
+  QEMU in CI. Correctness only — and the flags differ from the board's (`-static`), which the
+  chapter says wherever it matters.
+- Every disassembly listing the book prints is re-captured in CI and diffed against what is
+  committed, so a compiler that changes its mind fails the build rather than a reader's afternoon.
 - Timing tests are marked `board` and skip everywhere else.
 - The reader's problems are marked `problem` and deselected in CI; the **scaffolding** beside each
   is not, so CI proves every problem is answerable without asserting anyone has answered it.
@@ -652,7 +727,7 @@ bind both the author and any assistant, are **CLAUDE.md §5**. In summary:
 | Milestone | Contents | State |
 |---|---|---|
 | **M0 — scaffold** | Repository, pipeline, stamping mechanism, xv6 submodule and staging, `verify-setup.py`, ch00 complete, stubs for everything else | **done** |
-| **M1 — the board** | `make bench-board` run on the VisionFive 2 Lite; `setup-host` committed; Appendix C generated | needs the hardware |
+| **M1 — the board** | `make bench-board` run on the reference machine; `setup-host` committed; Appendix C generated | needs the hardware |
 | **M2 — Part I** | ch01–ch05, `sysfs/lib/bits.c`, `elfdump`, `framewalk` | next |
 | **M3 — Part II** | ch06–ch12 with kernel patches and per-chapter instrumentation | |
 | **M4 — the hinge** | ch13, both targets, first real comparison | needs M1 |
@@ -731,9 +806,9 @@ Recorded so they are not relitigated.
 2. **The targets do not share an instruction set, and Part III is ARM.** Decided on evidence
    ([§5](#5-hardware-and-execution-strategy)): no purchasable RISC-V core both counts and samples,
    which would have cost ch20 and ch21. Instruction-set continuity was worth less than two
-   chapters, and only three chapters read disassembly at all. Revisit if a RISC-V board appears
-   that counts, samples, has RVV 1.0 and upstream Linux support — at which point the reference
-   machine can move back and only `hardware/` and five chapter headers change.
+   chapters, and only ch04, ch16 and ch17 depend on reading disassembly. Revisit if a RISC-V
+   board appears that counts, samples, has RVV 1.0 and upstream Linux support — at which point
+   the reference machine can move back and only `hardware/` and five chapter headers change.
 3. **xv6 as a submodule plus patches, never a fork.** `ls xv6/patches/` must remain a complete
    answer to what the book changed.
 4. **The board is the only place a timing may be measured.** Enforced in code, not in prose.
@@ -755,7 +830,7 @@ Recorded so they are not relitigated.
 
 ## 14. Immediate next steps
 
-1. Run `make bench-board` on the VisionFive 2 Lite, commit `bench/results/setup-host.json`, and
+1. Run `make bench-board` on the reference machine, commit `bench/results/setup-host.json`, and
    remove the `pending=` marker on `ch00-board` in `bench/figures.py` (M1).
 2. Generate Appendix C from the board — the `perf` events it actually has.
 3. Write ch01 with the per-chapter prompt, following
