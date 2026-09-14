@@ -2,9 +2,9 @@
 
 | Stage | Bytes it produced | Lines |
 |---|---|---|
-| `preprocess` | 38273 | 1176 |
+| `preprocess` | 38189 | 1176 |
 | `compile` | 1756 | 108 |
 | `assemble` | 4440 | 10 |
 | `link` | 556304 | 3500 |
 
-*Conditions: target `xv6`; riscv64 cross compiler, any machine — nothing here was executed; riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d`; 2026-09-14. Source: `bench/results/stagewalk-riscv64.json`, code hash `a6d92be93225ff6e`.*
+*Conditions: target `xv6`; riscv64 cross compiler, any machine — nothing here was executed; riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d`; 2026-09-14. Source: `bench/results/stagewalk-riscv64.json`, code hash `95433683fb1fd95c`.*

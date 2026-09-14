@@ -77,6 +77,33 @@ def parse_walk(text: str) -> dict[str, Any]:
     return {"stages": stages, **facts}
 
 
+def refuse_a_size_that_describes_this_checkout(scratch: Path) -> None:
+    """Stage 1's size has to be a fact about the file, not about where the repository lives.
+
+    The preprocessor writes the name of every file it pasted in, spelled as it was given on the
+    command line, into the output it hands the compiler. So an absolute include path makes the
+    preprocessed file longer on a machine whose checkout is buried deeper — 38273 bytes here and
+    38345 on a CI runner, for a tree identical to the byte. The book caught that the only way it
+    was ever going to: the committed number and the regenerated one disagreed, and the disagreement
+    was three line markers wide.
+
+    ``stages.sh`` names everything relative to the root so that cannot happen. This is the check
+    that it has not quietly stopped doing so, and it looks at every file the walk produced rather
+    than only the preprocessed one: an object file or a binary that started embedding its build
+    directory would move the same way, for the same reason, and would be harder to spot.
+    """
+    here = str(ROOT).encode()
+    for produced in sorted(scratch.iterdir()):
+        if here in produced.read_bytes():
+            raise WalkError(
+                f"{produced.name} contains the path of this checkout ({ROOT}), so its size is "
+                "partly a statement about this machine's directory layout and would differ on "
+                "another. Refusing to stamp it. See the comment at the top of sysfs/tools/"
+                "stages.sh: every path the walk hands the compiler must be relative to the "
+                "repository root."
+            )
+
+
 def walk() -> dict[str, Any]:
     """Run the four commands and read back what they left behind."""
     if not shutil.which(CC):
@@ -89,6 +116,7 @@ def walk() -> dict[str, Any]:
             check=True,
             cwd=ROOT,
         ).stdout
+        refuse_a_size_that_describes_this_checkout(Path(scratch))
     return parse_walk(printed)
 
 

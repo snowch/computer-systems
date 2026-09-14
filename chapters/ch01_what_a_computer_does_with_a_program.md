@@ -209,6 +209,18 @@ book is better off teaching you to *look at the output* than to model the optimi
 `<stdio.h>` and its dependencies, not "the cost of libc". A program that includes more headers
 preprocesses to more text and may still link to the same binary.
 
+**And that size was, briefly, a statement about this machine's directory layout.** The
+preprocessor writes into its output the name of every file it pasted in, spelled exactly as the
+command line spelled it. So an absolute include path makes the preprocessed file longer on a
+machine whose checkout sits deeper, and the same commit measured larger on a CI runner than on a
+laptop — the whole difference being the line markers naming one header. Nothing about the number
+could have given that away; a size is a size. It surfaced only because CI regenerates this result
+instead of trusting the committed copy, and the two disagreed. `stages.sh` now names every path
+relative to the repository root, and the runner refuses to stamp a result if any file the walk
+produced mentions where the repository lives. Worth knowing in its own right, as the sharpest
+possible statement of what stage 1 actually does: it is pasting text, and the paths are part of
+the text.
+
 ## Problems
 
 Three. Each has a test that passes only when you have solved it, and none of them has an answer

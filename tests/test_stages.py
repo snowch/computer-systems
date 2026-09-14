@@ -10,15 +10,21 @@ computes and will disagree about everything else.
 
 from __future__ import annotations
 
+import shutil
+import subprocess
+
 import pytest
 
 from bench import xv6
 from bench.disasm import disassemble
 from bench.measure import compile_program
 from bench.run_disasm import target_for
+from bench.run_stages import CC, WalkError, parse_walk, refuse_a_size_that_describes_this_checkout
 from bench.stamp import ROOT
 
 HOST_PROGRAM = "sysfs/tools/sameanswer.c"
+WALK_SCRIPT = "sysfs/tools/stages.sh"
+WALK_HEADER = "sysfs/include/sysfs/stages.h"
 EXPECTED = ["span 64", "folded 2016", "counted 2016", "agree yes", "end sameanswer"]
 
 
@@ -111,6 +117,59 @@ def test_volatile_keeps_every_read():
     )
     assert plain.text.count("lw") == 1, "ch03 says the plain version reads once:\n" + plain.text
     assert marked.text.count("lw") == 4, "ch03 says volatile keeps all four reads:\n" + marked.text
+
+
+def test_the_walk_refuses_a_file_that_names_this_checkout():
+    """The guard itself, checked — a guard nobody has ever seen fire is a comment.
+
+    It reads every file the walk produced rather than only the preprocessed one, because an
+    object file or a binary that began embedding its build directory would move a recorded size
+    the same way and would be much harder to attribute.
+    """
+    scratch = ROOT / "sysfs" / "build"
+    scratch.mkdir(parents=True, exist_ok=True)
+    planted = scratch / "walk-guard-probe.i"
+    planted.write_text(f'# 1 "{ROOT}/sysfs/include/sysfs/stages.h" 1\n')
+    try:
+        with pytest.raises(WalkError, match="path of this checkout"):
+            refuse_a_size_that_describes_this_checkout(scratch)
+    finally:
+        planted.unlink()
+
+
+@pytest.mark.skipif(shutil.which(CC) is None, reason=f"needs {CC}")
+def test_the_walk_measures_the_toolchain_and_not_the_checkout(tmp_path):
+    """ch01's stage sizes must be the same in two clones of the same commit. They were not.
+
+    An absolute `-I` put this checkout's path into the preprocessor's line markers and therefore
+    into stage 1's byte count, so the same tree measured 38273 bytes on a laptop and 38345 on a CI
+    runner — three line markers, twenty-four characters apart. No amount of reading the number
+    would have found that. Measuring it twice from different depths finds it immediately, which is
+    the only reason this test exists in the form it does.
+    """
+    walks = []
+    roots = ("b", "a-deliberately-long-directory-name/" * 3 + "checkout")
+    for name in roots:
+        checkout = tmp_path / name
+        for relative in (WALK_SCRIPT, HOST_PROGRAM, WALK_HEADER):
+            copied = checkout / relative
+            copied.parent.mkdir(parents=True, exist_ok=True)
+            copied.write_bytes((ROOT / relative).read_bytes())
+        printed = subprocess.run(
+            ["sh", str(checkout / WALK_SCRIPT), HOST_PROGRAM, str(checkout / "build"), CC],
+            cwd=checkout,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout
+        walks.append(parse_walk(printed))
+
+    shorter, longer = (len(str(tmp_path / name)) for name in roots)
+    assert longer - shorter > 100, "the two checkouts must differ enough for a path to show up"
+    assert walks[0] == walks[1], (
+        "the same commit measured differently from two directories, so ch01's stage sizes are "
+        f"partly a statement about where the tree lives:\n{walks[0]}\n{walks[1]}"
+    )
 
 
 def test_the_trap_probe_matches_the_program_it_counts():

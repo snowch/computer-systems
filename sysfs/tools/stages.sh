@@ -22,7 +22,23 @@ stem=$(basename "$source" .c)
 root=$(cd "$(dirname "$0")/../.." && pwd)
 
 mkdir -p "$outdir"
-flags="-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -I$root/sysfs/include"
+outdir=$(cd "$outdir" && pwd)
+
+# Everything below runs from the repository root, and every path handed to the compiler is
+# relative to it. That is not tidiness. The preprocessor writes into its output the name of every
+# file it pasted in, spelled exactly as it was given on the command line, so an absolute `-I`
+# would put the location of this checkout into stage 1's size — and the same commit would measure
+# 72 bytes larger under /home/runner/work/computer-systems/computer-systems than under
+# /home/user/computer-systems. That is not a wrong number so much as a number about the wrong
+# thing, and bench/run_stages.py refuses to record one.
+source=$(cd "$(dirname "$source")" && pwd)/$(basename "$source")
+case $source in
+  "$root"/*) source=${source#"$root"/} ;;
+  *) echo "stages.sh: $source is outside $root, so stage 1's size is not reproducible" >&2 ;;
+esac
+cd "$root"
+
+flags="-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -Isysfs/include"
 
 echo "stagewalk 1"
 echo "cc $($cc --version | head -1)"
