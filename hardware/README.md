@@ -63,8 +63,9 @@ So staying on RISC-V would have cost **two of Part III's eight chapters**, plus 
 plus tooling that breaks between distro releases. A Raspberry Pi costs none of those things.
 
 **What it costs instead** is instruction-set continuity between Part II and Part III — and only
-in the three chapters that actually read disassembly (ch16, ch17, ch21). The other five are
-method, and method does not have an architecture. A reader who learned RISC-V assembly in Part I
+in the Part III chapters that actually read disassembly: ch16, ch17 and ch21. The other five are
+method, and method does not have an architecture. Appendix F is the translation, written for the
+reader who learned RISC-V in ch04 and is about to read AArch64 in ch16. A reader who learned RISC-V assembly in Part I
 and then reads AArch64 in ch16 is not being failed by the book; they are being shown that the
 concepts were never about RISC-V. That is worth more than the tidiness it replaces.
 
@@ -126,7 +127,9 @@ python3 scripts/verify-setup.py
 On the machine it reads the device tree and `/proc/cpuinfo`, prints what the core says it is, and
 tests **counting and sampling separately** — because a machine can do the first without the
 second, and because some configurations report a zero rather than an error, and a zero will
-happily propagate into a table.
+happily propagate into a table. The sampling test spins deliberately and counts the samples it
+got back: a profiler asked to sample a sleeping process collects nothing and exits successfully,
+which is indistinguishable from a board that cannot sample at all.
 
 If that script is happy, the machine works, whatever anyone recommended. If it is not, no amount
 of specification says otherwise.
@@ -143,8 +146,21 @@ Most do not. Five do, and each says so in its own header:
 | ch20 — Whole-Machine Profiling | That `perf` can **sample** | Works on any mainline ARM machine. The chapter most RISC-V boards cannot run |
 | ch21 — Vectors | A vector unit — NEON here | On a RISC-V board without RVV 1.0 it reverts to reasoning |
 
-## The reference machine
+## The reference machine, and why no kernel version is pinned
 
 Figures committed in this repository were measured on the machine each result names — every one
-stamps the model, the core and the kernel that produced it. Your numbers will differ. The book is
-about ratios, mechanisms and method, and those transfer.
+stamps the model, the operating system, the kernel, the core and whether `perf` could count and
+sample. Your numbers will differ. The book is about ratios, mechanisms and method, and those
+transfer.
+
+What that stamp is *not* is a requirement. It would be easy to name an image and a kernel here,
+and the temptation is real, because whether counters work is a property of the whole
+configuration and not of the board: the Raspberry Pi kernel's 6.12 branch shipped a Pi 5 device
+tree with the `arm-pmu` node missing @rpi-pmu-dt-6507, and on those images the hardware was fine
+and `perf` saw nothing.
+
+But a pinned version is the wrong lesson as well as a perishable one. It is wrong within a year,
+it cannot be re-verified on every release, and it teaches a reader to compare a string instead of
+asking the machine — while the failure it is meant to prevent remains perfectly possible on the
+version that was correct when it was written. `verify-setup.py` asks the machine. That answer
+stays true.

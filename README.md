@@ -57,9 +57,9 @@ not a spec sheet.
 
 **The two targets do not share an instruction set, and that is deliberate.** The kernel small
 enough to read in an afternoon is a RISC-V kernel; the hardware whose counters work is an ARM
-one. `hardware/README.md` shows the evidence. Three chapters depend on reading disassembly (ch04,
-ch16, ch17) and ch00 shows one function compiled both ways; the rest is method, and method does
-not have an architecture.
+one. `hardware/README.md` shows the evidence. Reading disassembly is confined to ch03 and ch04
+(RISC-V) and ch16, ch17 and ch21 (AArch64), with Appendix F translating between them; the rest is
+method, and method does not have an architecture.
 
 ```bash
 make xv6-qemu      # boot the teaching kernel

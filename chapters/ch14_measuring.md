@@ -13,7 +13,7 @@ short_title: "ch14 Measuring"
 |---|---|
 | **Target** | `host` — Linux on real hardware, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch13](#ch13) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Clock resolution and read cost; one fixed workload's distribution over many repetitions; the same benchmark made to give three answers by changing what should not matter. |
 :::
 
 ## The question

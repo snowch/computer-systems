@@ -115,14 +115,33 @@ holds an SSH key. It never measures anything.
 The counters. Everything else is printed on the box; whether `perf` can read the hardware is not,
 and it is the one that stops the book dead.
 
-On ARM the PMU is reached directly, but the kernel still has to be told it is there — some vendor
-kernels have shipped without the PMU node in the device tree, and then `perf` silently sees no
-hardware at all. On RISC-V there is an extra layer: the counters are machine-mode CSRs, the kernel
-runs in supervisor mode, and the firmware bridges them through the SBI PMU extension @riscv-sbi,
-so the answer depends on the firmware as much as on the silicon.
+On ARM the PMU is reached directly, but the kernel still has to be told it is there, and this is
+not hypothetical: the Raspberry Pi kernel's own 6.12 branch shipped a device tree for the Pi 5
+with the `arm-pmu` node missing @rpi-pmu-dt-6507. The 6.6 tree had it. On the affected images the
+hardware was perfectly capable, the `armv8_cortex_a76` driver never registered, and `perf` saw no
+hardware counters at all — quietly, because that is how this fails.
 
-Either way the book's answer to "will this machine work?" is a script rather than a claim, and it
-runs on the machine after it arrives rather than on a specification before it.
+On RISC-V there is an extra layer: the counters are machine-mode CSRs, the kernel runs in
+supervisor mode, and the firmware bridges them through the SBI PMU extension @riscv-sbi, so the
+answer depends on the firmware as much as on the silicon.
+
+Read that regression as the general case rather than a Raspberry Pi anecdote. **Whether your
+counters work is a property of the configuration, not of the board** — silicon, device tree,
+kernel, firmware and `perf` build all have to agree, and four of those five change under you
+without the box changing at all.
+
+:::{important} The book does not tell you which kernel to run
+It would be easy to end this section with an image and a version number, and that would be worse
+advice than it looks. A pinned version is wrong within a year, cannot be re-verified on every
+release, and teaches you to check a string instead of a machine — while the failure it is meant
+to prevent stays perfectly possible on the version that was correct when it was written.
+
+So the book does the other thing. Every `host` result stamps the board, the operating system, the
+kernel and whether `perf` could count and sample, and the table at the end of this chapter is
+that stamp. It tells you what produced the book's numbers; it is not a requirement for yours.
+What is required is that `verify-setup.py` passes on the machine in front of you, which is a
+question about that machine and not about a version string.
+:::
 
 ### Finding something else
 
@@ -286,11 +305,23 @@ different questions:
 :end-before:     if not shutil.which("perf")
 ```
 
-If nothing is counted, the usual cause on ARM is that the kernel was never told the PMU exists —
-the device tree needs a node for it, and some vendor kernels have shipped without one. Check
-`dmesg | grep -i pmu` for a line claiming the driver bound, and
-`ls /sys/bus/event_source/devices/` for a per-core PMU such as `armv8_cortex_a76`. On a RISC-V
-machine the failure is usually further down: the counters are machine-mode CSRs reached through
+If nothing is counted, the usual cause on ARM is the missing device-tree node described above.
+Ask the kernel directly:
+
+```bash
+dmesg | grep -i perfevents
+ls /sys/bus/event_source/devices/
+```
+
+A machine whose PMU registered says so at boot, naming the driver it bound:
+
+```text
+hw perfevents: enabled with armv8_cortex_a76 PMU driver, 7 counters available
+```
+
+and `/sys/bus/event_source/devices/` contains a matching entry. No such line, or no such entry,
+and no amount of care in `perf`'s arguments will help: there is nothing underneath it. On a RISC-V
+machine the failure is usually further down — the counters are machine-mode CSRs reached through
 the firmware's SBI PMU extension @riscv-sbi, so check for `CONFIG_RISCV_PMU_SBI` and a firmware
 that provides it.
 
@@ -306,9 +337,36 @@ interrupts the program thousands of times a second to ask where it is, and build
 where the time went from those interruptions. Sampling needs the counters to raise an interrupt
 when they overflow, and that is a separate hardware feature from counting.
 
+Test it with a program that is actually running. This matters more than it looks:
+
 ```bash
-perf record -o /dev/null -- true    # this must work too
+perf record -F 999 -e cycles -o /tmp/perf.data -- sleep 2    # proves nothing
+perf report --stats -i /tmp/perf.data | grep SAMPLE
 ```
+
+A sleeping process is off the CPU, so it retires no instructions and burns no cycles, and a
+perfectly working PMU returns almost nothing. The command succeeds, the sample count is near
+zero, and you have learned nothing about the machine. Give it something to sample instead:
+
+```bash
+perf record -F 999 -e cycles -o /tmp/perf.data -- \
+    python3 -c 'x = 0
+for _ in range(4_000_000): x += 1'
+perf report --stats -i /tmp/perf.data | grep SAMPLE
+```
+
+Now the sample count is the answer, and `bench/run_setup.py` asks exactly this question the same
+way — because the first version of it ran `perf record -- true`, believed the zero exit status,
+and would have declared a board capable of something it had never been asked to do:
+
+```{literalinclude} ../bench/run_setup.py
+:language: python
+:start-at: def perf_can_sample
+:end-before:     if not shutil.which("perf")
+```
+
+An exit status is not evidence. It is the same mistake as believing a counter that reads zero,
+and it is worth meeting twice in one chapter.
 
 On ARM, overflow interrupts are a standard PMU feature. On RISC-V they are the **Sscofpmf**
 extension @riscv-sscofpmf, and a kernel on a core without it says so at boot and then declines:

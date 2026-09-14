@@ -13,7 +13,7 @@ short_title: "ch20 Whole-Machine Profiling"
 |---|---|
 | **Target** | `host` — Linux on real hardware, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch19](#ch19) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Profiles of the supplied program before and after, and a sampling artefact shown deliberately. |
 | **Assumes** | that perf can sample. ARM PMUs support counter-overflow interrupts as standard, so this works on the reference machine — but most affordable RISC-V cores do not, and a reader following Part III on one will find this the chapter they cannot run. |
 :::
 

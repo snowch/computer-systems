@@ -13,7 +13,7 @@ short_title: "ch18 Memory Ordering on Real Hardware"
 |---|---|
 | **Target** | `host` — Linux on real hardware, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch17](#ch17) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Throughput against sharing distance; atomic cost, contended and uncontended; fence cost; scaling from one core to four. |
 | **Answers the cost of** | [ch10](#ch10) |
 | **Assumes** | four cores, and this interconnect's coherence behaviour. A different core count moves the scaling curve without changing the mechanism; two cores make the chapter thin. |
 :::

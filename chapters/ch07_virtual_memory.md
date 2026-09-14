@@ -13,7 +13,7 @@ short_title: "ch07 Virtual Memory"
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch06](#ch06) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | The page-table shape of a running process: levels, entries, and physical pages consumed per mapping. |
 :::
 
 ## The question

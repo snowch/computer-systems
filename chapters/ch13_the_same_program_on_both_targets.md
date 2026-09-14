@@ -13,7 +13,7 @@ short_title: "ch13 The Same Program on Both Targets"
 |---|---|
 | **Target** | `xv6` and `host` — every example says which |
 | **Prerequisites** | [ch12](#ch12) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | The same structural facts from both targets, and the first side-by-side timing: the board's, against QEMU's meaningless equivalent, shown deliberately. |
 | **Answers the cost of** | [ch04](#ch04), [ch06](#ch06), [ch07](#ch07) |
 :::
 

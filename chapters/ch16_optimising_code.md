@@ -13,7 +13,7 @@ short_title: "ch16 Optimising Code"
 |---|---|
 | **Target** | `host` — Linux on real hardware, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch15](#ch15) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Each transformation at `-O0`, `-O2` and `-O3` with the disassembly that explains it, including one where the optimisation does nothing because the compiler had already done it. |
 | **Answers the cost of** | [ch04](#ch04) |
 :::
 

@@ -8,10 +8,12 @@ short_title: Preface
 *From bits to cycles, measured on real hardware.*
 
 :::{warning} This book is being written
-Chapter 0 is complete and the toolchain around it works end to end. Every other chapter is a
-stub carrying its target, its question and the measurements it owes you. The
-[project plan](https://github.com/snowch/computer-systems/blob/main/PLAN.md) has the outline and
-what each chapter has to produce before it loses its `[DRAFT]` marker.
+[Chapter 0](#ch00) is complete and the toolchain around it works end to end. Every other
+chapter is a stub, and every stub names its target, its question and the measurements it owes you
+— so the table of contents is already a usable map of where the book is going. The six appendices
+each say what they will hold and where that content has to come from. The
+[project plan](https://github.com/snowch/computer-systems/blob/main/PLAN.md) has the long version,
+and what each chapter must produce before it loses its `[DRAFT]` marker.
 
 **[Download the whole book as a PDF](systems-from-scratch.pdf)** — every chapter and appendix in
 one file, built from the same source as this site, so the two cannot disagree about what a
@@ -54,8 +56,8 @@ laptop, not extrapolated from a different machine.
 The split is not a compromise; it is the argument. QEMU will happily answer a question about
 nanoseconds and the answer will be meaningless, because it models no cache, no branch predictor
 and no pipeline. Watching a program in a debugger tells you what it *does*. Only real hardware
-tells you what it *costs*. Chapter 13 puts the same program through both and makes the gap
-concrete.
+tells you what it *costs*. [Chapter 13](#ch13) puts the same program through both and makes
+the gap concrete.
 
 ### Why they do not share an instruction set
 
@@ -67,7 +69,7 @@ Part III needs `perf` to do two separate things: **count** events over a run, an
 interrupt the program thousands of times a second to ask where it is. Sampling needs the counters
 to raise an interrupt when they overflow. On ARM that is a standard part of the performance
 monitoring unit. On RISC-V it is an optional extension, and a 2025 study of the three RISC-V cores
-you can actually buy found that none of them wins:
+you can actually buy @riscv-pmu-profiling found that none of them wins:
 
 | | SiFive U74 | T-Head C910 | SpacemiT X60 |
 |---|---|---|---|
@@ -94,21 +96,24 @@ follow that a single-architecture book could not offer.
 has to *assert* that its ideas generalise. This one demonstrates it, by having them survive a
 change of architecture in front of you.
 
-**You get two memory models instead of one.** Chapter 10 teaches RISC-V's; chapter 18 measures
-ARM's, which is also weak and differently specified. A reader shown only one would reasonably
+**You get two memory models instead of one.** [Chapter 10](#ch10) teaches RISC-V's;
+[chapter 18](#ch18) measures ARM's, which is also weak and differently specified. A reader shown only one would reasonably
 conclude that model *is* memory ordering. Shown two, you learn it is a family, that a fence is an
 architecture-specific spelling of an architecture-independent need, and that store buffers and
 coherence are what actually transfer.
 
-**Chapter 13 gets harder in the way that matters.** Three things differ between watching a program
+**[Chapter 13](#ch13) gets harder in the way that matters.** Three things differ between watching a program
 under xv6 and profiling it on real hardware: emulation against hardware, one kernel against
 another, one instruction set against another. Attributing a difference to the wrong one is the
 commonest way to be confidently wrong about performance, and that chapter is where you practise
 separating them.
 
-Machine code appears in four chapters. Chapter 0 shows one small function compiled for both, so
-that the difference is concrete rather than promised; ch04, ch16 and ch17 are the three that
-depend on reading it. The rest is method, and method does not have an architecture.
+Reading disassembly is a small part of the book, and this is the whole of what the split costs
+you. In Parts I and II it is RISC-V: [ch03](#ch03) and [ch04](#ch04). In Part III it is AArch64:
+[ch16](#ch16), [ch17](#ch17) and [ch21](#ch21). Chapter 0 shows one small function compiled both ways, so the difference is concrete rather
+than promised, and [Appendix F](#appendix-f) is a translation between the two for the reader who
+meets the second having learned the first. Everything else is method, and method does not have an
+architecture.
 
 ### One argument, not two tutorials
 
@@ -117,19 +122,19 @@ Every chapter in it names the earlier chapter whose cost it measures, in its own
 
 | When Part III asks | You already learned the mechanism in |
 |---|---|
-| ch15 — where is the data, and what does each step out cost? | ch02 layout and alignment, ch07 address translation |
-| ch16 — what did that cost? | ch04 what the compiler emitted |
-| ch17 — what is the core doing between fetch and finish? | ch04 the instructions themselves |
-| ch18 — what do four cores cost each other? | ch10 locks, fences and ordering |
-| ch19 — what does Linux charge for this? | ch06 traps, ch08 faults, ch11 switches |
+| [ch15](#ch15) — where is the data, and what does each step out cost? | [ch02](#ch02) layout and alignment, [ch07](#ch07) address translation |
+| [ch16](#ch16) — what did that cost? | [ch04](#ch04) what the compiler emitted |
+| [ch17](#ch17) — what is the core doing between fetch and finish? | [ch04](#ch04) the instructions themselves |
+| [ch18](#ch18) — what do four cores cost each other? | [ch10](#ch10) locks, fences and ordering |
+| [ch19](#ch19) — what does Linux charge for this? | [ch06](#ch06) traps, [ch08](#ch08) faults, [ch11](#ch11) switches |
 
 So you never arrive at a Part III chapter cold. You arrive knowing the mechanism completely and
 needing only the price — a better position than either half could put you in alone, and the reason
 the book is arranged this way rather than as theory followed by benchmarks.
 
-Three Part III chapters have no counterpart, deliberately: ch14 teaches measurement itself, ch20 is
-about the whole machine rather than any one mechanism, and ch21 concerns hardware Part II never had
-reason to describe.
+Three Part III chapters have no counterpart, deliberately: [ch14](#ch14) teaches measurement
+itself, [ch20](#ch20) is about the whole machine rather than any one mechanism, and
+[ch21](#ch21) concerns hardware Part II never had reason to describe.
 
 ## How the numbers work
 
@@ -149,15 +154,21 @@ hundred pages in.
 
 Someone who has seen digital logic and a pipeline diagram, has spent years around computers, is
 fluent in a scripting language, and has never had a reason to read a kernel. You do not need to
-know C well; chapter 3 covers the parts that are really about addresses. You do not need OS
-internals; that is Part II.
+know C well; [chapter 3](#ch03) covers the parts that are really about addresses. You do not
+need OS internals; that is Part II.
 
 ## What you will need
 
 A laptop for Parts I and II — everything there runs under emulation, free. For Part III, a small
 Linux machine whose `perf` can count and sample; a Raspberry Pi 5 is the reference, and one you
-already own may well do. Chapter 0 is the setup, and a script that tells you which targets your
-machine can currently run and whether its counters are real.
+already own may well do. [Chapter 0](#ch00) is the setup, and a script that tells you which
+targets your machine can currently run and whether its counters are real.
+
+The book does not tell you which kernel to run. Whether a machine's performance counters work is
+a property of its whole configuration — silicon, device tree, kernel, firmware — rather than of
+the board, and the reference board's own counters went missing for a kernel release. So every
+figure records the image and kernel that produced it, and chapter 0 hands you a script that asks
+your machine instead of a version number to match.
 
 ## Problems
 

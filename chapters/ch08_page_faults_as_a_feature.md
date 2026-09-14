@@ -13,7 +13,7 @@ short_title: "ch08 Page Faults as a Feature"
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch07](#ch07) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Fault counts and pages allocated for one workload, with each feature and without it. |
 :::
 
 ## The question

@@ -125,3 +125,15 @@
                   exposes. Cited by ch17, which measures what it can and says which numbers are
                   derived rather than counted.}
 }
+
+@misc{rpi-pmu-dt-6507,
+  title        = {6.12.y is missing arm-pmu device tree node on {Pi5}},
+  author       = {{raspberrypi/linux issue 6507}},
+  year         = {2025},
+  howpublished = {\url{https://github.com/raspberrypi/linux/issues/6507}},
+  note         = {The reference machine's own performance counters, absent for a kernel release.
+                  The 6.12.y device tree dropped the arm-pmu node the 6.6.y one carried, so the
+                  armv8_cortex_a76 PMU never registered and perf silently saw no hardware. Cited
+                  by ch00 as the concrete case behind its instruction to verify counters on the
+                  machine rather than assume them from the board.}
+}

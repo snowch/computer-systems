@@ -216,6 +216,10 @@ def board_identity_table(name: str) -> str:
     machine = result["machine"]
     rows: list[list[Any]] = [
         ["Board (device tree)", machine.get("model")],
+        # Image and kernel together, because the counters are a property of the configuration and
+        # not only of the silicon: the reference board's own PMU went missing for a kernel
+        # release. ch00 tells the reader to verify rather than match this row.
+        ["Operating system", machine.get("os")],
         ["Kernel", machine.get("kernel")],
         ["Cores online", machine.get("cpus_online")],
         ["Native compiler", result.get("toolchain", {}).get("cc")],
@@ -227,5 +231,6 @@ def board_identity_table(name: str) -> str:
         ["`perf stat` reads hardware counters", summary.get("perf_counters_readable")],
         ["Cycle counter event", summary.get("perf_cycles_event")],
         ["`perf record` can sample", summary.get("perf_can_sample")],
+        ["Samples collected in the capability check", summary.get("perf_samples")],
     ]
     return render_table(["What", "This board"], rows)

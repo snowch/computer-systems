@@ -176,6 +176,21 @@ def cpuinfo_fields() -> dict[str, str]:
     return fields
 
 
+def _os_release() -> str:
+    """The distribution and version, as the running system describes itself.
+
+    Recorded because the kernel alone is not the whole configuration. The reference machine's
+    counters went missing for a kernel release — the Pi 5's device tree dropped the ``arm-pmu``
+    node in 6.12.y @rpi-pmu-dt-6507 — so "which image, which kernel" is part of what a ``host``
+    result means, and a reader comparing their numbers with the book's needs both.
+    """
+    for line in _read("/etc/os-release").splitlines():
+        key, _, value = line.partition("=")
+        if key == "PRETTY_NAME":
+            return value.strip().strip('"')
+    return ""
+
+
 def classify_machine() -> str:
     """``board``, ``qemu``, ``qemu-user`` or ``other`` — where this process is really running.
 
@@ -220,6 +235,9 @@ def describe_recorder() -> dict[str, Any]:
     model = _read("/proc/device-tree/model")
     if model:
         recorder["model"] = model
+    distribution = _os_release()
+    if distribution:
+        recorder["os"] = distribution
     cpu = {k: v for k, v in cpuinfo_fields().items() if k != "processor"}
     if cpu:
         recorder["cpu"] = cpu

@@ -13,7 +13,7 @@ short_title: "ch10 Locks and Memory Ordering"
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch09](#ch09) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Acquisitions and contentions per lock, and the interleavings that break an unlocked counter — deterministic under QEMU, which is the one thing emulation makes easier. |
 :::
 
 ## The question

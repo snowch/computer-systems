@@ -13,7 +13,7 @@ short_title: "ch06 Traps and System Calls"
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch05](#ch05) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Instructions on the trap path, counted by instrumentation rather than timed, and the register and CSR state saved and restored. |
 :::
 
 ## The question

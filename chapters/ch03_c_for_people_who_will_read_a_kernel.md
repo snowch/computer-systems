@@ -13,7 +13,7 @@ short_title: "ch03 C for People Who Will Read a Kernel"
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch02](#ch02) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | The code the compiler emits for each construct — the disassembly is the evidence. |
 :::
 
 ## The question

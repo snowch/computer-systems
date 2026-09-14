@@ -13,7 +13,7 @@ short_title: "ch09 Interrupts and Drivers"
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch08](#ch08) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Interrupt counts by source over a defined workload, and buffer occupancy under load. |
 :::
 
 ## The question
