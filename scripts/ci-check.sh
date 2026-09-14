@@ -94,6 +94,11 @@ echo "== the interrupt census still says what the book prints =="
 # not record are the ones that vary; see the runner's docstring.
 python3 -m bench.run_interrupts --check
 
+echo "== the lock is still made of the instructions the book prints =="
+# Read out of the kernel as built, so this catches a compiler that stopped emitting the atomic or
+# the fence — either of which would be a broken lock, and neither of which any test would notice.
+python3 -m bench.run_locks --check
+
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check
 

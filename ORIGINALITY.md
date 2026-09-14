@@ -423,6 +423,51 @@ top-half/bottom-half split.
   is close to a well-known lab, and which no test could grade without becoming one.
 - **Citations are primary only**: the RISC-V privileged specification and xv6's own source.
 
+## ch10 · Locks and Memory Ordering
+
+**Closest in subject.** The xv6 book's chapter on locking, which walks the same `spinlock.c`; MIT
+6.1810's locks lab; *Operating Systems: Three Easy Pieces* on locks and concurrency; and the
+memory-ordering material in *A Primer on Memory Consistency and Cache Coherence* and in the RISC-V
+and ARM architecture manuals.
+
+**How this differs, and the care taken.**
+
+- **The chapter is built on disassembly rather than on narrative.** "Two threads can lose an
+  update" is presented as a fact about what `counter++` compiles to, printed on both
+  architectures, rather than as a story about threads. Every claim about atomicity and ordering is
+  a listing CI regenerates, which is a form none of the comparable material uses.
+- **Atomicity and ordering are separated by showing that the spelling changes and the instruction
+  count does not.** `amoadd.d` against `amoadd.d.aqrl` is the same single instruction with two
+  letters added. That framing — ordering is free here in instructions and is not free everywhere —
+  is this book's, and it sets up ch18 rather than restating a memory-model chapter.
+- **The AArch64 outlined-atomics finding is original to this measurement.** The same C becomes one
+  instruction on RISC-V and a call to a run-time-dispatched helper on AArch64, because the
+  compiler cannot assume LSE. It was found by disassembling both, not taken from anywhere.
+- **The kernel primitives are read out of the kernel as built**, so the counts are of the
+  instructions the machine runs. The three observations drawn from them — one instruction of
+  twenty-five does the mutual exclusion, `release` contains no atomic at all, and `push_off`
+  plus `pop_off` outweigh both primitives — are this book's, and follow from counting rather than
+  from reading the source.
+- **ch09's debt is paid explicitly.** The book's own unlocked census counters are judged against
+  the chapter's own evidence, and defended on the grounds that locking the trap path would change
+  the thing being measured by an amount comparable to what is being counted. A book auditing its
+  own instrumentation in the chapter that explains why it is wrong is not a move any textbook
+  makes, because no textbook has instrumentation to audit.
+- **A plan that turned out to be wrong is reported rather than rewritten.** PLAN.md promised
+  contention counts and claimed the interleavings would be deterministic under QEMU; neither
+  survived, and "What we measured" says so and says why. `bench/outline.py` is corrected in the
+  same commit.
+- **The problems are original.** 10.1 is graded by running the reader's lock under real threads
+  and counting lost updates — the only problem in the book graded by concurrency, because a lock
+  is the one thing that cannot be checked by reading it. 10.2's eighteen cases turn on the
+  asymmetry of acquire and release and on same-address ordering, which settles a case before any
+  barrier is consulted. 10.3 asks for an order conflict rather than "will it hang", which is
+  deliberately the question a lock-ordering rule actually asks. Verified against references kept
+  outside the repository.
+- **Not set**: the well-known allocator-and-buffer-cache contention lab, which measures contention
+  — the one thing this target cannot show.
+- **Citations are primary only**: the RISC-V unprivileged specification and xv6's own source.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the

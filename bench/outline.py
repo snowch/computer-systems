@@ -198,8 +198,8 @@ CHAPTERS: tuple[Chapter, ...] = (
         "xv6",
         "What breaks when two harts touch the same memory, and what is the minimum fix?",
         "ch10-locks",
-        owes="Acquisitions and contentions per lock, and the interleavings that break an unlocked "
-        "counter — deterministic under QEMU, which is the one thing emulation makes easier.",
+        owes="What a lock is made of, in instructions: the atomic that excludes, the fence that "
+        "orders, and what turning interrupts off costs beside them.",
     ),
     Chapter(
         11,

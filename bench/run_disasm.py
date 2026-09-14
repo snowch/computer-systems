@@ -66,6 +66,17 @@ SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
             "sysfs_call_through",
         ),
     ),
+    "ordering": (
+        "sysfs/lib/ordering.c",
+        "sysfs/include/sysfs/ordering.h",
+        (
+            "sysfs_bump_plain",
+            "sysfs_bump_relaxed",
+            "sysfs_bump_ordered",
+            "sysfs_publish",
+            "sysfs_publish_unordered",
+        ),
+    ),
     "frames": (
         "sysfs/lib/frames.c",
         "sysfs/include/sysfs/frames.h",

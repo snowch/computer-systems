@@ -489,3 +489,28 @@ def interrupt_cost_table(name: str) -> str:
         ["Characters arriving from the keyboard", run["chars_received"]],
     ]
     return render_table(["What happened", "Count"], rows)
+
+
+def lock_primitives_table(name: str) -> str:
+    """What xv6's lock is made of, as built.
+
+    The instruction counts are what each function *contains*, error paths included — xv6 checks
+    on every acquire that the caller is not already holding the lock, and panics if it is. The
+    column that matters is the narrow one: how many of those instructions are doing the mutual
+    exclusion.
+    """
+    primitives = load_result(name)["summary"]["primitives"]
+    rows = [
+        [
+            f"`{symbol}`",
+            data["instructions"],
+            data["atomic"],
+            data["fences"],
+            data["csr_operations"],
+        ]
+        for symbol, data in sorted(primitives.items())
+    ]
+    return render_table(
+        ["", "Instructions", "Atomic", "Fences", "CSR writes"],
+        rows,
+    )

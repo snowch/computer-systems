@@ -290,6 +290,27 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.interrupt_cost_table,
         result="interrupts-xv6",
     ),
+    # -- ch10 ---------------------------------------------------------------------------
+    "ch10-race": Listing(
+        symbol="sysfs_bump_plain",
+        results=("ordering-riscv64", "ordering-aarch64"),
+    ),
+    "ch10-atomic": Listing(
+        symbol="sysfs_bump_relaxed",
+        results=("ordering-riscv64", "ordering-aarch64"),
+    ),
+    "ch10-ordered": Listing(
+        symbol="sysfs_bump_ordered",
+        results=("ordering-riscv64",),
+    ),
+    "ch10-publish": Listing(
+        symbol="sysfs_publish",
+        results=("ordering-riscv64", "ordering-aarch64"),
+    ),
+    "ch10-primitives": Table(
+        render=tables.lock_primitives_table,
+        result="locks-xv6",
+    ),
     "ch00-board": Table(
         render=tables.board_identity_table,
         result="setup-host",

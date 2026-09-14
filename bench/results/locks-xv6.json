@@ -1,0 +1,74 @@
+{
+  "code_fingerprint": "031fd13c51bdaa92",
+  "code_sources": [
+    "bench/run_locks.py",
+    "bench/xv6.py"
+  ],
+  "conditions": {
+    "note": "instruction counts only; contention is a duration and this target has none",
+    "subject": "xv6's own spinlock, disassembled from the kernel as built"
+  },
+  "generated_at": "2026-09-14T21:25:03+00:00",
+  "kind": "artefact",
+  "machine": {
+    "arch": "riscv64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "riscv64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "locks-xv6",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v24",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "primitives": {
+      "acquire": {
+        "atomic": 1,
+        "branches": 2,
+        "calls": 4,
+        "csr_operations": 0,
+        "fences": 0,
+        "instructions": 25
+      },
+      "pop_off": {
+        "atomic": 0,
+        "branches": 4,
+        "calls": 3,
+        "csr_operations": 2,
+        "fences": 0,
+        "instructions": 27
+      },
+      "push_off": {
+        "atomic": 0,
+        "branches": 2,
+        "calls": 3,
+        "csr_operations": 1,
+        "fences": 0,
+        "instructions": 23
+      },
+      "release": {
+        "atomic": 0,
+        "branches": 1,
+        "calls": 3,
+        "csr_operations": 0,
+        "fences": 1,
+        "instructions": 20
+      }
+    }
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 the built kernel was read, not run",
+    "flags": "xv6's own CFLAGS"
+  }
+}
