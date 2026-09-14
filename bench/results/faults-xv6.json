@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "4d5a47d5fd4b6ea5",
+  "code_fingerprint": "62f7358e9e64d646",
   "code_sources": [
     "bench/run_faults.py",
     "bench/xv6.py",
@@ -12,7 +12,7 @@
     "note": "counts only: pages allocated and faults taken; nothing here was timed",
     "policies": "both are this kernel's own \u2014 sbrk allocates on request, sbrklazy on touch"
   },
-  "generated_at": "2026-09-14T20:59:30+00:00",
+  "generated_at": "2026-09-14T21:08:14+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",

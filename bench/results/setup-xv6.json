@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "c1a51b521449a6f7",
+  "code_fingerprint": "9aeea163ba931a57",
   "code_sources": [
     "bench/run_setup.py",
     "bench/xv6.py",
@@ -11,7 +11,7 @@
     "memory": "128M",
     "note": "structural facts only \u2014 QEMU models no timing (ch00)"
   },
-  "generated_at": "2026-09-14T21:00:13+00:00",
+  "generated_at": "2026-09-14T21:08:36+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",

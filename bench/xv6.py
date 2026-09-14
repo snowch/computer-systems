@@ -212,7 +212,13 @@ def qemu_command(stage: Path, cpus: int = DEFAULT_CPUS, memory: str = "128M") ->
         "-global",
         "virtio-mmio.force-legacy=false",
         "-drive",
-        f"file={stage / 'fs.img'},if=none,format=raw,id=x0",
+        # snapshot=on: writes go to a temporary overlay and the image on disk is never touched,
+        # so every boot starts from the same filesystem. Without it a measurement that writes a
+        # file would depend on how many times the suite had been run since `mkfs` last ran — and
+        # while QEMU does not in fact flush this image before it is killed, "the emulator happens
+        # not to get round to it" is not a property to record numbers against. ch09 counts disk
+        # interrupts, which is what made the question worth settling rather than assuming.
+        f"file={stage / 'fs.img'},if=none,format=raw,id=x0,snapshot=on",
         "-device",
         "virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0",
     ]
