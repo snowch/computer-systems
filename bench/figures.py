@@ -320,6 +320,15 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.switch_census_table,
         result="switch-xv6",
     ),
+    # -- ch12 ---------------------------------------------------------------------------
+    "ch12-amplification": Table(
+        render=tables.block_amplification_table,
+        result="blocks-xv6",
+    ),
+    "ch12-cost": Table(
+        render=tables.block_cost_table,
+        result="blocks-xv6",
+    ),
     "ch00-board": Table(
         render=tables.board_identity_table,
         result="setup-host",

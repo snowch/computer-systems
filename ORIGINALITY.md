@@ -499,6 +499,42 @@ scheduling policy and on the abstraction of a thread.
   itself — the one thing this chapter can simply show the reader, disassembled.
 - **Citations are primary only**: xv6's own source.
 
+## ch12 · The File System
+
+**Closest in subject.** The xv6 book's chapters on the file system and on logging; MIT 6.1810's
+file-system and large-files labs; *Operating Systems: Three Easy Pieces* on file-system
+implementation, journalling and crash consistency; and the journalling chapter of any OS text.
+
+**How this differs, and the care taken.**
+
+- **The chapter opens with a measured amplification factor and explains the file system in order
+  to explain it.** The comparable material introduces the seven layers and then mentions that a
+  log doubles writes. Here the number comes first, measured, and each layer is introduced as the
+  reason one of the counted blocks exists.
+- **The figure is a difference between two runs, not a single measurement.** A program creates,
+  optionally writes one byte, closes and unlinks; the census is zeroed before each run; the byte's
+  cost is the subtraction. That method exists because a single run charges the byte for forking
+  and exec'ing the program, which is larger than the thing being measured — and stating the method
+  in the chapter is part of the point.
+- **The runner refuses to stamp a result that contradicts the chapter's own explanation.** Twice
+  the blocks plus twice the transactions is checked, not asserted, so a kernel change that broke
+  the explanation would fail CI rather than leave the prose quietly wrong.
+- **That cross-check caught a real error in this chapter's own instrumentation.** The counter first
+  counted `log_write` calls rather than blocks, xv6 absorbs repeated writes to the same block, and
+  a simpler invariant passed on two wrong numbers agreeing. The comment in `run_blocks.py` records
+  it.
+- **Idempotence is given its own section and treated as the load-bearing idea**, with the
+  consequence drawn that the log must hold blocks rather than changes — which is also the
+  explanation for the amplification. That framing is this book's.
+- **The problems are original.** 12.1 is graded against the chapter's own measurement as well as
+  against arithmetic, so a formula that fits the algebra and not the machine fails. 12.2 finds the
+  single commit point. 12.3 gives six orderings of the same three writes, all of which produce the
+  right end state if nothing goes wrong, and asks which is safe at every point — deliberately not
+  "which looks sensible". Verified against references kept outside the repository.
+- **Not set**: the well-known large-files and symbolic-link labs, which are implementation
+  exercises rather than questions about what the disk is charged.
+- **Citations are primary only**: xv6's own source.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the

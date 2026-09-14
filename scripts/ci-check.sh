@@ -102,6 +102,9 @@ python3 -m bench.run_locks --check
 echo "== a context switch still moves what the book says =="
 python3 -m bench.run_switch --check
 
+echo "== one byte still costs the disk what the book prints =="
+python3 -m bench.run_blocks --check
+
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check
 

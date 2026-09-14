@@ -544,3 +544,41 @@ def switch_census_table(name: str) -> str:
         ],
     ]
     return render_table(["What the workload caused", "Count"], rows)
+
+
+def block_amplification_table(name: str) -> str:
+    """What reached the disk, for a program that wrote one byte and one that wrote none.
+
+    Three columns because the third is the only one that means anything: the two runs differ by a
+    single `write` call, so the difference is the byte's and everything else cancels.
+    """
+    run = load_result(name)["summary"]["blockload"]
+    quiet, byte, alone = (
+        run["creating_an_empty_file"],
+        run["and_writing_one_byte"],
+        run["the_byte_alone"],
+    )
+    rows = [
+        [label, quiet[key], byte[key], alone[key]]
+        for label, key in (
+            ("Blocks read from the disk", "reads"),
+            ("Blocks written to the disk", "writes"),
+            ("Blocks entered in the log", "logged"),
+            ("Transactions committed", "commits"),
+        )
+    ]
+    return render_table(["", "No bytes written", "One byte written", "The byte alone"], rows)
+
+
+def block_cost_table(name: str) -> str:
+    """The amplification, in the units the question was asked in."""
+    run = load_result(name)["summary"]["blockload"]
+    rows = [
+        ["Bytes the program wrote", 1],
+        ["Bytes the disk was given, because of that byte", run["bytes_written_for_one_byte"]],
+        [
+            "Bytes the disk was given for a file with nothing in it",
+            run["bytes_written_for_no_bytes"],
+        ],
+    ]
+    return render_table(["", "Bytes"], rows)

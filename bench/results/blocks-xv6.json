@@ -1,19 +1,18 @@
 {
-  "code_fingerprint": "b8bc8148b1a7d56c",
+  "code_fingerprint": "7a815d0008bee7b1",
   "code_sources": [
-    "bench/run_interrupts.py",
+    "bench/run_blocks.py",
     "bench/xv6.py",
-    "xv6/apps/intrload.c",
-    "xv6/patches/09-interrupt-census.patch"
+    "xv6/apps/blockload.c",
+    "xv6/patches/12-block-census.patch"
   ],
   "conditions": {
     "cpus": 3,
-    "disk": "the image is opened with snapshot=on, so every run starts from the same filesystem",
     "filesystem_image": "8e951179170df5a4",
-    "note": "counts only; nothing here was timed, and two counts are deliberately absent",
-    "omitted": "timer and UART interrupt counts, which measure elapsed time rather than work"
+    "method": "a difference between two runs of the same program, one of which writes a byte",
+    "note": "block counts only; nothing here was timed"
   },
-  "generated_at": "2026-09-14T21:46:51+00:00",
+  "generated_at": "2026-09-14T21:45:20+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",
@@ -23,7 +22,7 @@
     "measured_under": "emulation",
     "model": "qemu virt (-machine virt -bios none)"
   },
-  "name": "interrupts-xv6",
+  "name": "blocks-xv6",
   "recorded_on": {
     "arch": "x86_64",
     "cpu": {
@@ -37,21 +36,28 @@
     "python": "3.11.15"
   },
   "summary": {
-    "intrload": {
-      "block_operations": 64,
-      "chars_received": 10,
-      "chars_requested": 513,
-      "chars_the_writer_moved_itself": 577,
-      "counts_not_recorded": [
-        "timer",
-        "uart"
-      ],
-      "disk_interrupts": 318,
-      "times_the_writer_had_to_wait": 0
-    },
-    "workload": [
-      "intrload"
-    ]
+    "blockload": {
+      "and_writing_one_byte": {
+        "commits": 6,
+        "logged": 10,
+        "reads": 3,
+        "writes": 26
+      },
+      "bytes_written_for_no_bytes": 8192,
+      "bytes_written_for_one_byte": 5120,
+      "creating_an_empty_file": {
+        "commits": 5,
+        "logged": 6,
+        "reads": 0,
+        "writes": 16
+      },
+      "the_byte_alone": {
+        "commits": 1,
+        "logged": 4,
+        "reads": 3,
+        "writes": 10
+      }
+    }
   },
   "target": "xv6",
   "toolchain": {
