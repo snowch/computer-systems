@@ -7,4 +7,4 @@
 | `assemble` | 4440 | 10 |
 | `link` | 556304 | 3500 |
 
-*Conditions: target `xv6`; riscv64 cross compiler, any machine — nothing here was executed; riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d`; 2026-09-14. Source: `bench/results/stagewalk-riscv64.json`, code hash `95433683fb1fd95c`.*
+*Conditions: target `xv6`; riscv64 cross compiler, any machine — nothing here was executed; riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d`; 2026-09-14. Source: `bench/results/stagewalk-riscv64.json`, code hash `35e7218fd30bb059`.*

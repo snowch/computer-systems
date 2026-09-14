@@ -27,10 +27,10 @@ outdir=$(cd "$outdir" && pwd)
 # Everything below runs from the repository root, and every path handed to the compiler is
 # relative to it. That is not tidiness. The preprocessor writes into its output the name of every
 # file it pasted in, spelled exactly as it was given on the command line, so an absolute `-I`
-# would put the location of this checkout into stage 1's size — and the same commit would measure
-# 72 bytes larger under /home/runner/work/computer-systems/computer-systems than under
-# /home/user/computer-systems. That is not a wrong number so much as a number about the wrong
-# thing, and bench/run_stages.py refuses to record one.
+# would put the length of your checkout's path into stage 1's size: the same commit would measure
+# larger from a deeply nested directory than from a shallow one, once per line marker naming the
+# header. That is not a wrong number so much as a number about the wrong thing, and
+# bench/run_stages.py refuses to record one.
 source=$(cd "$(dirname "$source")" && pwd)/$(basename "$source")
 case $source in
   "$root"/*) source=${source#"$root"/} ;;
