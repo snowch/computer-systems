@@ -759,6 +759,100 @@ def sections_to_segments(result: str) -> str:
     )
 
 
+def trap_path(result: str) -> str:
+    """One system call, from the instruction that causes it to the instruction after it.
+
+    Drawn because the shape is the argument: a call into the kernel is not a call. It is a
+    hardware event, a page-table change, and two blocks of state movement wrapped around the work
+    you actually asked for — and the work is the small box in the middle.
+
+    The counts come from the stamped result, so the figure cannot claim a path length the
+    measurement does not support.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    path = load_result(result)["summary"]["path"]
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "What one system call actually costs to arrange",
+        "The work you asked for is the box in the middle. Everything else is getting there.",
+    )
+
+    stages = [
+        ("ecall", "hardware traps"),
+        ("uservec", f"save {path['uservec']['register_stores']} registers"),
+        ("usertrap", "decide why"),
+        ("syscall", "do the work"),
+        ("userret", f"restore {path['userret']['register_loads']}"),
+        ("sret", "back to user"),
+    ]
+    row_y = margin + 60
+    parts, _ = chain(margin, row_y, stages, box_width=108, box_height=50, gap=18)
+    body += parts
+
+    # The part that is easy to miss and impossible to ignore once seen.
+    note_y = row_y + 84
+    body.append(
+        _text(
+            margin,
+            note_y,
+            "and twice, in the middle of it, the address space changes",
+            size=12.5,
+            weight="700",
+            fill=WARN,
+        )
+    )
+    body.append(
+        _text(
+            margin,
+            note_y + 20,
+            "uservec switches to the kernel page table; userret switches back. That is why both",
+            size=12,
+            fill=MUTED,
+        )
+    )
+    body.append(
+        _text(
+            margin,
+            note_y + 38,
+            "halves live in one page mapped at the same address in both — the trampoline.",
+            size=12,
+            fill=MUTED,
+        )
+    )
+
+    # The two blocks of state movement, side by side, because the symmetry is the point.
+    bar_y = note_y + 76
+    total = path["uservec"]["instructions"] + path["userret"]["instructions"]
+    rows = [
+        (f"uservec  {path['uservec']['instructions']} instructions", "in"),
+        (f"userret  {path['userret']['instructions']} instructions", "out"),
+    ]
+    parts, height = column(margin, bar_y, 300, rows, row_height=34)
+    body += parts
+    body.append(
+        _text(margin + 340, bar_y + 38, f"{total} instructions of pure state movement,", size=12.5)
+    )
+    body.append(
+        _text(margin + 340, bar_y + 58, "before any of your work begins", size=12.5, fill=MUTED)
+    )
+
+    foot = bar_y + height + 58
+    body += footnote(
+        margin,
+        foot,
+        width - 2 * margin,
+        [
+            "Counted, not timed. This target cannot say what an instruction costs, and a count is",
+            "what remains true anyway: the path is this long whatever machine runs it. ch19 prices",
+            "the same shape on hardware.",
+        ],
+    )
+    return _svg(width, int(foot + 48), body, "The path of one system call into the kernel and back")
+
+
 #: fragment name -> the function that draws it
 DIAGRAMS = {
     "ch00-targets": two_target_map,
@@ -767,4 +861,5 @@ DIAGRAMS = {
     "ch03-dispatch": dispatch_table,
     "ch04-frame": stack_frame,
     "ch05-segments": sections_to_segments,
+    "ch06-trap-path": trap_path,
 }

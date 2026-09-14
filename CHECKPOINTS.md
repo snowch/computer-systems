@@ -18,7 +18,7 @@ a tag in the repository yet are planned, not published.
 | ch03 | `ch03-c` | `sysfs/lib/addresses.c` — the pairs ch03 compiles against each other |
 | ch04 | `ch04-asm` | `sysfs/tools/framewalk.c` — walk a stack from a frame pointer; `sysfs/lib/frames.c` |
 | ch05 | `ch05-elf` | `sysfs/tools/elfdump.c` — an ELF reader with no `<elf.h>` in it |
-| ch06 | `ch06-traps` | First kernel patches: syscall counting and tracing |
+| ch06 | `ch06-traps` | First kernel patch: the per-cause trap census, printed on Ctrl-T |
 | ch07 | `ch07-vm` | Page-table dumper; `sysfs/tools/sv39.c` |
 | ch08 | `ch08-faults` | Lazy allocation and copy-on-write, with reference counting |
 | ch09 | `ch09-devices` | Per-source interrupt counters; a driver for a simple device |

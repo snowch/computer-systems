@@ -265,6 +265,45 @@ genre of "ELF explained" articles and annotated hexdumps.
 
 ---
 
+## ch06 · Traps and System Calls
+
+**Closest in subject.** The xv6 book's chapter on traps and system calls, which walks the same
+`trampoline.S` and `usertrap` on the same kernel; MIT 6.1810's system-call lab; *Operating Systems:
+Three Easy Pieces* on limited direct execution; and the trap chapter of any OS text.
+
+**How this differs, and the care taken.** This is the chapter where the closest neighbour is the
+documentation for the very kernel being read, so the separation is deliberate and specific.
+
+- **The xv6 book explains the code; this chapter measures it.** Its central artefacts are a count
+  of the trap path's length read out of the built kernel, and a census of what a fixed workload
+  actually asked for, read out of a running one. Neither appears in the comparable material,
+  which is narrative.
+- **The framing is "a trap is not a call", derived from ch04.** The chapter's argument runs from
+  the calling convention: a called function preserves callee-saved registers because both sides
+  agreed; an interrupted program agreed to nothing, so the path must save everything. That
+  reasoning is this book's, it reuses ch04's material rather than restating background, and it
+  sets up the register problem.
+- **The kernel patch is not the MIT lab.** 6.1810's syscall lab asks for `trace(mask)` and
+  `sysinfo()`. This book's patch is a per-cause trap census printed on Ctrl-T, mirroring xv6's
+  existing Ctrl-P convention rather than adding a system call — specifically so that "add a system
+  call end to end" remains the reader's problem rather than the chapter's worked example.
+- **A measurement is deliberately withheld, and the withholding is taught.** Interrupt counts are
+  not recorded because their frequency depends on how long things took, and elapsed time inside
+  QEMU is a property of the host laptop. The chapter explains the decision rather than quietly
+  omitting the number. No comparable text confronts this, because no comparable text is trying to
+  hold a line about what its target may be asked.
+- **The figure is drawn from the stamped result**, so it cannot claim a path length the
+  measurement does not support.
+- **The problems are original.** 6.1 is checked behaviourally — the count must be non-zero and must
+  grow between two runs, so a constant fails — rather than by inspecting the reader's source. 6.2
+  reads the register count out of the kernel as built, so a reader who patches the trampoline is
+  graded against their own kernel.
+- **Citations are primary only**: the RISC-V privileged specification and xv6's own source. The xv6
+  book is not cited here or anywhere except "Where to go next" in other chapters, and this chapter
+  does not send the reader to it at all — it sends them to the assembly.
+
+---
+
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the
 book's own additions are `xv6/apps/` (Apache-2.0) and `xv6/patches/` (diffs, MIT like what they
 patch). See `xv6/README.md` and `LICENSE-CODE`.

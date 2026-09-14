@@ -1,0 +1,108 @@
+diff -urN a/kernel/console.c b/kernel/console.c
+--- a/kernel/console.c	2026-09-14 19:16:19.445692349 +0000
++++ b/kernel/console.c	2026-09-14 19:16:19.469786555 +0000
+@@ -149,6 +149,9 @@
+   acquire(&cons.lock);
+ 
+   switch (c) {
++  case C('T'): // Print the trap census (Systems From Scratch, ch06).
++    trapdump();
++    break;
+   case C('P'): // Print process list.
+     procdump();
+     break;
+diff -urN a/kernel/defs.h b/kernel/defs.h
+--- a/kernel/defs.h	2026-09-14 19:16:19.442159393 +0000
++++ b/kernel/defs.h	2026-09-14 19:16:19.469654173 +0000
+@@ -141,6 +141,7 @@
+ // trap.c
+ extern uint     ticks;
+ void            trapinit(void);
++void            trapdump(void);
+ void            trapinithart(void);
+ extern struct spinlock tickslock;
+ void            prepare_return(void);
+diff -urN a/kernel/trap.c b/kernel/trap.c
+--- a/kernel/trap.c	2026-09-14 19:16:19.438420251 +0000
++++ b/kernel/trap.c	2026-09-14 19:16:19.469458631 +0000
+@@ -16,6 +16,63 @@
+ 
+ extern int devintr();
+ 
++// -- trap census (Systems From Scratch, ch06) ---------------------------------------------
++//
++// Every trap into the kernel is counted, by cause. This exists because the book cannot time a
++// trap on this target -- QEMU models no pipeline and no memory, so a duration measured here
++// describes the laptop rather than RISC-V -- and counting is the honest alternative: how many
++// times the machine took this path, and why.
++//
++// scause's top bit distinguishes an interrupt from an exception and the remaining bits are the
++// cause within that class, so two arrays rather than one. Sixteen of each is enough for every
++// cause the privileged specification currently defines.
++#define NCAUSE 16
++
++struct trapcensus {
++  uint64 exception[NCAUSE];
++  uint64 interrupt[NCAUSE];
++  uint64 from_user;
++  uint64 from_kernel;
++  uint64 unclassified;
++};
++
++static struct trapcensus census;
++
++// Deliberately not locked. A count that is occasionally one short is a count; a lock on the trap
++// path would change the thing being measured, which is the mistake this whole book is about.
++static void
++census_note(uint64 scause, int user)
++{
++  uint64 code = scause & 0xf;
++  if (scause >> 63)
++    census.interrupt[code]++;
++  else if ((scause & ~(uint64)0xf) == 0)
++    census.exception[code]++;
++  else
++    census.unclassified++;
++
++  if (user)
++    census.from_user++;
++  else
++    census.from_kernel++;
++}
++
++// Printed on Ctrl-T at the console, the way Ctrl-P prints the process table. A system call would
++// be the other way to reach it, and ch06 leaves that to the reader.
++void
++trapdump(void)
++{
++  printk("trapcensus user %ld kernel %ld unclassified %ld\n", census.from_user,
++         census.from_kernel, census.unclassified);
++  for (int i = 0; i < NCAUSE; i++)
++    if (census.exception[i])
++      printk("trapcensus exception %d %ld\n", i, census.exception[i]);
++  for (int i = 0; i < NCAUSE; i++)
++    if (census.interrupt[i])
++      printk("trapcensus interrupt %d %ld\n", i, census.interrupt[i]);
++  printk("end trapcensus\n");
++}
++
+ void
+ trapinit(void)
+ {
+@@ -42,6 +99,8 @@
+   if ((r_sstatus() & SSTATUS_SPP) != 0)
+     panic("usertrap: not from user mode");
+ 
++  census_note(r_scause(), 1);
++
+   // send interrupts and exceptions to kerneltrap(),
+   // since we're now in the kernel.
+   w_stvec((uint64)kernelvec); //DOC: kernelvec
+@@ -136,6 +195,7 @@
+ void
+ kerneltrap()
+ {
++  census_note(r_scause(), 0);
+   int which_dev = 0;
+   uint64 sepc = r_sepc();
+   uint64 sstatus = r_sstatus();

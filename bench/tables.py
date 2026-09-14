@@ -246,6 +246,49 @@ def elf_shape_table(name: str) -> str:
     )
 
 
+def trap_path_table(name: str) -> str:
+    """The two halves of the trap path, counted."""
+    path = load_result(name)["summary"]["path"]
+    rows = [
+        [
+            f"`{half}`",
+            facts["instructions"],
+            facts["register_stores"],
+            facts["register_loads"],
+            facts["csr_operations"],
+        ]
+        for half, facts in sorted(path.items())
+    ]
+    return render_table(
+        ["Half of the path", "Instructions", "Registers saved", "Registers restored", "CSR ops"],
+        rows,
+    )
+
+
+def trap_census_table(name: str) -> str:
+    """What a fixed workload asked the kernel for, and what interrupted it."""
+    result = load_result(name)
+    census = result["summary"]["census"]
+    causes = {
+        "8": "system call (`ecall` from user mode)",
+        "13": "load page fault",
+        "15": "store page fault",
+        "12": "instruction page fault",
+        "2": "illegal instruction",
+    }
+    rows = [
+        [causes.get(code, f"exception {code}"), count]
+        for code, count in sorted(census["exceptions"].items(), key=lambda kv: -kv[1])
+    ]
+    rows.append(
+        [
+            "interrupt causes seen (counts deliberately not recorded)",
+            ", ".join(str(c) for c in census["interrupt_causes_seen"]),
+        ]
+    )
+    return render_table(["What the kernel was entered for", "Times"], rows)
+
+
 def xv6_environment_table(name: str) -> str:
     """What booting the teaching kernel actually produced, as facts rather than as a claim."""
     result = load_result(name)

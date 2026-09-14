@@ -50,6 +50,13 @@ python3 -m bench.run_stages --check
 python3 -m bench.run_frames --check
 python3 -m bench.run_elf --check
 
+echo "== the trap census still says what the book prints =="
+# Boots the patched kernel and re-runs ch06's workload. Only the deterministic half of the census
+# is recorded, so this is a real check rather than a coin toss: a patch that changed how many
+# system calls the shell makes would move the number, and moving it silently is the failure the
+# whole stamping scheme exists to prevent.
+python3 -m bench.run_traps --check
+
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check
 

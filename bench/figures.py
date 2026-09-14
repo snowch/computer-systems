@@ -33,6 +33,7 @@ from bench.diagrams import (
     stack_frame,
     struct_padding,
     toolchain_stages,
+    trap_path,
     two_target_map,
 )
 
@@ -227,6 +228,20 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "ch05-shape": Table(
         render=tables.elf_shape_table,
         result="elf-xv6",
+    ),
+    # -- ch06 ---------------------------------------------------------------------------
+    "ch06-trap-path": Diagram(
+        draw=trap_path,
+        alt="One system call from ecall to sret, with the state movement at each end.",
+        result="traps-xv6",
+    ),
+    "ch06-path-counts": Table(
+        render=tables.trap_path_table,
+        result="traps-xv6",
+    ),
+    "ch06-census": Table(
+        render=tables.trap_census_table,
+        result="traps-xv6",
     ),
     "ch00-board": Table(
         render=tables.board_identity_table,
