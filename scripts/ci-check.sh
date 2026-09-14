@@ -71,6 +71,15 @@ echo "== the trap census still says what the book prints =="
 # whole stamping scheme exists to prevent.
 python3 -m bench.run_traps --check
 
+echo "== the page tables still have the shape the book prints =="
+# Boots the kernel and dumps its own map and init's. Both are decided by the build rather than by
+# the run, so this is a real check: a kernel patch that changed the layout, or a submodule bump
+# that moved a mapping, would show up here as a shape the chapter no longer describes.
+#
+# It also re-runs ch07's cross-check — the Sv39 model derives the table count from the addresses,
+# the kernel counts by walking — and refuses to stamp or pass if the two stop agreeing.
+python3 -m bench.run_pagetable --check
+
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check
 

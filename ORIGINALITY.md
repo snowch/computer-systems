@@ -302,6 +302,53 @@ documentation for the very kernel being read, so the separation is deliberate an
   book is not cited here or anywhere except "Where to go next" in other chapters, and this chapter
   does not send the reader to it at all — it sends them to the assembly.
 
+## ch07 · Virtual Memory
+
+**Closest in subject.** The xv6 book's chapter on page tables, which walks Sv39 and `vm.c` on the
+same kernel; *Operating Systems: Three Easy Pieces* on paging and multi-level page tables;
+*Computer Systems: A Programmer's Perspective* chapter 9; and the memory-management chapter of any
+OS text. The RISC-V Reader's treatment of Sv39.
+
+**How this differs, and the care taken.** The comparable material asks how translation works. This
+chapter asks what the map costs, which produces a different spine, a different measurement and
+different problems.
+
+- **The organising question is the cost of the description, not the mechanism of the lookup.** A
+  page table is a data structure that exists so an address can mean something, and it occupies
+  memory. The chapter's central measurement is how many physical pages two real address spaces
+  spend describing where their other physical pages are — a figure no comparable text reports,
+  because none of them is asking the book's question.
+- **The finding is the inversion, and it was measured rather than chosen.** The kernel's map is
+  vast and nearly free per page; init's is tiny and mostly overhead. That contrast, and the
+  explanation for it — cost follows the number of separate regions, not the number of pages — is
+  arrived at from a census this book's patch prints, not from any existing exposition.
+- **Sv39's geometry is derived, not recited.** The chapter's claim is that only the page size and
+  the entry size were chosen and every other number is forced. That framing is this book's, it
+  matches ch04's treatment of the calling convention, and it produces a table whose right-hand
+  column is "where it comes from".
+- **The kernel patch is not a lab exercise from any course.** It is a page-table census on Ctrl-V,
+  mirroring xv6's own Ctrl-P convention and this book's own ch06 patch. MIT 6.1810's page-table
+  labs ask for `vmprint`, a speed-up of `getpid` via a shared page, and a superpage allocator;
+  none of those is this, and the chapter deliberately does not set them.
+- **The cross-check is the unusual part.** `sysfs/tools/sv39.c` derives the required table count
+  from the addresses alone, from the specification, with no machine involved; the kernel counts
+  its tables by walking them; the runner refuses to stamp a result in which the two disagree. The
+  published figure is therefore an agreement between a specification and a kernel rather than a
+  single observation. No comparable text does this because none of them is stamping results.
+- **ch06 is repaid in this chapter's currency.** The trapframe and trampoline cost two page-table
+  pages per process, because nothing else is within a gigabyte of them. That is a consequence of
+  the previous chapter's mechanism, expressed in a unit the previous chapter could not measure,
+  and it is this book's observation.
+- **The problems are original and none has a stored answer.** 7.1 is graded by how many pages the
+  reader's mapper took from the allocator, compared against the chapter's own model — so a correct
+  mapper that allocates eagerly fails, which is the chapter's thesis turned into a test. 7.2 is
+  graded against the mappings the reader's own 7.1 made. 7.3's four answers each follow from where
+  the test put the mappings. `sysfs/lib/sv39.c` splits addresses and counts tables; it neither
+  walks a page table nor builds one, so it hands the reader nothing.
+- **Citations are primary only**: the RISC-V privileged specification and xv6's own source. The
+  xv6 book is not cited, and the chapter sends the reader to `vm.c` rather than to any commentary
+  on it.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the

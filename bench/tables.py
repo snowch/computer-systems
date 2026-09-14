@@ -388,3 +388,50 @@ def board_identity_table(name: str) -> str:
         ["Samples collected in the capability check", summary.get("perf_samples")],
     ]
     return render_table(["What", "This board"], rows)
+
+
+def pagetable_shape_table(name: str) -> str:
+    """What each address space maps, and what describing it costs.
+
+    Two rows and one comparison. The kernel's map is enormous and nearly free per byte; init's is
+    tiny and mostly overhead. Reading across explains why: the cost follows the number of separate
+    regions, and neither the number of pages nor the number of bytes predicts it.
+    """
+    tables = load_result(name)["summary"]["tables"]
+    rows = []
+    for label in ("kernel", "init"):
+        entry = tables[label]
+        table_pages = sum(entry["table_pages"])
+        mapped = entry["leaf_entries"][0]
+        rows.append(
+            [
+                f"`{label}`",
+                table_pages,
+                mapped,
+                entry["regions"],
+                f"{100 * table_pages / mapped:.3g}%",
+            ]
+        )
+    return render_table(
+        ["Address space", "Page-table pages", "Pages mapped", "Separate regions", "Overhead"], rows
+    )
+
+
+def sv39_geometry_table(name: str) -> str:
+    """Sv39's shape, and the two numbers the whole of it follows from.
+
+    Printed rather than asserted because the chapter's claim is that none of this is arbitrary:
+    given a page size and an entry size, every other figure in the table is forced.
+    """
+    sv39 = load_result(name)["summary"]["sv39"]
+    rows = [
+        ["Page size", f"{sv39['page_bytes']} bytes", "chosen"],
+        ["Page-table entry", f"{sv39['entry_bytes']} bytes", "chosen"],
+        ["Entries per table", sv39["entries_per_table"], "page ÷ entry"],
+        ["Index bits per level", sv39["index_bits"], "log₂(entries)"],
+        ["Levels", sv39["levels"], "to reach 39 bits"],
+        ["One level-0 entry covers", f"{sv39['spans']['0']} bytes", "a page"],
+        ["One level-1 entry covers", f"{sv39['spans']['1']} bytes", "512 pages"],
+        ["One level-2 entry covers", f"{sv39['spans']['2']} bytes", "512 of those"],
+    ]
+    return render_table(["", "Value", "Where it comes from"], rows)

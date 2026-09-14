@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 432" width="780" height="432" role="img">
+  <title>What an address space costs to describe</title>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1a1a1a"/></marker></defs>
+  <rect width="780" height="432" fill="#ffffff"/>
+  <text x="24" y="36" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1a1a1a" text-anchor="start">A page table's size is decided by where the pages are</text>
+  <text x="24" y="56" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">init's address space: six mapped pages, five pages of table to describe them.</text>
+  <line x1="34" y1="102" x2="746" y2="102" stroke="#c9ced6"/>
+  <text x="34" y="128" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="normal" fill="#5b6270" text-anchor="start">0</text>
+  <text x="746" y="128" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="normal" fill="#5b6270" text-anchor="end">MAXVA</text>
+  <rect x="34" y="87" width="26" height="30" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="47" y="107" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="normal" fill="#1a1a1a" text-anchor="middle">4</text>
+  <rect x="720" y="87" width="26" height="30" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="733" y="107" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="normal" fill="#1a1a1a" text-anchor="middle">2</text>
+  <text x="24" y="154" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#5b6270" text-anchor="start">4 pages at 0x0</text>
+  <rect x="24" y="168" width="176" height="32" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="112.0" y="189" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#1a1a1a" text-anchor="middle">its own L1 table</text>
+  <rect x="24" y="208" width="176" height="32" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="112.0" y="229" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#1a1a1a" text-anchor="middle">its own L0 table</text>
+  <line x1="47" y1="120" x2="112.0" y2="164" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <text x="756" y="154" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#5b6270" text-anchor="end">2 pages at 0x3fffffe000</text>
+  <rect x="580" y="168" width="176" height="32" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="668.0" y="189" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#1a1a1a" text-anchor="middle">its own L1 table</text>
+  <rect x="580" y="208" width="176" height="32" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="668.0" y="229" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#1a1a1a" text-anchor="middle">its own L0 table</text>
+  <line x1="733" y1="120" x2="668.0" y2="164" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <rect x="302.0" y="264" width="176" height="32" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="390.0" y="285" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#1a1a1a" text-anchor="middle">one shared root</text>
+  <text x="24" y="340" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#1a1a1a" text-anchor="start">5 pages of table for 6 pages of memory.</text>
+  <line x1="24" y1="360" x2="756" y2="360" stroke="#c9ced6"/>
+  <text x="24" y="382" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">The kernel maps 49219 pages in 102 pages of table, because almost all of them are consecutive.</text>
+  <text x="24" y="400" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">Same mechanism, opposite result: the cost is per region, not per page.</text>
+</svg>

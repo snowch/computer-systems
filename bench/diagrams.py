@@ -853,6 +853,179 @@ def trap_path(result: str) -> str:
     return _svg(width, int(foot + 48), body, "The path of one system call into the kernel and back")
 
 
+def sv39_walk(result: str) -> str:
+    """One virtual address, taken apart into the four things translation does with it.
+
+    Drawn because the split is the mechanism and a sentence describing it is not memorable. Three
+    nine-bit indices and a twelve-bit offset, each pointing at the level that consumes it — and
+    the twenty-five bits at the top, which translation never looks at and which must therefore
+    agree with bit 38 or the address is not an address.
+
+    The spans come from the stamped result, so the figure cannot claim a geometry the model and
+    the kernel have not agreed on.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    sv39 = load_result(result)["summary"]["sv39"]
+    spans = sv39["spans"]
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "How Sv39 reads a virtual address",
+        "Nine bits per level, three levels, and twelve bits it never touches.",
+    )
+
+    # Bit widths, drawn to scale: the unused quarter is genuinely a third of the word.
+    bits = [
+        ("63:39 — copies bit 38", 25),
+        ("L2", 9),
+        ("L1", 9),
+        ("L0", 9),
+        ("offset", 12),
+    ]
+    scale = (width - 2 * margin) / sum(count for _, count in bits)
+    row_y = margin + 58
+    parts, _ = cells(margin, row_y, [(label, count * scale) for label, count in bits], height=40)
+    body += parts
+
+    # Each index names the table that consumes it, and what one of its entries covers.
+    levels = [
+        ("L2", "root table", spans["2"]),
+        ("L1", "second table", spans["1"]),
+        ("L0", "third table", spans["0"]),
+    ]
+    box_w, gap = 176, 24
+    table_y = row_y + 116
+    cursor = margin + 96
+    index_x = margin + 25 * scale
+    for name, role, span in levels:
+        body.append(_rect(cursor, table_y, box_w, 74, fill=PANEL))
+        body.append(_text(cursor + 14, table_y + 26, role, size=13, weight="700"))
+        body.append(_mono(cursor + 14, table_y + 46, f"{sv39['entries_per_table']} entries"))
+        body.append(
+            _text(
+                cursor + 14, table_y + 64, f"one entry covers {_bytes(span)}", size=11.5, fill=MUTED
+            )
+        )
+        body.append(_arrow(index_x + 4.5 * scale, row_y + 40, cursor + box_w / 2, table_y - 4))
+        body.append(_mono(index_x + 4.5 * scale, row_y + 58, name, anchor="middle", fill=MUTED))
+        index_x += 9 * scale
+        cursor += box_w + gap
+
+    note_y = table_y + 108
+    body.append(
+        _text(
+            margin,
+            note_y,
+            "The offset is not translated. It is copied.",
+            size=13.5,
+            weight="700",
+        )
+    )
+    body += footnote(
+        margin,
+        note_y + 42,
+        width - 2 * margin,
+        [
+            f"Why nine: a {sv39['page_bytes']}-byte page holds {sv39['entries_per_table']} entries "
+            f"of {sv39['entry_bytes']} bytes, and {sv39['entries_per_table']} is nine bits.",
+            "Three levels of nine, plus twelve of offset, is thirty-nine — which is where the name comes from.",
+        ],
+    )
+    return _svg(width, note_y + 92, body, "Sv39 address translation")
+
+
+def _bytes(count: int) -> str:
+    """Byte counts as a reader says them, for figure labels only."""
+    for unit, size in (("GiB", 1 << 30), ("MiB", 1 << 20), ("KiB", 1 << 10)):
+        if count >= size:
+            return f"{count // size} {unit}"
+    return f"{count} B"
+
+
+def address_space_cost(result: str) -> str:
+    """Why the smallest address space in the system has the worst overhead.
+
+    The totals in the table next to this figure are not explicable without it. init maps six
+    pages, and they are not in one place: four at the bottom of the address space and two at the
+    very top. Each cluster forces its own chain down from the root, and a chain is two pages
+    whether it ends in one mapping or five hundred.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    tables = load_result(result)["summary"]["tables"]
+    init, kernel = tables["init"], tables["kernel"]
+    runs = init["runs"]
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "A page table's size is decided by where the pages are",
+        "init's address space: six mapped pages, five pages of table to describe them.",
+    )
+
+    # The virtual address space as one rule, with the two clusters marked where they fall.
+    line_y = margin + 78
+    left, right = margin + 10, width - margin - 10
+    body.append(_line(left, line_y, right, line_y))
+    body.append(_text(left, line_y + 26, "0", size=11.5, fill=MUTED, family=MONO))
+    body.append(
+        _text(right, line_y + 26, "MAXVA", size=11.5, fill=MUTED, anchor="end", family=MONO)
+    )
+
+    marks = []
+    for index, run in enumerate(runs):
+        at = left if index == 0 else right - 26
+        body.append(_rect(at, line_y - 15, 26, 30, fill=PANEL))
+        body.append(_mono(at + 13, line_y + 5, str(run["pages"]), anchor="middle"))
+        marks.append((at + 13, f"{run['pages']} pages at {run['start']:#x}"))
+
+    # Under each cluster, the chain of tables it forces. The root is shared; nothing else is.
+    chain_y = line_y + 66
+    box_w = 176
+    for at, label in marks:
+        # The clusters sit at the two ends of the address space, so their boxes have to be
+        # pulled back inside the canvas; the arrow keeps them attached to the mark they explain.
+        box_x = min(max(at - box_w / 2, margin), width - margin - box_w)
+        centre = box_x + box_w / 2
+        anchor = "start" if at < width / 2 else "end"
+        text_x = box_x if anchor == "start" else box_x + box_w
+        body.append(_text(text_x, chain_y - 14, label, size=11.5, fill=MUTED, anchor=anchor))
+        for step, name in enumerate(("its own L1 table", "its own L0 table")):
+            top = chain_y + step * 40
+            body.append(_rect(box_x, top, box_w, 32, fill=PANEL))
+            body.append(_text(centre, top + 21, name, size=12, anchor="middle"))
+        body.append(_arrow(at, line_y + 18, centre, chain_y - 4))
+
+    shared_y = chain_y + 96
+    body.append(_rect(width / 2 - 88, shared_y, 176, 32, fill=PANEL))
+    body.append(_text(width / 2, shared_y + 21, "one shared root", size=12, anchor="middle"))
+
+    total = sum(init["table_pages"])
+    verdict_y = shared_y + 76
+    body.append(
+        _text(
+            margin,
+            verdict_y,
+            f"{total} pages of table for {init['leaf_entries'][0]} pages of memory.",
+            size=13.5,
+            weight="700",
+        )
+    )
+    body += footnote(
+        margin,
+        verdict_y + 42,
+        width - 2 * margin,
+        [
+            f"The kernel maps {kernel['leaf_entries'][0]} pages in {sum(kernel['table_pages'])} "
+            "pages of table, because almost all of them are consecutive.",
+            "Same mechanism, opposite result: the cost is per region, not per page.",
+        ],
+    )
+    return _svg(width, verdict_y + 92, body, "What an address space costs to describe")
+
+
 #: fragment name -> the function that draws it
 DIAGRAMS = {
     "ch00-targets": two_target_map,
@@ -862,4 +1035,6 @@ DIAGRAMS = {
     "ch04-frame": stack_frame,
     "ch05-segments": sections_to_segments,
     "ch06-trap-path": trap_path,
+    "ch07-walk": sv39_walk,
+    "ch07-address-spaces": address_space_cost,
 }

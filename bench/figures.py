@@ -28,10 +28,12 @@ from dataclasses import dataclass
 
 from bench import tables
 from bench.diagrams import (
+    address_space_cost,
     dispatch_table,
     sections_to_segments,
     stack_frame,
     struct_padding,
+    sv39_walk,
     toolchain_stages,
     trap_path,
     two_target_map,
@@ -242,6 +244,25 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "ch06-census": Table(
         render=tables.trap_census_table,
         result="traps-xv6",
+    ),
+    # -- ch07 ---------------------------------------------------------------------------
+    "ch07-walk": Diagram(
+        draw=sv39_walk,
+        alt="A 64-bit virtual address split into three nine-bit indices and a twelve-bit offset.",
+        result="pagetable-xv6",
+    ),
+    "ch07-sv39": Table(
+        render=tables.sv39_geometry_table,
+        result="pagetable-xv6",
+    ),
+    "ch07-shape": Table(
+        render=tables.pagetable_shape_table,
+        result="pagetable-xv6",
+    ),
+    "ch07-address-spaces": Diagram(
+        draw=address_space_cost,
+        alt="init's two clusters of mapped pages, and the chain of tables each one forces.",
+        result="pagetable-xv6",
     ),
     "ch00-board": Table(
         render=tables.board_identity_table,
