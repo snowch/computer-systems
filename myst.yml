@@ -35,6 +35,7 @@ project:
     - ORIGINALITY.md
     - ERRATA.md
     - xv6/README.md
+    - hardware/README.md
     - xv6/xv6-riscv/**
   toc:
     - file: index.md

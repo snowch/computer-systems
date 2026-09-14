@@ -392,7 +392,7 @@ the discipline is that neither is ever asked the other's question.
 | Target | What it is | What it answers | What it must never be asked |
 |---|---|---|---|
 | **`xv6`** | xv6-riscv under `qemu-system-riscv64`, on any machine | Structure and semantics: instruction sequences, system calls, page tables, scheduling, on-disk state | Anything about time. QEMU has no cache, no branch predictor, no store buffer, no pipeline, no memory latency |
-| **`host`** | StarFive VisionFive 2 Lite, native, over SSH | Everything about cost: cycles, misses, mispredictions, syscall and fault costs, scaling across four cores | Anything requiring a kernel you can stop mid-trap and modify freely |
+| **`host`** | An RV64GC Linux SBC with working `perf` counters, native, over SSH. Reference machine: a StarFive VisionFive 2 Lite | Everything about cost: cycles, misses, mispredictions, syscall and fault costs, scaling across cores | Anything requiring a kernel you can stop mid-trap and modify freely |
 
 **Rules that follow:**
 
@@ -409,12 +409,28 @@ the discipline is that neither is ever asked the other's question.
   board can complete Parts I and II in full — fourteen chapters — and set the board up before
   [ch13](#ch13).
 
-**Why this board.** RISC-V, so the ISA in the debugger in Part I is the ISA under the profiler in
-Part III with no translation in the reader's head. And the U74 is in-order with a short pipeline,
-which makes microarchitectural effects *legible*: on an out-of-order core, small experiments
-frequently come out backwards for reasons that take a chapter to explain. The cost is no vector
-unit ([ch21](#ch21)) and modest absolute performance, both of which the book states rather than
-works around.
+**Why a capability, not a part number.** The book originally named one model. The retailer listing
+for it went out of stock while ch00 was being written, and the named variant proved hard to buy in
+the UK at all. A book outlives a product listing, so `hardware/README.md` states what the board
+must *do* and `hardware/find-a-board.txt` is a prompt the reader gives to an assistant that knows
+today's stock. Nothing rests on that recommendation being right: `scripts/verify-setup.py`
+interrogates the board that actually arrived, and `perf` either reads hardware counters or it does
+not.
+
+**What the requirement still insists on.** RISC-V, so the ISA in the debugger in Part I is the ISA
+under the profiler in Part III with no translation in the reader's head. Working `perf` hardware
+counters, which on RISC-V depend on the firmware's SBI PMU extension and so are a property of the
+shipped image as much as of the silicon — this is the one thing with no workaround. And, preferred
+rather than required, an in-order core: it makes microarchitectural effects *legible*, where on an
+out-of-order core small experiments frequently come out backwards for reasons that take a chapter
+to explain.
+
+**What follows from readers having different boards.** Absolute numbers are reader-specific, so
+the prose argues in ratios, mechanisms and method, and every figure stamps the machine that
+produced it. Committed figures come from the reference machine; ch15 in particular becomes
+"measure *your* cache hierarchy" rather than a table to memorise, which suits the book's question
+better anyway. Where a chapter depends on something specific to the reference core — no vector
+unit, [ch21](#ch21) — it says so rather than generalising.
 
 ---
 

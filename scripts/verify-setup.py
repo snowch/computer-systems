@@ -174,9 +174,10 @@ def check_host_target(report: Report) -> bool:
     report.say(WARN, f"not the board: {explanation}")
     report.say(
         WARN,
-        "target `host`: read-only here. Every figure in Part III is measured over SSH on the "
-        "VisionFive 2 Lite; `make bench-board` refuses to run anywhere else.",
+        "target `host`: read-only here. Every figure in Part III is measured natively on a "
+        "RISC-V board over SSH; `make bench-board` refuses to run anywhere else.",
     )
+    report.say(WARN, "  what a board has to be able to do, and how to find one: hardware/README.md")
 
     # An x86-64 laptop or CI runner can still *check* RV64 code, which is most of what a
     # chapter's tests assert. Worth saying, because it is the difference between "I can work on

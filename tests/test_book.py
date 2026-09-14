@@ -127,3 +127,50 @@ def test_repository_licences_are_split():
     assert Path(ROOT / "xv6" / "xv6-riscv" / "LICENSE").exists(), (
         "the xv6 submodule must keep its own MIT licence file"
     )
+
+
+# -- the hardware prompt ------------------------------------------------------------------
+
+PROMPT = ROOT / "hardware" / "find-a-board.txt"
+
+
+def test_the_board_prompt_keeps_its_non_negotiables():
+    """The prompt is what a reader shops against, so it must not quietly lose a requirement.
+
+    The counter requirement is the one that matters: it is the only one with no workaround, it is
+    not printed on the box, and on RISC-V it depends on the firmware rather than the chip. A
+    prompt that dropped it would send someone to buy a board that cannot run Part III.
+    """
+    text = PROMPT.read_text()
+    for required in (
+        "perf stat -e cycles,instructions",
+        "<not supported>",
+        "SBI PMU",
+        "CONFIG_RISCV_PMU_SBI",
+        "rv64imafdc",
+    ):
+        assert required in text, f"the board prompt no longer mentions {required!r}"
+
+
+def test_the_board_prompt_asks_for_sources_and_admits_uncertainty():
+    """An LLM guessing confidently about perf support is the failure mode this guards against."""
+    text = PROMPT.read_text().lower()
+    assert "source" in text
+    assert "unsure" in text or "uncertain" in text
+
+
+def test_the_board_prompt_has_placeholders_to_fill_in():
+    text = PROMPT.read_text()
+    assert "[YOUR COUNTRY]" in text
+    assert "[YOUR BUDGET]" in text
+
+
+def test_chapter_zero_quotes_the_prompt_rather_than_copying_it():
+    """One source of truth: ch00 literalincludes the file, it does not paste it."""
+    chapter = (ROOT / "chapters" / "ch00_prerequisites_and_setup.md").read_text()
+    assert "{literalinclude} ../hardware/find-a-board.txt" in chapter
+    assert "hardware/README.md" in chapter
+
+
+def test_the_hardware_notes_are_not_published_as_a_chapter():
+    assert "hardware/README.md" in MYST["project"]["exclude"]
