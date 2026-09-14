@@ -13,7 +13,7 @@
     "note": "counts only; nothing here was timed, and two counts are deliberately absent",
     "omitted": "timer and UART interrupt counts, which measure elapsed time rather than work"
   },
-  "generated_at": "2026-09-14T21:53:46+00:00",
+  "generated_at": "2026-09-14T22:15:21+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",

@@ -8,7 +8,7 @@
     "note": "instruction counts only; contention is a duration and this target has none",
     "subject": "xv6's own spinlock, disassembled from the kernel as built"
   },
-  "generated_at": "2026-09-14T21:53:49+00:00",
+  "generated_at": "2026-09-14T22:15:24+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "riscv64",

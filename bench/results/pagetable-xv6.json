@@ -13,7 +13,7 @@
     "note": "structure only: page-table pages, leaf entries and where the mappings are",
     "subjects": "the kernel's own map, and init's \u2014 both fixed by the build, not the run"
   },
-  "generated_at": "2026-09-14T21:53:44+00:00",
+  "generated_at": "2026-09-14T22:15:19+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",

@@ -12,7 +12,7 @@
     "method": "a difference between two runs of the same program, one of which writes a byte",
     "note": "block counts only; nothing here was timed"
   },
-  "generated_at": "2026-09-14T21:53:48+00:00",
+  "generated_at": "2026-09-14T22:15:22+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",

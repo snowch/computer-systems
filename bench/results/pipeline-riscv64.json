@@ -10,7 +10,7 @@
     "compiler": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
     "note": "no timing: this records what the compiler chose, not what it cost"
   },
-  "generated_at": "2026-09-14T22:11:00+00:00",
+  "generated_at": "2026-09-14T22:15:12+00:00",
   "kind": "listing",
   "machine": {
     "arch": "riscv64",

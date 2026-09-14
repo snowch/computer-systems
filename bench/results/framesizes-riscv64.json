@@ -10,7 +10,7 @@
     "frame_bytes": "read from the prologue's own `addi sp,sp,-N`; 0 means no frame",
     "note": "counts of instructions and stack bytes; nothing was executed or timed"
   },
-  "generated_at": "2026-09-14T21:53:49+00:00",
+  "generated_at": "2026-09-14T22:15:16+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "riscv64",

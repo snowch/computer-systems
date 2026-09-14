@@ -11,7 +11,7 @@
     "memory": "128M",
     "note": "structural facts only \u2014 QEMU models no timing (ch00)"
   },
-  "generated_at": "2026-09-14T21:53:53+00:00",
+  "generated_at": "2026-09-14T22:15:25+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",
