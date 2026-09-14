@@ -13,7 +13,7 @@ short_title: "ch12 The File System"
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch11](#ch11) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Block reads and writes for a traced operation, and the amplification between a one-byte write and the disk traffic it causes. |
 :::
 
 ## The question

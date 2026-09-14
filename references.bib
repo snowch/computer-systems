@@ -125,3 +125,29 @@
                   exposes. Cited by ch17, which measures what it can and says which numbers are
                   derived rather than counted.}
 }
+
+@misc{rpi-pmu-dt-6507,
+  title        = {6.12.y is missing arm-pmu device tree node on {Pi5}},
+  author       = {{raspberrypi/linux issue 6507}},
+  year         = {2025},
+  howpublished = {\url{https://github.com/raspberrypi/linux/issues/6507}},
+  note         = {The reference machine's own performance counters, absent for a kernel release.
+                  The 6.12.y device tree dropped the arm-pmu node the 6.6.y one carried, so the
+                  armv8_cortex_a76 PMU never registered and perf silently saw no hardware. Cited
+                  by ch00 as the concrete case behind its instruction to verify counters on the
+                  machine rather than assume them from the board.}
+}
+
+@misc{rpi-dt-bcm2712,
+  title        = {{BCM2712} device tree sources, {\tt arch/arm64/boot/dts/broadcom/}},
+  author       = {{raspberrypi/linux} and {torvalds/linux}},
+  howpublished = {\url{https://github.com/raspberrypi/linux/tree/rpi-6.17.y/arch/arm64/boot/dts/broadcom}},
+  note         = {Read directly rather than taken on report, because whether a Pi 5 has usable
+                  performance counters is decided here. As consulted: the Raspberry Pi kernel
+                  carries the arm-pmu node with compatible arm,cortex-a76-pmu and four per-core
+                  overflow interrupts, in bcm2712-ds.dtsi, reached from bcm2712-rpi-5-b.dts and
+                  from both D0-stepping variants. In rpi-6.6.y the same node sits in
+                  bcm2712.dtsi. Mainline's own BCM2712 tree, bcm2712-rpi-5-b.dts through
+                  bcm2712-rpi-5-b-base.dtsi to bcm2712.dtsi, carries no such node. Cited by ch00
+                  for the claim that the image decides this and the version number does not.}
+}

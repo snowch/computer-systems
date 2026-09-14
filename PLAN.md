@@ -131,7 +131,7 @@ measurement bias @mytkowicz2009wrong, the difference between a correct result an
 
 ## 4. Outline
 
-Twenty-two chapters in three parts, plus five appendices. The machine-readable version — number,
+Twenty-two chapters in three parts, plus six appendices. The machine-readable version — number,
 slug, title, part, target, checkpoint tag — is `bench/outline.py`, and `tests/test_book.py`
 asserts that it, `myst.yml` and the files on disk agree, and that every chapter here declares in
 its own header the target it is given below.
@@ -151,8 +151,10 @@ happens to it, with no hand-waving and no appeals to "roughly".
 - **Code.** `scripts/verify-setup.py`; `sysfs/include/sysfs/probe.h` and its two front ends;
   `bench/stamp.py`, `bench/measure.py`, `bench/xv6.py`; the staging mechanism for xv6.
 - **Measurements.** `setup-xv6` (kernel, emulator, harts, image contents, the C data model as
-  reported from inside xv6); `setup-host` (board identity, ISA string, core IDs, and whether
-  `perf` reaches hardware counters).
+  reported from inside xv6); `setup-host` (board, image, kernel, whatever the running kernel says
+  identifies the core, and whether `perf` can count *and* sample).
+- **Listings.** `shapes-riscv64` and `shapes-aarch64` — one small function compiled for both
+  architectures, so the instruction-set difference is shown rather than asserted.
 - **Problems.** Decide which stamped results may be published; predict a struct's layout before
   compiling it; write a first xv6 user program end to end.
 
@@ -341,7 +343,7 @@ on the board and stamped; nothing here may come from an emulator.
   each level, TLB reach. Locality and the miss-rate model.
 - **Code.** `sysfs/bench/pointer_chase.c`, `sysfs/bench/stride.c`.
 - **Measurements.** Latency versus working-set size; latency versus stride; measured cache and
-  line sizes compared with @sifive-u74; TLB reach.
+  line sizes compared with the vendor's figures @rpi-bcm2712; TLB reach.
 - **Problems.** Derive the cache parameters from a supplied dataset; predict the miss rate of a
   loop and then measure it.
 
@@ -358,8 +360,12 @@ on the board and stamped; nothing here may come from an emulator.
 
 #### ch17 · The CPU — target `host`
 
-- **Objectives.** The in-order pipeline; branch prediction; instruction-level parallelism;
-  reading the U74's counters and knowing which are derived rather than measured.
+- **Objectives.** The out-of-order pipeline; branch prediction; instruction-level parallelism;
+  reading the A76's PMU events and knowing which are derived rather than measured.
+- **Note.** An in-order core would make this chapter easier to read, and the book does not have
+  one: the in-order RISC-V option could not sample (§5). The consolation is that every machine a
+  reader is likely to optimise is out-of-order, so attributing cycles on a core that reorders them
+  is the skill that transfers. The header says so; ch00 says so at more length.
 - **Code.** `sysfs/bench/branches.c`, `sysfs/bench/ilp.c`.
 - **Measurements.** Misprediction rate versus branch predictability; IPC versus dependency chain
   length; the cost of a mispredict, derived and stated as derived.

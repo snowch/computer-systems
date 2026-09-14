@@ -21,8 +21,9 @@ exactly like a right one, and the reader has no way to tell.
    exemption from becoming a way round the board.
 5. **A pending figure whose result has landed is an error.** Otherwise a measurement gets taken
    and the book goes on saying it is missing.
-6. **No measured figure is typed into chapter prose**, where regenerating results would silently
-   leave it behind.
+6. **No measured figure is typed into prose on any published page**, where regenerating results
+   would silently leave it behind. Every page the book publishes, the preface included — it was
+   outside this check for as long as it existed, and it carries a hardware comparison table.
 
 Fragment freshness is a separate check: ``scripts/render-figures.py --check``.
 """
@@ -45,8 +46,17 @@ from bench.stamp import (  # noqa: E402
     provenance_problems,
 )
 
-CHAPTERS = ROOT / "chapters"
-APPENDICES = ROOT / "appendices"
+
+#: Every page the book publishes. The preface was missing from this list for as long as it
+#: existed, so the most-read page in the book was the one page allowed to type a measurement into
+#: a sentence — and it carries a hardware comparison table, which is exactly the shape of thing
+#: the rule exists for. ``tests/test_book.py`` checks this against myst.yml's table of contents,
+#: so a page added to the book cannot quietly be added outside the check.
+def published_pages() -> list[Path]:
+    return sorted(
+        [ROOT / "index.md", *(ROOT / "chapters").glob("*.md"), *(ROOT / "appendices").glob("*.md")]
+    )
+
 
 #: Units that make a claim about cost. A figure carrying one of these belongs in a generated
 #: fragment, because it can only have come from a run that might be redone.
@@ -121,28 +131,27 @@ def check_results(problems: list[str]) -> int:
 
 def check_prose(problems: list[str]) -> None:
     """Rule 6: a measured figure typed into a sentence is one nobody will ever regenerate."""
-    for directory in (CHAPTERS, APPENDICES):
-        for source in sorted(directory.glob("*.md")):
-            lines = source.read_text().splitlines()
-            fenced = False
-            for n, line in enumerate(lines, start=1):
-                stripped = line.strip()
-                if stripped.startswith("```"):
-                    fenced = not fenced
-                    continue
-                # Generated tables, their caption lines, and directive options carry real
-                # figures legitimately.
-                if fenced or stripped.startswith(("|", ":", "*Conditions", "%", "<!--")):
-                    continue
-                if n >= 2 and EXEMPTION.match(lines[n - 2].strip()):
-                    continue
-                for hit in MEASURED_FIGURE.findall(line):
-                    problems.append(
-                        f"{source.relative_to(ROOT)}:{n} types the measured figure "
-                        f"'{hit.strip()}' into prose. Put it in a generated fragment "
-                        "(AUTHORING_GUIDE.md), or, if it is a cited specification rather than a "
-                        "measurement, precede the line with `% number-ok: <citation>`."
-                    )
+    for source in published_pages():
+        lines = source.read_text().splitlines()
+        fenced = False
+        for n, line in enumerate(lines, start=1):
+            stripped = line.strip()
+            if stripped.startswith("```"):
+                fenced = not fenced
+                continue
+            # Generated tables, their caption lines, and directive options carry real figures
+            # legitimately.
+            if fenced or stripped.startswith(("|", ":", "*Conditions", "%", "<!--")):
+                continue
+            if n >= 2 and EXEMPTION.match(lines[n - 2].strip()):
+                continue
+            for hit in MEASURED_FIGURE.findall(line):
+                problems.append(
+                    f"{source.relative_to(ROOT)}:{n} types the measured figure "
+                    f"'{hit.strip()}' into prose. Put it in a generated fragment "
+                    "(AUTHORING_GUIDE.md), or, if it is a cited specification rather than a "
+                    "measurement, precede the line with `% number-ok: <citation>`."
+                )
 
 
 def main() -> int:

@@ -13,7 +13,7 @@ short_title: "ch01 What a Computer Does With a Program"
 |---|---|
 | **Target** | `xv6` and `host` — every example says which |
 | **Prerequisites** | [ch00](#ch00) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Object and section sizes at each toolchain stage (`xv6`), and instruction counts for the same program under `perf stat` (`host`). |
 :::
 
 ## The question

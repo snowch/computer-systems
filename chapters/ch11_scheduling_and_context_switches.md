@@ -13,7 +13,7 @@ short_title: "ch11 Scheduling and Context Switches"
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch10](#ch10) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Context switches per workload, bytes saved per switch, and the exact register set. |
 :::
 
 ## The question

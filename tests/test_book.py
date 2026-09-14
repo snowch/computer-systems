@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from bench.outline import APPENDICES, CHAPTERS, PARTS, Chapter
+from bench.outline import APPENDICES, CHAPTERS, PARTS, Appendix, Chapter, reading_disassembly
 from bench.stamp import ROOT
 
 MYST = yaml.safe_load((ROOT / "myst.yml").read_text())
@@ -175,11 +175,27 @@ def test_the_board_prompt_has_placeholders_to_fill_in():
     assert "[YOUR BUDGET]" in text
 
 
-def test_chapter_zero_quotes_the_prompt_rather_than_copying_it():
-    """One source of truth: ch00 literalincludes the file, it does not paste it."""
+def test_the_board_prompt_is_linked_rather_than_copied():
+    """One source of truth for the prompt, wherever it is quoted.
+
+    It used to be `{literalinclude}`d into ch00, back when the reference machine was a RISC-V
+    board that was genuinely hard to buy and finding one was a chapter's worth of work. Now the
+    chapter recommends a Pi 5, every Pi 5 works, and shopping advice is not what a setup chapter
+    is for — so the prompt stays in `hardware/`, where a reader who cannot get one will look, and
+    ch00 points at it in a sentence.
+
+    What this still guards is the copy: no page may paste the prompt's text, because two copies
+    of a list of requirements drift and the stale one is the one somebody shops against.
+    """
+    prompt = (ROOT / "hardware" / "find-a-board.txt").read_text()
+    signature = next(line for line in prompt.splitlines() if "HARD REQUIREMENTS" in line)
+    notes = (ROOT / "hardware" / "README.md").read_text()
+    assert "find-a-board.txt" in notes, "hardware/README.md no longer points at the prompt"
+    assert signature not in notes, "hardware/README.md has pasted the prompt instead of linking it"
+
     chapter = (ROOT / "chapters" / "ch00_prerequisites_and_setup.md").read_text()
-    assert "{literalinclude} ../hardware/find-a-board.txt" in chapter
-    assert "hardware/README.md" in chapter
+    assert "hardware/README.md" in chapter, "ch00 no longer points anywhere for the alternative"
+    assert signature not in chapter, "ch00 has pasted the prompt"
 
 
 def test_the_hardware_notes_are_not_published_as_a_chapter():
@@ -338,3 +354,157 @@ def test_the_preface_shows_the_pairing(chapter: Chapter):
         assert label in section, (
             f"the preface's table does not show that {chapter.label} costs {label}"
         )
+
+
+# -- the claim about what the instruction-set split costs -----------------------------------
+
+#: Every page that tells the reader how much AArch64 they are in for. Each states it at its own
+#: length, and all of them have to name the same chapters.
+DISASSEMBLY_CLAIMS = ("index.md", "README.md", "hardware/README.md")
+
+
+def _labels_near(text: str, keyword: str) -> set[str]:
+    """Chapter labels in the paragraph that mentions `keyword`."""
+    paragraphs = [block for block in text.split("\n\n") if keyword in block]
+    return {label for block in paragraphs for label in re.findall(r"\bch\d\d\b", block)}
+
+
+@pytest.mark.parametrize("page", DISASSEMBLY_CLAIMS)
+def test_pages_agree_on_which_chapters_read_disassembly(page: str):
+    """Three pages make this claim, and they had already drifted into three different answers.
+
+    It is load-bearing: it is the reason the two targets are allowed not to share an instruction
+    set, so a reader deciding whether to accept that bargain is owed the real number. The outline
+    is the source; this asserts each page tells the same story it does.
+
+    Two rules, because the pages are not the same length. Every page must name the complete
+    **AArch64** set, since that is the cost being claimed and an understatement of it is the
+    failure that matters. No page may name a chapter that does not read disassembly at all.
+    Naming the RISC-V side as well is optional — `hardware/README.md` is about Part III only.
+
+    ch00 is excluded throughout: it *demonstrates* both rather than requiring either.
+    """
+    without_ch00 = lambda kind: {  # noqa: E731
+        label for label in reading_disassembly(kind) if label != "ch00"
+    }
+    text = (ROOT / page).read_text()
+    found = _labels_near(text, "disassembly")
+    assert found, f"{page} no longer says anything about reading disassembly"
+
+    missing = without_ch00("aarch64") - found
+    assert not missing, (
+        f"{page} understates what the instruction-set split costs: it omits {sorted(missing)}"
+    )
+    wrong = found - without_ch00("aarch64") - without_ch00("riscv")
+    assert not wrong, f"{page} says {sorted(wrong)} read disassembly; bench/outline.py disagrees"
+
+
+def test_checkpoint_tags_match_the_outline():
+    """CHECKPOINTS.md and the outline had disagreed about ch21 since Part III moved to AArch64.
+
+    The chapter stopped being unmeasurable and started leaving code behind; PLAN.md was updated
+    and the tag table was not. A reader following the tags would have looked for a checkpoint the
+    book said did not exist.
+    """
+    table = (ROOT / "CHECKPOINTS.md").read_text()
+    rows = dict(re.findall(r"^\|\s*(ch\d\d)\s*\|\s*(.*?)\s*\|", table, re.MULTILINE))
+    for chapter in CHAPTERS:
+        assert chapter.label in rows, f"CHECKPOINTS.md has no row for {chapter.label}"
+        cell = rows[chapter.label]
+        if chapter.tag is None:
+            assert "`" not in cell, f"{chapter.label} has no tag in the outline but {cell!r} here"
+        else:
+            assert f"`{chapter.tag}`" in cell, (
+                f"CHECKPOINTS.md gives {chapter.label} {cell!r}, the outline says {chapter.tag!r}"
+            )
+
+
+# -- what a stub is for --------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_every_chapter_names_the_measurements_it_owes(chapter: Chapter):
+    """The preface promises this, and for a while the promise was two-thirds kept.
+
+    "Every other chapter is a stub carrying its target, its question and the measurements it owes
+    you" — and the row said *[To write: the figure this chapter produces]*, identically, in all
+    twenty-one of them. A stub that names its debt is useful to a reader deciding where to wait;
+    one that names a placeholder is twenty-one identical pages behind twenty-one different titles.
+    """
+    if chapter.number == 0:
+        return  # written, and lists its results by name in its own header
+    assert chapter.owes, f"{chapter.label} has no `owes` in bench/outline.py"
+    header = (ROOT / chapter.path).read_text().split(":::", 2)[1]
+    assert chapter.owes in header, (
+        f"{chapter.label}'s header does not carry what the outline says it owes — "
+        "regenerate with `python3 scripts/new-chapter.py --all --force`"
+    )
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_no_chapter_owes_a_timing_to_the_wrong_target(chapter: Chapter):
+    """An `xv6` chapter that promised a duration would be promising something CI must reject."""
+    if chapter.target != "xv6" or not chapter.owes:
+        return
+    forbidden = ("nanosecond", "how long", "speedup", "latency", "throughput")
+    found = [word for word in forbidden if word in chapter.owes.lower()]
+    assert not found, (
+        f"{chapter.label} is an xv6 chapter but says it owes {found} — "
+        "QEMU cannot produce that, and bench.stamp would refuse to record it"
+    )
+
+
+APPENDIX_IDS = [appendix.letter for appendix in APPENDICES]
+
+
+@pytest.mark.parametrize("appendix", APPENDICES, ids=APPENDIX_IDS)
+def test_every_appendix_says_what_it_will_hold(appendix: Appendix):
+    """Six appendices used to be one sentence repeated six times.
+
+    Defensible in a template, indefensible as six published pages. Where the content comes from
+    differs more than the titles suggest — a specification, the board, the submodule — and that is
+    what decides when each one can be written at all.
+    """
+    assert appendix.holds and appendix.source, f"Appendix {appendix.letter} is undescribed"
+    text = (ROOT / appendix.path).read_text()
+    assert appendix.holds in text, f"Appendix {appendix.letter} does not say what it will hold"
+    assert appendix.source in text, f"Appendix {appendix.letter} does not say where it comes from"
+
+
+def test_the_appendices_are_not_all_the_same_page():
+    """The check that would have caught it: six titles, six bodies, six different bodies."""
+    bodies = {
+        (ROOT / appendix.path).read_text().split("# Appendix", 1)[1] for appendix in APPENDICES
+    }
+    assert len(bodies) == len(APPENDICES), "two appendices are the same page under two titles"
+
+
+def test_every_published_page_is_checked_for_typed_numbers():
+    """The no-typed-numbers rule has to cover the book, not most of it.
+
+    `verify-numbers.py` scanned `chapters/` and `appendices/` and not `index.md`, so the preface —
+    the most-read page, and the one carrying a hardware comparison table — was the single page
+    allowed to type a measurement into a sentence. A page added to the table of contents must not
+    be able to land outside the check either, so the two lists are compared rather than trusted.
+    """
+    import subprocess  # noqa: PLC0415
+
+    scanned = subprocess.run(
+        [
+            "python3",
+            "-c",
+            "import sys; sys.path.insert(0, '.'); "
+            "sys.path.insert(0, 'scripts'); "
+            "import importlib.util as u; "
+            "s = u.spec_from_file_location('vn', 'scripts/verify-numbers.py'); "
+            "m = u.module_from_spec(s); s.loader.exec_module(m); "
+            "print('\\n'.join(str(p.relative_to(m.ROOT)) for p in m.published_pages()))",
+        ],
+        capture_output=True,
+        text=True,
+        cwd=ROOT,
+        check=True,
+    ).stdout.split()
+
+    for page in ["index.md", *TOC_FILES]:
+        assert page in scanned, f"{page} is published but verify-numbers.py never reads it"

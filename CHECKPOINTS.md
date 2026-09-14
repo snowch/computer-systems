@@ -33,7 +33,7 @@ a tag in the repository yet are planned, not published.
 | ch18 | `ch18-concurrency` | `sharing.c`, `atomics.c` — four cores, and what they cost each other |
 | ch19 | `ch19-os-cost` | `syscall.c`, `fault.c`, `switch.c` |
 | ch20 | `ch20-profiling` | `profile.sh`, and the program to diagnose with it |
-| ch21 | — | No new code: ch21 reasons about hardware this board does not have |
+| ch21 | `ch21-vectors` | `sysfs/bench/vectorisable.c` — loops that do and do not auto-vectorise |
 | — | `v1.0` | Appendices complete, every figure measured, errata reconciled |
 
 ## Two tags that mean something different

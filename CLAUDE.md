@@ -139,8 +139,10 @@ show a mechanism. 25–40 PDF pages per chapter.
 
 ## Chapter status
 
-ch00 is written. Everything else is a stub carrying its target, question and prerequisites from
-`bench/outline.py`. The reference machine has not yet produced `setup-host.json`, so `ch00-board`
+ch00 is written. Everything else is a stub carrying its target, question, prerequisites and the
+measurements it owes, all from `bench/outline.py`; the six appendices carry what they will hold
+and where that content has to come from. Regenerate the lot with
+`python3 scripts/new-chapter.py --all --force`, which refuses to touch a written chapter. The reference machine has not yet produced `setup-host.json`, so `ch00-board`
 is the one figure currently `pending=`; PLAN.md §11 has the roadmap and CHECKPOINTS.md the tag
 scheme.
 

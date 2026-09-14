@@ -13,7 +13,7 @@ short_title: "ch05 Linking and Loading"
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch04](#ch04) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Section and segment tables for xv6's own binaries, and what `exec` maps where. |
 :::
 
 ## The question

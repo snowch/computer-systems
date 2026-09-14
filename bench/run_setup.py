@@ -23,6 +23,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -187,31 +188,62 @@ def perf_capability() -> dict[str, Any]:
         "perf_counts": counted,
         "perf_hardware_events": hardware_events,
         "perf_note": None if readable else "perf ran but no event reached hardware",
-        "perf_can_sample": perf_can_sample(),
+        **perf_can_sample(),
     }
 
 
-def perf_can_sample() -> bool:
+#: A workload that is on-CPU for long enough to be sampled, using only the interpreter already
+#: running this. The choice matters more than it looks: ``perf record -- sleep 2`` is the obvious
+#: test and it is wrong, because a sleeping task retires no instructions and burns no cycles, so
+#: a perfectly working PMU returns nothing and the board is declared incapable.
+_SPIN = "x = 0\nfor _ in range(4_000_000):\n    x += 1\n"
+
+#: perf's own count of what it collected, from ``perf report --stats``.
+_SAMPLE_COUNT = re.compile(r"SAMPLE events:\s+(\d+)")
+
+
+def perf_can_sample() -> dict[str, Any]:
     """Whether ``perf record`` can sample on this board, which is a separate question.
 
-    Counting and sampling are different capabilities and a board can have the first without
-    the second. Sampling needs the counters to raise an overflow interrupt, which on RISC-V
-    means the **Sscofpmf** extension @riscv-sscofpmf; a kernel without it says so at boot and
-    then refuses to sample. The SiFive U74 does not implement it.
+    Counting and sampling are different capabilities and a board can have the first without the
+    second. Sampling needs the counters to raise an overflow interrupt, which on RISC-V means the
+    **Sscofpmf** extension @riscv-sscofpmf; a kernel without it says so at boot and then refuses.
+    The SiFive U74 does not implement it. That is the difference between ch19, which counts, and
+    ch20, which samples, so it is recorded as a fact about the board rather than discovered in a
+    chapter.
 
-    That is the difference between ch19, which counts, and ch20, which samples — so it is worth
-    recording as a fact about the board rather than discovering it in a chapter.
+    **This asks for samples rather than for an exit code.** An earlier version ran
+    ``perf record -- true`` and believed a zero return, which is the same mistake as believing a
+    counter that reads zero: ``perf`` will open the event, collect nothing from a program that
+    barely runs, and exit successfully. The question is not whether the command succeeded, it is
+    whether any samples came back — so this spins deliberately and counts them.
     """
     if not shutil.which("perf"):
-        return False
-    probe = subprocess.run(
-        ["perf", "record", "-q", "-o", "/dev/null", "--", "true"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    text = (probe.stderr + probe.stdout).lower()
-    return probe.returncode == 0 and "not supported" not in text
+        return {"perf_can_sample": False, "perf_samples": 0}
+
+    with tempfile.TemporaryDirectory() as scratch:
+        data = Path(scratch) / "perf.data"
+        record = subprocess.run(
+            ["perf", "record", "-F", "999", "-e", "cycles", "-o", str(data), "--"]
+            + [sys.executable, "-c", _SPIN],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        noise = (record.stderr + record.stdout).lower()
+        if "not supported" in noise or not data.exists():
+            return {"perf_can_sample": False, "perf_samples": 0}
+
+        stats = subprocess.run(
+            ["perf", "report", "--stats", "-i", str(data)],
+            capture_output=True,
+            text=True,
+            check=False,
+        ).stdout
+        found = _SAMPLE_COUNT.search(stats)
+        samples = int(found.group(1)) if found else 0
+
+    return {"perf_can_sample": samples > 0, "perf_samples": samples}
 
 
 def run_host() -> dict[str, Any]:

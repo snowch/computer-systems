@@ -68,12 +68,60 @@ in Parts I and II depends on hardware you do not have.
 
 ## What to buy
 
-A **Raspberry Pi 5**, 4 GB or more, **with the active cooler**. A Pi 4 you already own will do.
+A **Raspberry Pi 5 with 4 GB or more**, and an active cooler. That is the whole decision. Every Pi
+5 has the counters this book needs — same SoC, same four cores, no variant where they are missing
+— so there is no specification to compare and nothing to get wrong except the RAM, and only
+because [ch18](#ch18) wants four cores with room to work.
 
-It is an ARM machine, and Parts I and II are RISC-V. That is deliberate: `perf` has to both count
-and sample, no affordable RISC-V core does both, and choosing one would have cost two chapters of
-Part III. The preface makes that argument with the evidence behind it; this chapter is about
-getting the machine working.
+| | What | Why this one |
+|---|---|---|
+| **Board** | Raspberry Pi 5, 4 GB or 8 GB | Four identical Cortex-A76 cores whose performance counters work. See below |
+| **Cooling** | The official active cooler, or a case with a fan | **Not optional here.** A Pi 5 under sustained load throttles |
+| **Power** | The official 27 W USB-C supply, or one rated for the board | Underpowering a Pi produces instability that reads exactly like a kernel bug |
+| **Storage** | A microSD card that is not the cheapest on the shelf | An NVMe drive on a PCIe HAT is nicer and not required |
+| **Network** | An Ethernet cable | WiFi works. Wired is one fewer variable when a measurement looks strange |
+
+You also need a development machine for Parts I and II — anything that runs Homebrew or apt and
+holds an SSH key. It never measures anything.
+
+**The cooler earns its line in the table.** A Pi 5 that throttles is running a benchmark at one
+clock speed and finishing it at another, which is not a slow measurement but a wrong one, and one
+of the more instructive ways to be wrong. [ch14](#ch14) treats throttling as a measurement hazard
+and shows how to catch it happening; a cooler means you meet it deliberately rather than in every
+run you ever take.
+
+### Why a separate board, and not the laptop you are reading this on
+
+A laptop can almost certainly count and sample — `perf` on x86-64 is mature, and on Linux you
+could start Part III this afternoon. The reason not to is that the machine is too complicated to
+learn on. A current laptop has cores of two different kinds, a clock that moves constantly, two
+threads sharing one core's execution units, and a scheduler migrating your benchmark across all of
+it. Each of those makes a measurement harder to attribute. The Pi 5 is four identical cores with
+one cache hierarchy and no hyper-threading: when a number moves, something you did moved it.
+
+That is the book's own argument applied to its own tooling — use the instrument that can answer
+the question. A laptop is a *faster* machine and a *worse* instrument. If a Pi is genuinely not
+possible, Part III still runs on a Linux laptop, and every chapter whose reading depends on the
+core's shape says so in its own header.
+
+The Pi is not the *most* legible instrument, and it is worth knowing what it is not. An **in-order**
+core — short pipeline, no out-of-order execution, no register renaming — makes microarchitecture
+plainer still: a dependent load that misses in cache stalls, visibly, for as long as the miss
+takes. The A76 reorders, so the connection between an instruction you wrote and a cycle that got
+spent runs through enough machinery that a small experiment occasionally comes out backwards.
+
+Two reasons that is the right trade anyway. The in-order RISC-V option could not sample, which
+cost more than legibility bought. And **every machine you are likely to care about optimising
+reorders**, so learning to attribute cycles on one is the skill that transfers.
+[ch17](#ch17) is harder for it, says so in its own header, and is more useful as a result. If you
+want the clean version too, an in-order Cortex-A53 — a Pi 3 or Pi Zero 2 W — costs very little,
+and running ch17's experiments on both is an instructive afternoon.
+
+### It is an ARM machine, and Parts I and II are RISC-V
+
+That is deliberate: `perf` has to both count *and* sample, no affordable RISC-V core does both,
+and choosing one would have cost two chapters of Part III. The preface has the evidence; this
+chapter is about getting the machine working.
 
 % number-ok: SoC specification from @rpi-bcm2712; every figure in this book comes from the machine itself
 Its SoC is a BCM2712: four Arm Cortex-A76 cores at 2.4 GHz, 64 kB of L1 instruction and data
@@ -85,94 +133,76 @@ more satisfying results in Part III.
 Three levels with a private L2 and a shared L3 is a genuinely good shape to learn on. The private
 level shows you locality; the shared one is where [ch18](#ch18)'s cores collide.
 
-**The active cooler is not optional for this book.** A Pi 5 under sustained load throttles, and a
-benchmark that quietly changes clock speed half way through is not a slow measurement — it is a
-wrong one, and one of the more instructive ways to be wrong about a benchmark. [ch14](#ch14)
-treats thermal throttling as a measurement hazard and shows how to detect it; a cooler means you
-meet it deliberately rather than by accident in every run.
+### If you already own something else
 
-### What the machine has to do
+The book recommends one machine because one machine is enough, not because the rest of Part III
+is about Raspberry Pis. What a machine actually has to do is short:
 
 | | Requirement | Why |
 |---|---|---|
-| **Must** | 64-bit ARM or RISC-V running Linux, reachable over SSH | |
+| **Must** | 64-bit Linux, reachable over SSH | |
 | **Must** | `perf stat -e cycles,instructions -- true` returns real counts | **The one requirement with no workaround.** Part III does not exist without it |
 | **Must** | `perf record` can sample | [ch20](#ch20) is entirely sampling. A different capability from counting |
 | **Must** | 4 GB RAM, 4 cores | [ch18](#ch18) measures what cores cost each other |
 | **Nice** | NVMe or a fast SSD | Builds and [ch12](#ch12) are far less tedious |
 | **Nice** | A SIMD unit the compiler targets — NEON, or RVV 1.0 | [ch21](#ch21) measures vectorisation |
-| **Nice** | An in-order core | Not required, and the reference is out-of-order. See below |
+| **Nice** | Few kinds of core, and a clock that holds still | Not required. It is why the reference is a Pi rather than a laptop |
 
-Plus the unglamorous parts: a power supply **rated for the board** — underpowering one produces
-instability that reads exactly like a kernel bug — a microSD card that is not the cheapest on the
-shelf, and an Ethernet cable, because wired is one fewer variable when a measurement looks strange.
+An old laptop, a spare desktop, a Rock 5B, another single-board computer you have in a drawer: run
+`scripts/verify-setup.py` on it and it will tell you. `hardware/README.md` has the same list in a
+form you can hand to a search tool, for readers somewhere Raspberry Pis are hard to get.
 
-You also need a development machine for Parts I and II. Anything that runs Homebrew or apt and
-holds an SSH key. It never measures anything.
+:::{caution} The purchase is yours
+This book does not sell hardware, has no relationship with any vendor, and has tested nothing but
+its own reference machine. Prices, availability and listings change; nothing here is a warranty
+that a given machine will work for you.
+
+The practical version: **the requirement you cannot check before it arrives is the one that
+matters most.** No product listing can honestly promise you working performance counters, because
+they depend on the image as much as on the board. Buy somewhere with a return policy, and run
+`scripts/verify-setup.py` on day one rather than the week you reach Part III.
+:::
 
 ### The requirement to be suspicious about
 
 The counters. Everything else is printed on the box; whether `perf` can read the hardware is not,
 and it is the one that stops the book dead.
 
-On ARM the PMU is reached directly, but the kernel still has to be told it is there — some vendor
-kernels have shipped without the PMU node in the device tree, and then `perf` silently sees no
-hardware at all. On RISC-V there is an extra layer: the counters are machine-mode CSRs, the kernel
-runs in supervisor mode, and the firmware bridges them through the SBI PMU extension @riscv-sbi,
-so the answer depends on the firmware as much as on the silicon.
+On ARM the PMU is reached directly, but the kernel still has to be told it is there, and this is
+not hypothetical: the Raspberry Pi kernel's own 6.12 branch shipped a device tree for the Pi 5
+with the `arm-pmu` node missing @rpi-pmu-dt-6507. The 6.6 tree had it. On the affected images the
+hardware was perfectly capable, the `armv8_cortex_a76` driver never registered, and `perf` saw no
+hardware counters at all — quietly, because that is how this fails.
 
-Either way the book's answer to "will this machine work?" is a script rather than a claim, and it
-runs on the machine after it arrives rather than on a specification before it.
+On RISC-V there is an extra layer: the counters are machine-mode CSRs, the kernel runs in
+supervisor mode, and the firmware bridges them through the SBI PMU extension @riscv-sbi, so the
+answer depends on the firmware as much as on the silicon.
 
-### Finding something else
+Read that regression as the general case rather than a Raspberry Pi anecdote. **Whether your
+counters work is a property of the configuration, not of the board** — silicon, device tree,
+kernel, firmware and `perf` build all have to agree, and four of those five change under you
+without the box changing at all.
 
-If Raspberry Pis are hard to get where you are, the requirements above are stable but which
-machines satisfy them today is not, and this book is the wrong place to answer it.
+:::{important} The book does not tell you which kernel to run
+It would be easy to end this section with an image and a version number, and that would be worse
+advice than it looks. A pinned version is wrong within a year, cannot be re-verified on every
+release, and teaches you to check a string instead of a machine — while the failure it is meant
+to prevent stays perfectly possible on the version that was correct when it was written.
 
-So `hardware/find-a-board.txt` states them in a form something else can shop against. Paste it
-into an assistant that can search the web, with your country and budget filled in:
+A *minimum* version would be worse still, and the reason is specific rather than pedantic. What
+went wrong on the Pi 5 was a **regression**, so the node was present in the older kernel and
+absent in the newer one; a floor selects for the broken configurations rather than against them.
+A range would work and would need maintaining forever — and it would still have to be written
+once per kernel tree, because the Raspberry Pi kernel and mainline are different trees that
+disagree about this today @rpi-dt-bcm2712. The version number is not the thing. The device tree
+in `/boot/firmware/` is the thing, and your machine will read it out for you.
 
-```{literalinclude} ../hardware/find-a-board.txt
-:language: text
-:start-at: HARD REQUIREMENTS
-:end-before: NICE TO HAVE
-```
-
-That is an extract; the file also carries the RISC-V findings the preface sets out, so a
-recommendation cannot walk you back into the problem those findings describe, and it asks for a
-**source** for the `perf` claims specifically — the claim most likely to come back confidently
-wrong.
-
-:::{caution} The purchase is yours
-This book does not sell hardware, has not tested most of what a search might surface, and has no
-relationship with any vendor. Availability and prices change, listings go out of stock, and an
-assistant will occasionally state a machine's `perf` support with more confidence than its
-evidence supports. Verify the retailer, the price and the return policy yourself; nothing here is
-a warranty that a given machine will work for you.
-
-The practical version: the requirement you cannot check before it arrives is the one that matters
-most. Buy somewhere that takes returns, and run `scripts/verify-setup.py` on day one rather than
-the week you reach Part III.
+So the book does the other thing. Every `host` result stamps the board, the operating system, the
+kernel and whether `perf` could count and sample, and the table at the end of this chapter is
+that stamp. It tells you what produced the book's numbers; it is not a requirement for yours.
+What is required is that `verify-setup.py` passes on the machine in front of you, which is a
+question about that machine and not about a version string.
 :::
-
-### On in-order cores, and why the reference is not one
-
-An in-order core — short pipeline, no out-of-order execution, no register renaming — makes
-microarchitecture *legible*. A dependent load that misses in cache stalls, visibly, for as long as
-the miss takes. On an out-of-order core the connection between an instruction you wrote and a
-cycle that got spent is mediated by enough machinery that small experiments sometimes come out
-backwards.
-
-The reference machine is out-of-order anyway, and there are two reasons that is acceptable.
-
-The first is that the in-order RISC-V option could not sample, which cost more than legibility
-bought. The second is more interesting: **every machine you are likely to care about optimising is
-out-of-order.** Learning to attribute cycles on a core that reorders them is the skill that
-transfers to the laptop and the server. [ch17](#ch17) is harder to read for it, says so in its own
-header, and is more useful as a result.
-
-If you want the clean version too, an in-order ARM core — a Cortex-A53, in a Pi 3 or Pi Zero 2 W —
-costs very little, and running [ch17](#ch17)'s experiments on both is an instructive afternoon.
 
 ### The reference machine, and why your numbers will differ
 
@@ -214,13 +244,24 @@ when you are standing in front of a shop rather than reading a chapter.
 A Pi is a well-trodden path and the Raspberry Pi documentation is the authority on it. What
 follows is the shape of the task and the parts this book depends on.
 
-**1. Write a 64-bit image.** Raspberry Pi OS (64-bit) or Ubuntu Server for ARM, written with
-Raspberry Pi Imager, which will also set the hostname, your SSH key and your WiFi while it
-writes. Use its advanced options — it saves the whole "find it on the network and change the
-default password" dance.
+**1. Write a 64-bit image.** Raspberry Pi OS (64-bit), written with Raspberry Pi Imager, which
+will also set the hostname, your SSH key and your WiFi while it writes. Use its advanced options
+— it saves the whole "find it on the network and change the default password" dance.
 
 It has to be a **64-bit** image. A 32-bit userspace on ARMv7 does not get you the ARMv8 PMU, and
 you would spend an afternoon finding that out.
+
+It also has to be an image whose **device tree describes the PMU**, and that is a real choice
+rather than a formality. The counters are in every Pi 5's silicon; whether Linux is told about
+them depends on the `.dtb` your image ships. Reading the sources @rpi-dt-bcm2712: the Raspberry Pi
+kernel carries an `arm-pmu` node for the Cortex-A76, with one overflow interrupt per core, and
+every Pi 5 variant inherits it. Mainline Linux's own BCM2712 tree carries no such node at all.
+
+So prefer an image built on the Raspberry Pi kernel, which is what Raspberry Pi OS and the
+Raspberry Pi builds of other distributions use. A general-purpose distribution running a mainline
+kernel with mainline device trees on the same board may have no hardware PMU exposed to it
+whatever — not because the chip lacks one, but because nothing told the kernel it was there. One
+command settles it either way, and it is the next section.
 
 **2. Boot it, wired if you can.** WiFi works; wired is one fewer variable when a measurement
 looks strange.
@@ -286,11 +327,23 @@ different questions:
 :end-before:     if not shutil.which("perf")
 ```
 
-If nothing is counted, the usual cause on ARM is that the kernel was never told the PMU exists —
-the device tree needs a node for it, and some vendor kernels have shipped without one. Check
-`dmesg | grep -i pmu` for a line claiming the driver bound, and
-`ls /sys/bus/event_source/devices/` for a per-core PMU such as `armv8_cortex_a76`. On a RISC-V
-machine the failure is usually further down: the counters are machine-mode CSRs reached through
+If nothing is counted, the usual cause on ARM is the missing device-tree node described above.
+Ask the kernel directly:
+
+```bash
+dmesg | grep -i perfevents
+ls /sys/bus/event_source/devices/
+```
+
+A machine whose PMU registered says so at boot, naming the driver it bound:
+
+```text
+hw perfevents: enabled with armv8_cortex_a76 PMU driver, 7 counters available
+```
+
+and `/sys/bus/event_source/devices/` contains a matching entry. No such line, or no such entry,
+and no amount of care in `perf`'s arguments will help: there is nothing underneath it. On a RISC-V
+machine the failure is usually further down — the counters are machine-mode CSRs reached through
 the firmware's SBI PMU extension @riscv-sbi, so check for `CONFIG_RISCV_PMU_SBI` and a firmware
 that provides it.
 
@@ -306,9 +359,36 @@ interrupts the program thousands of times a second to ask where it is, and build
 where the time went from those interruptions. Sampling needs the counters to raise an interrupt
 when they overflow, and that is a separate hardware feature from counting.
 
+Test it with a program that is actually running. This matters more than it looks:
+
 ```bash
-perf record -o /dev/null -- true    # this must work too
+perf record -F 999 -e cycles -o /tmp/perf.data -- sleep 2    # proves nothing
+perf report --stats -i /tmp/perf.data | grep SAMPLE
 ```
+
+A sleeping process is off the CPU, so it retires no instructions and burns no cycles, and a
+perfectly working PMU returns almost nothing. The command succeeds, the sample count is near
+zero, and you have learned nothing about the machine. Give it something to sample instead:
+
+```bash
+perf record -F 999 -e cycles -o /tmp/perf.data -- \
+    python3 -c 'x = 0
+for _ in range(4_000_000): x += 1'
+perf report --stats -i /tmp/perf.data | grep SAMPLE
+```
+
+Now the sample count is the answer, and `bench/run_setup.py` asks exactly this question the same
+way — because the first version of it ran `perf record -- true`, believed the zero exit status,
+and would have declared a board capable of something it had never been asked to do:
+
+```{literalinclude} ../bench/run_setup.py
+:language: python
+:start-at: def perf_can_sample
+:end-before:     if not shutil.which("perf")
+```
+
+An exit status is not evidence. It is the same mistake as believing a counter that reads zero,
+and it is worth meeting twice in one chapter.
 
 On ARM, overflow interrupts are a standard PMU feature. On RISC-V they are the **Sscofpmf**
 extension @riscv-sscofpmf, and a kernel on a core without it says so at boot and then declines:

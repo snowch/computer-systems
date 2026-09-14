@@ -13,7 +13,7 @@ short_title: "ch21 Vectors"
 |---|---|
 | **Target** | `host` — Linux on real hardware, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch20](#ch20) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Speedup per loop with and without vectorisation, the emitted code that explains each, and one loop the compiler refuses — measured against the arithmetic bound, not celebrated alone. |
 | **Assumes** | a vector unit — NEON on the reference core. This chapter became measurable when Part III moved to AArch64; on a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run. |
 :::
 

@@ -13,7 +13,7 @@ short_title: "ch02 Representing Information"
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch01](#ch01) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Type sizes, alignments and struct layouts, and what signed overflow and shifts actually compile to. |
 :::
 
 ## The question

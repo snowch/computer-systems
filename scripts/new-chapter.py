@@ -42,6 +42,9 @@ STUB_MARKER = "[To write:"
 
 def chapter_stub(chapter: Chapter, previous: Chapter | None) -> str:
     prerequisites = f"[{previous.label}](#{previous.label})" if previous else "none"
+    # The preface tells the reader every stub names the measurements it owes them. A placeholder
+    # here made that two-thirds true across twenty-one pages.
+    owes = chapter.owes or "[To write: the measurements this chapter must produce.]"
     assumes = f"\n| **Assumes** | {chapter.assumes} |" if chapter.assumes else ""
     answers = (
         "\n| **Answers the cost of** | "
@@ -65,7 +68,7 @@ short_title: "{chapter.label} {chapter.title}"
 |---|---|
 | **Target** | {TARGET_LABEL[chapter.target]} |
 | **Prerequisites** | {prerequisites} |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |{answers}{assumes}
+| **What it measures** | {owes} |{answers}{assumes}
 :::
 
 ## The question
@@ -105,6 +108,13 @@ further reading and nowhere else — never as a source for this chapter's conten
 
 
 def appendix_stub(appendix: Appendix) -> str:
+    """A stub that says what this appendix will hold and where the content comes from.
+
+    All six used to be the same sentence. That is defensible for a template and indefensible as
+    six published pages: a reader who opens Appendix F wanting to know what AArch64 help is coming
+    should learn that, and a reader who opens Appendix C should learn that it cannot exist until
+    somebody runs the board.
+    """
     return f"""---
 title: "Appendix {appendix.letter} — {appendix.title} [DRAFT]"
 short_title: "Appendix {appendix.letter}"
@@ -113,8 +123,16 @@ short_title: "Appendix {appendix.letter}"
 ({appendix.label})=
 # Appendix {appendix.letter} · {appendix.title} [DRAFT]
 
-[To write: an appendix is a reference, not a chapter. No argument, no narrative, and everything
-in it either cites a primary source or comes from a stamped result.]
+:::{{note}} Not written yet
+**What it will hold.** {appendix.holds}
+
+**Where it comes from.** {appendix.source}
+:::
+
+An appendix in this book is a reference, not a chapter: no argument, no narrative, and everything
+in it either cites a primary source or comes from a stamped result under `bench/results/`.
+
+[To write: the reference itself. PLAN.md §4 has the scope.]
 """
 
 

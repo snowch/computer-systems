@@ -180,6 +180,7 @@ def board_result(tmp_path, monkeypatch):
                 "perf_counters_readable": True,
                 "perf_cycles_event": "cycles",
                 "perf_can_sample": arch == "aarch64",
+                "perf_samples": 214 if arch == "aarch64" else 0,
             },
             code_sources=["bench/run_setup.py"],
             toolchain={"cc": "gcc (test) 13.3.0", "flags": "-O2"},
@@ -188,6 +189,7 @@ def board_result(tmp_path, monkeypatch):
                 "arch": arch,
                 "measured_under": "native",
                 "model": f"a {arch} board",
+                "os": "Some Linux 1.0",
                 "kernel": "Linux 6.6",
                 "cpus_online": "0-3",
                 "cpu": CPUINFO[arch],
@@ -229,3 +231,24 @@ def test_board_table_reports_counting_and_sampling_separately(board_result):
     table = board_identity_table("setup-host")
     assert "| `perf stat` reads hardware counters | yes |" in table
     assert "| `perf record` can sample | no |" in table
+
+
+def test_board_table_names_the_configuration_not_only_the_board(board_result):
+    """The reference board's own PMU went missing for a kernel release (ch00, @rpi-pmu-dt-6507).
+
+    So "which board" is not the whole answer to "do the counters work": the image and the kernel
+    are part of the configuration the numbers came from, and the table a reader compares against
+    has to say which ones.
+    """
+    board_result("aarch64")
+    table = board_identity_table("setup-host")
+    assert "| Operating system | Some Linux 1.0 |" in table
+    assert "| Kernel | Linux 6.6 |" in table
+
+
+def test_board_table_shows_how_many_samples_the_check_collected(board_result):
+    """A sampling claim backed by an exit status is not backed by anything (ch00)."""
+    board_result("aarch64")
+    assert "| Samples collected in the capability check | 214 |" in board_identity_table(
+        "setup-host"
+    )

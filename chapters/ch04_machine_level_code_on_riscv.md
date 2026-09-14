@@ -13,7 +13,7 @@ short_title: "ch04 Machine-Level Code on RISC-V"
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch03](#ch03) |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | Instruction mix and frame sizes for a set of small functions at `-O0` and `-O2`. Static facts about emitted code, never timings. |
 :::
 
 ## The question
