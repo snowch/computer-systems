@@ -15,7 +15,7 @@ a tag in the repository yet are planned, not published.
 | ch00 | `ch00-setup` | Both targets working; the stamping, staging and figure machinery; `sysprobe` on both targets |
 | ch01 | `ch01-whole-stack` | `sysfs/tools/stages.sh`, the two-route sum, and `sameanswer` on both targets |
 | ch02 | `ch02-bits` | `sysfs/lib/bits.c` — the bit operations, tested; `signedness.c`, the four functions ch02 reads |
-| ch03 | `ch03-c` | The pointer and storage demonstrations, each a complete program |
+| ch03 | `ch03-c` | `sysfs/lib/addresses.c` — the pairs ch03 compiles against each other |
 | ch04 | `ch04-asm` | `sysfs/tools/framewalk.c` — walk a stack from a frame pointer |
 | ch05 | `ch05-elf` | `sysfs/tools/elfdump.c` — an ELF reader, written not described |
 | ch06 | `ch06-traps` | First kernel patches: syscall counting and tracing |

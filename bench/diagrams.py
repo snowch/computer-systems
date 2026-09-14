@@ -527,9 +527,87 @@ def struct_padding(result: str) -> str:
     )
 
 
+def dispatch_table() -> str:
+    """An array of function pointers, and what an indirect call actually does.
+
+    The pattern ch03 exists to teach and ch09 relies on: a kernel that must do *something*
+    different for each of several devices does not write a switch, it writes a table and indexes
+    it. Drawn because the mechanism is two dereferences — one to fetch the address, one to jump to
+    it — and a sentence describing that is worth much less than a picture of it.
+    """
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "A table of function pointers",
+        "How a kernel does something different per device without knowing the devices.",
+    )
+
+    # The table: one slot per operation, each holding an address rather than code.
+    slot = 116
+    table_y = margin + 60
+    names = ["ops[0]", "ops[1]", "ops[2]", "ops[3]"]
+    parts, _ = cells(margin, table_y, [(name, slot) for name in names], height=42)
+    body += parts
+    body.append(
+        _text(margin, table_y - 10, "the table, in memory", size=11, weight="700", fill=MUTED)
+    )
+    body.append(
+        _text(
+            margin + 4 * slot + 18, table_y + 26, "each slot holds an address,", size=12, fill=MUTED
+        )
+    )
+    body.append(_text(margin + 4 * slot + 18, table_y + 43, "not a function", size=12, fill=MUTED))
+
+    # The code each slot names, sitting somewhere else entirely.
+    code_y = table_y + 118
+    targets = ["read()", "write()", "ioctl()", "close()"]
+    parts, _ = cells(margin, code_y, [(name, slot) for name in targets], height=42, mono=True)
+    body += parts
+    body.append(
+        _text(margin, code_y - 10, "the code, elsewhere", size=11, weight="700", fill=MUTED)
+    )
+
+    for index in range(4):
+        x = margin + index * slot + slot / 2
+        body.append(_arrow(x, table_y + 46, x, code_y - 4))
+
+    # The call itself, spelled out as the two steps it is.
+    call_y = code_y + 92
+    body.append(_mono(margin, call_y, "ops[n](arg)", size=13, weight="700"))
+    body.append(
+        _text(
+            margin + 116,
+            call_y,
+            "1. load the address out of slot n     2. jump to whatever that was",
+            size=12,
+            fill=MUTED,
+        )
+    )
+
+    foot = call_y + 50
+    body += footnote(
+        margin,
+        foot,
+        width - 2 * margin,
+        [
+            "A direct call names its target inside the instruction; the CPU knows where it is going",
+            "before it fetches the operand. An indirect call does not, and ch17 measures what the",
+            "branch predictor makes of that difference.",
+        ],
+    )
+    return _svg(
+        width,
+        int(foot + 48),
+        body,
+        "A dispatch table of function pointers, and the two steps of an indirect call",
+    )
+
+
 #: fragment name -> the function that draws it
 DIAGRAMS = {
     "ch00-targets": two_target_map,
     "ch01-stages": toolchain_stages,
     "ch02-padding": struct_padding,
+    "ch03-dispatch": dispatch_table,
 }

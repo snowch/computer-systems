@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 392" width="780" height="392" role="img">
+  <title>A dispatch table of function pointers, and the two steps of an indirect call</title>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1a1a1a"/></marker></defs>
+  <rect width="780" height="392" fill="#ffffff"/>
+  <text x="24" y="36" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1a1a1a" text-anchor="start">A table of function pointers</text>
+  <text x="24" y="56" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">How a kernel does something different per device without knowing the devices.</text>
+  <rect x="24" y="84" width="116" height="42" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="82.0" y="109.0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" fill="#1a1a1a" text-anchor="middle">ops[0]</text>
+  <rect x="140" y="84" width="116" height="42" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="198.0" y="109.0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" fill="#1a1a1a" text-anchor="middle">ops[1]</text>
+  <rect x="256" y="84" width="116" height="42" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="314.0" y="109.0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" fill="#1a1a1a" text-anchor="middle">ops[2]</text>
+  <rect x="372" y="84" width="116" height="42" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="430.0" y="109.0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" fill="#1a1a1a" text-anchor="middle">ops[3]</text>
+  <text x="24" y="74" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#5b6270" text-anchor="start">the table, in memory</text>
+  <text x="506" y="110" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">each slot holds an address,</text>
+  <text x="506" y="127" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">not a function</text>
+  <rect x="24" y="202" width="116" height="42" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="82.0" y="227.0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" fill="#1a1a1a" text-anchor="middle">read()</text>
+  <rect x="140" y="202" width="116" height="42" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="198.0" y="227.0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" fill="#1a1a1a" text-anchor="middle">write()</text>
+  <rect x="256" y="202" width="116" height="42" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="314.0" y="227.0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" fill="#1a1a1a" text-anchor="middle">ioctl()</text>
+  <rect x="372" y="202" width="116" height="42" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="430.0" y="227.0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" fill="#1a1a1a" text-anchor="middle">close()</text>
+  <text x="24" y="192" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#5b6270" text-anchor="start">the code, elsewhere</text>
+  <line x1="82.0" y1="130" x2="82.0" y2="198" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <line x1="198.0" y1="130" x2="198.0" y2="198" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <line x1="314.0" y1="130" x2="314.0" y2="198" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <line x1="430.0" y1="130" x2="430.0" y2="198" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <text x="24" y="294" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="700" fill="#1a1a1a" text-anchor="start">ops[n](arg)</text>
+  <text x="140" y="294" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">1. load the address out of slot n     2. jump to whatever that was</text>
+  <line x1="24" y1="322" x2="756" y2="322" stroke="#c9ced6"/>
+  <text x="24" y="344" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">A direct call names its target inside the instruction; the CPU knows where it is going</text>
+  <text x="24" y="362" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">before it fetches the operand. An indirect call does not, and ch17 measures what the</text>
+  <text x="24" y="380" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">branch predictor makes of that difference.</text>
+</svg>

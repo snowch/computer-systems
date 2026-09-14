@@ -148,6 +148,44 @@ every few years.
 
 ---
 
+## ch03 · C for People Who Will Read a Kernel
+
+**Closest in subject.** Every C book's chapter on pointers, and in particular *The C Programming
+Language* chapter 5, the pointer chapters of *Computer Systems: A Programmer's Perspective*, and
+the "pointers are hard" genre generally. Also every "C for systems programmers" course handout.
+
+**How this differs.**
+
+- **Sorted by whether the machine has heard of the construct.** The comparable material is
+  organised by language feature: pointers, then arrays, then function pointers, then qualifiers.
+  This chapter has one axis and it is not a C axis — *does this survive to the instruction
+  stream?* `static` vanishes, an array parameter is discarded, `volatile` survives into every
+  load, and a function pointer changes the instruction. That organising question comes from this
+  book's spine rather than from C, and it produces a different order and a different selection.
+- **It is explicitly not a C tutorial, and says which parts it refuses to cover.** The chapter's
+  stated job is to make kernel source readable, so it covers what appears in kernel source and
+  stops. No style guidance, no idiom catalogue, nothing about the parts of C xv6 does not use.
+- **Each claim is settled by compiling both sides.** `volatile` is not described, it is shown as
+  one load against four. The claim that an array parameter is a pointer parameter is not asserted,
+  it is checked instruction for instruction by a test, so a compiler that disagreed would fail CI
+  rather than quietly making the sentence false. `sysfs/lib/addresses.c` was written for this book.
+- **The dispatch-table figure is drawn for this book** and shows the mechanism — a slot holds an
+  address, the call is a load then a jump — rather than illustrating a syntax.
+- **The problems are original.** 3.1 generates its own listings from the reader's toolchain rather
+  than storing them, so the puzzle cannot go stale or disagree with their compiler. 3.2 is a
+  storage-duration bug of the shape that made the C library grow `_r` variants, checked by whether
+  both answers survive to one `printf`. 3.3 asks the reader to fill a dispatch table where one
+  function's name deliberately does not match the slot it belongs in, so it cannot be solved by
+  matching strings.
+- **`volatile` is bounded rather than recommended.** The chapter states exactly what it
+  guarantees and says plainly that it is not a threading primitive, deferring to ch10 — a
+  distinction much of the comparable material blurs.
+- **Citations are primary only**: the C standard and the xv6 source. The reader is pointed at
+  `kernel/uart.c` as a first real thing to read, with a warning about which part of it they are
+  not equipped for yet.
+
+---
+
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the
 book's own additions are `xv6/apps/` (Apache-2.0) and `xv6/patches/` (diffs, MIT like what they
 patch). See `xv6/README.md` and `LICENSE-CODE`.

@@ -27,7 +27,12 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 from bench import tables
-from bench.diagrams import struct_padding, toolchain_stages, two_target_map
+from bench.diagrams import (
+    dispatch_table,
+    struct_padding,
+    toolchain_stages,
+    two_target_map,
+)
 
 
 @dataclass(frozen=True)
@@ -164,6 +169,31 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "ch02-unsigned-quarter": Listing(
         symbol="sysfs_unsigned_quarter",
         results=("signedness-riscv64",),
+    ),
+    # -- ch03 ---------------------------------------------------------------------------
+    "ch03-dispatch": Diagram(
+        draw=dispatch_table,
+        alt="A table of function pointers, each slot holding an address of code stored elsewhere.",
+    ),
+    "ch03-plain-reads": Listing(
+        symbol="sysfs_read_four",
+        results=("addresses-riscv64",),
+    ),
+    "ch03-volatile-reads": Listing(
+        symbol="sysfs_read_four_volatile",
+        results=("addresses-riscv64",),
+    ),
+    "ch03-array-parameter": Listing(
+        symbol="sysfs_sum_array",
+        results=("addresses-riscv64",),
+    ),
+    "ch03-private-call": Listing(
+        symbol="sysfs_uses_private",
+        results=("addresses-riscv64",),
+    ),
+    "ch03-indirect-call": Listing(
+        symbol="sysfs_call_through",
+        results=("addresses-riscv64",),
     ),
     "ch00-board": Table(
         render=tables.board_identity_table,

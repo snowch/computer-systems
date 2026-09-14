@@ -1,4 +1,7 @@
-"""ch01's program says the same thing on both targets, and the compiler folds one route away.
+"""Claims Part I makes about emitted code, asserted so a compiler changing its mind fails CI.
+
+ch01's program says the same thing on both targets and the compiler folds one route away; ch03's
+array parameter is a pointer parameter, and its volatile reads all survive.
 
 Two claims the chapter makes, checked rather than asserted. The first is the point of having two
 targets at all: identical source, identical output, two machines that agree about what a program
@@ -68,3 +71,43 @@ def test_the_walk_script_is_the_one_the_chapter_quotes():
     script = (ROOT / "sysfs" / "tools" / "stages.sh").read_text()
     order = [script.index(f"# {n}. ") for n in (1, 2, 3, 4)]
     assert order == sorted(order), "stages.sh no longer walks the stages in order"
+
+
+@pytest.mark.hostcode
+def test_an_array_parameter_compiles_to_a_pointer_parameter():
+    """ch03 claims these are identical instruction for instruction. Claims get checked.
+
+    The chapter prints one of the two listings and says the other is the same, which saves the
+    reader a page of duplicate output and costs the book nothing — provided something asserts it.
+    """
+    target = target_for("riscv64")
+    array = disassemble(
+        ["sysfs/lib/addresses.c"], "sysfs_sum_array", target, includes=["sysfs/include"]
+    )
+    pointer = disassemble(
+        ["sysfs/lib/addresses.c"], "sysfs_sum_pointer", target, includes=["sysfs/include"]
+    )
+
+    def body(text: str) -> list[str]:
+        # Everything after the symbol header, with the offsets stripped: two functions at
+        # different addresses in the same object file are not expected to share those.
+        return [line.split(":\t", 1)[1] for line in text.splitlines() if ":\t" in line]
+
+    assert body(array.text) == body(pointer.text), (
+        "ch03 says an array parameter and a pointer parameter produce the same code:\n"
+        f"{array.text}\n\n{pointer.text}"
+    )
+
+
+@pytest.mark.hostcode
+def test_volatile_keeps_every_read():
+    """The other claim ch03 rests on: a plain read may be elided and a volatile one may not."""
+    target = target_for("riscv64")
+    plain = disassemble(
+        ["sysfs/lib/addresses.c"], "sysfs_read_four", target, includes=["sysfs/include"]
+    )
+    marked = disassemble(
+        ["sysfs/lib/addresses.c"], "sysfs_read_four_volatile", target, includes=["sysfs/include"]
+    )
+    assert plain.text.count("lw") == 1, "ch03 says the plain version reads once:\n" + plain.text
+    assert marked.text.count("lw") == 4, "ch03 says volatile keeps all four reads:\n" + marked.text
