@@ -275,9 +275,14 @@ the advice as hygiene rather than as a result — and [ch14](#ch14) will hand yo
 settle it yourself, because "the same benchmark, one thing changed that should not matter" is
 exactly that chapter's subject. Run it both ways and find out whether you can tell.
 
-A router or switch port is the easy version: the machine gets an address and a route without being
-asked. A cable straight into a laptop's Ethernet port — a dock's, usually — works too and is
-arguably quieter, since nothing else on a two-host link is broadcasting at it. But that link has
+Only the machine being measured needs the cable. Your laptop can stay on Wi-Fi: its radio
+interrupts its own cores, not the ones running the benchmark. So for most people this costs a
+cable to the nearest router or switch port and nothing else — the machine gets an address and a
+route without being asked, and both ends are on the same network, so everything below works.
+
+If no router port is within reach, a cable straight into a laptop's Ethernet port — a dock's,
+usually, or a cheap USB-C adapter — works too, and is arguably quieter, since nothing else on a
+two-host link is broadcasting at it. But that link has
 no DHCP server and no route out, so the machine comes up with a link-local address and no
 internet, and the first `apt install` fails in a way that looks like a broken image. Turn on your
 laptop's internet sharing (macOS: Settings → General → Sharing → Internet Sharing, from Wi-Fi to
