@@ -11,9 +11,10 @@ short_title: "ch17 The CPU"
 
 | | |
 |---|---|
-| **Target** | `host` — VisionFive 2 Lite, natively |
+| **Target** | `host` — a RISC-V board, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch16](#ch16) |
 | **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **Assumes** | an in-order pipeline, and the PMU events this core exposes. On an out-of-order core the same experiments run, but the results are harder to attribute and some come out backwards. |
 :::
 
 ## The question

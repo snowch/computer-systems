@@ -127,3 +127,121 @@ def test_repository_licences_are_split():
     assert Path(ROOT / "xv6" / "xv6-riscv" / "LICENSE").exists(), (
         "the xv6 submodule must keep its own MIT licence file"
     )
+
+
+# -- the hardware prompt ------------------------------------------------------------------
+
+PROMPT = ROOT / "hardware" / "find-a-board.txt"
+
+
+def test_the_board_prompt_keeps_its_non_negotiables():
+    """The prompt is what a reader shops against, so it must not quietly lose a requirement.
+
+    The counter requirement is the one that matters: it is the only one with no workaround, it is
+    not printed on the box, and on RISC-V it depends on the firmware rather than the chip. A
+    prompt that dropped it would send someone to buy a board that cannot run Part III.
+    """
+    text = PROMPT.read_text()
+    for required in (
+        "perf stat -e cycles,instructions",
+        "<not supported>",
+        "SBI PMU",
+        "CONFIG_RISCV_PMU_SBI",
+        "rv64imafdc",
+    ):
+        assert required in text, f"the board prompt no longer mentions {required!r}"
+
+
+def test_the_board_prompt_asks_for_sources_and_admits_uncertainty():
+    """An LLM guessing confidently about perf support is the failure mode this guards against."""
+    text = PROMPT.read_text().lower()
+    assert "source" in text
+    assert "unsure" in text or "uncertain" in text
+
+
+def test_the_board_prompt_has_placeholders_to_fill_in():
+    text = PROMPT.read_text()
+    assert "[YOUR COUNTRY]" in text
+    assert "[YOUR BUDGET]" in text
+
+
+def test_chapter_zero_quotes_the_prompt_rather_than_copying_it():
+    """One source of truth: ch00 literalincludes the file, it does not paste it."""
+    chapter = (ROOT / "chapters" / "ch00_prerequisites_and_setup.md").read_text()
+    assert "{literalinclude} ../hardware/find-a-board.txt" in chapter
+    assert "hardware/README.md" in chapter
+
+
+def test_the_hardware_notes_are_not_published_as_a_chapter():
+    assert "hardware/README.md" in MYST["project"]["exclude"]
+
+
+# -- chapters that depend on the reference hardware ---------------------------------------
+
+HARDWARE_SENSITIVE = [chapter for chapter in CHAPTERS if chapter.assumes]
+
+
+def test_some_chapters_declare_a_hardware_assumption():
+    """A guard on the guard: if this list empties, the checks below stop checking anything."""
+    assert HARDWARE_SENSITIVE, "bench/outline.py records no hardware assumptions at all"
+
+
+@pytest.mark.parametrize("chapter", HARDWARE_SENSITIVE, ids=[c.label for c in HARDWARE_SENSITIVE])
+def test_hardware_assumption_is_in_the_chapter_header(chapter: Chapter):
+    """Readers open one chapter, not the whole book. The warning has to be where they land."""
+    header = (ROOT / chapter.path).read_text()
+    assert "| **Assumes** |" in header, (
+        f"{chapter.path} assumes something about the reference core but its header does not "
+        "say so — regenerate the stub, or add the row by hand if the chapter is written"
+    )
+
+
+@pytest.mark.parametrize("chapter", HARDWARE_SENSITIVE, ids=[c.label for c in HARDWARE_SENSITIVE])
+def test_chapter_zero_names_every_hardware_sensitive_chapter(chapter: Chapter):
+    """ch00 promises a complete list. A chapter added later must not quietly escape it."""
+    ch00 = (ROOT / "chapters" / "ch00_prerequisites_and_setup.md").read_text()
+    section = ch00[ch00.index("### Which chapters actually depend on the hardware") :]
+    assert f"[{chapter.label}](#{chapter.label})" in section, (
+        f"{chapter.label} assumes something about the hardware but ch00's list omits it"
+    )
+
+
+def test_host_chapter_headers_do_not_name_a_specific_board():
+    """The hardware requirement is a capability (ch00), so a header naming one board is wrong.
+
+    Every host chapter said 'VisionFive 2 Lite' until this was caught — nine chapters that would
+    have been inaccurate for any reader who bought something else.
+    """
+    offenders = []
+    for chapter in CHAPTERS:
+        if chapter.target != "host":
+            continue
+        header = (ROOT / chapter.path).read_text().split(":::", 2)[1]
+        if re.search(r"VisionFive|StarFive|JH7110", header):
+            offenders.append(chapter.label)
+    assert not offenders, f"these host chapters name a specific board in their header: {offenders}"
+
+
+def test_every_stub_carries_the_marker_that_protects_written_chapters():
+    """--force decides what is safe to overwrite by looking for this marker.
+
+    A stub generated without it would be indistinguishable from a written chapter, and would
+    quietly stop being regenerated when the template changes.
+    """
+    for chapter in CHAPTERS:
+        text = (ROOT / chapter.path).read_text()
+        if "[DRAFT]" not in text:
+            continue
+        assert "[To write:" in text, f"{chapter.path} is a draft but carries no stub marker"
+
+
+def test_the_hardware_advice_carries_its_caveat():
+    """The book points readers at third-party tools and then at shops. Both pages say whose
+    decision that is, and the note is the kind of thing that gets tidied away in an edit."""
+    notes = (ROOT / "hardware" / "README.md").read_text()
+    chapter = (ROOT / "chapters" / "ch00_prerequisites_and_setup.md").read_text()
+    for text, where in ((notes, "hardware/README.md"), (chapter, "ch00")):
+        lowered = text.lower()
+        assert "return policy" in lowered, f"{where} does not mention checking the return policy"
+        assert "warranty" in lowered, f"{where} does not disclaim a warranty"
+    assert "The purchase is yours and so is the risk" in notes

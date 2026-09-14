@@ -1,0 +1,54 @@
+I am working through a book called "Systems From Scratch", which measures CPU and
+operating-system performance on a RISC-V single-board computer. I need to buy one.
+Search for what is on sale today and recommend two or three options.
+
+Where I am: [YOUR COUNTRY].   Budget: [YOUR BUDGET].
+
+HARD REQUIREMENTS. A board that misses any of these is no use to me.
+
+  - A 64-bit RISC-V application processor, RV64GC (rv64imafdc), running Linux. Not a
+    microcontroller: it has to boot Debian, Ubuntu or similar from microSD or eMMC and
+    let me log in over SSH via Ethernet or WiFi.
+
+  - Working hardware performance counters under Linux `perf`. This is the one I cannot
+    work around, and it is the one most likely to be wrong. The test is:
+
+        perf stat -e cycles,instructions -- true
+
+    It must print real counts, not `<not supported>` and not zeroes. On RISC-V the
+    counters reach Linux through the firmware, so this depends on OpenSBI exposing the
+    SBI PMU extension and the kernel having CONFIG_RISCV_PMU_SBI — it is a property of
+    the software image as much as of the chip. For each board, tell me what evidence
+    you actually have: a forum post, bug report or article showing real `perf stat`
+    output is worth far more than a spec sheet, and a spec sheet saying the core has a
+    hardware performance monitor does not mean a shipping image exposes it.
+
+  - At least 4 GB of RAM, 8 GB preferred.
+
+  - At least 2 cores, 4 or more preferred — one chapter measures what cores cost each
+    other, and that needs more than two.
+
+STRONGLY PREFERRED
+
+  - An in-order core, such as the SiFive U74 family. The book explains microarchitecture
+    by measuring it, and an in-order core makes the effects legible. An aggressive
+    out-of-order core is not disqualifying, but it muddies small experiments.
+
+  - Currently in production and still receiving distro images, rather than end-of-life
+    or a board whose vendor kernel was abandoned two years ago.
+
+NICE TO HAVE, roughly in order
+
+  - An M.2 slot for NVMe. Builds and the file-system chapters are much less tedious.
+  - RVV 1.0 vector support. One chapter currently reasons about vectorisation because
+    the reference hardware cannot do it; a vector-capable board would let me measure it.
+  - A 3.3 V UART header, for watching a boot that never reaches the network.
+
+WHAT I WANT BACK
+
+For each recommendation: the board and its SoC; core type, count and clock; RAM options;
+current price; a link to a retailer that will actually ship to where I am; and your
+confidence that `perf` hardware counters work, with a source for that specific claim.
+
+Say plainly when you are unsure rather than guessing. I would rather buy nothing this
+week than buy a board that cannot count cycles.

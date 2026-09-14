@@ -77,43 +77,132 @@ not arrived yet, set up the xv6 half now and come back to the rest before
 
 ## What to buy
 
-% number-ok: board specification from @starfive-jh7110; the book's own figures come from the board itself
-The board is a **StarFive VisionFive 2 Lite**: a JH7110S SoC with four SiFive U74 cores at
-1.25 GHz, 8 GB of LPDDR4, and onboard WiFi. Those are the vendor's numbers @starfive-jh7110; the
-book does not repeat them anywhere else, because from here on the board reports its own
-specification and that is what gets printed.
+Not a specific board — a board that can do four things. That distinction matters more than it
+looks, so it is worth a paragraph before the shopping list.
 
-| Item | Why |
-|---|---|
-| StarFive VisionFive 2 Lite | The `host` target. Four in-order U74 cores, which is exactly the right kind of simple. |
-| USB-C power supply, 5 V / 3 A | Underpowering a board produces instability that looks like a kernel bug. Do not use a phone charger you have not checked. |
-| microSD card, 32 GB or more, decent class | Holds the system. A slow card makes every build feel like a hardware problem. |
-| Ethernet cable | Optional but recommended. WiFi works; wired is one fewer variable when a measurement looks strange. |
-| M.2 NVMe SSD | Optional. Faster builds and a far better experience from [ch12](#ch12) onwards, where the file system chapters start touching real storage. |
-| USB–UART adapter (3.3 V) | Optional. A serial console is how you watch a boot that never reaches the network. Worth having the first time something goes wrong. |
+This book originally named one model. While chapter 0 was being written, the retailer listing for
+it went out of stock, and the exact variant named turned out to be difficult to buy in the UK at
+all. A book outlives a product listing; one that hard-codes a part number has a broken first
+chapter within a year, and the reader who hits it cannot tell whether the substitute they found is
+equivalent.
 
-You also need a development machine — the book assumes a Mac, but any machine that can run
-Homebrew or apt and hold an SSH key will do. It never measures anything.
+So here is what the machine has to be able to do:
 
-### Why this board
+| | Requirement | Why |
+|---|---|---|
+| **Must** | RV64GC (`rv64imafdc`) application processor running Linux, reachable over SSH | The instruction set you read in a debugger in Part I is the one you count in Part III, with no translation in your head |
+| **Must** | `perf stat -e cycles,instructions -- true` returns real counts | **The one requirement with no workaround.** Part III does not exist without it |
+| **Must** | 4 GB RAM (8 GB preferred); 2 cores (4 or more preferred) | [ch18](#ch18) measures what cores cost each other, which needs more than two |
+| **Prefer** | An in-order core — the SiFive U74 family or similar | The reason is below, and it is the one that changes how the book reads |
+| **Prefer** | Still in production, still receiving distro images | An abandoned vendor kernel is where `perf` support goes to die |
+| **Nice** | M.2 NVMe | Builds and [ch12](#ch12) are far less tedious |
+| **Nice** | RVV 1.0 vector support | [ch21](#ch21) reasons about vectorisation because the reference hardware cannot do it. Yours might |
+| **Nice** | 3.3 V UART header | For watching a boot that never reaches the network |
 
-Two reasons, and the second is the real one.
+Plus the unglamorous parts: a **USB-C power supply** rated for the board — underpowering one
+produces instability that reads exactly like a kernel bug — a **microSD card** of 32 GB or more
+that is not the cheapest on the shelf, and an **Ethernet cable**, because WiFi works but wired is
+one fewer variable when a measurement looks strange.
 
-It is RISC-V, so the instruction set the debugger shows you in Part I is the instruction set the
-profiler counts in Part III. There is no translation step in your head between the two halves of
-the book.
+You also need a development machine. The book assumes a Mac, but anything that runs Homebrew or
+apt and holds an SSH key will do. It never measures anything.
 
-And the U74 is a **simple** core: in-order, short pipeline, no out-of-order execution, no
-register renaming. On a modern out-of-order x86 or Apple core, the connection between an
-instruction you wrote and a cycle that got spent is mediated by so much machinery that
-small-scale experiments frequently come out backwards. On an in-order core, a dependent load that
-misses in cache stalls, visibly, for as long as the miss takes. The measurements in Part III are
-*legible* in a way that the same measurements on a laptop are not — and once you have seen the
-mechanism clearly on a simple machine, you can go looking for it on a complicated one.
+### The requirement to be suspicious about
 
-The cost is that this core has no vector unit, so [ch21](#ch21) cannot measure vectorisation at
-all. That chapter says so and reasons instead. Being unable to measure something and saying so is
-a normal outcome; inventing a number is not.
+The counters. Everything else on that list is printed on the box; whether `perf` can read the
+hardware is not, and it is the one that stops the book dead.
+
+On RISC-V the performance counters are not reached directly by Linux. The hardware exposes them
+as machine-mode CSRs, the kernel runs in supervisor mode, and the two are bridged by the firmware
+through the **SBI PMU extension** @riscv-sbi. So whether `perf stat` works is a property of the
+software image as much as of the silicon — and a datasheet saying the core has a hardware
+performance monitor tells you nothing about whether a shipping distro will let you read it.
+
+Which is why the book's answer to "will this board work?" is a script rather than a claim, and
+why it runs on the board after it arrives rather than on a specification before it.
+
+### Finding one
+
+The requirements above are stable. Which boards satisfy them, in your country, at the price you
+want, on the day you read this — is not, and this book is the wrong place to answer it.
+
+So `hardware/find-a-board.txt` states those requirements in a form something else can shop
+against. Paste it into an assistant that can search the web, with your country and budget filled
+in:
+
+```{literalinclude} ../hardware/find-a-board.txt
+:language: text
+:start-at: HARD REQUIREMENTS
+:end-before: STRONGLY PREFERRED
+```
+
+That is an extract; the file also covers what is merely preferred, and asks for a **source** for
+the `perf` claim specifically, because that is the claim most likely to come back confidently
+wrong. Treat the reply as a shortlist rather than an answer — and note that the verification step
+does not depend on it being right.
+
+:::{caution} The purchase is yours
+This book does not sell hardware, has not tested most of what a search might surface, and has no
+relationship with any vendor. Availability and prices change, listings go out of stock, and an
+assistant will occasionally state a board's `perf` support with more confidence than its evidence
+supports. Verify the retailer, the price and the return policy yourself; nothing here is a
+warranty that a given board will work for you.
+
+The practical version: the requirement you cannot check before it arrives is the one that matters
+most. Buy somewhere that takes returns, and run `scripts/verify-setup.py` on day one rather than
+the week you reach Part III.
+:::
+
+### Why an in-order core
+
+Two reasons this book cares, and the second is the real one.
+
+RISC-V, so Part I and Part III are about the same instruction set.
+
+And **in-order** — a short pipeline, no out-of-order execution, no register renaming. On a modern
+out-of-order core, the connection between an instruction you wrote and a cycle that got spent is
+mediated by so much machinery that small experiments frequently come out backwards. On an
+in-order core, a dependent load that misses in cache stalls, visibly, for as long as the miss
+takes. Part III's measurements are *legible* in a way the same measurements on a laptop are not —
+and once you have seen a mechanism clearly on a simple machine, you know what to go looking for
+on a complicated one.
+
+An out-of-order RISC-V board is not disqualifying. It will make [ch17](#ch17) and [ch18](#ch18)
+harder to read, and your numbers will differ more from the committed ones. Everything still works.
+
+### The reference machine, and why your numbers will differ
+
+Every figure in Part III of this repository was measured on a **StarFive VisionFive 2 Lite**
+(JH7110S, four SiFive U74 cores) unless the result says otherwise — and every result does say,
+because each one stamps the board model, ISA string and core IDs of the machine that produced it.
+
+So your numbers will not match, and that is expected rather than a problem. The book is about
+ratios, mechanisms and method, and those transfer.
+
+### Which chapters actually depend on the hardware
+
+Most do not. Four do, and rather than let you discover that two hundred pages in, here they are
+up front. Each of these says the same thing in its own header, so you cannot open one without
+being told.
+
+| Chapter | What it assumes | What changes on a different board |
+|---|---|---|
+| [ch15](#ch15) | A particular cache hierarchy — levels, sizes, line size, TLB reach | The numbers, entirely. The method is the chapter, and measuring *your own* hierarchy is the exercise |
+| [ch17](#ch17) | An in-order pipeline, and the PMU events this core exposes | The experiments still run. On an out-of-order core the results are harder to attribute, and some come out backwards |
+| [ch18](#ch18) | Four cores, and this interconnect's coherence behaviour | A different core count moves the scaling curve without changing the mechanism. Two cores make the chapter thin |
+| [ch21](#ch21) | **No vector unit** | The one assumption a better board invalidates in your favour: with RVV 1.0 you can measure what this chapter only reasons about |
+
+The pattern is worth noticing, because it is the same one the two targets follow. A chapter's
+*mechanism* survives a change of hardware; its *numbers* do not. That is why the book insists on
+stamping every figure with the machine that produced it, and why [ch15](#ch15) is written as an
+instruction rather than a table — a cache hierarchy you measured is worth more than one you read.
+
+If none of your numbers resemble the committed ones and you want to know whether that is your
+board or your method: it is almost always your board, and [ch14](#ch14) is where you learn to
+tell the difference.
+
+`hardware/README.md` has the requirements, the prompt and the verification step in one place, for
+when you are standing in front of a shop rather than reading a chapter.
 
 ## Setting up the board
 

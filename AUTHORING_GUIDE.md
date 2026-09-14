@@ -49,7 +49,7 @@ The section that matters most is the fifth: **What this cannot tell you**. It is
 skip and the one that makes the other six believable. If a chapter genuinely has no limits worth
 naming, the chapter is not finished — go and look harder at the measurement.
 
-## Four rules that are not negotiable
+## Five rules that are not negotiable
 
 ### Never paste code into prose
 
@@ -85,6 +85,21 @@ python3 scripts/render-figures.py --check     # fail if a committed one is stale
 build. If the number is a cited *specification* rather than a measurement — a clock rate from a
 datasheet — put `% number-ok: @citekey` on the line before it, so the exemption and its reason are
 visible in review.
+
+### Never let a chapter depend on the reference hardware silently
+
+Readers are told to buy a board meeting a capability spec, not a part number (`hardware/`), so
+theirs will differ from the machine the committed figures came from. Most chapters do not care.
+If yours does — it assumes a cache shape, a core count, an in-order pipeline, the presence or
+absence of an extension — record it as that chapter's `assumes` field in `bench/outline.py`.
+
+That one edit puts an **Assumes** row in the chapter header and makes `tests/test_book.py` insist
+the chapter also appears in ch00's list of hardware-sensitive chapters. Prose saying the same
+thing gets dropped the first time the chapter is rewritten; data does not.
+
+State what *changes* on other hardware, not merely that something does. "Assumes four cores" is a
+warning. "A different core count moves the scaling curve without changing the mechanism" is
+useful.
 
 ### Never let a target answer the other one's question
 

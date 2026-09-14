@@ -32,7 +32,7 @@ of it. Chapters 1–21 are stubs carrying their target, their question and the m
 | Target | What | For |
 |---|---|---|
 | **`xv6`** | The MIT teaching kernel under `qemu-system-riscv64` | What a program *does*: system calls, page tables, scheduling, on-disk state. Runs anywhere. |
-| **`host`** | A StarFive VisionFive 2 Lite, natively over SSH | What a program *costs*: cycles, cache misses, mispredictions, four cores interfering. |
+| **`host`** | An RV64GC Linux board with working `perf` counters, natively over SSH — see [`hardware/`](hardware/) | What a program *costs*: cycles, cache misses, mispredictions, cores interfering. |
 
 QEMU models no cache, no branch predictor and no pipeline, so it will answer a question about
 nanoseconds and the answer will be fiction. The repository enforces the split rather than trusting
@@ -50,7 +50,10 @@ python3 scripts/verify-setup.py     # says which targets this machine can run
 ```
 
 On a laptop with a RISC-V cross compiler and QEMU, that is everything Parts I and II need —
-fourteen chapters. Chapter 0 is the shopping list and setup for the board, which Part III needs.
+fourteen chapters. Part III needs a RISC-V board; **[`hardware/`](hardware/)** says what it has to
+be able to do, and carries a prompt you can hand to an assistant to find one that is actually in
+stock where you are. The book deliberately does not name a part number — it outlives any
+listing — and `verify-setup.py` is what decides whether the board you bought can do the job.
 
 ```bash
 make xv6-qemu      # boot the teaching kernel

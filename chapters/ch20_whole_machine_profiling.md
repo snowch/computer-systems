@@ -11,7 +11,7 @@ short_title: "ch20 Whole-Machine Profiling"
 
 | | |
 |---|---|
-| **Target** | `host` — VisionFive 2 Lite, natively |
+| **Target** | `host` — a RISC-V board, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch19](#ch19) |
 | **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
 :::

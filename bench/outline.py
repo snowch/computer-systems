@@ -33,6 +33,14 @@ class Chapter:
     question: str
     #: Checkpoint tag, or None for a chapter that leaves no code behind (CHECKPOINTS.md).
     tag: str | None = None
+    #: What this chapter assumes about the *reference* machine, for chapters whose reading
+    #: changes on different hardware. None means the chapter is hardware-neutral.
+    #:
+    #: ch00 states the hardware requirement as a capability rather than a part number, so a
+    #: reader's board will differ from the one the committed figures came from. Most chapters do
+    #: not care. These do, and saying so in their own header is what stops it being a surprise
+    #: three hundred pages in — or being quietly dropped when the chapter is finally drafted.
+    assumes: str | None = None
 
     @property
     def label(self) -> str:
@@ -191,6 +199,9 @@ CHAPTERS: tuple[Chapter, ...] = (
         "host",
         "Where is the data, and what does each extra step out cost?",
         "ch15-memory",
+        assumes="a particular cache hierarchy — the levels, sizes, line size and TLB "
+        "reach are this core's. The method transfers to any board; the numbers do not, "
+        "and measuring your own is the exercise.",
     ),
     Chapter(
         16,
@@ -209,6 +220,9 @@ CHAPTERS: tuple[Chapter, ...] = (
         "host",
         "What is this core doing between fetching an instruction and finishing it?",
         "ch17-cpu",
+        assumes="an in-order pipeline, and the PMU events this core exposes. On an "
+        "out-of-order core the same experiments run, but the results are harder to "
+        "attribute and some come out backwards.",
     ),
     Chapter(
         18,
@@ -218,6 +232,9 @@ CHAPTERS: tuple[Chapter, ...] = (
         "host",
         "What do four cores cost each other, and what does a fence actually buy?",
         "ch18-concurrency",
+        assumes="four cores, and this interconnect's coherence behaviour. A different "
+        "core count moves the scaling curve without changing the mechanism; two cores "
+        "make the chapter thin.",
     ),
     Chapter(
         19,
@@ -245,6 +262,9 @@ CHAPTERS: tuple[Chapter, ...] = (
         "host",
         "What would vectorising buy, on a core that cannot do it?",
         None,
+        assumes="no vector unit. This is the one assumption a better board invalidates "
+        "in the reader's favour: on a core with RVV 1.0 the chapter can measure what it "
+        "otherwise only reasons about.",
     ),
 )
 

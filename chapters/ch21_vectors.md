@@ -11,9 +11,10 @@ short_title: "ch21 Vectors"
 
 | | |
 |---|---|
-| **Target** | `host` — VisionFive 2 Lite, natively |
+| **Target** | `host` — a RISC-V board, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch20](#ch20) |
 | **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **Assumes** | no vector unit. This is the one assumption a better board invalidates in the reader's favour: on a core with RVV 1.0 the chapter can measure what it otherwise only reasons about. |
 :::
 
 ## The question
