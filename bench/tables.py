@@ -11,6 +11,7 @@ that names the target, the machine, the kernel, the compiler and the flags that 
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from bench.stamp import load_result
@@ -87,19 +88,42 @@ def listing_instructions(name: str, symbol: str) -> int:
     return load_result(name)["summary"]["listings"][symbol]["instructions"]
 
 
+_OPTIMISATION_FLAG = re.compile(r"-O\w+|-f[\w-]+")
+
+
+def optimisation_level(result: dict[str, Any]) -> str:
+    """The flags a listing was built with that decide what the compiler is allowed to emit.
+
+    The last ``-O`` wins, because that is what a command line does and because ch21 builds the
+    same source at two levels by appending one to the other exactly as a reader would. Any ``-f``
+    flags come with it, and they have to: two of ch21's three builds are both ``-O3`` and differ
+    only in whether the compiler may change the program's answer, so a label naming the level
+    alone would put two different listings under identical headings.
+    """
+    found = _OPTIMISATION_FLAG.findall(result.get("toolchain", {}).get("flags", ""))
+    levels = [flag for flag in found if flag.startswith("-O")]
+    return " ".join(([levels[-1]] if levels else []) + [f for f in found if f[1] != "O"])
+
+
 def listing_label(name: str, symbol: str) -> str:
-    """The line above a listing: what it is, which architecture, and how long it came out.
+    """The line above a listing: what it is, which architecture and level, and how long it is.
 
     Assembled from the result rather than typed, like everything else here. The instruction count
     in particular: it is the figure a chapter comparing two architectures most wants to quote, and
     a hand-typed one would be the first thing to go stale.
+
+    The optimisation level is in the label rather than only in the conditions line underneath
+    because ch21 prints the same function twice, from two levels, and without it the two blocks
+    are indistinguishable at a glance — which is the one thing the figure is for.
     """
     result = load_result(name)
     arch = result["machine"]["arch"]
+    level = optimisation_level(result)
     count = listing_instructions(name, symbol)
+    at = f" at `{level}`" if level else ""
     return (
-        f"**`{symbol}` compiled for {arch}** — the `{result['target']}` target's instruction set, "
-        f"{count} instructions."
+        f"**`{symbol}` compiled for {arch}{at}** — the `{result['target']}` target's instruction "
+        f"set, {count} instructions."
     )
 
 
@@ -938,3 +962,40 @@ def skid_table(name: str) -> str:
         [f"`{entry['text']}`", f"+{entry['offset']}", f"{entry['samples_pct']}%"] for entry in run
     ]
     return render_table(["Instruction", "Offset", "Samples"], rows)
+
+
+def vector_loops_table(name: str) -> str:
+    """Five loops and three builds: which of them the compiler widened, and when.
+
+    Instructions and vector instructions in the same cell, because neither is the answer alone. A
+    loop that widened has both a handful of vector instructions and several times as many
+    instructions overall — the width is in the middle and the rest is getting there.
+    """
+    run = load_result(name)["summary"]
+    headers = {"o2": "`-O2`", "o3": "`-O3`", "o3fast": "`-O3 -ffast-math`"}
+    levels = [level for level in ("o2", "o3", "o3fast") if level in run["levels"]]
+    rows = [
+        [f"`{symbol}`"]
+        + [
+            f"{run['loops'][symbol][level]['instructions']}"
+            f" ({run['loops'][symbol][level]['vector']} vector)"
+            for level in levels
+        ]
+        for symbol in sorted(run["loops"])
+    ]
+    return render_table(["Loop", *(headers[level] for level in levels)], rows)
+
+
+def vector_speedup_table(name: str) -> str:
+    """What each loop actually gained, beside what its lane count allows.
+
+    The bound column is the point. A speedup printed on its own invites the reader to be pleased
+    with it; printed beside the most the width could possibly buy, it invites the only useful
+    question, which is where the rest went.
+    """
+    run = load_result(name)["summary"]["loops"]
+    rows = [
+        [f"`{symbol}`", f"×{data['speedup']}", f"×{data['bound']}", f"{data['achieved_pct']}%"]
+        for symbol, data in sorted(run.items())
+    ]
+    return render_table(["Loop", "Measured", "Arithmetic bound", "Of the bound"], rows)

@@ -488,6 +488,33 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
             f"{BOARD} (`bench/results/skid-host.json`)."
         ),
     ),
+    # -- ch21 ---------------------------------------------------------------------------
+    "ch21-loops": Table(
+        render=tables.vector_loops_table,
+        result="vectors-census",
+    ),
+    "ch21-scale": Listing(
+        symbol="sysfs_vec_scale",
+        # The book's own level first, because that is what a reader building this code gets.
+        results=("vectors-o2", "vectors-o3"),
+    ),
+    "ch21-sum-f32": Listing(
+        symbol="sysfs_vec_sum_f32",
+        # The refusal, then the same loop with permission to change the answer.
+        results=("vectors-o3", "vectors-o3fast"),
+    ),
+    "ch21-running": Listing(
+        symbol="sysfs_vec_running",
+        results=("vectors-o3fast",),
+    ),
+    "ch21-speedup": Table(
+        render=tables.vector_speedup_table,
+        result="vectors-host",
+        pending=(
+            "The loops have not been run yet, so there is nothing to put beside the bound: "
+            f"{BOARD} (`bench/results/vectors-host.json`)."
+        ),
+    ),
     "ch00-board": Table(
         render=tables.board_identity_table,
         result="setup-host",

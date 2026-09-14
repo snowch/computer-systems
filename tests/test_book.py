@@ -108,8 +108,12 @@ def test_written_chapters_have_an_originality_entry():
         text = (ROOT / chapter.path).read_text()
         if "[DRAFT]" in text:
             continue
-        assert chapter.label in originality, (
-            f"{chapter.label} has lost its [DRAFT] marker but ORIGINALITY.md does not cover it"
+        # The heading, not the label anywhere in the file. A passing mention in another
+        # chapter's entry — or in a footer saying which chapters are still stubs — used to
+        # satisfy this, which is how ch21 briefly had no entry and a green test.
+        assert f"## {chapter.label} ·" in originality, (
+            f"{chapter.label} has lost its [DRAFT] marker but ORIGINALITY.md has no "
+            f"'## {chapter.label} ·' section for it"
         )
 
 

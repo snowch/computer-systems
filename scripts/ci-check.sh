@@ -120,6 +120,9 @@ python3 -m bench.run_sharing --check
 echo "== ch20's program still has the shape the chapter profiles =="
 python3 -m bench.run_profile --check
 
+echo "== the compiler still refuses ch21's three loops =="
+python3 -m bench.run_vectors --check
+
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check
 

@@ -812,6 +812,43 @@ writing on sampling profilers' pitfalls.
   expensive because of a decision made in a different phase that no amount of sampling points at.
 - **Citations are primary only**: `perf_event_open(2)` and the measurement-bias paper.
 
+## ch21 · Vectors
+
+**Closest in subject.** Every compiler's own auto-vectorisation documentation; the SIMD chapters
+of *Performance Analysis and Tuning on Modern CPUs*; Goldberg's paper and the many treatments of
+floating-point non-associativity that follow it; and the large genre of "we vectorised it and got
+Nx" write-ups.
+
+**How this differs, and the care taken.**
+
+- **The chapter's first finding is one that genre never reports: at the book's own optimisation
+  level, none of the five loops vectorises.** That is measured, not asserted — three builds of one
+  source, counted from the disassembly — and it makes "when will the compiler do it for me" a
+  question with a real answer rather than a rhetorical one.
+- **The refused floating-point reduction is shown to be a refusal rather than a limitation**, by
+  granting permission and watching the same loop widen in the next column. No treatment consulted
+  makes the distinction that way; they explain non-associativity and then move on.
+- **Problem 21.2 makes the reader reproduce the disagreement rather than read about it.** They
+  write both orders, the test supplies an input where the answers differ, and the comparison is on
+  bit patterns computed one single-precision addition at a time by the test itself. The
+  scaffolding pins the two boundary facts: one lane must reproduce the sequential sum exactly, and
+  the two orders must agree when nothing rounds.
+- **The speedup is never printed alone.** Both the pending table and problem 21.3 report the
+  fraction of the arithmetic bound achieved, and the problem deliberately does not clamp a result
+  over a hundred, because that is the value that says the comparison has stopped being between two
+  versions of one loop.
+- **The tail is treated as the main result of problem 21.1 rather than a footnote**, including the
+  case a lane count alone hides: a loop shorter than one vector gains nothing and pays for all the
+  setup code, which the chapter's own `-O2`-against-`-O3` listing makes concrete.
+- **The counting rule is reported as having been wrong first.** Counting instructions that name a
+  vector register marked the unvectorisable loop as vectorised, because this compiler builds a
+  float zero with a half-width vector form. The runner's guard caught it, the rule now counts only
+  full-width forms, and both the chapter and the source say so — a reader who greps a listing for
+  `v` registers would make the same mistake.
+- **No intrinsics anywhere, and the cost of that is stated**: the book never shows the ceiling a
+  hand-written version might reach, which is named in the limitations rather than left out.
+- **Citations are primary only**: the two architectures' vector specifications.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the
@@ -820,4 +857,4 @@ patch). See `xv6/README.md` and `LICENSE-CODE`.
 
 ---
 
-*Chapters ch01–ch21 are stubs. Entries are added as each is written.*
+*Every chapter is written, and every one has an entry above. An appendix that acquires content of its own — rather than collecting what the chapters established — needs one too.*
