@@ -62,11 +62,16 @@ jobs:
         # drift (PLAN.md §9).
         run: ./scripts/ci-check.sh
 
-      - name: Boot xv6 and prove the target still works end to end
-        # ci-check.sh already runs the xv6 tests. This re-runs the measurement itself and fails
-        # if the committed result no longer matches what a fresh boot produces — the guard
-        # against a kernel patch that changes the answers without anyone re-rendering.
-        run: |
-          python3 -m bench.run_setup --target xv6
-          git diff --exit-code -- bench/results/setup-xv6.json \
-            || (echo "::error::the xv6 measurement changed; re-render figures and commit" && exit 1)
+      - name: Re-measure the xv6 target and compare with what is committed
+        # ci-check.sh already runs the xv6 tests; this asks a different question — does a fresh
+        # boot still give the answers the repository is publishing?
+        #
+        # It closes a hole nothing else covers. verify-numbers.py hashes the *files* a result
+        # names, and the xv6 submodule commit is not a file, so bumping the submodule or adding a
+        # kernel patch can change what the kernel reports while every fingerprint still matches.
+        #
+        # `--check` compares the summary and ignores generated_at and recorded_on, which describe
+        # when and where the tooling ran rather than what it measured. An earlier version of this
+        # step diffed the whole file, which reported a difference on every run — including on the
+        # same machine a second later — and so could never have passed anywhere.
+        run: python3 -m bench.run_setup --target xv6 --check

@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
 """Chapter 0's measurements: prove each target works, and record exactly what it is.
 
-    python3 -m bench.run_setup --target xv6     # boots xv6 under QEMU; runs anywhere
-    python3 -m bench.run_setup --target host    # the board's own account of itself
+    python3 -m bench.run_setup --target xv6             # boots xv6 under QEMU; runs anywhere
+    python3 -m bench.run_setup --target host            # the board's own account of itself
+    python3 -m bench.run_setup --target xv6 --check     # re-measure and compare; write nothing
 
 Neither of these is a timing measurement, which is why the ``xv6`` half can run in CI. They are
 the two facts every later chapter depends on: that the toolchain produces working RV64 code, and
 that the machine the book claims to have measured is the machine it says it is.
+
+``--check`` re-measures and compares against the committed result without writing anything. CI
+runs it on every push, because it closes a hole nothing else covers: ``verify-numbers.py`` hashes
+the *files* a result names, and the xv6 submodule commit is not a file. Bumping the submodule, or
+adding a kernel patch, can therefore change what the kernel reports while every fingerprint still
+matches. Re-running the measurement is the only thing that notices.
 """
 
 from __future__ import annotations
@@ -29,6 +36,8 @@ from bench.stamp import (
     describe_board,
     describe_qemu,
     flags_string,
+    load_result,
+    measurement_differences,
     write_result,
 )
 
@@ -220,6 +229,11 @@ def run_host() -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--target", choices=("host", "xv6"), required=True)
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="re-measure and compare against the committed result; write nothing",
+    )
     args = parser.parse_args(argv)
 
     if args.target == "xv6":
@@ -254,9 +268,40 @@ def main(argv: list[str] | None = None) -> int:
             conditions={"note": "identity and capability, measured natively on the board"},
         )
 
+    if args.check:
+        return report_differences(payload)
+
     path = write_result(payload)
     print(f"wrote {Path(path).relative_to(ROOT)}")
     return 0
+
+
+def report_differences(fresh: dict[str, Any]) -> int:
+    """Compare a fresh run against what is committed, and say what moved."""
+    name = fresh["name"]
+    try:
+        committed = load_result(name)
+    except FileNotFoundError:
+        print(f"{name}: nothing committed to compare against — run without --check first")
+        return 1
+
+    differences = measurement_differences(committed, fresh)
+    if not differences:
+        print(f"{name}: unchanged — a fresh run still gives the answers that are committed")
+        return 0
+
+    print(f"{name}: the measurement has MOVED since it was committed\n")
+    for difference in differences:
+        print(f"  {difference}")
+    print(
+        "\nThe committed result is stale, so any table rendered from it is showing a figure the "
+        "code no longer produces.\nRe-run and commit:\n"
+        f"  python3 -m bench.run_setup --target {fresh['target']}\n"
+        "  python3 scripts/render-figures.py\n"
+        "Whether the cause is a submodule bump, a new patch or a different compiler, the fix is "
+        "the same."
+    )
+    return 1
 
 
 if __name__ == "__main__":

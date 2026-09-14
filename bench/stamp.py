@@ -364,6 +364,53 @@ def provenance_problems(name: str, payload: dict[str, Any]) -> list[str]:
     return problems
 
 
+def measurement_differences(committed: dict[str, Any], fresh: dict[str, Any]) -> list[str]:
+    """What actually changed between two runs of the same measurement.
+
+    **The measurement is the summary.** Everything else in a result is provenance, and provenance
+    is policed separately by ``scripts/verify-numbers.py`` — stamps present, code fingerprint
+    matching, target measured somewhere it was allowed to be. Re-running answers one question
+    only: *do we still get the same answers?*
+
+    So everything outside the summary is ignored, and each part of it for its own reason:
+
+    * ``generated_at`` changes on every run by definition, and ``recorded_on`` describes the
+      machine that drove the tooling — for an ``xv6`` result a laptop or a CI runner, not the
+      system under study. Comparing whole files byte-for-byte counts both, which reports a
+      difference every time, including on the same machine a second later.
+    * ``machine`` and ``toolchain`` are context. A runner whose QEMU or compiler is a version
+      ahead still agrees about the answers, and failing on that would make this check noise.
+      A noisy check gets ignored, which costs more than it saves.
+
+    A difference in the summary is worth failing over even when its cause is a toolchain change,
+    because the committed result is then stale and the table rendered from it is showing a figure
+    the code no longer produces. The fix is the same either way: re-run and commit.
+    """
+    return _compare(committed.get("summary", {}), fresh.get("summary", {}), "summary")
+
+
+def _compare(before: Any, after: Any, path: str) -> list[str]:
+    if isinstance(before, dict) and isinstance(after, dict):
+        differences = []
+        for key in sorted(set(before) | set(after)):
+            if key not in before:
+                differences.append(f"{path}.{key}: added, now {after[key]!r}")
+            elif key not in after:
+                differences.append(f"{path}.{key}: gone, was {before[key]!r}")
+            else:
+                differences += _compare(before[key], after[key], f"{path}.{key}")
+        return differences
+    if isinstance(before, list) and isinstance(after, list):
+        if len(before) != len(after):
+            return [f"{path}: {len(before)} entries, now {len(after)}"]
+        return [
+            difference
+            for index, (old, new) in enumerate(zip(before, after, strict=True))
+            for difference in _compare(old, new, f"{path}[{index}]")
+        ]
+    return [] if before == after else [f"{path}: {before!r}, now {after!r}"]
+
+
 def normalise_isa(isa: str) -> str:
     """Lower-case an ISA string and drop whitespace, so two spellings of the same ISA compare."""
     return re.sub(r"\s+", "", isa.lower())

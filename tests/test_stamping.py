@@ -21,6 +21,7 @@ from bench.stamp import (
     ROOT,
     build_result,
     code_fingerprint,
+    measurement_differences,
     normalise_isa,
     provenance_problems,
     write_result,
@@ -158,3 +159,53 @@ def test_every_figure_is_a_table_or_a_diagram():
 
 def test_isa_strings_normalise():
     assert normalise_isa("RV64IMAFDC ") == normalise_isa("rv64imafdc")
+
+
+def test_environmental_stamps_do_not_count_as_a_changed_measurement():
+    """The bug that made CI red on its first run.
+
+    ``generated_at`` changes on every run and ``recorded_on`` describes the machine driving the
+    tooling — a CI runner, not the system under study. A comparison that counted either would
+    report a difference every time, including on the same machine a second later.
+    """
+    committed = sample()
+    fresh = sample(
+        generated_at="2030-01-01T00:00:00+00:00",
+        recorded_on={"kind": "other", "arch": "x86_64", "kernel": "Linux 6.17.0-azure"},
+    )
+    assert measurement_differences(committed, fresh) == []
+
+
+def test_a_moved_measurement_is_reported_with_its_path():
+    committed = sample(summary={"kernel_bytes": 276112, "types": [{"name": "int", "size": 4}]})
+    fresh = sample(summary={"kernel_bytes": 280000, "types": [{"name": "int", "size": 8}]})
+    differences = measurement_differences(committed, fresh)
+    assert "summary.kernel_bytes: 276112, now 280000" in differences
+    assert "summary.types[0].size: 4, now 8" in differences
+
+
+def test_added_and_removed_summary_keys_are_reported():
+    differences = measurement_differences(sample(summary={"a": 1}), sample(summary={"b": 2}))
+    assert any("gone" in difference for difference in differences)
+    assert any("added" in difference for difference in differences)
+
+
+def test_a_longer_list_is_reported_rather_than_zipped_silently():
+    """zip() would drop the extra entry and call the measurement unchanged."""
+    committed = sample(summary={"types": [{"size": 4}]})
+    fresh = sample(summary={"types": [{"size": 4}, {"size": 8}]})
+    assert measurement_differences(committed, fresh) == ["summary.types: 1 entries, now 2"]
+
+
+def test_context_blocks_are_not_part_of_the_measurement():
+    """A runner whose QEMU or compiler is a version ahead still agrees about the answers.
+
+    Those blocks are provenance, and provenance is verify-numbers.py's job. Failing here on a
+    QEMU minor version would make the check noise, and a noisy check gets ignored.
+    """
+    committed = sample()
+    fresh = sample(
+        machine={"kind": "qemu", "emulator": "QEMU emulator version 9.9.9", "kernel": "xv6 @ test"},
+        toolchain={"cc": "riscv64-linux-gnu-gcc 14.0.0", "flags": "-O2"},
+    )
+    assert measurement_differences(committed, fresh) == []

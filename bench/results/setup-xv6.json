@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "98a4ad4468dcbe10",
+  "code_fingerprint": "d4ac5624ef96acd5",
   "code_sources": [
     "bench/run_setup.py",
     "bench/xv6.py",
@@ -11,7 +11,7 @@
     "memory": "128M",
     "note": "structural facts only \u2014 QEMU models no timing (ch00)"
   },
-  "generated_at": "2026-09-13T23:19:15+00:00",
+  "generated_at": "2026-09-14T04:59:28+00:00",
   "machine": {
     "arch": "riscv64",
     "emulator": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
