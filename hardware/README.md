@@ -42,6 +42,27 @@ most likely to be confidently wrong.
 
 Treat what comes back as a shortlist, not an answer.
 
+## Before you buy — this is your decision
+
+This book does not sell hardware, has not tested most of what it might point you at, and has no
+relationship with any vendor. The prompt above hands your requirements to a third-party tool
+whose answers nobody here checks: availability and prices change constantly, listings go out of
+stock (one did while this page was being written), and a language model will sometimes state a
+board's `perf` support with far more confidence than its evidence supports.
+
+So treat whatever comes back as a lead to verify, not a recommendation to act on. Check the
+retailer, the current price and the return policy yourself before spending anything.
+
+**The purchase is yours and so is the risk.** Nothing here is a warranty that any board will work
+for you, or that it can be returned if it does not. `LICENSE` and `LICENSE-CODE` disclaim
+warranties for the prose and the code alike, and that extends to anything on this page.
+
+One practical consequence worth acting on. **The requirement you cannot check before it arrives
+is the one that matters most**: whether `perf` reads hardware counters depends on the firmware
+and the distro image rather than on the chip alone, so no product listing can honestly promise
+it. Buy from somewhere that accepts returns, and run the check below the day the board arrives
+rather than the week you reach Part III.
+
 ## Then verify, because that is the point
 
 ```bash
@@ -63,5 +84,16 @@ The figures committed in this repository were measured on a **StarFive VisionFiv
 each one stamps the board model, ISA string and core IDs of the machine that produced it.
 
 So your numbers will differ from the committed ones, and that is expected rather than a problem.
-The book is about ratios, mechanisms and method; where a chapter depends on something specific
-to this core, it says so.
+The book is about ratios, mechanisms and method, and those transfer.
+
+Four chapters do depend on properties of this core, and each says so in its own header:
+
+| Chapter | Assumes | On a different board |
+|---|---|---|
+| ch15 — The Memory Hierarchy | A particular cache hierarchy | The numbers change entirely. Measuring your own is the exercise |
+| ch17 — The CPU | An in-order pipeline, and this core's PMU events | Experiments still run; out-of-order results are harder to attribute |
+| ch18 — Memory Ordering on Real Hardware | Four cores, and this interconnect | The scaling curve moves, the mechanism does not. Two cores make it thin |
+| ch21 — Vectors | **No vector unit** | With RVV 1.0 you can measure what the chapter only reasons about |
+
+Worth reading before you buy: a two-core board makes ch18 thin, and a vector-capable one makes
+ch21 better than it is for the author.

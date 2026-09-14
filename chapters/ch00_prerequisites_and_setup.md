@@ -141,6 +141,18 @@ the `perf` claim specifically, because that is the claim most likely to come bac
 wrong. Treat the reply as a shortlist rather than an answer — and note that the verification step
 does not depend on it being right.
 
+:::{caution} The purchase is yours
+This book does not sell hardware, has not tested most of what a search might surface, and has no
+relationship with any vendor. Availability and prices change, listings go out of stock, and an
+assistant will occasionally state a board's `perf` support with more confidence than its evidence
+supports. Verify the retailer, the price and the return policy yourself; nothing here is a
+warranty that a given board will work for you.
+
+The practical version: the requirement you cannot check before it arrives is the one that matters
+most. Buy somewhere that takes returns, and run `scripts/verify-setup.py` on day one rather than
+the week you reach Part III.
+:::
+
 ### Why an in-order core
 
 Two reasons this book cares, and the second is the real one.
@@ -165,11 +177,32 @@ Every figure in Part III of this repository was measured on a **StarFive VisionF
 because each one stamps the board model, ISA string and core IDs of the machine that produced it.
 
 So your numbers will not match, and that is expected rather than a problem. The book is about
-ratios, mechanisms and method. Where a chapter depends on something specific to this core — the
-absence of a vector unit in [ch21](#ch21), most obviously — it says so rather than generalising.
+ratios, mechanisms and method, and those transfer.
 
-`hardware/README.md` has this list, the prompt and the verification step in one place, for when
-you are standing in front of a shop rather than reading a chapter.
+### Which chapters actually depend on the hardware
+
+Most do not. Four do, and rather than let you discover that two hundred pages in, here they are
+up front. Each of these says the same thing in its own header, so you cannot open one without
+being told.
+
+| Chapter | What it assumes | What changes on a different board |
+|---|---|---|
+| [ch15](#ch15) | A particular cache hierarchy — levels, sizes, line size, TLB reach | The numbers, entirely. The method is the chapter, and measuring *your own* hierarchy is the exercise |
+| [ch17](#ch17) | An in-order pipeline, and the PMU events this core exposes | The experiments still run. On an out-of-order core the results are harder to attribute, and some come out backwards |
+| [ch18](#ch18) | Four cores, and this interconnect's coherence behaviour | A different core count moves the scaling curve without changing the mechanism. Two cores make the chapter thin |
+| [ch21](#ch21) | **No vector unit** | The one assumption a better board invalidates in your favour: with RVV 1.0 you can measure what this chapter only reasons about |
+
+The pattern is worth noticing, because it is the same one the two targets follow. A chapter's
+*mechanism* survives a change of hardware; its *numbers* do not. That is why the book insists on
+stamping every figure with the machine that produced it, and why [ch15](#ch15) is written as an
+instruction rather than a table — a cache hierarchy you measured is worth more than one you read.
+
+If none of your numbers resemble the committed ones and you want to know whether that is your
+board or your method: it is almost always your board, and [ch14](#ch14) is where you learn to
+tell the difference.
+
+`hardware/README.md` has the requirements, the prompt and the verification step in one place, for
+when you are standing in front of a shop rather than reading a chapter.
 
 ## Setting up the board
 

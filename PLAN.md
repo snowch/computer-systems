@@ -429,8 +429,24 @@ to explain.
 the prose argues in ratios, mechanisms and method, and every figure stamps the machine that
 produced it. Committed figures come from the reference machine; ch15 in particular becomes
 "measure *your* cache hierarchy" rather than a table to memorise, which suits the book's question
-better anyway. Where a chapter depends on something specific to the reference core — no vector
-unit, [ch21](#ch21) — it says so rather than generalising.
+better anyway.
+
+**Four chapters depend on the reference core, and must say so.** The dependency is recorded in
+`bench/outline.py` as a chapter's `assumes` field, which `scripts/new-chapter.py` renders as an
+**Assumes** row in the chapter header, and which `tests/test_book.py` requires to appear both
+there and in ch00's list. A reader opens one chapter, not the book, so the warning has to be
+where they land — and recording it as data rather than prose is what stops it being dropped when
+the chapter is finally drafted.
+
+| Chapter | Assumes | Effect elsewhere |
+|---|---|---|
+| ch15 | A particular cache hierarchy | Numbers change entirely; the method is the chapter |
+| ch17 | An in-order pipeline and this core's PMU events | Experiments still run; results are harder to attribute out-of-order |
+| ch18 | Four cores and this interconnect's coherence | Scaling curve moves; mechanism does not |
+| ch21 | No vector unit | The one assumption a better board invalidates in the reader's favour |
+
+No other chapter may acquire a hardware dependency silently: if it needs one, it gets an
+`assumes` entry, and the tests then insist the reader is told.
 
 ---
 

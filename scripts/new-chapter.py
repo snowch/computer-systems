@@ -23,15 +23,26 @@ sys.path.insert(0, str(ROOT))
 
 from bench.outline import APPENDICES, CHAPTERS, Appendix, Chapter  # noqa: E402
 
+#: How a chapter's header names its target. Deliberately not a product name for `host`: ch00
+#: states the hardware requirement as a capability, and a header naming one board would be wrong
+#: for every reader who bought a different one — which was the state of all nine host chapters
+#: until this was fixed.
 TARGET_LABEL = {
     "xv6": "`xv6` — the teaching kernel under QEMU",
-    "host": "`host` — VisionFive 2 Lite, natively",
+    "host": "`host` — a RISC-V board, natively ([hardware](#ch00))",
     "both": "`xv6` and `host` — every example says which",
 }
 
 
+#: Present in every generated stub, and absent from a chapter someone has written. Used to
+#: decide whether --force is safe: regenerating the template over real prose would destroy work,
+#: and "are you sure?" is not a guarantee.
+STUB_MARKER = "[To write:"
+
+
 def chapter_stub(chapter: Chapter, previous: Chapter | None) -> str:
     prerequisites = f"[{previous.label}](#{previous.label})" if previous else "none"
+    assumes = f"\n| **Assumes** | {chapter.assumes} |" if chapter.assumes else ""
     return f"""---
 title: "{chapter.title} [DRAFT]"
 short_title: "{chapter.label} {chapter.title}"
@@ -47,7 +58,7 @@ short_title: "{chapter.label} {chapter.title}"
 |---|---|
 | **Target** | {TARGET_LABEL[chapter.target]} |
 | **Prerequisites** | {prerequisites} |
-| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
+| **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |{assumes}
 :::
 
 ## The question
@@ -95,14 +106,31 @@ short_title: "Appendix {appendix.letter}"
 ({appendix.label})=
 # Appendix {appendix.letter} · {appendix.title} [DRAFT]
 
-[To write. An appendix is a reference, not a chapter: no argument, no narrative, and everything
+[To write: an appendix is a reference, not a chapter. No argument, no narrative, and everything
 in it either cites a primary source or comes from a stamped result.]
 """
 
 
+class WrittenChapterError(RuntimeError):
+    """Refusing to overwrite a chapter that is no longer a stub."""
+
+
 def write(path: Path, body: str, force: bool) -> bool:
-    if path.exists() and not force:
-        return False
+    """Write a stub, refusing to destroy prose.
+
+    ``--force`` exists so the whole set can be regenerated when the template changes — which is
+    a normal thing to need, and was needed the day every host chapter's header turned out to name
+    a specific board. What it must never do is overwrite a chapter someone has written. The stub
+    marker is the test: a real chapter has had every ``[To write: …]`` replaced by then.
+    """
+    if path.exists():
+        if not force:
+            return False
+        if STUB_MARKER not in path.read_text():
+            raise WrittenChapterError(
+                f"{path.relative_to(ROOT)} is a written chapter, not a stub — refusing to "
+                "overwrite it. Edit it by hand, or delete it first if you really mean to."
+            )
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(body)
     return True
@@ -123,23 +151,35 @@ def main() -> int:
         parser.error(f"no chapter {args.number} in bench/outline.py")
 
     written = skipped = 0
+    protected: list[str] = []
     for chapter in wanted:
         previous = next((c for c in CHAPTERS if c.number == chapter.number - 1), None)
-        if write(ROOT / chapter.path, chapter_stub(chapter, previous), args.force):
-            print(f"  wrote {chapter.path}")
-            written += 1
-        else:
-            skipped += 1
-
-    if args.all:
-        for appendix in APPENDICES:
-            if write(ROOT / appendix.path, appendix_stub(appendix), args.force):
-                print(f"  wrote {appendix.path}")
+        try:
+            if write(ROOT / chapter.path, chapter_stub(chapter, previous), args.force):
+                print(f"  wrote {chapter.path}")
                 written += 1
             else:
                 skipped += 1
+        except WrittenChapterError:
+            # Reported at the end rather than raised. Aborting a --force part-way through leaves
+            # half the chapters on the new template and half on the old, which is worse than
+            # either.
+            protected.append(chapter.path)
+
+    if args.all:
+        for appendix in APPENDICES:
+            try:
+                if write(ROOT / appendix.path, appendix_stub(appendix), args.force):
+                    print(f"  wrote {appendix.path}")
+                    written += 1
+                else:
+                    skipped += 1
+            except WrittenChapterError:
+                protected.append(appendix.path)
 
     print(f"\nnew-chapter: {written} file(s) written, {skipped} already present")
+    for path in protected:
+        print(f"  left alone (written, not a stub): {path}")
     return 0
 
 
