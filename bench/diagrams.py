@@ -56,16 +56,159 @@ def _rect(x: float, y: float, w: float, h: float, *, fill: str, stroke: str = RU
     )
 
 
+#: One arrowhead, defined once and referenced by every arrow. Inlined into each figure rather
+#: than shared across files because an ``<img>`` is its own document: a marker defined elsewhere
+#: does not exist as far as this SVG is concerned.
+_DEFS = (
+    '<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" '
+    'markerHeight="6" orient="auto-start-reverse">'
+    f'<path d="M 0 0 L 10 5 L 0 10 z" fill="{INK}"/></marker></defs>'
+)
+
+
 def _svg(width: int, height: int, body: list[str], title: str) -> str:
     """Wrap the parts in a root element, with a title for anyone using a screen reader."""
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
         f'width="{width}" height="{height}" role="img">\n'
         f"  <title>{escape(title)}</title>\n"
+        f"  {_DEFS}\n"
         f'  <rect width="{width}" height="{height}" fill="{PAPER}"/>\n  '
         + "\n  ".join(body)
         + "\n</svg>\n"
     )
+
+
+# -- primitives -----------------------------------------------------------------------------
+#
+# Enough vocabulary to draw what a systems book needs, and no more. Four shapes recur across
+# twenty-two chapters: a row of cells (bits, bytes, struct members, cache lines), a column of
+# regions with addresses beside them (an address space, a stack frame, a page table), a chain of
+# stages with arrows between them (a toolchain, a trap path, a pipeline), and free arrows for
+# everything else. Building those once means a chapter's figure function says what the figure
+# *is* rather than where its rectangles go.
+
+
+def _line(x1: float, y1: float, x2: float, y2: float, *, stroke: str = RULE, dash: str = "") -> str:
+    extra = f' stroke-dasharray="{dash}"' if dash else ""
+    return f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{stroke}"{extra}/>'
+
+
+def _arrow(x1: float, y1: float, x2: float, y2: float, *, stroke: str = INK) -> str:
+    return (
+        f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{stroke}" '
+        f'stroke-width="1.4" marker-end="url(#a)"/>'
+    )
+
+
+def _mono(x: float, y: float, body: str, **kwargs) -> str:
+    kwargs.setdefault("size", 11.5)
+    return _text(x, y, body, family=MONO, **kwargs)
+
+
+def cells(
+    x: float,
+    y: float,
+    items: list[tuple[str, float]],
+    *,
+    height: float = 38,
+    fill: str = PANEL,
+    label_size: float = 12,
+    mono: bool = True,
+) -> tuple[list[str], float]:
+    """A row of adjacent boxes, each given its own width. Returns the parts and the total width.
+
+    Adjacent and not spaced, because in every use of this the thing being drawn *is* contiguous —
+    bits in a word, bytes in a struct, blocks on a disk. A gap between the boxes would draw a
+    space that is not there.
+    """
+    parts: list[str] = []
+    cursor = x
+    for label, width in items:
+        parts.append(_rect(cursor, y, width, height, fill=fill))
+        writer = _mono if mono else _text
+        parts.append(
+            writer(cursor + width / 2, y + height / 2 + 4, label, size=label_size, anchor="middle")
+        )
+        cursor += width
+    return parts, cursor - x
+
+
+def column(
+    x: float,
+    y: float,
+    width: float,
+    rows: list[tuple[str, str]],
+    *,
+    row_height: float = 34,
+    fill: str = PANEL,
+) -> tuple[list[str], float]:
+    """A vertical stack of regions, each with a note to its right. Returns parts and total height.
+
+    Drawn top-down in the order given. Address spaces are conventionally drawn with low addresses
+    at the bottom, so a caller wanting that passes its rows already reversed — the function does
+    not guess, because half the uses here are not address spaces.
+    """
+    parts: list[str] = []
+    cursor = y
+    for label, note in rows:
+        parts.append(_rect(x, cursor, width, row_height, fill=fill))
+        parts.append(_mono(x + 12, cursor + row_height / 2 + 4, label, size=12))
+        if note:
+            parts.append(
+                _text(x + width + 14, cursor + row_height / 2 + 4, note, size=12, fill=MUTED)
+            )
+        cursor += row_height
+    return parts, cursor - y
+
+
+def chain(
+    x: float,
+    y: float,
+    stages: list[tuple[str, str]],
+    *,
+    box_width: float = 118,
+    box_height: float = 52,
+    gap: float = 34,
+) -> tuple[list[str], float]:
+    """Boxes left to right with an arrow between each pair. Returns parts and total width.
+
+    Each stage is a heading and one line under it. The arrows carry the meaning — this shape is
+    for things that happen in an order, and the gap is where the reader should ask what the
+    previous stage handed over.
+    """
+    parts: list[str] = []
+    cursor = x
+    for index, (heading, note) in enumerate(stages):
+        if index:
+            parts.append(
+                _arrow(cursor - gap + 6, y + box_height / 2, cursor - 6, y + box_height / 2)
+            )
+        parts.append(_rect(cursor, y, box_width, box_height, fill=PANEL))
+        parts.append(
+            _text(cursor + box_width / 2, y + 22, heading, size=12.5, weight="700", anchor="middle")
+        )
+        parts.append(
+            _text(cursor + box_width / 2, y + 39, note, size=11, fill=MUTED, anchor="middle")
+        )
+        cursor += box_width + gap
+    return parts, cursor - x - gap
+
+
+def heading(x: float, y: float, title: str, subtitle: str = "") -> list[str]:
+    """Every figure opens the same way, so that a reader meeting the tenth one already knows."""
+    parts = [_text(x, y, title, size=17, weight="700")]
+    if subtitle:
+        parts.append(_text(x, y + 20, subtitle, size=12.5, fill=MUTED))
+    return parts
+
+
+def footnote(x: float, y: float, width: float, lines: list[str]) -> list[str]:
+    """The rule and the small print under a figure: what it is not saying."""
+    parts = [_line(x, y - 22, x + width, y - 22)]
+    for index, line in enumerate(lines):
+        parts.append(_text(x, y + index * 18, line, size=12, fill=MUTED))
+    return parts
 
 
 def _panel(

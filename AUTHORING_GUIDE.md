@@ -212,6 +212,29 @@ check people learn to ignore is worse than no check.
 Every figure must show a mechanism. If it would still make sense with the labels removed, it is
 decoration.
 
+### When to draw one
+
+Reach for a diagram whenever the thing being explained has a **shape** — and in a book about
+systems that is most of it. Prose is bad at spatial relationships and good at causal ones, so the
+division is usually clean:
+
+| Draw it | Write it |
+|---|---|
+| Where something sits: an address space, a stack frame, a struct's bytes, a cache line | Why it sits there |
+| What order things happen in: a toolchain, a trap path, a pipeline stage | What each step decides |
+| What is adjacent to what: page-table levels, file-system layers, cores and caches | What it costs |
+| Two arrangements of the same thing, side by side | Which one you should prefer, and when |
+
+`bench/diagrams.py` has the vocabulary for those: `cells` for a contiguous row (bits, bytes,
+members, blocks), `column` for stacked regions with addresses beside them, `chain` for stages with
+arrows between them, plus `heading` and `footnote` so every figure opens and closes the same way.
+A chapter's figure function should read as a description of the figure, not as a list of
+rectangle coordinates.
+
+The footnote is not optional garnish. A diagram makes a claim, and the line under it is where the
+claim is bounded — *this is one core's view*, *addresses are illustrative, run the dumper for
+yours*. A figure with no stated limits is the visual form of a number with no conditions.
+
 ## Definition of done
 
 PLAN.md §12.3. `[DRAFT]` comes out of the title when every box is ticked, and not before.

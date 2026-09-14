@@ -508,3 +508,45 @@ def test_every_published_page_is_checked_for_typed_numbers():
 
     for page in ["index.md", *TOC_FILES]:
         assert page in scanned, f"{page} is published but verify-numbers.py never reads it"
+
+
+# -- figures earn their place, and get used -------------------------------------------------
+
+PAGES = ["index.md", *TOC_FILES]
+
+
+def _all_page_text() -> str:
+    return "\n".join((ROOT / page).read_text() for page in PAGES)
+
+
+def test_every_declared_figure_is_included_somewhere():
+    """A figure nobody includes is one the reader never sees, and CI still renders it forever.
+
+    The mirror of the check that every included fragment exists. Both failures are silent: one
+    leaves a hole in a chapter, the other leaves work in the repository doing nothing.
+    """
+    from bench.figures import FIGURES, Diagram  # noqa: PLC0415
+
+    text = _all_page_text()
+    orphans = []
+    for name, figure in FIGURES.items():
+        needle = f"_figures/{name}.svg" if isinstance(figure, Diagram) else f"_generated/{name}.md"
+        if needle not in text:
+            orphans.append(name)
+    assert not orphans, f"declared but included by no page: {sorted(orphans)}"
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_a_written_chapter_shows_the_reader_something(chapter: Chapter):
+    """Prose alone is not this book's format.
+
+    CLAUDE.md §7 asks for figures that show a mechanism, and a finished chapter with nothing
+    included from `bench/figures.py` has either measured nothing or drawn nothing — both of which
+    are worth failing over rather than discovering at proof stage.
+    """
+    text = (ROOT / chapter.path).read_text()
+    if "[DRAFT]" in text:
+        return
+    assert "_generated/" in text or "_figures/" in text, (
+        f"{chapter.label} is finished but includes no table, listing or diagram"
+    )
