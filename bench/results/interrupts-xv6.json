@@ -9,11 +9,11 @@
   "conditions": {
     "cpus": 3,
     "disk": "the image is opened with snapshot=on, so every run starts from the same filesystem",
-    "filesystem_image": "8e951179170df5a4",
+    "filesystem_image": "d57c939855d788a7",
     "note": "counts only; nothing here was timed, and two counts are deliberately absent",
     "omitted": "timer and UART interrupt counts, which measure elapsed time rather than work"
   },
-  "generated_at": "2026-09-14T21:46:51+00:00",
+  "generated_at": "2026-09-14T21:53:46+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",
@@ -46,7 +46,7 @@
         "timer",
         "uart"
       ],
-      "disk_interrupts": 318,
+      "disk_interrupts": 319,
       "times_the_writer_had_to_wait": 0
     },
     "workload": [

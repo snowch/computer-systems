@@ -12,7 +12,7 @@
     "note": "counts only: pages allocated and faults taken; nothing here was timed",
     "policies": "both are this kernel's own \u2014 sbrk allocates on request, sbrklazy on touch"
   },
-  "generated_at": "2026-09-14T21:08:14+00:00",
+  "generated_at": "2026-09-14T21:53:45+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",

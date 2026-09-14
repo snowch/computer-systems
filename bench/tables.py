@@ -582,3 +582,48 @@ def block_cost_table(name: str) -> str:
         ],
     ]
     return render_table(["", "Bytes"], rows)
+
+
+def bridge_agreement_table(name: str) -> str:
+    """Everything the two targets agree about, which is everything they can be asked."""
+    summary = load_result(name)["summary"]
+    agreed, instructions = summary["agreed"], summary["instructions"]
+    rows = [
+        ["The answer both routes computed", agreed["sequential"]],
+        ["Elements walked", agreed["cells"]],
+        [
+            "Instructions in the sequential route (RISC-V)",
+            instructions["riscv64"]["sysfs_bridge_sequential"],
+        ],
+        [
+            "Instructions in the chased route (RISC-V)",
+            instructions["riscv64"]["sysfs_bridge_chased"],
+        ],
+        [
+            "Instructions in the sequential route (AArch64)",
+            instructions["aarch64"]["sysfs_bridge_sequential"],
+        ],
+        [
+            "Instructions in the chased route (AArch64)",
+            instructions["aarch64"]["sysfs_bridge_chased"],
+        ],
+    ]
+    return render_table(["What both targets say", "Value"], rows)
+
+
+def bridge_cost_table(name: str) -> str:
+    """What the two routes actually cost, once the board has said.
+
+    Written before the measurement exists, so that landing it is one command rather than a
+    rewrite. The columns are the ones the chapter's argument needs: the structural prediction, the
+    measured result, and the ratio between them — which is the size of the error and the reason
+    Part III exists.
+    """
+    run = load_result(name)["summary"]["bridge"]
+    rows = [
+        ["Sequential route", run["sequential_ns"]],
+        ["Chased route", run["chased_ns"]],
+        ["Measured ratio", f"{run['chased_ns'] / run['sequential_ns']:.1f}x"],
+        ["Ratio the instruction counts predict", f"{run['predicted_ratio']:.1f}x"],
+    ]
+    return render_table(["", "Nanoseconds per element"], rows)

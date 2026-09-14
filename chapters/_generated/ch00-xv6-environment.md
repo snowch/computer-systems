@@ -6,7 +6,7 @@
 | Emulator | QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) |
 | Machine model | qemu virt (-machine virt -bios none) |
 | Harts started | 3 |
-| User programs in the image | 27 |
+| User programs in the image | 28 |
 | Kernel image size (bytes) | 298048 |
 | Byte order | little |
 

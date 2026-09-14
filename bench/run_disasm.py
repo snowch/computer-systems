@@ -66,6 +66,11 @@ SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
             "sysfs_call_through",
         ),
     ),
+    "bridge": (
+        "sysfs/lib/bridge.c",
+        "sysfs/include/sysfs/bridge.h",
+        ("sysfs_bridge_sequential", "sysfs_bridge_chased"),
+    ),
     "ordering": (
         "sysfs/lib/ordering.c",
         "sysfs/include/sysfs/ordering.h",

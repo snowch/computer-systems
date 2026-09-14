@@ -329,6 +329,27 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.block_cost_table,
         result="blocks-xv6",
     ),
+    # -- ch13 ---------------------------------------------------------------------------
+    "ch13-sequential": Listing(
+        symbol="sysfs_bridge_sequential",
+        results=("bridge-riscv64", "bridge-aarch64"),
+    ),
+    "ch13-chased": Listing(
+        symbol="sysfs_bridge_chased",
+        results=("bridge-riscv64", "bridge-aarch64"),
+    ),
+    "ch13-agreement": Table(
+        render=tables.bridge_agreement_table,
+        result="bridge-both",
+    ),
+    "ch13-cost": Table(
+        render=tables.bridge_cost_table,
+        result="bridge-host",
+        pending=(
+            "The two routes have not been timed on the reference machine yet: "
+            f"{BOARD} (`bench/results/bridge-host.json`)."
+        ),
+    ),
     "ch00-board": Table(
         render=tables.board_identity_table,
         result="setup-host",

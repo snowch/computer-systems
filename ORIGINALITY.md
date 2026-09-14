@@ -535,6 +535,37 @@ implementation, journalling and crash consistency; and the journalling chapter o
   exercises rather than questions about what the disk is charged.
 - **Citations are primary only**: xv6's own source.
 
+## ch13 · The Same Program on Both Targets
+
+**Closest in subject.** No single work is close, which is unusual for this book. The nearest
+material is the "measurement is hard" literature — Mytkowicz et al. on measurement bias, and the
+introductory chapters of *Performance Analysis and Tuning on Modern CPUs* and *Systems
+Performance* — and the pointer-chase microbenchmark, which is folklore and appears in many places.
+
+**How this differs, and the care taken.**
+
+- **The chapter exists because of this book's own structure and could not be lifted from
+  anywhere.** It is the hinge between a target chosen for visibility and a target chosen for
+  cost, and its argument is about the twelve chapters that precede it.
+- **The program is chosen so the structural model is right and useless at once.** Two routes over
+  the same data, the same answer, and loop bodies differing by one load — so Parts I and II
+  predict a factor under two, correctly, and Part III exists because of the size of the error.
+  The pointer chase is a well-known shape; using it as the moment a book's own method runs out is
+  not.
+- **The confound is named as three simultaneous variables and then turned into an exercise.**
+  Problems 13.1 and 13.2 grade the design of the comparison rather than its result, against a
+  table of configurations the tests read for themselves, so there is no key. That is this book's
+  own move and the reason the chapter is placed where it is.
+- **"Structure transfers and cost does not" is argued to be wrong in both directions.** The
+  instruction count is structural and does not transfer; the layout is structural and transfers
+  only because ch02 measured that it does. Problem 13.3 is built on exactly those two.
+- **The central figure is pending and the chapter says so in its own voice**, with a paragraph on
+  why an emulated duration would be worse than no duration. Writing the argument so that it
+  stands without the number, and landing the number later as a one-command change, is this book's
+  pending-figure discipline used where it matters most.
+- **Citations**: the measurement-bias paper is cited as a primary source in "Where to go next";
+  no textbook is used for content.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the

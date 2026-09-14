@@ -3,7 +3,7 @@
 | What happened | Count |
 |---|---|
 | Block operations the workload performed | 64 |
-| Interrupts the disk raised | 318 |
+| Interrupts the disk raised | 319 |
 | Characters the workload asked to be written | 513 |
 | Characters the writing process handed over itself | 577 |
 | Times it had to stop and wait for the device | 0 |
