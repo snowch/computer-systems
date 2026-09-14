@@ -79,7 +79,7 @@ because [ch18](#ch18) wants four cores with room to work.
 | **Cooling** | The official active cooler, or a case with a fan | **Not optional here.** A Pi 5 under sustained load throttles |
 | **Power** | The official 27 W USB-C supply, or one rated for the board | Underpowering a Pi produces instability that reads exactly like a kernel bug |
 | **Storage** | A microSD card that is not the cheapest on the shelf | An NVMe drive on a PCIe HAT is nicer and not required |
-| **Network** | An Ethernet cable | WiFi works. Wired is one fewer variable when a measurement looks strange |
+| **Network** | An Ethernet cable — any working one | WiFi works. Wired keeps the radio's driver from doing interrupt work on the cores you are measuring |
 
 You also need a development machine for Parts I and II — anything that runs Homebrew or apt and
 holds an SSH key. It never measures anything.
@@ -263,8 +263,32 @@ kernel with mainline device trees on the same board may have no hardware PMU exp
 whatever — not because the chip lacks one, but because nothing told the kernel it was there. One
 command settles it either way, and it is the next section.
 
-**2. Boot it, wired if you can.** WiFi works; wired is one fewer variable when a measurement
-looks strange.
+**2. Boot it, wired if you can.** Not because the link speed matters — nothing in Part III touches
+the network, so bandwidth, latency and the grade of cable are all irrelevant to every number in
+this book. What a radio does is make the machine do work you did not ask for: its driver takes
+interrupts and runs softirqs on the same cores your benchmark is running on, and a lossy link adds
+`sshd` wakeups on top. [ch18](#ch18) and [ch19](#ch19), which measure small per-operation costs,
+are where that is most likely to show.
+
+Most likely, and not measured. This book has not put a number on it, which means you should treat
+the advice as hygiene rather than as a result — and [ch14](#ch14) will hand you the tools to
+settle it yourself, because "the same benchmark, one thing changed that should not matter" is
+exactly that chapter's subject. Run it both ways and find out whether you can tell.
+
+Only the machine being measured needs the cable. Your laptop can stay on Wi-Fi: its radio
+interrupts its own cores, not the ones running the benchmark. So for most people this costs a
+cable to the nearest router or switch port and nothing else — the machine gets an address and a
+route without being asked, and both ends are on the same network, so everything below works.
+
+If no router port is within reach, a cable straight into a laptop's Ethernet port — a dock's,
+usually, or a cheap USB-C adapter — works too, and is arguably quieter, since nothing else on a
+two-host link is broadcasting at it. But that link has
+no DHCP server and no route out, so the machine comes up with a link-local address and no
+internet, and the first `apt install` fails in a way that looks like a broken image. Turn on your
+laptop's internet sharing (macOS: Settings → General → Sharing → Internet Sharing, from Wi-Fi to
+the Ethernet adapter; Linux: set the connection to *Shared to other computers*) and both problems
+go away at once — it hands out the lease and routes the traffic. `.local` names resolve over a
+direct cable either way, so step 3 works unchanged.
 
 **3. Give it a name.** In `~/.ssh/config` on your laptop:
 
