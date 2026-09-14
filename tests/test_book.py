@@ -175,11 +175,27 @@ def test_the_board_prompt_has_placeholders_to_fill_in():
     assert "[YOUR BUDGET]" in text
 
 
-def test_chapter_zero_quotes_the_prompt_rather_than_copying_it():
-    """One source of truth: ch00 literalincludes the file, it does not paste it."""
+def test_the_board_prompt_is_linked_rather_than_copied():
+    """One source of truth for the prompt, wherever it is quoted.
+
+    It used to be `{literalinclude}`d into ch00, back when the reference machine was a RISC-V
+    board that was genuinely hard to buy and finding one was a chapter's worth of work. Now the
+    chapter recommends a Pi 5, every Pi 5 works, and shopping advice is not what a setup chapter
+    is for — so the prompt stays in `hardware/`, where a reader who cannot get one will look, and
+    ch00 points at it in a sentence.
+
+    What this still guards is the copy: no page may paste the prompt's text, because two copies
+    of a list of requirements drift and the stale one is the one somebody shops against.
+    """
+    prompt = (ROOT / "hardware" / "find-a-board.txt").read_text()
+    signature = next(line for line in prompt.splitlines() if "HARD REQUIREMENTS" in line)
+    notes = (ROOT / "hardware" / "README.md").read_text()
+    assert "find-a-board.txt" in notes, "hardware/README.md no longer points at the prompt"
+    assert signature not in notes, "hardware/README.md has pasted the prompt instead of linking it"
+
     chapter = (ROOT / "chapters" / "ch00_prerequisites_and_setup.md").read_text()
-    assert "{literalinclude} ../hardware/find-a-board.txt" in chapter
-    assert "hardware/README.md" in chapter
+    assert "hardware/README.md" in chapter, "ch00 no longer points anywhere for the alternative"
+    assert signature not in chapter, "ch00 has pasted the prompt"
 
 
 def test_the_hardware_notes_are_not_published_as_a_chapter():

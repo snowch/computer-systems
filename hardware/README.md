@@ -1,8 +1,10 @@
 # Choosing a machine
 
-Part III of *Systems From Scratch* is measured on real hardware. This directory says what that
-hardware has to be able to do, why it is an ARM machine rather than a RISC-V one, and how to
-check the thing you bought.
+Part III of *Systems From Scratch* is measured on real hardware. Chapter 0 tells a reader what to
+buy in one line, because for almost everyone there is one answer and every unit of it works. This
+directory is the rest: what the hardware has to be able to do, why it is an ARM machine rather
+than a RISC-V one, what to do if you cannot get the recommended board, and how to check whatever
+you ended up with.
 
 ## The short version
 

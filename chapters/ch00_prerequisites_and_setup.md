@@ -68,12 +68,60 @@ in Parts I and II depends on hardware you do not have.
 
 ## What to buy
 
-A **Raspberry Pi 5**, 4 GB or more, **with the active cooler**. A Pi 4 you already own will do.
+A **Raspberry Pi 5 with 4 GB or more**, and an active cooler. That is the whole decision. Every Pi
+5 has the counters this book needs — same SoC, same four cores, no variant where they are missing
+— so there is no specification to compare and nothing to get wrong except the RAM, and only
+because [ch18](#ch18) wants four cores with room to work.
 
-It is an ARM machine, and Parts I and II are RISC-V. That is deliberate: `perf` has to both count
-and sample, no affordable RISC-V core does both, and choosing one would have cost two chapters of
-Part III. The preface makes that argument with the evidence behind it; this chapter is about
-getting the machine working.
+| | What | Why this one |
+|---|---|---|
+| **Board** | Raspberry Pi 5, 4 GB or 8 GB | Four identical Cortex-A76 cores whose performance counters work. See below |
+| **Cooling** | The official active cooler, or a case with a fan | **Not optional here.** A Pi 5 under sustained load throttles |
+| **Power** | The official 27 W USB-C supply, or one rated for the board | Underpowering a Pi produces instability that reads exactly like a kernel bug |
+| **Storage** | A microSD card that is not the cheapest on the shelf | An NVMe drive on a PCIe HAT is nicer and not required |
+| **Network** | An Ethernet cable | WiFi works. Wired is one fewer variable when a measurement looks strange |
+
+You also need a development machine for Parts I and II — anything that runs Homebrew or apt and
+holds an SSH key. It never measures anything.
+
+**The cooler earns its line in the table.** A Pi 5 that throttles is running a benchmark at one
+clock speed and finishing it at another, which is not a slow measurement but a wrong one, and one
+of the more instructive ways to be wrong. [ch14](#ch14) treats throttling as a measurement hazard
+and shows how to catch it happening; a cooler means you meet it deliberately rather than in every
+run you ever take.
+
+### Why a separate board, and not the laptop you are reading this on
+
+A laptop can almost certainly count and sample — `perf` on x86-64 is mature, and on Linux you
+could start Part III this afternoon. The reason not to is that the machine is too complicated to
+learn on. A current laptop has cores of two different kinds, a clock that moves constantly, two
+threads sharing one core's execution units, and a scheduler migrating your benchmark across all of
+it. Each of those makes a measurement harder to attribute. The Pi 5 is four identical cores with
+one cache hierarchy and no hyper-threading: when a number moves, something you did moved it.
+
+That is the book's own argument applied to its own tooling — use the instrument that can answer
+the question. A laptop is a *faster* machine and a *worse* instrument. If a Pi is genuinely not
+possible, Part III still runs on a Linux laptop, and every chapter whose reading depends on the
+core's shape says so in its own header.
+
+The Pi is not the *most* legible instrument, and it is worth knowing what it is not. An **in-order**
+core — short pipeline, no out-of-order execution, no register renaming — makes microarchitecture
+plainer still: a dependent load that misses in cache stalls, visibly, for as long as the miss
+takes. The A76 reorders, so the connection between an instruction you wrote and a cycle that got
+spent runs through enough machinery that a small experiment occasionally comes out backwards.
+
+Two reasons that is the right trade anyway. The in-order RISC-V option could not sample, which
+cost more than legibility bought. And **every machine you are likely to care about optimising
+reorders**, so learning to attribute cycles on one is the skill that transfers.
+[ch17](#ch17) is harder for it, says so in its own header, and is more useful as a result. If you
+want the clean version too, an in-order Cortex-A53 — a Pi 3 or Pi Zero 2 W — costs very little,
+and running ch17's experiments on both is an instructive afternoon.
+
+### It is an ARM machine, and Parts I and II are RISC-V
+
+That is deliberate: `perf` has to both count *and* sample, no affordable RISC-V core does both,
+and choosing one would have cost two chapters of Part III. The preface has the evidence; this
+chapter is about getting the machine working.
 
 % number-ok: SoC specification from @rpi-bcm2712; every figure in this book comes from the machine itself
 Its SoC is a BCM2712: four Arm Cortex-A76 cores at 2.4 GHz, 64 kB of L1 instruction and data
@@ -85,30 +133,35 @@ more satisfying results in Part III.
 Three levels with a private L2 and a shared L3 is a genuinely good shape to learn on. The private
 level shows you locality; the shared one is where [ch18](#ch18)'s cores collide.
 
-**The active cooler is not optional for this book.** A Pi 5 under sustained load throttles, and a
-benchmark that quietly changes clock speed half way through is not a slow measurement — it is a
-wrong one, and one of the more instructive ways to be wrong about a benchmark. [ch14](#ch14)
-treats thermal throttling as a measurement hazard and shows how to detect it; a cooler means you
-meet it deliberately rather than by accident in every run.
+### If you already own something else
 
-### What the machine has to do
+The book recommends one machine because one machine is enough, not because the rest of Part III
+is about Raspberry Pis. What a machine actually has to do is short:
 
 | | Requirement | Why |
 |---|---|---|
-| **Must** | 64-bit ARM or RISC-V running Linux, reachable over SSH | |
+| **Must** | 64-bit Linux, reachable over SSH | |
 | **Must** | `perf stat -e cycles,instructions -- true` returns real counts | **The one requirement with no workaround.** Part III does not exist without it |
 | **Must** | `perf record` can sample | [ch20](#ch20) is entirely sampling. A different capability from counting |
 | **Must** | 4 GB RAM, 4 cores | [ch18](#ch18) measures what cores cost each other |
 | **Nice** | NVMe or a fast SSD | Builds and [ch12](#ch12) are far less tedious |
 | **Nice** | A SIMD unit the compiler targets — NEON, or RVV 1.0 | [ch21](#ch21) measures vectorisation |
-| **Nice** | An in-order core | Not required, and the reference is out-of-order. See below |
+| **Nice** | Few kinds of core, and a clock that holds still | Not required. It is why the reference is a Pi rather than a laptop |
 
-Plus the unglamorous parts: a power supply **rated for the board** — underpowering one produces
-instability that reads exactly like a kernel bug — a microSD card that is not the cheapest on the
-shelf, and an Ethernet cable, because wired is one fewer variable when a measurement looks strange.
+An old laptop, a spare desktop, a Rock 5B, another single-board computer you have in a drawer: run
+`scripts/verify-setup.py` on it and it will tell you. `hardware/README.md` has the same list in a
+form you can hand to a search tool, for readers somewhere Raspberry Pis are hard to get.
 
-You also need a development machine for Parts I and II. Anything that runs Homebrew or apt and
-holds an SSH key. It never measures anything.
+:::{caution} The purchase is yours
+This book does not sell hardware, has no relationship with any vendor, and has tested nothing but
+its own reference machine. Prices, availability and listings change; nothing here is a warranty
+that a given machine will work for you.
+
+The practical version: **the requirement you cannot check before it arrives is the one that
+matters most.** No product listing can honestly promise you working performance counters, because
+they depend on the image as much as on the board. Buy somewhere with a return policy, and run
+`scripts/verify-setup.py` on day one rather than the week you reach Part III.
+:::
 
 ### The requirement to be suspicious about
 
@@ -150,56 +203,6 @@ that stamp. It tells you what produced the book's numbers; it is not a requireme
 What is required is that `verify-setup.py` passes on the machine in front of you, which is a
 question about that machine and not about a version string.
 :::
-
-### Finding something else
-
-If Raspberry Pis are hard to get where you are, the requirements above are stable but which
-machines satisfy them today is not, and this book is the wrong place to answer it.
-
-So `hardware/find-a-board.txt` states them in a form something else can shop against. Paste it
-into an assistant that can search the web, with your country and budget filled in:
-
-```{literalinclude} ../hardware/find-a-board.txt
-:language: text
-:start-at: HARD REQUIREMENTS
-:end-before: NICE TO HAVE
-```
-
-That is an extract; the file also carries the RISC-V findings the preface sets out, so a
-recommendation cannot walk you back into the problem those findings describe, and it asks for a
-**source** for the `perf` claims specifically — the claim most likely to come back confidently
-wrong.
-
-:::{caution} The purchase is yours
-This book does not sell hardware, has not tested most of what a search might surface, and has no
-relationship with any vendor. Availability and prices change, listings go out of stock, and an
-assistant will occasionally state a machine's `perf` support with more confidence than its
-evidence supports. Verify the retailer, the price and the return policy yourself; nothing here is
-a warranty that a given machine will work for you.
-
-The practical version: the requirement you cannot check before it arrives is the one that matters
-most. Buy somewhere that takes returns, and run `scripts/verify-setup.py` on day one rather than
-the week you reach Part III.
-:::
-
-### On in-order cores, and why the reference is not one
-
-An in-order core — short pipeline, no out-of-order execution, no register renaming — makes
-microarchitecture *legible*. A dependent load that misses in cache stalls, visibly, for as long as
-the miss takes. On an out-of-order core the connection between an instruction you wrote and a
-cycle that got spent is mediated by enough machinery that small experiments sometimes come out
-backwards.
-
-The reference machine is out-of-order anyway, and there are two reasons that is acceptable.
-
-The first is that the in-order RISC-V option could not sample, which cost more than legibility
-bought. The second is more interesting: **every machine you are likely to care about optimising is
-out-of-order.** Learning to attribute cycles on a core that reorders them is the skill that
-transfers to the laptop and the server. [ch17](#ch17) is harder to read for it, says so in its own
-header, and is more useful as a result.
-
-If you want the clean version too, an in-order ARM core — a Cortex-A53, in a Pi 3 or Pi Zero 2 W —
-costs very little, and running [ch17](#ch17)'s experiments on both is an instructive afternoon.
 
 ### The reference machine, and why your numbers will differ
 
