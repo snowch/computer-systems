@@ -3,7 +3,7 @@
 The book's whole claim is that it measured things. That claim is worth exactly as much as its
 weakest number, so every result written under ``bench/results/`` records five things:
 
-* **which target** it ran on — ``host`` (the VisionFive 2 Lite, natively) or ``xv6`` (the
+* **which target** it ran on — ``host`` (real hardware, natively) or ``xv6`` (the
   teaching kernel under QEMU), because the two answer different questions and only one of them
   answers questions about time;
 * **what machine** produced it — board model and ISA string, or the QEMU version and the xv6
@@ -36,6 +36,18 @@ RESULTS_DIR = ROOT / "bench" / "results"
 #: The two execution targets. Every result declares one, and the distinction is the spine of the
 #: whole book: ``xv6`` tells you what a program *does*, ``host`` tells you what it *costs*.
 TARGETS = ("host", "xv6")
+
+#: Architectures a ``host`` figure may be measured on.
+#:
+#: The two targets no longer share an instruction set, and that is a deliberate choice rather
+#: than an accident. ``xv6`` is RISC-V because the kernel that can be read in an afternoon is a
+#: RISC-V kernel; ``host`` is AArch64 because that is where the performance counters actually
+#: work — RISC-V's overflow-interrupt support is absent on every affordable in-order core, which
+#: makes sampling impossible and a profiling chapter unwritable.
+#:
+#: ``riscv64`` stays permitted because a reader who already owns a RISC-V board can follow Part
+#: III on it, with the limits each chapter names in its own header.
+BOARD_ARCHES = ("aarch64", "riscv64")
 
 #: Stamps every result must carry. A number missing any of them cannot be checked by anyone,
 #: including its author six months later.
@@ -104,19 +116,40 @@ def _read(path: str) -> str:
         return ""
 
 
-def _cpuinfo_fields() -> dict[str, str]:
-    """The RISC-V-specific lines of ``/proc/cpuinfo``, which identify the core.
+#: ``/proc/cpuinfo`` keys that identify the core, on either architecture. RISC-V reports an ISA
+#: string and three vendor/architecture/implementation IDs; ARM reports an implementer, part and
+#: revision plus a feature list. Both are how you tell one core from another implementation of
+#: the same instruction set — which matters, because they run the same programs at very
+#: different costs.
+_CPU_KEYS = frozenset(
+    {
+        # RISC-V
+        "isa",
+        "mvendorid",
+        "marchid",
+        "mimpid",
+        "uarch",
+        "mmu",
+        # ARM
+        "cpu implementer",
+        "cpu architecture",
+        "cpu variant",
+        "cpu part",
+        "cpu revision",
+        "features",
+        "model name",
+        "bogomips",
+    }
+)
 
-    On an RV64 Linux system this carries ``isa``, ``mvendorid``, ``marchid``, ``mimpid`` and
-    often ``uarch``. Those four numbers are how you tell a SiFive U74 from QEMU's generic
-    implementation of the same instruction set, which matters because they execute the same
-    programs at wildly different costs.
-    """
+
+def _cpuinfo_fields() -> dict[str, str]:
+    """The lines of ``/proc/cpuinfo`` that identify the core, whichever architecture it is."""
     fields: dict[str, str] = {}
     for line in _read("/proc/cpuinfo").splitlines():
         key, _, value = line.partition(":")
         key, value = key.strip().lower(), value.strip()
-        if key in {"isa", "mvendorid", "marchid", "mimpid", "uarch", "mmu", "processor"} and value:
+        if key in _CPU_KEYS and value:
             fields.setdefault(key, value)
     return fields
 
@@ -130,14 +163,15 @@ def classify_machine() -> str:
 
     The signals, in order:
 
-    * not an RV64 machine at all — a laptop or a CI runner — is ``other``;
-    * RV64 with a device tree naming a real board is ``board``;
-    * RV64 with a device tree naming QEMU's ``virt`` machine is ``qemu``;
-    * RV64 with no device tree is user-mode emulation: ``qemu-riscv64`` fakes ``uname`` so
-      :func:`platform.machine` says ``riscv64``, but there is no hardware description underneath
-      because the kernel running is the host's.
+    * not a board architecture at all — an x86-64 laptop or CI runner — is ``other``;
+    * a board architecture with a device tree naming real hardware is ``board``;
+    * a board architecture with a device tree naming QEMU's ``virt`` machine is ``qemu``;
+    * a board architecture with no device tree is user-mode emulation: ``qemu-aarch64`` and
+      ``qemu-riscv64`` both fake ``uname``, so :func:`platform.machine` reports the target
+      architecture while the kernel underneath is the host's and there is no hardware
+      description at all.
     """
-    if platform.machine() != "riscv64":
+    if platform.machine() not in BOARD_ARCHES:
         return "other"
     model = _read("/proc/device-tree/model")
     if not model:
@@ -285,7 +319,7 @@ def load_result(name: str, results_dir: Path | None = None) -> dict[str, Any]:
         raise FileNotFoundError(
             f"{path} does not exist. The runner that writes it is named by "
             f"`grep -rl {Path(name).stem} bench/run_*.py`; for a host-target figure that means "
-            "running `make bench-board` on the VisionFive 2."
+            "running `make bench-board` on the machine being measured."
         )
     return json.loads(path.read_text())
 

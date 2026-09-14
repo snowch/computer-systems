@@ -11,10 +11,10 @@ short_title: "ch15 The Memory Hierarchy"
 
 | | |
 |---|---|
-| **Target** | `host` — a RISC-V board, natively ([hardware](#ch00)) |
+| **Target** | `host` — Linux on real hardware, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch14](#ch14) |
 | **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
-| **Assumes** | a particular cache hierarchy — the levels, sizes, line size and TLB reach are this core's. The method transfers to any board; the numbers do not, and measuring your own is the exercise. |
+| **Assumes** | a particular cache hierarchy — the levels, sizes, line size and TLB reach are this core's. The method transfers to any machine; the numbers do not, and measuring your own is the exercise. |
 :::
 
 ## The question

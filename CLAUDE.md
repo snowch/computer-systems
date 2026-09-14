@@ -18,11 +18,17 @@ Everything here follows from this, so do not work around it.
   **Never time anything here.** QEMU models no cache, no branch predictor, no store buffer, no
   pipeline and no memory latency; a duration measured inside it describes the host machine and
   the translation strategy, not RISC-V.
-- **`host`** — a StarFive VisionFive 2 Lite, natively, over SSH. Every number about cost.
+- **`host`** — Linux on real hardware, natively, over SSH. Every number about cost. The reference
+  machine is a Raspberry Pi 5; `hardware/README.md` says what any machine has to be able to do.
 
 `bench.stamp.provenance_problems` enforces both directions and CI runs it. If you find yourself
 wanting to relax it, the answer is no: an emulated timing is indistinguishable from a real one
 once it is a number in a table, which is exactly why the check exists.
+
+**The two targets do not share an instruction set, and that is deliberate.** Part III needs `perf`
+to count *and* sample, and no purchasable RISC-V core does both — staying on RISC-V would have
+made ch20 and ch21 unmeasurable. PLAN.md §5 and `hardware/README.md` carry the evidence. Do not
+"fix" the inconsistency; it was bought with two chapters.
 
 ## Build
 
@@ -130,8 +136,14 @@ show a mechanism. 25–40 PDF pages per chapter.
 ## Chapter status
 
 ch00 is written. Everything else is a stub carrying its target, question and prerequisites from
-`bench/outline.py`. The board has not yet produced `setup-host.json`, so `ch00-board` is the one
-figure currently `pending=`; PLAN.md §11 has the roadmap and CHECKPOINTS.md the tag scheme.
+`bench/outline.py`. The reference machine has not yet produced `setup-host.json`, so `ch00-board`
+is the one figure currently `pending=`; PLAN.md §11 has the roadmap and CHECKPOINTS.md the tag
+scheme.
+
+**Five chapters depend on the reference machine** — ch15, ch17, ch18, ch20, ch21 — recorded as the
+`assumes` field in `bench/outline.py`. That renders an **Assumes** row in the chapter header and
+is required by `tests/test_book.py` to appear in ch00's list too. A chapter must not acquire a
+hardware dependency without one.
 
 **Renumbering chapters is expensive.** `myst build --strict` catches every broken `{ref}`, which
 is where the volume is. What it cannot see is `chapters/chNN_*.md` paths in `myst.yml` (a regex

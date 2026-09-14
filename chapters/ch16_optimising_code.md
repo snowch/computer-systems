@@ -11,7 +11,7 @@ short_title: "ch16 Optimising Code"
 
 | | |
 |---|---|
-| **Target** | `host` — a RISC-V board, natively ([hardware](#ch00)) |
+| **Target** | `host` — Linux on real hardware, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch15](#ch15) |
 | **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
 :::

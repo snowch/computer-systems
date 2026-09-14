@@ -60,7 +60,7 @@ class Diagram:
 
 #: The board runs Part III. Repeating the instruction in every pending reason would be noise, so
 #: it lives here and each entry says what specifically is missing.
-BOARD = "run `make bench-board` on the VisionFive 2 Lite and commit the result"
+BOARD = "run `make bench-board` on the reference machine and commit the result"
 
 FIGURES: dict[str, Table | Diagram] = {
     # -- ch00 ---------------------------------------------------------------------------

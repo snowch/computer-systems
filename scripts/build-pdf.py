@@ -610,7 +610,7 @@ def main() -> int:
         front,
         parts,
         title=title,
-        tagline="From bits to cycles, measured on RISC-V.",
+        tagline="From bits to cycles, measured on real hardware.",
         blurb=blurb,
     )
 

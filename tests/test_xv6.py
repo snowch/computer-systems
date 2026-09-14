@@ -61,7 +61,7 @@ def test_patches_apply_or_say_why():
     xv6.prepare(force=True)  # raises with the patch name and git's message if one does not apply
 
 
-@pytest.mark.riscv
+@pytest.mark.hostcode
 def test_both_targets_give_the_same_answers(booted, host_target, build_dir: Path):
     """The whole of chapter 0's claim, in one assertion.
 

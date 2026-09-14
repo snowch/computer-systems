@@ -5,7 +5,7 @@ description: Re-run the measurements and refresh every figure
 Re-run what can be measured here and bring the book's figures back into agreement with the code.
 
 1. `make bench-xv6` — every `xv6`-target result. Runs anywhere QEMU does.
-2. `make bench-board` — every `host`-target result. **Only on the VisionFive 2 Lite**; it
+2. `make bench-board` — every `host`-target result. **Only on the machine being measured**; it
    refuses to run anywhere else, and that refusal is correct.
 3. `python3 scripts/render-figures.py` to rewrite the fragments and diagrams.
 4. `python3 scripts/verify-numbers.py` — every stamp, hash and provenance rule.

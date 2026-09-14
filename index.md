@@ -5,7 +5,7 @@ short_title: Preface
 
 # Systems From Scratch
 
-*From bits to cycles, measured on RISC-V.*
+*From bits to cycles, measured on real hardware.*
 
 :::{warning} This book is being written
 Chapter 0 is complete and the toolchain around it works end to end. Every other chapter is a
@@ -47,14 +47,22 @@ The first is **xv6**, the MIT teaching kernel, running under QEMU. It is a compl
 system small enough to read in an afternoon, and you can stop the whole machine mid-trap and look
 at anything. Parts I and II live there.
 
-The second is a **StarFive VisionFive 2 Lite** — a RISC-V board with four in-order cores, sitting
-on a desk, reached over SSH. Every number in Part III is measured on it, natively. Not in an
-emulator, not on the laptop, not extrapolated from a different architecture.
+The second is a small Linux machine on a desk, reached over SSH — a **Raspberry Pi 5** by
+default. Every number in Part III is measured on it, natively. Not in an emulator, not on the
+laptop, not extrapolated from a different machine.
 
 The split is not a compromise; it is the argument. QEMU will happily answer a question about
 nanoseconds and the answer will be meaningless, because it models no cache, no branch predictor
-and no pipeline. Watching a program in a debugger tells you what it *does*. Only the board tells
-you what it *costs*. Chapter 13 puts the same program through both and makes the gap concrete.
+and no pipeline. Watching a program in a debugger tells you what it *does*. Only real hardware
+tells you what it *costs*. Chapter 13 puts the same program through both and makes the gap
+concrete.
+
+The two targets do not share an instruction set, and that is deliberate rather than untidy. The
+kernel small enough to read in an afternoon is a RISC-V kernel. The hardware whose performance
+counters actually work — where a profiler can sample, and where there is a vector unit to
+measure — is an ARM one. Chapter 0 shows the evidence behind that choice. Only three chapters
+read disassembly; everything else is method, and method does not have an architecture. If the
+concepts only worked on one instruction set, they would not be worth learning.
 
 ## How the numbers work
 
@@ -64,10 +72,11 @@ produced the number. Nothing is typed into the prose by hand, and CI fails if a 
 hash stops matching the code in the repository.
 
 Two consequences worth stating plainly. Where a measurement has not been taken yet, you will see
-a box saying so rather than a plausible-looking placeholder. And where the hardware cannot answer
-a question at all — this core has no vector unit, so chapter 21 cannot measure vectorisation — the
-chapter says that, shows the reasoning it used instead, and does not quietly substitute a number
-from somewhere else.
+a box saying so rather than a plausible-looking placeholder. And where a machine cannot answer a
+question at all, the chapter says that, shows the reasoning it used instead, and does not quietly
+substitute a number from somewhere else. Five chapters depend on something specific about the
+reference machine, and each says so in its own header rather than letting you discover it two
+hundred pages in.
 
 ## Who it is for
 
@@ -78,8 +87,10 @@ internals; that is Part II.
 
 ## What you will need
 
-A laptop for Parts I and II, and a RISC-V board for Part III. Chapter 0 is the shopping list, the
-installation, and a script that tells you which targets your machine can currently run.
+A laptop for Parts I and II — everything there runs under emulation, free. For Part III, a small
+Linux machine whose `perf` can count and sample; a Raspberry Pi 5 is the reference, and one you
+already own may well do. Chapter 0 is the setup, and a script that tells you which targets your
+machine can currently run and whether its counters are real.
 
 ## Problems
 

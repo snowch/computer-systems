@@ -1,54 +1,72 @@
 I am working through a book called "Systems From Scratch", which measures CPU and
-operating-system performance on a RISC-V single-board computer. I need to buy one.
-Search for what is on sale today and recommend two or three options.
+operating-system performance on a small Linux machine. I need to buy one, or confirm
+that something I already own will do. Search for what is on sale today and recommend
+two or three options.
 
 Where I am: [YOUR COUNTRY].   Budget: [YOUR BUDGET].
 
-HARD REQUIREMENTS. A board that misses any of these is no use to me.
+The book's reference machine is a Raspberry Pi 5. If Raspberry Pis are easy to get
+where I am and within budget, say so and stop — I do not need alternatives for their
+own sake. Everything below is for deciding whether something else will do.
 
-  - A 64-bit RISC-V application processor, RV64GC (rv64imafdc), running Linux. Not a
-    microcontroller: it has to boot Debian, Ubuntu or similar from microSD or eMMC and
-    let me log in over SSH via Ethernet or WiFi.
+HARD REQUIREMENTS. A machine that misses any of these is no use to me.
 
-  - Working hardware performance counters under Linux `perf`. This is the one I cannot
-    work around, and it is the one most likely to be wrong. The test is:
+  - A 64-bit ARM (AArch64) or RISC-V (rv64imafdc) application processor running Linux.
+    Not a microcontroller: it has to boot Debian, Ubuntu or similar from microSD, eMMC
+    or SSD, and let me log in over SSH.
+
+  - Working hardware performance counters under Linux `perf`:
 
         perf stat -e cycles,instructions -- true
 
-    It must print real counts, not `<not supported>` and not zeroes. On RISC-V the
-    counters reach Linux through the firmware, so this depends on OpenSBI exposing the
-    SBI PMU extension and the kernel having CONFIG_RISCV_PMU_SBI — it is a property of
-    the software image as much as of the chip. For each board, tell me what evidence
-    you actually have: a forum post, bug report or article showing real `perf stat`
-    output is worth far more than a spec sheet, and a spec sheet saying the core has a
-    hardware performance monitor does not mean a shipping image exposes it.
+    It must print real counts, not `<not supported>` and not zeroes.
 
-  - At least 4 GB of RAM, 8 GB preferred.
+  - Sampling as well as counting:
 
-  - At least 2 cores, 4 or more preferred — one chapter measures what cores cost each
-    other, and that needs more than two.
+        perf record -o /dev/null -- true
 
-STRONGLY PREFERRED
+    must work. Counting and sampling are different capabilities and some machines have
+    the first without the second. One chapter is entirely about sampling.
 
-  - An in-order core, such as the SiFive U74 family. The book explains microarchitecture
-    by measuring it, and an in-order core makes the effects legible. An aggressive
-    out-of-order core is not disqualifying, but it muddies small experiments.
+  - At least 4 GB of RAM, and at least 4 cores — one chapter measures what cores cost
+    each other.
 
-  - Currently in production and still receiving distro images, rather than end-of-life
-    or a board whose vendor kernel was abandoned two years ago.
+WHAT I ALREADY KNOW, so please do not re-derive it or contradict it without evidence.
+
+  - On ARM, counter-overflow interrupts are a standard PMU feature, so both counting
+    and sampling generally work on a mainline kernel. Check anyway that the PMU node is
+    present in the device tree for the board you recommend — some vendor kernels have
+    shipped without it, and then `perf` silently sees no hardware.
+
+  - RISC-V is much weaker here, and I have already investigated it. The SiFive U74
+    (StarFive JH7110: VisionFive 2, Milk-V Mars, Star64) counts but has no
+    counter-overflow support, so `perf record` cannot sample. SpacemiT K1/X60 boards
+    (Banana Pi BPI-F3, Milk-V Jupiter) have trouble with the standard cycles and
+    instructions events entirely, exposing vendor counters such as u_mode_cycle
+    instead. The T-Head C910 (Lichee Pi 4A) does have overflow support but needs a
+    vendor kernel. So do not recommend a RISC-V board unless I asked for one, and if I
+    did, tell me which of counting and sampling actually works on it, and whether it
+    needs CONFIG_RISCV_PMU_SBI and a firmware exposing the SBI PMU extension.
+
+  - The OS image matters as much as the machine. Tell me WHICH distro image and kernel
+    the working evidence came from, not only which board.
 
 NICE TO HAVE, roughly in order
 
-  - An M.2 slot for NVMe. Builds and the file-system chapters are much less tedious.
-  - RVV 1.0 vector support. One chapter currently reasons about vectorisation because
-    the reference hardware cannot do it; a vector-capable board would let me measure it.
-  - A 3.3 V UART header, for watching a boot that never reaches the network.
+  - NVMe or a fast SSD. Builds and the file-system chapters are much less tedious.
+  - A SIMD unit the compiler will actually target — NEON on ARM, RVV 1.0 on RISC-V.
+    One chapter measures vectorisation.
+  - A serial console header, for watching a boot that never reaches the network.
+  - An in-order core. Not required, and the reference machine is out-of-order, but
+    in-order cores make two of the microarchitecture chapters easier to read.
 
 WHAT I WANT BACK
 
-For each recommendation: the board and its SoC; core type, count and clock; RAM options;
-current price; a link to a retailer that will actually ship to where I am; and your
-confidence that `perf` hardware counters work, with a source for that specific claim.
+For each recommendation: the machine and its SoC; core type, count and clock; RAM
+options; current price; a link to a retailer that will actually ship to where I am;
+whether `perf` can count and whether it can sample, with a source for each of those two
+claims specifically — a forum post, bug report, kernel log or article showing real
+output is worth far more than a spec sheet.
 
 Say plainly when you are unsure rather than guessing. I would rather buy nothing this
-week than buy a board that cannot count cycles.
+week than buy a machine that cannot count cycles.

@@ -11,15 +11,15 @@ short_title: "ch21 Vectors"
 
 | | |
 |---|---|
-| **Target** | `host` — a RISC-V board, natively ([hardware](#ch00)) |
+| **Target** | `host` — Linux on real hardware, natively ([hardware](#ch00)) |
 | **Prerequisites** | [ch20](#ch20) |
 | **What it measures** | [To write: the figure this chapter produces, and the result file under `bench/results/` it lands in.] |
-| **Assumes** | no vector unit. This is the one assumption a better board invalidates in the reader's favour: on a core with RVV 1.0 the chapter can measure what it otherwise only reasons about. |
+| **Assumes** | a vector unit — NEON on the reference core. This chapter became measurable when Part III moved to AArch64; on a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run. |
 :::
 
 ## The question
 
-What would vectorising buy, on a core that cannot do it?
+What does vectorising actually buy, and when will the compiler do it for me?
 
 [To write: one paragraph. State the question this chapter answers and why the previous chapter
 leaves it open. No summary of what is to come — the reader can see the headings.]

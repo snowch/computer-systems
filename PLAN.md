@@ -1,6 +1,6 @@
 # Systems From Scratch — Book Plan
 
-*From bits to cycles, measured on RISC-V.*
+*From bits to cycles, measured on real hardware.*
 
 The outline, the settled decisions, and the conventions. Read this before writing anything; read
 **AUTHORING_GUIDE.md** before writing a chapter; read **CLAUDE.md** before letting an assistant
@@ -285,13 +285,16 @@ on the board and stamped; nothing here may come from an emulator.
 
 - **Objectives.** Clocks and what they cost to read; `perf stat`; cycle counters; repetition,
   variance and what statistic to report; warm-up; the observer effect; measurement bias
-  @mytkowicz2009wrong. How to be wrong about a benchmark.
+  @mytkowicz2009wrong; **thermal throttling**, which the reference machine does under sustained
+  load and which silently changes the clock a benchmark is measuring against. How to be wrong
+  about a benchmark.
 - **Code.** `sysfs/lib/timing.c` and its header — the book's clock. **Joins
   `bench.stamp.CORE_SOURCES` in this chapter**, which invalidates every prior `host` result by
   design; it happens once, here.
 - **Measurements.** Clock resolution and read cost; the distribution of a fixed workload over many
   repetitions; the same benchmark made to give three different answers by changing something that
-  should not matter.
+  should not matter; a run long enough to throttle, with the clock recorded alongside the result
+  so the reader can see the floor move.
 - **Problems.** Build a timing harness against a specification; find the bias in a supplied
   benchmark; make a wrong benchmark right.
 
@@ -355,21 +358,25 @@ on the board and stamped; nothing here may come from an emulator.
   deliberately.
 - **Problems.** Find the bottleneck in an unfamiliar program; produce a profile that is wrong, and
   say why.
+- **Note.** This chapter is the reason Part III is measured on ARM. It needs `perf record`, and
+  sampling needs counter-overflow interrupts, which no affordable in-order RISC-V core provides
+  ([§5](#5-hardware-and-execution-strategy)). It is fully measurable on the reference machine, and
+  its header warns the RISC-V reader that this is the one chapter they cannot run.
 
 #### ch21 · Vectors — target `host`
 
-An honest chapter about something this hardware cannot do.
-
-- **Objectives.** What vectorisation is and what it would buy; RVV's shape; what the compiler does
-  when asked to vectorise for a core with no vector unit; how to reason about a speedup you cannot
-  measure.
-- **Code.** `sysfs/bench/vectorisable.c` — loops that would vectorise, built for both `rv64gc` and
-  a vector-capable target for comparison of *emitted code only*.
-- **Measurements.** Instruction counts and emitted code for both targets; scalar performance on
-  the board. **No vector timing**, and the chapter says so in a warning box, states what it would
-  take to measure, and gives the reasoning it used instead.
-- **Problems.** Predict which loops a vectoriser can handle and confirm from the emitted code;
-  compute the bound a vector unit would be subject to.
+- **Objectives.** What vectorisation is and what it buys; when the compiler will do it unasked and
+  when it will not; reading vectorised output; the bound a vector unit is actually subject to.
+- **Code.** `sysfs/bench/vectorisable.c` — loops that do and do not auto-vectorise, each a
+  separate function.
+- **Measurements.** Speedup per loop with and without vectorisation; the emitted code that
+  explains each; at least one loop the compiler refuses and why; measured against the arithmetic
+  bound rather than celebrated on its own.
+- **Problems.** Predict which loops the vectoriser can handle and confirm from the emitted code;
+  make one it refuses acceptable to it; compute the bound and explain the gap.
+- **Note.** This chapter was unmeasurable under the original RISC-V plan — the reference core had
+  no vector unit — and became measurable when Part III moved to AArch64 (NEON). A reader on a
+  RISC-V board without RVV 1.0 is back in the original situation, and the header says so.
 
 ### Appendices
 
@@ -392,46 +399,60 @@ the discipline is that neither is ever asked the other's question.
 | Target | What it is | What it answers | What it must never be asked |
 |---|---|---|---|
 | **`xv6`** | xv6-riscv under `qemu-system-riscv64`, on any machine | Structure and semantics: instruction sequences, system calls, page tables, scheduling, on-disk state | Anything about time. QEMU has no cache, no branch predictor, no store buffer, no pipeline, no memory latency |
-| **`host`** | An RV64GC Linux SBC with working `perf` counters, native, over SSH. Reference machine: a StarFive VisionFive 2 Lite | Everything about cost: cycles, misses, mispredictions, syscall and fault costs, scaling across cores | Anything requiring a kernel you can stop mid-trap and modify freely |
+| **`host`** | Linux on real hardware with `perf` that can count **and sample**, native, over SSH. Reference machine: a Raspberry Pi 5 | Everything about cost: cycles, misses, mispredictions, syscall and fault costs, scaling across cores | Anything requiring a kernel you can stop mid-trap and modify freely |
 
 **Rules that follow:**
 
 - Every chapter declares its target in its header, and `tests/test_book.py` checks the declaration
   against `bench/outline.py`.
 - Every example, figure and exercise states which target it ran on.
-- `make bench-board` refuses to run anywhere but the board. `bench.stamp.provenance_problems`
-  rejects a `host` result not measured natively on RISC-V hardware, and rejects any `xv6` result
+- `make bench-board` refuses to run anywhere but the machine itself. `bench.stamp.provenance_problems`
+  rejects a `host` result not measured natively on board hardware, and rejects any `xv6` result
   whose summary contains a duration.
 - **CI is an x86-64 runner and measures nothing.** It boots xv6 under QEMU for every `xv6`
-  example, and cross-compiles every `host` example for RV64 and runs it under user-mode QEMU for
-  *correctness*. Timing tests are marked `board` and skip themselves everywhere else.
+  example, and cross-compiles every `host` example for AArch64 and runs it under user-mode QEMU
+  for *correctness*. Timing tests are marked `board` and skip themselves everywhere else.
 - No chapter above `xv6` is a prerequisite for a later `xv6` chapter, so a reader without the
   board can complete Parts I and II in full — fourteen chapters — and set the board up before
   [ch13](#ch13).
 
-**Why a capability, not a part number.** The book originally named one model. The retailer listing
-for it went out of stock while ch00 was being written, and the named variant proved hard to buy in
-the UK at all. A book outlives a product listing, so `hardware/README.md` states what the board
-must *do* and `hardware/find-a-board.txt` is a prompt the reader gives to an assistant that knows
+**Why the targets do not share an instruction set.** Part III needs `perf` to count *and* to
+sample. Sampling requires counter-overflow interrupts — standard on ARM PMUs, and on RISC-V the
+Sscofpmf extension @riscv-sscofpmf, whose support is thin. A 2025 study of the three RISC-V cores
+that are actually purchasable @riscv-pmu-profiling found none that wins: the SiFive U74 counts but
+cannot sample and has no vector unit; the T-Head C910 samples but needs a vendor kernel; the
+SpacemiT X60 has RVV 1.0 and struggles with `cycles` and `instructions` themselves. Staying on
+RISC-V would have made **two of Part III's eight chapters unmeasurable** (ch20 needs sampling, ch21
+needs vectors), on hardware that is hard to buy, with a toolchain that has regressed between distro
+releases.
+
+The cost is instruction-set continuity, and it falls on the three chapters that read disassembly —
+ch16, ch17, ch21. The other five are method, and method has no architecture. A reader meeting
+AArch64 in ch16 after learning RISC-V in ch04 is being shown that the concepts were never about
+RISC-V, which is worth more than the tidiness it replaces. `hardware/README.md` carries the
+evidence; ch00 makes the argument to the reader.
+
+**Why a capability, not a part number.** The book originally named one board. Its retailer listing
+went out of stock while ch00 was being written, and the named variant proved hard to buy in the UK
+at all. A book outlives a product listing, so `hardware/README.md` states what the machine must
+*do* and `hardware/find-a-board.txt` is a prompt the reader hands to an assistant that knows
 today's stock. Nothing rests on that recommendation being right: `scripts/verify-setup.py`
-interrogates the board that actually arrived, and `perf` either reads hardware counters or it does
-not.
+interrogates the machine that actually arrived, and `perf` either reads hardware counters or it
+does not.
 
-**What the requirement still insists on.** RISC-V, so the ISA in the debugger in Part I is the ISA
-under the profiler in Part III with no translation in the reader's head. Working `perf` hardware
-counters, which on RISC-V depend on the firmware's SBI PMU extension and so are a property of the
-shipped image as much as of the silicon — this is the one thing with no workaround. And, preferred
-rather than required, an in-order core: it makes microarchitectural effects *legible*, where on an
-out-of-order core small experiments frequently come out backwards for reasons that take a chapter
-to explain.
+**What the requirement insists on.** Counting **and** sampling — the one thing with no workaround,
+and two capabilities rather than one, since a machine can have the first without the second. Four
+cores, for ch18. Everything else is preference, including in-order execution: it makes
+microarchitecture legible, the reference machine does not have it, and ch17 says so and is more
+transferable for it, because every machine a reader wants to optimise is out-of-order.
 
-**What follows from readers having different boards.** Absolute numbers are reader-specific, so
+**What follows from readers having different machines.** Absolute numbers are reader-specific, so
 the prose argues in ratios, mechanisms and method, and every figure stamps the machine that
 produced it. Committed figures come from the reference machine; ch15 in particular becomes
 "measure *your* cache hierarchy" rather than a table to memorise, which suits the book's question
 better anyway.
 
-**Four chapters depend on the reference core, and must say so.** The dependency is recorded in
+**Five chapters depend on the reference core, and must say so.** The dependency is recorded in
 `bench/outline.py` as a chapter's `assumes` field, which `scripts/new-chapter.py` renders as an
 **Assumes** row in the chapter header, and which `tests/test_book.py` requires to appear both
 there and in ch00's list. A reader opens one chapter, not the book, so the warning has to be
@@ -441,9 +462,10 @@ the chapter is finally drafted.
 | Chapter | Assumes | Effect elsewhere |
 |---|---|---|
 | ch15 | A particular cache hierarchy | Numbers change entirely; the method is the chapter |
-| ch17 | An in-order pipeline and this core's PMU events | Experiments still run; results are harder to attribute out-of-order |
+| ch17 | An out-of-order, 4-wide core and its PMU events | Width, predictor and event names differ; an in-order core is *easier* to read |
 | ch18 | Four cores and this interconnect's coherence | Scaling curve moves; mechanism does not |
-| ch21 | No vector unit | The one assumption a better board invalidates in the reader's favour |
+| ch20 | That `perf` can **sample**, not only count | Standard on mainline ARM; the chapter a RISC-V reader cannot run |
+| ch21 | A vector unit (NEON) | On a RISC-V board without RVV 1.0 it reverts to reasoning |
 
 No other chapter may acquire a hardware dependency silently: if it needs one, it gets an
 `assumes` entry, and the tests then insist the reader is told.
@@ -706,21 +728,27 @@ Recorded so they are not relitigated.
 
 1. **Two targets, not one.** A single target would mean either no real timings or no inspectable
    kernel. The split is the book's argument.
-2. **xv6 as a submodule plus patches, never a fork.** `ls xv6/patches/` must remain a complete
+2. **The targets do not share an instruction set, and Part III is ARM.** Decided on evidence
+   ([§5](#5-hardware-and-execution-strategy)): no purchasable RISC-V core both counts and samples,
+   which would have cost ch20 and ch21. Instruction-set continuity was worth less than two
+   chapters, and only three chapters read disassembly at all. Revisit if a RISC-V board appears
+   that counts, samples, has RVV 1.0 and upstream Linux support — at which point the reference
+   machine can move back and only `hardware/` and five chapter headers change.
+3. **xv6 as a submodule plus patches, never a fork.** `ls xv6/patches/` must remain a complete
    answer to what the book changed.
-3. **The board is the only place a timing may be measured.** Enforced in code, not in prose.
-4. **CI proves correctness, never cost.** Cross-compilation plus user-mode QEMU, marked as such
+4. **The board is the only place a timing may be measured.** Enforced in code, not in prose.
+5. **CI proves correctness, never cost.** Cross-compilation plus user-mode QEMU, marked as such
    everywhere it appears.
-5. **No executable cells in chapters.** Pre-rendered fragments, diffed in CI.
-6. **Pending figures show nothing rather than something plausible.** A missing measurement
+6. **No executable cells in chapters.** Pre-rendered fragments, diffed in CI.
+7. **Pending figures show nothing rather than something plausible.** A missing measurement
    announces itself; a placeholder does not.
-7. **Problems are tests, not an answer key.** Marked `problem`, deselected in CI, with scaffolding
+8. **Problems are tests, not an answer key.** Marked `problem`, deselected in CI, with scaffolding
    checked separately.
-8. **Figures are hand-built deterministic SVG, not matplotlib.** A plot whose bytes change on a
+9. **Figures are hand-built deterministic SVG, not matplotlib.** A plot whose bytes change on a
    library upgrade cannot be checked for staleness, and a check people learn to ignore is worse
    than no check.
-9. **British English, and the book's voice is the author's.**
-10. **Split licence**: CC-BY-NC-4.0 for prose, Apache-2.0 for code, MIT retained for xv6 and for
+10. **British English, and the book's voice is the author's.**
+11. **Split licence**: CC-BY-NC-4.0 for prose, Apache-2.0 for code, MIT retained for xv6 and for
     patches against it.
 
 ---

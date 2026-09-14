@@ -145,11 +145,21 @@ def test_the_board_prompt_keeps_its_non_negotiables():
     for required in (
         "perf stat -e cycles,instructions",
         "<not supported>",
-        "SBI PMU",
-        "CONFIG_RISCV_PMU_SBI",
-        "rv64imafdc",
+        "perf record",
     ):
         assert required in text, f"the board prompt no longer mentions {required!r}"
+
+
+def test_the_board_prompt_keeps_the_riscv_warning():
+    """Hard-won, and the reason Part III is not on RISC-V. It must not be quietly dropped.
+
+    A reader who asks for a RISC-V board should be told which of counting and sampling actually
+    works on the core they are considering, because the answer differs per core and no product
+    listing says.
+    """
+    text = PROMPT.read_text()
+    for required in ("U74", "SBI PMU", "CONFIG_RISCV_PMU_SBI", "rv64imafdc", "u_mode_cycle"):
+        assert required in text, f"the RISC-V warning no longer mentions {required!r}"
 
 
 def test_the_board_prompt_asks_for_sources_and_admits_uncertainty():

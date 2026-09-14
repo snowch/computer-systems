@@ -6,8 +6,8 @@ project:
   description: >-
     From bits to cycles, measured on RISC-V. A self-study text on computer systems and
     performance — data representation, machine code, the operating system layer and CPU
-    microarchitecture — built on the xv6 teaching kernel and measured natively on a
-    StarFive VisionFive 2 Lite.
+    microarchitecture — built on the xv6 teaching kernel and measured natively on hardware
+    whose performance counters actually work.
   keywords:
     - computer systems
     - performance
