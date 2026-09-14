@@ -514,3 +514,33 @@ def lock_primitives_table(name: str) -> str:
         ["", "Instructions", "Atomic", "Fences", "CSR writes"],
         rows,
     )
+
+
+def switch_cost_table(name: str) -> str:
+    """What a context switch moves, beside what a trap moves.
+
+    The comparison is the content, so both are in one table. ch06's figure is loaded rather than
+    repeated, so the two cannot disagree; `run_traps --check` keeps that one current.
+    """
+    swtch = load_result(name)["summary"]["swtch"]
+    trap = load_result("traps-xv6")["summary"]["path"]
+    rows = [
+        ["Registers a context switch saves", swtch["registers_saved"]],
+        ["Registers a trap saves ([ch06](#ch06))", trap["uservec"]["register_stores"]],
+        ["Bytes a switch moves, in and out", swtch["bytes_moved"]],
+        ["Instructions in `swtch`", swtch["instructions"]],
+    ]
+    return render_table(["What a switch costs to arrange", "Count"], rows)
+
+
+def switch_census_table(name: str) -> str:
+    """The one switch count a workload decides."""
+    census = load_result(name)["summary"]["census"]
+    rows = [
+        ["Children created and exited", census["children_created"]],
+        [
+            "Switches out of a process that is not coming back",
+            census["switches_out_of_an_exiting_process"],
+        ],
+    ]
+    return render_table(["What the workload caused", "Count"], rows)

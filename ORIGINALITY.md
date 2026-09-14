@@ -468,6 +468,37 @@ and ARM architecture manuals.
   — the one thing this target cannot show.
 - **Citations are primary only**: the RISC-V unprivileged specification and xv6's own source.
 
+## ch11 · Scheduling and Context Switches
+
+**Closest in subject.** The xv6 book's chapter on scheduling, which walks the same `swtch`,
+`sched` and `sleep`; MIT 6.1810's threads lab; *Operating Systems: Three Easy Pieces* on
+scheduling policy and on the abstraction of a thread.
+
+**How this differs, and the care taken.**
+
+- **The chapter's spine is a ratio the comparable material does not compute.** A trap saves
+  thirty-one registers and a switch saves fourteen, both read out of this book's own earlier
+  measurement and out of the kernel as built. The explanation — a trap is not a call and a switch
+  is, so ch04's convention has already done most of the work — reuses this book's own chapters
+  rather than restating background, and turns "context switches are expensive" into a claim with a
+  number attached.
+- **Switches are attributed by reason, and only the workload-determined one is published.** That
+  discipline is this book's and is applied for the fourth time here; the chapter states it briefly
+  rather than re-deriving it, and reports the finding that the timer never preempted anything in
+  this workload without publishing the count.
+- **The patch's first version contained ch10's race**, a shared reason-slot written by one hart and
+  read by another, and the count came out twice what the workload could have caused. It is fixed
+  with a per-process field and the patch's own comment says so. A book that gets caught by the
+  chapter it just wrote, and prints that, is not a form any textbook uses.
+- **The problems are original.** 11.1 grades ch04's convention applied to the switch, so the
+  chapter's headline ratio becomes something the reader derives rather than reads. 11.2 uses two
+  orderings of the same six events with different answers, so the problem cannot be passed by
+  recognising a diagram. 11.3 picks burst lengths on which no two policies agree, so a reader who
+  implements one policy three times fails. Verified against references kept outside the repository.
+- **Not set**: the well-known kernel-threads lab, which asks for an implementation of switching
+  itself — the one thing this chapter can simply show the reader, disassembled.
+- **Citations are primary only**: xv6's own source.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the

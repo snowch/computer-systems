@@ -99,6 +99,9 @@ echo "== the lock is still made of the instructions the book prints =="
 # the fence — either of which would be a broken lock, and neither of which any test would notice.
 python3 -m bench.run_locks --check
 
+echo "== a context switch still moves what the book says =="
+python3 -m bench.run_switch --check
+
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check
 

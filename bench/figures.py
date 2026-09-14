@@ -311,6 +311,15 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.lock_primitives_table,
         result="locks-xv6",
     ),
+    # -- ch11 ---------------------------------------------------------------------------
+    "ch11-swtch": Table(
+        render=tables.switch_cost_table,
+        result="switch-xv6",
+    ),
+    "ch11-census": Table(
+        render=tables.switch_census_table,
+        result="switch-xv6",
+    ),
     "ch00-board": Table(
         render=tables.board_identity_table,
         result="setup-host",
