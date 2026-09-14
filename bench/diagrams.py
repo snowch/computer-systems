@@ -604,10 +604,75 @@ def dispatch_table() -> str:
     )
 
 
+def stack_frame() -> str:
+    """One frame, and the two slots that make the frames into a list you can walk.
+
+    Drawn because `sysfs/tools/framewalk.c` indexes those slots by number and a reader is owed a
+    picture of what it is indexing. The addresses decrease upwards, which is the way the stack
+    actually grows and the opposite of how a list is usually drawn — getting that backwards is
+    most of why the subtraction in a prologue looks wrong the first time.
+    """
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "A stack frame, and how to leave it",
+        "Two fixed slots turn the frames into a linked list, which is all a backtrace is.",
+    )
+
+    box = 320
+    top = margin + 62
+    rows = [
+        ("caller's frame", ""),
+        ("saved fp  (fp-16)", "where the caller's frame begins"),
+        ("return address  (fp-8)", "where to resume when this returns"),
+        ("locals, spills, outgoing args", "whatever would not fit in registers"),
+    ]
+    parts, height = column(margin + 150, top, box, rows, row_height=46)
+    body += parts
+
+    # The two pointers, named where they actually point.
+    fp_y = top + 46
+    body.append(_mono(margin, fp_y + 8, "fp →", size=13, weight="700"))
+    body.append(_text(margin, fp_y + 26, "this frame", size=11, fill=MUTED))
+    sp_y = top + height
+    body.append(_mono(margin, sp_y, "sp →", size=13, weight="700"))
+    body.append(_text(margin, sp_y + 18, "the bottom", size=11, fill=MUTED))
+
+    # Which way memory runs. Drawn because it is the thing readers get backwards.
+    axis = margin + 150 + box + 54
+    body.append(_arrow(axis, top + height - 8, axis, top + 8))
+    body.append(_text(axis + 12, top + height / 2 - 6, "addresses", size=11, fill=MUTED))
+    body.append(_text(axis + 12, top + height / 2 + 10, "increase", size=11, fill=MUTED))
+    body.append(_text(axis + 12, top + height / 2 + 32, "the stack grows down", size=11, fill=WARN))
+
+    # The walk itself, which is a two-line loop once the picture is in front of you.
+    walk_y = top + height + 46
+    body.append(_text(margin, walk_y, "to climb one frame", size=11, weight="700", fill=MUTED))
+    body.append(_mono(margin, walk_y + 22, "return_address = fp[-1]", size=12))
+    body.append(_mono(margin, walk_y + 42, "fp             = fp[-2]", size=12))
+
+    foot = walk_y + 92
+    body += footnote(
+        margin,
+        foot,
+        width - 2 * margin,
+        [
+            "Only while frame pointers are kept. Compiled without them the slots are not written,",
+            "the list does not exist, and a backtrace has to be reconstructed from debug tables",
+            "instead — which is why a release build's stack trace is so often a disappointment.",
+        ],
+    )
+    return _svg(
+        width, int(foot + 48), body, "A RISC-V stack frame and the two slots a backtrace walks"
+    )
+
+
 #: fragment name -> the function that draws it
 DIAGRAMS = {
     "ch00-targets": two_target_map,
     "ch01-stages": toolchain_stages,
     "ch02-padding": struct_padding,
     "ch03-dispatch": dispatch_table,
+    "ch04-frame": stack_frame,
 }

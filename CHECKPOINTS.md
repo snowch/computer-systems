@@ -16,7 +16,7 @@ a tag in the repository yet are planned, not published.
 | ch01 | `ch01-whole-stack` | `sysfs/tools/stages.sh`, the two-route sum, and `sameanswer` on both targets |
 | ch02 | `ch02-bits` | `sysfs/lib/bits.c` — the bit operations, tested; `signedness.c`, the four functions ch02 reads |
 | ch03 | `ch03-c` | `sysfs/lib/addresses.c` — the pairs ch03 compiles against each other |
-| ch04 | `ch04-asm` | `sysfs/tools/framewalk.c` — walk a stack from a frame pointer |
+| ch04 | `ch04-asm` | `sysfs/tools/framewalk.c` — walk a stack from a frame pointer; `sysfs/lib/frames.c` |
 | ch05 | `ch05-elf` | `sysfs/tools/elfdump.c` — an ELF reader, written not described |
 | ch06 | `ch06-traps` | First kernel patches: syscall counting and tracing |
 | ch07 | `ch07-vm` | Page-table dumper; `sysfs/tools/sv39.c` |

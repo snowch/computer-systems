@@ -47,6 +47,7 @@ echo "== the toolchain still produces the files ch01 counts =="
 # builds xv6, because one of the numbers is the size of the same program linked by xv6's own
 # user library — the comparison ch01 closes on.
 python3 -m bench.run_stages --check
+python3 -m bench.run_frames --check
 
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check

@@ -163,6 +163,45 @@ def linking_cost_table(name: str) -> str:
     return render_table(["What", "Count"], rows)
 
 
+def frame_sizes_table(name: str) -> str:
+    """Frame size and instruction mix for each function, at both optimisation levels.
+
+    One row per function with the two levels side by side, because the comparison is the content:
+    reading down a column says what an optimiser does to memory traffic far more directly than
+    two separate tables would.
+    """
+    rows_by_symbol: dict[str, dict[str, dict]] = {}
+    for row in load_result(name)["summary"]["functions"]:
+        rows_by_symbol.setdefault(row["symbol"], {})[row["level"]] = row
+
+    rows = []
+    for symbol, levels in rows_by_symbol.items():
+        low, high = levels["-O0"], levels["-O2"]
+        rows.append(
+            [
+                f"`{symbol}`",
+                low["frame_bytes"],
+                high["frame_bytes"],
+                low["instructions"],
+                high["instructions"],
+                low["load"] + low["store"],
+                high["load"] + high["store"],
+            ]
+        )
+    return render_table(
+        [
+            "Function",
+            "Frame `-O0`",
+            "Frame `-O2`",
+            "Instructions `-O0`",
+            "Instructions `-O2`",
+            "Memory ops `-O0`",
+            "Memory ops `-O2`",
+        ],
+        rows,
+    )
+
+
 def xv6_environment_table(name: str) -> str:
     """What booting the teaching kernel actually produced, as facts rather than as a claim."""
     result = load_result(name)

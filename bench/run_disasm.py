@@ -66,6 +66,11 @@ SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
             "sysfs_call_through",
         ),
     ),
+    "frames": (
+        "sysfs/lib/frames.c",
+        "sysfs/include/sysfs/frames.h",
+        ("sysfs_leaf", "sysfs_calls_out", "sysfs_accumulates"),
+    ),
     "signedness": (
         "sysfs/lib/signedness.c",
         "sysfs/include/sysfs/signedness.h",

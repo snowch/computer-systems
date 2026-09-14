@@ -29,6 +29,7 @@ from dataclasses import dataclass
 from bench import tables
 from bench.diagrams import (
     dispatch_table,
+    stack_frame,
     struct_padding,
     toolchain_stages,
     two_target_map,
@@ -194,6 +195,23 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "ch03-indirect-call": Listing(
         symbol="sysfs_call_through",
         results=("addresses-riscv64",),
+    ),
+    # -- ch04 ---------------------------------------------------------------------------
+    "ch04-frame": Diagram(
+        draw=stack_frame,
+        alt="A stack frame with the saved frame pointer and return address slots marked.",
+    ),
+    "ch04-frames": Table(
+        render=tables.frame_sizes_table,
+        result="framesizes-riscv64",
+    ),
+    "ch04-leaf": Listing(
+        symbol="sysfs_leaf",
+        results=("frames-riscv64",),
+    ),
+    "ch04-calls-out": Listing(
+        symbol="sysfs_calls_out",
+        results=("frames-riscv64",),
     ),
     "ch00-board": Table(
         render=tables.board_identity_table,
