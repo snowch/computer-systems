@@ -216,6 +216,10 @@ decoration.
 
 PLAN.md §12.3. `[DRAFT]` comes out of the title when every box is ticked, and not before.
 
+**Not when it reaches a length.** There is no page target: a chapter is as long as what it has to
+convey. Judge a section at a time — does this one earn its place? — rather than judging the
+chapter against a number it was never given.
+
 ## Style
 
 British English, direct, active voice, short sentences. No "in this chapter we will". Mathematics
