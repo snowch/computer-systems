@@ -114,6 +114,9 @@ python3 -m bench.run_loops --check
 echo "== the compiler still leaves ch17 a branch to measure =="
 python3 -m bench.run_pipeline --check
 
+echo "== ch18's counters still land where the book says =="
+python3 -m bench.run_sharing --check
+
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check
 

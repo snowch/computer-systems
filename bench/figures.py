@@ -407,6 +407,21 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         result="pipeline-host",
         pending=f"The predictor has not been measured yet: {BOARD} (`bench/results/pipeline-host.json`).",
     ),
+    # -- ch18 ---------------------------------------------------------------------------
+    "ch18-layout": Table(
+        render=tables.sharing_layout_table,
+        result="sharing-layout",
+    ),
+    "ch18-sharing": Table(
+        render=tables.sharing_cost_table,
+        result="sharing-host",
+        pending=f"The cores have not been made to fight yet: {BOARD} (`bench/results/sharing-host.json`).",
+    ),
+    "ch18-atomics": Table(
+        render=tables.atomics_cost_table,
+        result="sharing-host",
+        pending=f"The atomics have not been timed yet: {BOARD} (`bench/results/sharing-host.json`).",
+    ),
     "ch00-board": Table(
         render=tables.board_identity_table,
         result="setup-host",

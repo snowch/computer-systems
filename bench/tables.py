@@ -773,3 +773,38 @@ def mispredict_table(name: str) -> str:
     ]
     rows.append(["**derived cost of one mispredict**", "", f"{run['derived_cost_ns']:.1f} ns"])
     return render_table(["Data", "Mispredicted", "Per element"], rows)
+
+
+def sharing_layout_table(name: str) -> str:
+    """Two counters, two layouts, and the only question that decides whether cores fight."""
+    layouts = load_result(name)["summary"]["layouts"]
+    rows = [
+        [
+            f"`{which}`",
+            f"{layouts[which]['size']} bytes",
+            " and ".join(str(o) for o in layouts[which]["offsets"]),
+            "yes" if layouts[which]["same_line"] else "no",
+        ]
+        for which in ("packed", "padded")
+    ]
+    return render_table(["", "Size", "Offsets", "Same cache line"], rows)
+
+
+def sharing_cost_table(name: str) -> str:
+    """What sharing a line costs, once four cores have said."""
+    run = load_result(name)["summary"]["sharing"]
+    rows = [
+        [f"{point['threads']} threads, `{point['layout']}`", f"{point['ns']} ns per increment"]
+        for point in run["points"]
+    ]
+    return render_table(["", "Measured"], rows)
+
+
+def atomics_cost_table(name: str) -> str:
+    """What each ordering costs, uncontended and contended."""
+    run = load_result(name)["summary"]["atomics"]
+    rows = [
+        [f"`{op}`", f"{data['uncontended_ns']} ns", f"{data['contended_ns']} ns"]
+        for op, data in sorted(run.items())
+    ]
+    return render_table(["Operation", "One core", "Four cores"], rows)

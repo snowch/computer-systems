@@ -696,6 +696,37 @@ is folklore and appears in CS:APP chapter 5 among many others.
   book's.
 - **Citations are primary only**: the core's technical reference manual and `perf list`.
 
+## ch18 · Memory Ordering on Real Hardware
+
+**Closest in subject.** *A Primer on Memory Consistency and Cache Coherence*; the false-sharing
+sections of *What Every Programmer Should Know About Memory* and *Performance Analysis and Tuning
+on Modern CPUs*; the ARM and RISC-V memory-model chapters; and the very large literature on
+Amdahl's law.
+
+**How this differs, and the care taken.**
+
+- **The chapter's reason for existing is the book's two-architecture decision, and it says so.**
+  Its middle section puts AArch64's `stlr` beside RISC-V's `fence rw,w` — both printed by ch10
+  from real disassembly — and draws the conclusion that a reader shown one weak memory model
+  concludes that model is memory ordering. No single-architecture treatment can make that move,
+  and it is the return on a cost PLAN §5 paid two chapters of Part III for.
+- **The false-sharing figure needs no machine and is measured anyway.** Whether two counters land
+  on one line is decided by the layout, so it is stamped from a cross build, and the runner
+  refuses a layout in which the packed structure has stopped sharing or the padded one has
+  started — which would leave the chapter demonstrating nothing while still producing a table.
+- **"False sharing" is examined as a name.** The sharing is real and what is false is the
+  implication that the program meant to share; problem 18.1's key case is two fields on one line
+  written by the same thread, which costs nothing.
+- **Amdahl's law is used as a pre-registration rather than as a result.** The chapter's claim is
+  that a measured curve alone says very little and a measured curve falling short of a predicted
+  one says where to look. Problem 18.2 is therefore set to be done *before* the board reports.
+- **"Atomics are expensive" is refused as a fact about atomics.** The two columns of the cost
+  table are the same instruction differing by a large factor on something not in the instruction.
+- **The limitation section separates what the machine does from what the model permits**, and says
+  that no measurement can replace ch10's problem about permission — a reordering that never
+  happens on this chip may be allowed on the next one.
+- **Citations are primary only**: the two architectures' specifications.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the
