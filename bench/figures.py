@@ -422,6 +422,43 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         result="sharing-host",
         pending=f"The atomics have not been timed yet: {BOARD} (`bench/results/sharing-host.json`).",
     ),
+    # -- ch19 ---------------------------------------------------------------------------
+    "ch19-model": Table(
+        render=tables.os_model_table,
+        result="traps-xv6",
+    ),
+    "ch19-trap": Listing(
+        symbol="sysfs_raw_getpid",
+        results=("oscalls-aarch64",),
+    ),
+    "ch19-call": Listing(
+        symbol="sysfs_libc_getpid",
+        results=("oscalls-aarch64",),
+    ),
+    "ch19-cost": Table(
+        render=tables.os_cost_table,
+        result="oscost-host",
+        pending=(
+            "Linux has not been asked what it charges yet: "
+            f"{BOARD} (`bench/results/oscost-host.json`)."
+        ),
+    ),
+    "ch19-faults": Table(
+        render=tables.fault_cost_table,
+        result="faultcost-host",
+        pending=(
+            "A minor fault and a major one have not been timed against each other yet: "
+            f"{BOARD} (`bench/results/faultcost-host.json`)."
+        ),
+    ),
+    "ch19-vdso": Table(
+        render=tables.vdso_table,
+        result="vdso-host",
+        pending=(
+            "The call that traps and the call that does not have not been put side by side yet: "
+            f"{BOARD} (`bench/results/vdso-host.json`)."
+        ),
+    ),
     "ch00-board": Table(
         render=tables.board_identity_table,
         result="setup-host",

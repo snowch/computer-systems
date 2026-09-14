@@ -808,3 +808,78 @@ def atomics_cost_table(name: str) -> str:
         for op, data in sorted(run.items())
     ]
     return render_table(["Operation", "One core", "Four cores"], rows)
+
+
+def os_model_table(name: str) -> str:
+    """Part II's structural account of three kernel services, assembled in one place.
+
+    Every figure here was measured on the xv6 target and is already in the book; gathering them is
+    what makes the comparison with Linux a comparison rather than a fresh set of numbers. `name`
+    is unused: the sources are the four results named below, and the conditions line comes from
+    the one this figure is declared against.
+    """
+    traps = load_result("traps-xv6")["summary"]
+    switch = load_result("switch-xv6")["summary"]["swtch"]
+    faults = load_result("faults-xv6")["summary"]["faultload"]
+    rows = [
+        [
+            "System call",
+            f"{traps['path']['uservec']['instructions'] + traps['path']['userret']['instructions']} instructions of trap path",
+            "[ch06](#ch06)",
+        ],
+        [
+            "…of which registers moved",
+            f"{traps['path']['uservec']['register_stores'] + traps['path']['userret']['register_loads']}",
+            "[ch06](#ch06)",
+        ],
+        [
+            "Page fault",
+            f"{faults['load_faults'] + faults['store_faults']} for {faults['touched_lazy']} first touches",
+            "[ch08](#ch08)",
+        ],
+        [
+            "Context switch",
+            f"{switch['registers_saved']} registers, {switch['bytes_moved']} bytes",
+            "[ch11](#ch11)",
+        ],
+    ]
+    return render_table(["Service", "What Part II established", "Where"], rows)
+
+
+def os_cost_table(name: str) -> str:
+    """What Linux charges for the same three, once the board has said.
+
+    Every row carries a baseline, because a duration on its own is not a cost. "A system call
+    takes N nanoseconds" is only useful beside what the cheapest thing the machine can do takes,
+    and the ratio is what survives a change of hardware.
+    """
+    run = load_result(name)["summary"]["services"]
+    rows = [
+        [f"`{service}`", f"{data['ns']} ns", data["baseline"], f"×{data['ratio']}"]
+        for service, data in sorted(run.items())
+    ]
+    return render_table(["Service", "Measured", "Against", "Ratio"], rows)
+
+
+def fault_cost_table(name: str) -> str:
+    """A minor fault and a major one, which differ by what the kernel had to go and find."""
+    run = load_result(name)["summary"]["faults"]
+    rows = [
+        [kind, f"{data['ns']} ns", data["satisfied_from"]]
+        for kind, data in sorted(run.items(), key=lambda item: item[1]["ns"])
+    ]
+    return render_table(["Fault", "Measured", "Satisfied from"], rows)
+
+
+def vdso_table(name: str) -> str:
+    """The same request, with and without the privilege change.
+
+    The `route` column is the measurement's whole point: two calls that are indistinguishable in
+    C, one of which enters the kernel and one of which does not.
+    """
+    run = load_result(name)["summary"]["routes"]
+    rows = [
+        [f"`{call}`", data["route"], f"{data['ns']} ns"]
+        for call, data in sorted(run.items(), key=lambda item: item[1]["ns"])
+    ]
+    return render_table(["Call", "Route", "Measured"], rows)

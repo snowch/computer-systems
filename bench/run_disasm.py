@@ -109,6 +109,11 @@ SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
             "sysfs_unsigned_quarter",
         ),
     ),
+    "oscalls": (
+        "sysfs/lib/oscalls.c",
+        "sysfs/include/sysfs/oscalls.h",
+        ("sysfs_raw_getpid", "sysfs_libc_getpid"),
+    ),
     "stages": (
         "sysfs/lib/stages.c",
         "sysfs/include/sysfs/stages.h",

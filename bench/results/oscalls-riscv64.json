@@ -1,16 +1,16 @@
 {
-  "code_fingerprint": "e17f22d620226600",
+  "code_fingerprint": "73b36c36e67150e6",
   "code_sources": [
     "bench/run_disasm.py",
     "bench/disasm.py",
-    "sysfs/lib/stages.c",
-    "sysfs/include/sysfs/stages.h"
+    "sysfs/lib/oscalls.c",
+    "sysfs/include/sysfs/oscalls.h"
   ],
   "conditions": {
     "compiler": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
     "note": "no timing: this records what the compiler chose, not what it cost"
   },
-  "generated_at": "2026-09-14T22:30:47+00:00",
+  "generated_at": "2026-09-14T22:30:46+00:00",
   "kind": "listing",
   "machine": {
     "arch": "riscv64",
@@ -18,7 +18,7 @@
     "measured_under": "compilation",
     "model": "riscv64 cross compiler, any machine \u2014 nothing here was executed"
   },
-  "name": "stages-riscv64",
+  "name": "oscalls-riscv64",
   "recorded_on": {
     "arch": "x86_64",
     "cpu": {
@@ -33,18 +33,18 @@
   },
   "summary": {
     "listings": {
-      "sysfs_sum_counted": {
-        "instructions": 11,
-        "symbol": "sysfs_sum_counted",
-        "text": "0000000000000006 <sysfs_sum_counted>:\n   6:\tbeqz\ta0,1c <.L6>\n   8:\tslli\ta4,a0,0x20\n   c:\tsrli\ta4,a4,0x20\n   e:\tli\ta5,0\n  10:\tli\ta0,0\n\n0000000000000012 <.L5>:\n  12:\tadd\ta0,a0,a5\n  14:\taddi\ta5,a5,1\n  16:\tbne\ta5,a4,12 <.L5>\n  1a:\tret\n\n000000000000001c <.L6>:\n  1c:\tli\ta0,0\n  1e:\tret"
+      "sysfs_libc_getpid": {
+        "instructions": 7,
+        "symbol": "sysfs_libc_getpid",
+        "text": "000000000000000a <sysfs_libc_getpid>:\n   a:\taddi\tsp,sp,-16\n   c:\tsd\tra,8(sp)\n   e:\tauipc\tra,0x0\n  12:\tjalr\tra # e <sysfs_libc_getpid+0x4>\n  16:\tld\tra,8(sp)\n  18:\taddi\tsp,sp,16\n  1a:\tret"
       },
-      "sysfs_sum_folded": {
-        "instructions": 2,
-        "symbol": "sysfs_sum_folded",
-        "text": "0000000000000000 <sysfs_sum_folded>:\n   0:\tli\ta0,2016\n   4:\tret"
+      "sysfs_raw_getpid": {
+        "instructions": 3,
+        "symbol": "sysfs_raw_getpid",
+        "text": "0000000000000000 <sysfs_raw_getpid>:\n   0:\tli\ta7,172\n   4:\tecall\n   8:\tret"
       }
     },
-    "source": "sysfs/lib/stages.c"
+    "source": "sysfs/lib/oscalls.c"
   },
   "target": "xv6",
   "toolchain": {

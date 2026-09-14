@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "691e8aacb76e3d7e",
+  "code_fingerprint": "a85e37ee0d8a28ed",
   "code_sources": [
     "bench/run_pipeline.py",
     "sysfs/lib/pipeline.c",
@@ -8,7 +8,7 @@
   "conditions": {
     "note": "what the core is given; what it does with it needs the board"
   },
-  "generated_at": "2026-09-14T22:15:13+00:00",
+  "generated_at": "2026-09-14T22:30:52+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "aarch64",
@@ -20,8 +20,8 @@
   "recorded_on": {
     "arch": "x86_64",
     "cpu": {
-      "bogomips": "4200.00",
-      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+      "bogomips": "5600.47",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.80GHz"
     },
     "cpus_online": "0-3",
     "kernel": "Linux 6.18.44-fc-v24",

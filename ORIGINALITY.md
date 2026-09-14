@@ -727,6 +727,48 @@ Amdahl's law.
   happens on this chip may be allowed on the next one.
 - **Citations are primary only**: the two architectures' specifications.
 
+## ch19 · The OS Layer's Cost on Real Hardware
+
+**Closest in subject.** The system-call and page-fault chapters of *Operating Systems: Three Easy
+Pieces* and of the xv6 book; *Systems Performance*'s treatment of system-call overhead and its
+`syscall`-latency methodology; *Computer Systems: A Programmer's Perspective*'s exceptional-control-flow
+chapter; and the many published "how expensive is a system call" microbenchmarks.
+
+**How this differs, and the care taken.**
+
+- **The chapter is built as a verdict on Part II rather than as an introduction to anything.**
+  Its first figure is Part II's own counts, gathered from three results the book already
+  committed, and its job is to turn them into a bound that the measurement can contradict. No
+  existing treatment can do that, because no existing treatment spent seven chapters counting the
+  same three services on a kernel the reader can stop mid-trap.
+- **The one measured figure is a pair of listings, and the pairing is the argument.** `getpid`
+  written as the trap instruction, and `getpid` written the way anybody writes it — a frame, a
+  branch and a sign-extension, with the trap nowhere in the listing. The conclusion drawn is that
+  cost at this layer is not visible in the code, which is then the reason the vDSO section lands.
+  The example is the book's own `sysfs/lib/oscalls.c`, not anyone's.
+- **The calling-convention observation is derived, not recited.** The register holding the call
+  number is not one the C convention would pick, and the chapter's reason is that the process and
+  the kernel were compiled separately and so cannot have agreed by being compiled together —
+  which is ch04's argument about callee-saved registers, reused rather than restated.
+- **Problem 19.1 is deliberately not the standard "beware of measurement overhead" warning.** It
+  is arithmetic whose interesting property is that at a single iteration the two harnesses agree:
+  putting the clock outside the loop divides the overhead rather than removing it. The test
+  asserts that agreement as scaffolding.
+- **Problem 19.2 is a lower bound, and the chapter says what each of the three possible outcomes
+  would mean** — under it the model is wrong, a little over it the model explains the cost, far
+  over it the model was never the expensive part. The problem's own test refuses a key that has
+  been rounded twice.
+- **Problem 19.3 is a precedence, not a taxonomy.** The four facts are classified in a stated
+  order, and the scaffolding tests assert the three things the order is for: fatal dominates, an
+  existing translation short-circuits, and a page owing only zeroes is minor with nothing
+  resident. All sixteen combinations are checked, so no case is quietly excluded.
+- **The limitations section refuses the chapter's own headline.** It says plainly that this cannot
+  tell you what a system call costs — `getpid` was chosen because the kernel does almost nothing
+  after the trap, so what is reported is the floor of the boundary, and a `read` returning a
+  megabyte is mostly not that.
+- **Citations are primary only**: the ARM architecture reference manual for the exception model,
+  and Linux's own generic system-call table for the number in the listing.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the
