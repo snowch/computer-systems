@@ -1,0 +1,105 @@
+{
+  "code_fingerprint": "d4ac5624ef96acd5",
+  "code_sources": [
+    "bench/run_setup.py",
+    "bench/xv6.py",
+    "xv6/apps/sysprobe.c",
+    "sysfs/include/sysfs/probe.h"
+  ],
+  "conditions": {
+    "cpus": 3,
+    "memory": "128M",
+    "note": "structural facts only \u2014 QEMU models no timing (ch00)"
+  },
+  "generated_at": "2026-09-14T04:59:28+00:00",
+  "machine": {
+    "arch": "riscv64",
+    "emulator": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "kernel": "xv6-riscv @ 9e3161a",
+    "kind": "qemu",
+    "measured_under": "emulation",
+    "model": "qemu virt (-machine virt -bios none)"
+  },
+  "name": "setup-xv6",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v24",
+    "kind": "other",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "cpus_requested": 3,
+    "endian": "little",
+    "harts": 3,
+    "kernel_bytes": 276112,
+    "layouts": [
+      {
+        "align": 4,
+        "name": "declaration_order",
+        "padding": 6,
+        "size": 12
+      },
+      {
+        "align": 4,
+        "name": "size_order",
+        "padding": 2,
+        "size": 8
+      }
+    ],
+    "offsets": {
+      "declaration_order.last": 8,
+      "declaration_order.middle": 4
+    },
+    "types": [
+      {
+        "align": 1,
+        "name": "char",
+        "size": 1
+      },
+      {
+        "align": 2,
+        "name": "short",
+        "size": 2
+      },
+      {
+        "align": 4,
+        "name": "int",
+        "size": 4
+      },
+      {
+        "align": 8,
+        "name": "long",
+        "size": 8
+      },
+      {
+        "align": 8,
+        "name": "long_long",
+        "size": 8
+      },
+      {
+        "align": 8,
+        "name": "pointer",
+        "size": 8
+      },
+      {
+        "align": 4,
+        "name": "float",
+        "size": 4
+      },
+      {
+        "align": 8,
+        "name": "double",
+        "size": 8
+      }
+    ],
+    "user_programs": 21,
+    "world": "xv6"
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "qemu-system-riscv64 -machine virt",
+    "flags": "xv6's own CFLAGS (-O -march=rv64gc -std=gnu99 -ffreestanding)"
+  }
+}

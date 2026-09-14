@@ -1,0 +1,33 @@
+# MyST build output
+_build/
+.myst/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+
+# Compiled companion code. Binaries are never committed: every example is built from source
+# on the target that runs it, and a committed a.out would silently be the wrong architecture.
+sysfs/build/
+*.o
+*.a
+*.elf
+*.out
+
+# The xv6 build tree. The submodule is kept pristine; scripts/xv6-prepare.py stages our own
+# sources and patches into it, and `make xv6-clean` puts it back. Nothing generated there is
+# ever committed — see xv6/README.md.
+xv6/stage/
+
+# Local benchmark scratch. Committed results live in bench/results/*.json.
+bench/results/*.local.json
+
+.DS_Store

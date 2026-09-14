@@ -1,0 +1,91 @@
+# See docs at: https://mystmd.org/guide/frontmatter
+version: 1
+project:
+  id: systems-from-scratch
+  title: Systems From Scratch
+  description: >-
+    From bits to cycles, measured on RISC-V. A self-study text on computer systems and
+    performance — data representation, machine code, the operating system layer and CPU
+    microarchitecture — built on the xv6 teaching kernel and measured natively on a
+    StarFive VisionFive 2 Lite.
+  keywords:
+    - computer systems
+    - performance
+    - risc-v
+    - xv6
+    - operating systems
+    - memory hierarchy
+    - perf
+    - microarchitecture
+  authors:
+    - name: Chris Snow
+      url: https://snowch.github.io
+  github: https://github.com/snowch/computer-systems
+  license:
+    content: CC-BY-NC-4.0
+    code: Apache-2.0
+  bibliography:
+    - references.bib
+  exclude:
+    - README.md
+    - PLAN.md
+    - CLAUDE.md
+    - AUTHORING_GUIDE.md
+    - CHECKPOINTS.md
+    - ORIGINALITY.md
+    - ERRATA.md
+    - xv6/README.md
+    - xv6/xv6-riscv/**
+  toc:
+    - file: index.md
+
+    - title: Part I — Foundations
+      children:
+        - file: chapters/ch00_prerequisites_and_setup.md
+        - file: chapters/ch01_what_a_computer_does_with_a_program.md
+        - file: chapters/ch02_representing_information.md
+        - file: chapters/ch03_c_for_people_who_will_read_a_kernel.md
+        - file: chapters/ch04_machine_level_code_on_riscv.md
+        - file: chapters/ch05_linking_and_loading.md
+
+    - title: Part II — The operating system layer
+      children:
+        - file: chapters/ch06_traps_and_system_calls.md
+        - file: chapters/ch07_virtual_memory.md
+        - file: chapters/ch08_page_faults_as_a_feature.md
+        - file: chapters/ch09_interrupts_and_drivers.md
+        - file: chapters/ch10_locks_and_memory_ordering.md
+        - file: chapters/ch11_scheduling_and_context_switches.md
+        - file: chapters/ch12_the_file_system.md
+        - file: chapters/ch13_the_same_program_on_both_targets.md
+
+    - title: Part III — Where the cycles go
+      children:
+        - file: chapters/ch14_measuring.md
+        - file: chapters/ch15_the_memory_hierarchy.md
+        - file: chapters/ch16_optimising_code.md
+        - file: chapters/ch17_the_cpu.md
+        - file: chapters/ch18_memory_ordering_on_real_hardware.md
+        - file: chapters/ch19_the_os_layers_cost.md
+        - file: chapters/ch20_whole_machine_profiling.md
+        - file: chapters/ch21_vectors.md
+
+    - title: Appendices
+      children:
+        - file: appendices/appendix_a_riscv_reference.md
+        - file: appendices/appendix_b_gdb_reference.md
+        - file: appendices/appendix_c_perf_events.md
+        - file: appendices/appendix_d_xv6_file_map.md
+        - file: appendices/appendix_e_glossary.md
+
+site:
+  template: book-theme
+  title: Systems From Scratch
+  options:
+    style: ./custom.css
+    logo_text: Systems From Scratch
+  nav:
+    - title: Chris Snow
+      url: https://snowch.github.io
+    - title: GitHub
+      url: https://github.com/snowch/computer-systems

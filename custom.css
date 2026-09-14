@@ -1,0 +1,30 @@
+/* Systems From Scratch — minimal overrides on top of the MyST book theme. */
+
+/* The chapter header table (target / prerequisites / what it measures) appears on every
+   chapter. Keep it compact and visually distinct from body tables. */
+.chapter-header table {
+  font-size: 0.9rem;
+}
+
+/* Result tables are wide and numeric; never let them break the page layout. */
+table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Tabular figures so measured columns line up down the page. */
+td:not(:first-child) {
+  font-variant-numeric: tabular-nums;
+}
+
+code {
+  font-size: 0.9em;
+}
+
+/* Diagrams are SVG written by scripts/render-figures.py. They carry their own type sizes, so
+   all the theme has to do is stop them overflowing on a phone. */
+img[src$=".svg"] {
+  max-width: 100%;
+  height: auto;
+}

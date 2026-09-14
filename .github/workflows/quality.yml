@@ -1,0 +1,77 @@
+name: Quality
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # The xv6 target is a submodule, and half the test suite is about it.
+          submodules: recursive
+          # No fetch-depth needed: verify-numbers.py hashes file contents rather than comparing
+          # commit times, so it needs the checkout and nothing more.
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install the RISC-V toolchain
+        # Three packages, three jobs:
+        #   gcc-riscv64-linux-gnu   builds the xv6 kernel and cross-builds host-target examples
+        #   qemu-system-misc        provides qemu-system-riscv64, which boots xv6
+        #   qemu-user-static        runs a cross-built RV64 binary on this x86-64 runner, which
+        #                           is how every host-target example gets its *correctness*
+        #                           checked here. Timings are never taken in CI — the runner is
+        #                           not the board, and bench/stamp.py refuses to pretend it is.
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gcc-riscv64-linux-gnu qemu-system-misc qemu-user-static
+
+      - name: Install MyST CLI (pinned)
+        # Required, not optional: without it ci-check.sh cannot run `myst build --strict`, and a
+        # broken cross-reference would reach main unnoticed. ci-check.sh fails when CI is set and
+        # myst is missing, so this step going wrong cannot pass silently.
+        run: npm install -g "mystmd@$(node -p "require('./package.json').devDependencies.mystmd")"
+
+      - name: Install Python dependencies
+        # Both files, and with `python -m pip` so the tests run under the interpreter that has
+        # them. The test suite imports bench, which imports PyYAML.
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Show which targets this runner can reach
+        # Not a check — a record. When a test skips, this is the log that says why.
+        run: python3 scripts/verify-setup.py || true
+
+      - name: Run the same checks as locally
+        # ci-check.sh is the single source of truth for what CI runs, so local and CI cannot
+        # drift (PLAN.md §9).
+        run: ./scripts/ci-check.sh
+
+      - name: Re-measure the xv6 target and compare with what is committed
+        # ci-check.sh already runs the xv6 tests; this asks a different question — does a fresh
+        # boot still give the answers the repository is publishing?
+        #
+        # It closes a hole nothing else covers. verify-numbers.py hashes the *files* a result
+        # names, and the xv6 submodule commit is not a file, so bumping the submodule or adding a
+        # kernel patch can change what the kernel reports while every fingerprint still matches.
+        #
+        # `--check` compares the summary and ignores generated_at and recorded_on, which describe
+        # when and where the tooling ran rather than what it measured. An earlier version of this
+        # step diffed the whole file, which reported a difference on every run — including on the
+        # same machine a second later — and so could never have passed anywhere.
+        run: python3 -m bench.run_setup --target xv6 --check

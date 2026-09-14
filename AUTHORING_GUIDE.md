@@ -1,0 +1,169 @@
+# Authoring Guide
+
+How to write a chapter of *Systems From Scratch* without breaking the three things that make the
+book worth reading: measured numbers, code that matches the prose, and problems that cannot lie
+about whether you solved them.
+
+## Quick start
+
+```bash
+npm install -g "mystmd@$(node -p "require('./package.json').devDependencies.mystmd")"
+python3 -m pip install -r requirements.txt -r requirements-dev.txt
+pre-commit install
+git submodule update --init --recursive
+
+python3 scripts/verify-setup.py    # which targets this machine can run
+make book                          # live preview at localhost:3000
+make check                         # exactly what CI runs
+```
+
+`python3 -m pip`, not a standalone tool install: `python3 -m pytest` has to work, and a pipx or
+uv `pytest` has its own environment and cannot import `bench`.
+
+## The order to write in
+
+Not the order the chapter is read in.
+
+1. **The problems, and their tests.** Before any prose. Make each one fail, and read the failure
+   — it is the first thing a reader will see, and it should tell them what to do rather than what
+   went wrong. Mark the reader's assertions `@pytest.mark.problem`.
+2. **The scaffolding tests.** Unmarked, beside the problems: the C compiles, the kernel boots with
+   the stub staged, the harness produces output. CI runs these and deselects the problems. The
+   book is responsible for handing the reader a problem that works.
+3. **The companion code.** Into `sysfs/` for the `host` target, `xv6/apps/` and `xv6/patches/` for
+   `xv6`. It must build and run on its declared target in CI.
+4. **The runner and the figures.** A `bench/run_*.py` that produces stamped results, and an entry
+   per figure in `bench/figures.py`.
+5. **The chapter**, to serve all of the above.
+6. **`ORIGINALITY.md`**, in the same commit.
+
+Writing the prose first produces a chapter that explains what you meant to measure.
+
+## The seven-part shape
+
+PLAN.md §12.1, and it is not negotiable — the repetition is what makes twenty-two chapters read as
+one book. `python3 scripts/new-chapter.py NN` generates the shape with the chapter's target,
+question and prerequisites already filled in from `bench/outline.py`.
+
+The section that matters most is the fifth: **What this cannot tell you**. It is the easiest to
+skip and the one that makes the other six believable. If a chapter genuinely has no limits worth
+naming, the chapter is not finished — go and look harder at the measurement.
+
+## Four rules that are not negotiable
+
+### Never paste code into prose
+
+Quote it from the working tree, so it cannot drift:
+
+````markdown
+```{literalinclude} ../sysfs/lib/bits.c
+:language: c
+:start-at: uint64_t sysfs_reverse_bits
+:end-before: uint64_t sysfs_popcount
+```
+````
+
+Anchor on `:start-at:` / `:end-before:` **text**, never `:lines:` — line numbers rot on the first
+edit above them, and `tests/test_book.py` fails a chapter that uses them.
+
+### Never type a number into prose
+
+Numbers come from `bench/results/*.json`. Declare the figure in `bench/figures.py`, render it, and
+include the fragment:
+
+```bash
+python3 scripts/render-figures.py            # write the fragments and diagrams
+python3 scripts/render-figures.py --check     # fail if a committed one is stale
+```
+
+````markdown
+```{include} _generated/ch15-cache-latency.md
+```
+````
+
+`scripts/verify-numbers.py` scans chapter prose for figures carrying a cost unit and fails the
+build. If the number is a cited *specification* rather than a measurement — a clock rate from a
+datasheet — put `% number-ok: @citekey` on the line before it, so the exemption and its reason are
+visible in review.
+
+### Never let a target answer the other one's question
+
+The `xv6` target produces no timings, ever. `bench.stamp.provenance_problems` rejects an `xv6`
+result whose summary contains anything durational, and rejects a `host` result that was not
+measured natively on the board. If you find yourself wanting a rough idea of how long something
+takes under QEMU: that number describes the laptop QEMU is running on.
+
+### Never invent a figure you have not measured
+
+For a `host` figure that needs the board, declare it `pending=` with the command that produces it:
+
+```python
+"ch15-cache-latency": Table(
+    render=tables.latency_table,
+    result="cache-latency",
+    pending=f"Cache latencies are not measured yet: {BOARD} (`bench/results/cache-latency.json`).",
+),
+```
+
+It renders as a warning box containing no numbers at all, and **you write the prose around it as
+though the numbers were there**, so that landing them is a one-command change and not a rewrite.
+When the measurement arrives, remove the marker in the same commit —
+`scripts/verify-numbers.py` fails if a pending figure's result file exists.
+
+## Measuring
+
+```bash
+make bench-xv6      # every xv6-target result. Runs anywhere QEMU does.
+make bench-board    # every host-target result. ON THE BOARD ONLY — it refuses elsewhere.
+make figures        # re-render everything from committed results
+```
+
+A runner's job is to produce a summary and hand it to `bench.stamp.build_result` with the sources
+it depends on. Record raw samples in the result where they are small enough to be useful: a
+distribution someone can re-examine is worth far more than a summary they have to trust.
+
+`CORE_SOURCES` in `bench/stamp.py` invalidates **every** result when it changes. Treat it as
+frozen. ch14 adds the timing library to it once, deliberately.
+
+## Problems
+
+A problem is a stub the reader edits and a test that passes only when they are right.
+
+- Put the stub and its test in `tests/chNN/`. The stub's docstring is the problem statement; the
+  chapter's Problems section is the invitation.
+- Make failure messages teach. `assert measured == expected` tells a reader nothing; "the padding
+  between two members is whatever it takes to satisfy the alignment of the one that comes second"
+  tells them where to look.
+- An xv6 problem's answer lives under `tests/`, not in `xv6/apps/`, and is staged with
+  `xv6.boot(..., extra_apps=[...])`. A program that does not compile should fail the reader's
+  test, not everybody's kernel build.
+- Never write the answer anywhere in the repository. The test is the answer key, and it runs.
+
+## Cross-references and citations
+
+Chapters carry a label matching their number, so refer to them as `[ch08](#ch08)` and to
+appendices as `[Appendix B](#appendix-b)`. MyST resolves these at build time and the build fails on
+a broken reference, which is the point.
+
+Cite with `@citekey` against `references.bib`. Every factual claim about hardware behaviour needs
+either a stamped measurement or a primary source. Textbooks go in "Where to go next" and nowhere
+else — see CLAUDE.md §5, which is binding.
+
+## Figures
+
+Drawn by code in `bench/diagrams.py`, as SVG, deterministically. Not matplotlib: its output embeds
+font paths and a version, so `--check` would fail on an upgrade that changed nothing visible, and
+a check people learn to ignore is worse than no check.
+
+Every figure must show a mechanism. If it would still make sense with the labels removed, it is
+decoration.
+
+## Definition of done
+
+PLAN.md §12.3. `[DRAFT]` comes out of the title when every box is ticked, and not before.
+
+## Style
+
+British English, direct, active voice, short sentences. No "in this chapter we will". Mathematics
+only where it predicts something the reader then checks. Prefer a measurement that surprises the
+reader to a rule that reassures them.

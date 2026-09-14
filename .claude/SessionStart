@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Bootstrap so a Claude Code web session can lint, test and build without setup.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+python3 -m pip install --quiet --upgrade pip
+# Into *this* interpreter, not a standalone tool install: `python3 -m pytest` has to work, and a
+# pipx/uv pytest has its own environment and cannot import bench.
+python3 -m pip install --quiet -r requirements.txt -r requirements-dev.txt
+
+if ! command -v myst >/dev/null 2>&1; then
+  npm install -g "mystmd@$(node -p "require('./package.json').devDependencies.mystmd")" >/dev/null 2>&1 || \
+    echo "note: mystmd install failed; ./scripts/ci-check.sh will skip the book build"
+fi
+
+# The xv6 target needs a cross compiler and a system emulator; the host-target *correctness*
+# path needs user-mode QEMU as well. Without these, most of the suite skips itself rather than
+# failing, which is quiet enough to be missed — so try, and say so if it did not work.
+if ! command -v qemu-system-riscv64 >/dev/null 2>&1 && command -v apt-get >/dev/null 2>&1; then
+  (apt-get update -qq && apt-get install -y -qq \
+     gcc-riscv64-linux-gnu qemu-system-misc qemu-user-static) >/dev/null 2>&1 || \
+    echo "note: RISC-V toolchain install failed; xv6 and riscv tests will skip"
+fi
+
+git submodule update --init --recursive >/dev/null 2>&1 || \
+  echo "note: could not fetch the xv6 submodule; xv6 tests will skip"
+
+echo "Ready. Run ./scripts/ci-check.sh before pushing."
