@@ -48,6 +48,7 @@ echo "== the toolchain still produces the files ch01 counts =="
 # user library — the comparison ch01 closes on.
 python3 -m bench.run_stages --check
 python3 -m bench.run_frames --check
+python3 -m bench.run_elf --check
 
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check

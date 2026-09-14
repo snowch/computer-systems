@@ -226,6 +226,45 @@ code chapters of Patterson & Hennessy; and every "reading assembly" tutorial.
 
 ---
 
+## ch05 · Linking and Loading
+
+**Closest in subject.** *Computer Systems: A Programmer's Perspective* chapter 7 is the canonical
+treatment of linking; *Linkers and Loaders* (Levine) is the book-length one; and there is a large
+genre of "ELF explained" articles and annotated hexdumps.
+
+**How this differs.**
+
+- **The reader is written, not used.** The comparable material explains the format and shows
+  `readelf` output. This chapter's premise is that a format explained by a tool stays a thing only
+  the tool understands, so `sysfs/tools/elfdump.c` was written for this book with no `<elf.h>`
+  anywhere in it — the structures are declared from the specification, field offset by field
+  offset, and the chapter's measurements come from that reader rather than from `readelf`.
+- **Organised around the sections/segments distinction as the chapter's spine**, rather than as
+  one topic among linking, symbol resolution, static libraries, dynamic libraries and loading. The
+  claim the chapter builds to — an ELF executable is a set of instructions to a loader, and the
+  code is incidental — is this book's framing, and follows from its "what does the machine
+  actually act on" question rather than from the usual "how does a program get built" one.
+- **The `.bss` observation is given its own section and a consequence.** A segment whose memory
+  size exceeds its file size is used to make the point that zero-initialisation is the *cheapest*
+  initial state rather than a favour with a cost — which is the opposite of how it is usually
+  presented.
+- **Dynamic linking is deliberately excluded and the exclusion is justified.** xv6's statically
+  linked, fixed-address binaries are chosen precisely because a Linux binary's answer is
+  complicated by machinery that is not the mechanism underneath. Most comparable chapters cover
+  both and blur which is fundamental.
+- **The figure is generated from the stamped result**, so the collapse from sections to segments
+  it draws is this repository's actual binary rather than an illustrative one.
+- **The problems are original and none has a stored answer.** 5.1 asks for two functions the
+  book's own reader deliberately does not contain, checked against that reader's output on a real
+  binary so the target moves with the file. 5.2 asks for link predictions and actually links the
+  pairs, including one case that links successfully and produces a wrong program. 5.3 generates
+  four real linker failures during the test run — including an archive listed before the object
+  that needs it — and asks the reader to name the cause from the message.
+- **Citations are primary only**: the ELF specification, the psABI, and xv6's own `exec.c`, which
+  the reader is sent to as the shortest complete answer to "what happens when you run a program".
+
+---
+
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the
 book's own additions are `xv6/apps/` (Apache-2.0) and `xv6/patches/` (diffs, MIT like what they
 patch). See `xv6/README.md` and `LICENSE-CODE`.

@@ -29,6 +29,7 @@ from dataclasses import dataclass
 from bench import tables
 from bench.diagrams import (
     dispatch_table,
+    sections_to_segments,
     stack_frame,
     struct_padding,
     toolchain_stages,
@@ -212,6 +213,20 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "ch04-calls-out": Listing(
         symbol="sysfs_calls_out",
         results=("frames-riscv64",),
+    ),
+    # -- ch05 ---------------------------------------------------------------------------
+    "ch05-segments": Diagram(
+        draw=sections_to_segments,
+        alt="Eighteen ELF sections collapsing into two loadable segments.",
+        result="elf-xv6",
+    ),
+    "ch05-segment-table": Table(
+        render=tables.elf_segments_table,
+        result="elf-xv6",
+    ),
+    "ch05-shape": Table(
+        render=tables.elf_shape_table,
+        result="elf-xv6",
     ),
     "ch00-board": Table(
         render=tables.board_identity_table,

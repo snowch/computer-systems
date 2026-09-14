@@ -668,6 +668,97 @@ def stack_frame() -> str:
     )
 
 
+def sections_to_segments(result: str) -> str:
+    """Eighteen sections become two segments, and one of them is partly not in the file.
+
+    The figure ch05 is for. Sections are the linker's view and segments are the loader's, the same
+    bytes described twice for two audiences, and the collapse from one to the other is where a
+    reader stops thinking of an executable as a list of named parts and starts thinking of it as
+    an address space. Everything here is read from the stamped result.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    program = load_result(result)["summary"]["programs"]["sameanswer"]
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "Two views of the same bytes",
+        "Sections are for the linker. Segments are for whatever has to load the thing.",
+    )
+
+    # Left: the sections that occupy memory, which is the short list. A reader who has just run
+    # elfdump has seen the long one and the difference is the point.
+    loaded = [s for s in program["sections"] if s["flags"] & 0x2]
+    top = margin + 62
+    rows = [(s["name"], f"{s['size']} bytes") for s in loaded]
+    parts, sections_height = column(margin, top, 250, rows, row_height=34)
+    body += parts
+    body.append(
+        _text(
+            margin,
+            top - 10,
+            f"{len(program['sections'])} sections, {len(rows)} of them loaded",
+            size=11,
+            weight="700",
+            fill=MUTED,
+        )
+    )
+
+    # Right: the segments, drawn to the same scale of importance rather than of size.
+    seg_x = margin + 430
+    labels = {5: "r-x  code", 6: "rw-  data", 4: "r--  read only"}
+    seg_rows = []
+    for segment in program["segments"]:
+        note = f"at {segment['vaddr']}"
+        if segment["memory_bytes"] > segment["file_bytes"]:
+            note += f"  ({segment['memory_bytes'] - segment['file_bytes']} bytes not in the file)"
+        seg_rows.append((labels.get(segment["flags"], str(segment["flags"])), note))
+    parts, _ = column(seg_x, top, 200, seg_rows, row_height=52)
+    body += parts
+    body.append(
+        _text(
+            seg_x,
+            top - 10,
+            f"{len(program['segments'])} segments",
+            size=11,
+            weight="700",
+            fill=MUTED,
+        )
+    )
+
+    for index in range(len(seg_rows)):
+        body.append(
+            _arrow(margin + 262, top + sections_height / 2, seg_x - 8, top + 26 + index * 52)
+        )
+
+    note_y = top + max(sections_height, len(seg_rows) * 52) + 40
+    body.append(
+        _text(
+            margin,
+            note_y,
+            "the loader is told: map this much, from here, and zero the rest",
+            size=12,
+            fill=MUTED,
+        )
+    )
+
+    foot = note_y + 54
+    body += footnote(
+        margin,
+        foot,
+        width - 2 * margin,
+        [
+            "A segment whose memory size exceeds its file size is asking for space that is not in",
+            "the file: .bss. Storing a megabyte of zeroes would be silly, so the format says how",
+            "many there are and the loader provides them.",
+        ],
+    )
+    return _svg(
+        width, int(foot + 48), body, "How an executable's sections collapse into loadable segments"
+    )
+
+
 #: fragment name -> the function that draws it
 DIAGRAMS = {
     "ch00-targets": two_target_map,
@@ -675,4 +766,5 @@ DIAGRAMS = {
     "ch02-padding": struct_padding,
     "ch03-dispatch": dispatch_table,
     "ch04-frame": stack_frame,
+    "ch05-segments": sections_to_segments,
 }

@@ -1,0 +1,304 @@
+{
+  "code_fingerprint": "93be272a049a71b1",
+  "code_sources": [
+    "bench/run_elf.py",
+    "sysfs/tools/elfdump.c"
+  ],
+  "conditions": {
+    "note": "structure only: sections, segments and symbol counts",
+    "subjects": "xv6 user programs, linked by xv6's own Makefile and linker script"
+  },
+  "generated_at": "2026-09-14T19:10:49+00:00",
+  "kind": "artefact",
+  "machine": {
+    "arch": "riscv64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "riscv64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "elf-xv6",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v24",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "programs": {
+      "ls": {
+        "defined_symbols": 60,
+        "entry": 620,
+        "sections": [
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": "(unnamed)",
+            "size": 0
+          },
+          {
+            "addr": 0,
+            "flags": 6,
+            "name": ".text",
+            "size": 2780
+          },
+          {
+            "addr": 2784,
+            "flags": 2,
+            "name": ".rodata",
+            "size": 121
+          },
+          {
+            "addr": 2912,
+            "flags": 2,
+            "name": ".eh_frame",
+            "size": 1212
+          },
+          {
+            "addr": 8192,
+            "flags": 3,
+            "name": ".data",
+            "size": 0
+          },
+          {
+            "addr": 8192,
+            "flags": 3,
+            "name": ".bss",
+            "size": 48
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".debug_info",
+            "size": 5949
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".debug_abbrev",
+            "size": 1753
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".debug_loc",
+            "size": 10303
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".debug_aranges",
+            "size": 240
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".debug_line",
+            "size": 6167
+          },
+          {
+            "addr": 0,
+            "flags": 48,
+            "name": ".debug_str",
+            "size": 1076
+          },
+          {
+            "addr": 0,
+            "flags": 48,
+            "name": ".comment",
+            "size": 45
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".riscv.attributes",
+            "size": 83
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".debug_ranges",
+            "size": 80
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".symtab",
+            "size": 1800
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".strtab",
+            "size": 390
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".shstrtab",
+            "size": 178
+          }
+        ],
+        "segments": [
+          {
+            "align": 4096,
+            "file_bytes": 4124,
+            "flags": 5,
+            "memory_bytes": 4124,
+            "vaddr": 0
+          },
+          {
+            "align": 4096,
+            "file_bytes": 0,
+            "flags": 6,
+            "memory_bytes": 48,
+            "vaddr": 8192
+          }
+        ],
+        "undefined_symbols": 0
+      },
+      "sameanswer": {
+        "defined_symbols": 59,
+        "entry": 208,
+        "sections": [
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": "(unnamed)",
+            "size": 0
+          },
+          {
+            "addr": 0,
+            "flags": 6,
+            "name": ".text",
+            "size": 2368
+          },
+          {
+            "addr": 2368,
+            "flags": 2,
+            "name": ".rodata",
+            "size": 145
+          },
+          {
+            "addr": 2520,
+            "flags": 2,
+            "name": ".eh_frame",
+            "size": 1148
+          },
+          {
+            "addr": 4096,
+            "flags": 3,
+            "name": ".data",
+            "size": 0
+          },
+          {
+            "addr": 4096,
+            "flags": 3,
+            "name": ".bss",
+            "size": 32
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".debug_info",
+            "size": 4801
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".debug_abbrev",
+            "size": 1651
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".debug_loc",
+            "size": 9943
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".debug_aranges",
+            "size": 240
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".debug_ranges",
+            "size": 224
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".debug_line",
+            "size": 5612
+          },
+          {
+            "addr": 0,
+            "flags": 48,
+            "name": ".debug_str",
+            "size": 1098
+          },
+          {
+            "addr": 0,
+            "flags": 48,
+            "name": ".comment",
+            "size": 45
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".riscv.attributes",
+            "size": 83
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".symtab",
+            "size": 1776
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".strtab",
+            "size": 416
+          },
+          {
+            "addr": 0,
+            "flags": 0,
+            "name": ".shstrtab",
+            "size": 178
+          }
+        ],
+        "segments": [
+          {
+            "align": 4096,
+            "file_bytes": 3668,
+            "flags": 5,
+            "memory_bytes": 3668,
+            "vaddr": 0
+          },
+          {
+            "align": 4096,
+            "file_bytes": 0,
+            "flags": 6,
+            "memory_bytes": 32,
+            "vaddr": 4096
+          }
+        ],
+        "undefined_symbols": 0
+      }
+    }
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 files were read, not run",
+    "flags": "the reader is built for this machine; the subjects are built by xv6"
+  }
+}

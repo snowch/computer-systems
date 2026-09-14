@@ -202,6 +202,50 @@ def frame_sizes_table(name: str) -> str:
     )
 
 
+def elf_segments_table(name: str) -> str:
+    """What the loader is told to do, per program: where, how much, and how much more."""
+    programs = load_result(name)["summary"]["programs"]
+    rows = []
+    for program, facts in sorted(programs.items()):
+        for segment in facts["segments"]:
+            permissions = "".join(
+                letter if segment["flags"] & bit else "-"
+                for bit, letter in ((4, "r"), (2, "w"), (1, "x"))
+            )
+            rows.append(
+                [
+                    f"`{program}`",
+                    permissions,
+                    segment["vaddr"],
+                    segment["file_bytes"],
+                    segment["memory_bytes"],
+                    segment["memory_bytes"] - segment["file_bytes"],
+                ]
+            )
+    return render_table(
+        ["Program", "Permissions", "Loaded at", "Bytes in the file", "Bytes in memory", "Zeroed"],
+        rows,
+    )
+
+
+def elf_shape_table(name: str) -> str:
+    """How many of each thing, per program. The collapse from sections to segments is the row."""
+    programs = load_result(name)["summary"]["programs"]
+    rows = [
+        [
+            f"`{program}`",
+            len(facts["sections"]),
+            len(facts["segments"]),
+            facts["defined_symbols"],
+            facts["undefined_symbols"],
+        ]
+        for program, facts in sorted(programs.items())
+    ]
+    return render_table(
+        ["Program", "Sections", "Loadable segments", "Symbols defined", "Symbols undefined"], rows
+    )
+
+
 def xv6_environment_table(name: str) -> str:
     """What booting the teaching kernel actually produced, as facts rather than as a claim."""
     result = load_result(name)
