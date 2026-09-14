@@ -41,6 +41,13 @@ echo "== disassembly listings still match the compiler =="
 # simply wrong. Both are fixed by `make bench-listings && make figures`.
 python3 -m bench.run_disasm --check
 
+echo "== the toolchain still produces the files ch01 counts =="
+# Same argument as the listings above: sizes and symbol counts are compiler output, not machine
+# measurements, so CI can re-derive them rather than trust the committed copy. This one also
+# builds xv6, because one of the numbers is the size of the same program linked by xv6's own
+# user library — the comparison ch01 closes on.
+python3 -m bench.run_stages --check
+
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check
 

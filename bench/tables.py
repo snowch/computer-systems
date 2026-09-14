@@ -138,6 +138,31 @@ def probe_layout_table(name: str) -> str:
     )
 
 
+def stage_sizes_table(name: str) -> str:
+    """What each stage produced, in bytes and lines.
+
+    Both columns, because they disagree in a way worth noticing: the assembler's output is larger
+    in bytes than the compiler's and far smaller in lines, which is what it looks like when text
+    becomes a container format.
+    """
+    summary = load_result(name)["summary"]
+    rows = [[f"`{stage['stage']}`", stage["bytes"], stage["lines"]] for stage in summary["stages"]]
+    return render_table(["Stage", "Bytes it produced", "Lines"], rows)
+
+
+def linking_cost_table(name: str) -> str:
+    """The same program, linked two ways, and what the object still owed the linker."""
+    summary = load_result(name)["summary"]
+    rows = [
+        ["Object file, before linking", summary["stages"][2]["bytes"]],
+        ["Symbols the object left undefined", summary["undefined_in_object"]],
+        ["Linked against glibc, statically", summary["linux_program_bytes"]],
+        ["Linked by xv6, against its own user library", summary["xv6_program_bytes"]],
+        ["Symbols the program leaves undefined", summary["undefined_in_program"]],
+    ]
+    return render_table(["What", "Count"], rows)
+
+
 def xv6_environment_table(name: str) -> str:
     """What booting the teaching kernel actually produced, as facts rather than as a claim."""
     result = load_result(name)

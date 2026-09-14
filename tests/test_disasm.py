@@ -23,8 +23,10 @@ from bench.disasm import (
     symbols,
 )
 from bench.measure import flags_for
-from bench.run_disasm import SOURCE, SYMBOLS, WORLD, capture, target_for
+from bench.run_disasm import SOURCES, WORLD, capture, target_for
 from bench.stamp import ROOT
+
+SHAPES_SOURCE, _SHAPES_HEADER, SHAPES_SYMBOLS = SOURCES["shapes"]
 
 #: Real output, from ``riscv64-linux-gnu-objdump -d --no-show-raw-insn --disassemble=sysfs_clamp``
 #: on gcc 13.3's object file. Checked in as a fixture rather than generated, so that the trap it
@@ -145,8 +147,8 @@ def test_disassembles_both_architectures(arch: str, build_dir):
     except Exception as exc:  # noqa: BLE001 — a missing cross compiler is a skip, not a failure
         pytest.skip(f"no {arch} toolchain here: {exc}")
 
-    for symbol in SYMBOLS:
-        listing = disassemble([SOURCE], symbol, target, build_dir=build_dir)
+    for symbol in SHAPES_SYMBOLS:
+        listing = disassemble([SHAPES_SOURCE], symbol, target, build_dir=build_dir)
         assert listing.arch == arch
         assert listing.text.startswith(f"{'0' * 16} <{symbol}>:") or f"<{symbol}>:" in listing.text
         assert listing.text.rstrip().endswith("ret"), (
@@ -170,7 +172,7 @@ def test_the_two_architectures_disagree_about_clamp():
             target = target_for(arch)
         except Exception:  # noqa: BLE001
             pytest.skip(f"needs both cross compilers; {arch} is missing")
-        texts[arch] = disassemble([SOURCE], "sysfs_clamp", target).text
+        texts[arch] = disassemble([SHAPES_SOURCE], "sysfs_clamp", target).text
 
     assert "csel" in texts["aarch64"], "ch00 says AArch64 selects rather than branches"
     assert "csel" not in texts["riscv64"]
@@ -196,7 +198,7 @@ def test_the_two_assemblers_divide_the_work_differently():
             target = target_for(arch)
         except Exception:  # noqa: BLE001
             pytest.skip(f"needs both cross compilers; {arch} is missing")
-        disassemble([SOURCE], "sysfs_clamp", target)  # for its side effect: the object file
+        disassemble([SHAPES_SOURCE], "sysfs_clamp", target)  # for its side effect: the object file
         readelf = target.cc.replace("gcc", "readelf")
         objects = list((ROOT / "sysfs" / "build").glob(f"shapes-{arch}.o"))
         assert objects, f"no {arch} object file to inspect"
@@ -220,4 +222,4 @@ def test_capture_is_a_listing_not_a_measurement():
 
     assert payload["kind"] == "listing"
     assert payload["machine"]["measured_under"] == "compilation"
-    assert set(payload["summary"]["listings"]) == set(SYMBOLS)
+    assert set(payload["summary"]["listings"]) == set(SHAPES_SYMBOLS)

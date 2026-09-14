@@ -51,7 +51,17 @@ TARGETS = ("host", "xv6")
 #: the same instructions on a laptop, on CI and on the board — so demanding a board for one would
 #: be theatre. In exchange a listing must carry no timings whatsoever, on either target: it is
 #: evidence about what the compiler chose, and never about what that choice cost.
-KINDS = ("measurement", "listing")
+#:
+#: An ``artefact`` is the same bargain for everything else a toolchain produces and the book
+#: *describes* rather than quotes: section sizes, symbol tables, what survives each stage. It is
+#: separate from ``listing`` rather than folded into it because a listing is reproduced verbatim
+#: into a chapter and therefore has a shape worth enforcing, while an artefact's summary is
+#: whatever that chapter needed to count. Both are held to the rule that matters: no durations.
+KINDS = ("measurement", "listing", "artefact")
+
+#: The kinds a compiler produces rather than a machine. Exempt from the board rule, and in
+#: exchange forbidden from carrying a timing at all.
+COMPILED_KINDS = ("listing", "artefact")
 
 #: Architectures a ``host`` figure may be measured on.
 #:
@@ -415,14 +425,14 @@ def timing_keys(summary: Any) -> list[str]:
     return sorted({key for key in _walk_keys(summary) if _TIMING_KEYS.search(key)})
 
 
-def _listing_problems(name: str, payload: dict[str, Any]) -> list[str]:
-    """What a listing has to be, given that it is exempt from the board rule.
+def _compiled_problems(name: str, payload: dict[str, Any], kind: str) -> list[str]:
+    """What a compiler-produced result has to be, given that it skips the board rule.
 
-    The exemption is sound — instructions do not depend on which computer ran the compiler — but
-    it is also the one loophole in the whole scheme: a timing relabelled ``kind: listing`` would
-    walk straight past the check that exists to stop exactly that. So a listing has to look like
-    one. It carries no durations on either target, its summary contains nothing but listings, and
-    it says outright that nothing was executed.
+    The exemption is sound — instructions and section sizes do not depend on which computer ran
+    the compiler — but it is also the one loophole in the whole scheme: a timing relabelled
+    ``kind: listing`` would walk straight past the check that exists to stop exactly that. So one
+    of these has to look like one. It carries no durations on either target, and it says outright
+    that nothing was executed.
     """
     problems: list[str] = []
     machine = payload.get("machine", {})
@@ -430,17 +440,22 @@ def _listing_problems(name: str, payload: dict[str, Any]) -> list[str]:
 
     if machine.get("measured_under") != "compilation":
         problems.append(
-            f"{name} is a listing but records measured_under="
-            f"{machine.get('measured_under')!r}. A listing is compiled, not run."
+            f"{name} is a {kind} but records measured_under="
+            f"{machine.get('measured_under')!r}. It is compiled, not run."
         )
 
     timing = timing_keys(summary)
     if timing:
         problems.append(
-            f"{name} is a listing carrying what looks like a timing: {', '.join(timing)}. A "
-            "listing is evidence about what the compiler chose, never about what it cost — record "
-            "the cost as a host measurement on the board instead."
+            f"{name} is a {kind} carrying what looks like a timing: {', '.join(timing)}. This is "
+            "evidence about what the compiler produced, never about what it cost — record the "
+            "cost as a host measurement on the board instead."
         )
+
+    if kind == "artefact":
+        if not summary:
+            problems.append(f"{name} is an artefact with an empty summary")
+        return problems
 
     listings = summary.get("listings")
     if not isinstance(listings, dict) or not listings:
@@ -485,8 +500,8 @@ def provenance_problems(name: str, payload: dict[str, Any]) -> list[str]:
 
     if kind not in KINDS:
         return [f"{name} declares kind {kind!r}, which is not one of {KINDS}"]
-    if kind == "listing":
-        return _listing_problems(name, payload)
+    if kind in COMPILED_KINDS:
+        return _compiled_problems(name, payload, kind)
 
     if target == "host":
         if machine.get("kind") != "board":

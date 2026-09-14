@@ -348,7 +348,81 @@ def two_target_map() -> str:
     )
 
 
+def toolchain_stages() -> str:
+    """What each stage of the toolchain hands to the next, and what it threw away doing it.
+
+    Drawn rather than tabulated because the *shape* is the lesson: a reader who has only ever
+    typed `gcc a.c -o a` believes in one box, and four boxes with arrows between them is the
+    correction. The sizes live in a table underneath, from a stamped result; this figure says
+    what each stage is *for*, which is the part that does not change between machines.
+    """
+    margin, top, width = 24, 24, 780
+    body = heading(
+        margin,
+        top + 12,
+        "One command, four programs",
+        "`gcc a.c -o a` runs all of these. Each one hands the next a file you may look at.",
+    )
+
+    stages = [
+        ("cpp", "preprocess"),
+        ("cc1", "compile"),
+        ("as", "assemble"),
+        ("ld", "link"),
+    ]
+    row_y = top + 46
+    parts, chain_width = chain(margin, row_y, stages, box_width=142, box_height=46, gap=44)
+    body += parts
+
+    # What arrives, under each arrow. The handover is the content: every one of these is a file
+    # on disk that the next stage reads, and naming them is most of the chapter.
+    handovers = [
+        (".c", "text you wrote"),
+        (".i", "text, includes pasted in"),
+        (".s", "assembly, decisions made"),
+        (".o", "bytes, plus holes to fill"),
+        ("a.out", "bytes, no holes left"),
+    ]
+    label_y = row_y + 72
+    step = 142 + 44
+    for index, (name, note) in enumerate(handovers):
+        x = margin + index * step - (22 if index else 0)
+        body.append(_mono(x, label_y, name, size=12.5, weight="700"))
+        body.append(_text(x, label_y + 17, note, size=11, fill=MUTED))
+
+    # What each stage discards, which is the half nobody draws.
+    discard_y = label_y + 56
+    body.append(
+        _text(margin, discard_y, "and what it throws away", size=11, weight="700", fill=WARN)
+    )
+    discards = [
+        "comments, macro names",
+        "types, names, most of the header",
+        "mnemonics, whitespace",
+        "nothing — it adds",
+    ]
+    for index, note in enumerate(discards):
+        body.append(
+            _text(margin + index * step, discard_y + 20, f"✗ {note}", size=11.5, fill=MUTED)
+        )
+
+    foot_y = discard_y + 62
+    body += footnote(
+        margin,
+        foot_y,
+        width - 2 * margin,
+        [
+            "Only the second box makes decisions. The first is text substitution, the third is a",
+            "lookup table, and the fourth resolves addresses — none of them can change your loop.",
+        ],
+    )
+    return _svg(
+        width, int(foot_y + 30), body, "The four stages of the toolchain, and what each discards"
+    )
+
+
 #: fragment name -> the function that draws it
 DIAGRAMS = {
     "ch00-targets": two_target_map,
+    "ch01-stages": toolchain_stages,
 }

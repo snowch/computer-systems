@@ -13,7 +13,7 @@ a tag in the repository yet are planned, not published.
 | Chapter | Tag | What the code does at that point |
 |---|---|---|
 | ch00 | `ch00-setup` | Both targets working; the stamping, staging and figure machinery; `sysprobe` on both targets |
-| ch01 | `ch01-whole-stack` | The toolchain stages, kept and inspectable |
+| ch01 | `ch01-whole-stack` | `sysfs/tools/stages.sh`, the two-route sum, and `sameanswer` on both targets |
 | ch02 | `ch02-bits` | `sysfs/lib/bits.c` — the bit operations, tested |
 | ch03 | `ch03-c` | The pointer and storage demonstrations, each a complete program |
 | ch04 | `ch04-asm` | `sysfs/tools/framewalk.c` — walk a stack from a frame pointer |

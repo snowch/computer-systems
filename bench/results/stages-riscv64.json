@@ -1,16 +1,16 @@
 {
-  "code_fingerprint": "1b63d565942aa900",
+  "code_fingerprint": "e3acb6cdd3cf17b0",
   "code_sources": [
     "bench/run_disasm.py",
     "bench/disasm.py",
-    "sysfs/lib/shapes.c",
-    "sysfs/include/sysfs/shapes.h"
+    "sysfs/lib/stages.c",
+    "sysfs/include/sysfs/stages.h"
   ],
   "conditions": {
     "compiler": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
     "note": "no timing: this records what the compiler chose, not what it cost"
   },
-  "generated_at": "2026-09-14T18:43:45+00:00",
+  "generated_at": "2026-09-14T18:43:46+00:00",
   "kind": "listing",
   "machine": {
     "arch": "riscv64",
@@ -18,7 +18,7 @@
     "measured_under": "compilation",
     "model": "riscv64 cross compiler, any machine \u2014 nothing here was executed"
   },
-  "name": "shapes-riscv64",
+  "name": "stages-riscv64",
   "recorded_on": {
     "arch": "x86_64",
     "cpu": {
@@ -33,18 +33,18 @@
   },
   "summary": {
     "listings": {
-      "sysfs_clamp": {
-        "instructions": 10,
-        "symbol": "sysfs_clamp",
-        "text": "0000000000000000 <sysfs_clamp>:\n   0:\tblt\ta0,a1,18 <.L4>\n   4:\tmv\ta1,a0\n   6:\tblt\ta2,a0,10 <.L6>\n   a:\tsext.w\ta0,a1\n   e:\tret\n\n0000000000000010 <.L6>:\n  10:\tmv\ta1,a2\n  12:\tsext.w\ta0,a1\n  16:\tret\n\n0000000000000018 <.L4>:\n  18:\tmv\ta0,a1\n  1a:\tret"
+      "sysfs_sum_counted": {
+        "instructions": 11,
+        "symbol": "sysfs_sum_counted",
+        "text": "0000000000000006 <sysfs_sum_counted>:\n   6:\tbeqz\ta0,1c <.L6>\n   8:\tslli\ta4,a0,0x20\n   c:\tsrli\ta4,a4,0x20\n   e:\tli\ta5,0\n  10:\tli\ta0,0\n\n0000000000000012 <.L5>:\n  12:\tadd\ta0,a0,a5\n  14:\taddi\ta5,a5,1\n  16:\tbne\ta5,a4,12 <.L5>\n  1a:\tret\n\n000000000000001c <.L6>:\n  1c:\tli\ta0,0\n  1e:\tret"
       },
-      "sysfs_sum": {
-        "instructions": 12,
-        "symbol": "sysfs_sum",
-        "text": "000000000000001c <sysfs_sum>:\n  1c:\tbeqz\ta1,34 <.L10>\n  1e:\tslli\ta1,a1,0x2\n  20:\tmv\ta5,a0\n  22:\tadd\ta3,a0,a1\n  26:\tli\ta0,0\n\n0000000000000028 <.L9>:\n  28:\tlw\ta4,0(a5)\n  2a:\taddi\ta5,a5,4\n  2c:\tadd\ta0,a0,a4\n  2e:\tbne\ta5,a3,28 <.L9>\n  32:\tret\n\n0000000000000034 <.L10>:\n  34:\tli\ta0,0\n  36:\tret"
+      "sysfs_sum_folded": {
+        "instructions": 2,
+        "symbol": "sysfs_sum_folded",
+        "text": "0000000000000000 <sysfs_sum_folded>:\n   0:\tli\ta0,2016\n   4:\tret"
       }
     },
-    "source": "sysfs/lib/shapes.c"
+    "source": "sysfs/lib/stages.c"
   },
   "target": "xv6",
   "toolchain": {

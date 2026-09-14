@@ -42,12 +42,24 @@ from bench.stamp import (
     write_result,
 )
 
-#: The file whose functions the book reads as machine code, and its header.
-SOURCE = "sysfs/lib/shapes.c"
-HEADER = "sysfs/include/sysfs/shapes.h"
-
-#: The functions captured, in the order a chapter meets them.
-SYMBOLS = ("sysfs_clamp", "sysfs_sum")
+#: The files whose functions the book reads as machine code: result stem -> (source, header,
+#: symbols in the order a chapter meets them).
+#:
+#: One result per file per architecture rather than one big result, because the fingerprint is
+#: taken over the sources a result names — so editing ch02's example would otherwise invalidate
+#: ch01's listings and send an author to the wrong chapter looking for what changed.
+SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
+    "shapes": (
+        "sysfs/lib/shapes.c",
+        "sysfs/include/sysfs/shapes.h",
+        ("sysfs_clamp", "sysfs_sum"),
+    ),
+    "stages": (
+        "sysfs/lib/stages.c",
+        "sysfs/include/sysfs/stages.h",
+        ("sysfs_sum_folded", "sysfs_sum_counted"),
+    ),
+}
 
 #: Which of the book's two worlds an instruction set belongs to.
 #:
@@ -89,13 +101,14 @@ def target_for(arch: str) -> HostTarget:
     )
 
 
-def capture(arch: str) -> dict[str, Any]:
-    """Disassemble every symbol for one architecture, and stamp the lot."""
+def capture(arch: str, stem: str = "shapes") -> dict[str, Any]:
+    """Disassemble every symbol in one source file for one architecture, and stamp the lot."""
+    source, header, symbols = SOURCES[stem]
     target = target_for(arch)
     listings = {}
     toolchain: dict[str, Any] = {}
-    for symbol in SYMBOLS:
-        listing = disassemble([SOURCE], symbol, target, includes=["sysfs/include"])
+    for symbol in symbols:
+        listing = disassemble([source], symbol, target, includes=["sysfs/include"])
         if listing.arch != arch:
             raise RuntimeError(
                 f"asked {target.cc} for {arch} and objdump read a {listing.arch} object file. "
@@ -110,11 +123,11 @@ def capture(arch: str) -> dict[str, Any]:
     toolchain["objdump"] = toolchain["objdump"].split(" --disassemble=")[0] + " --disassemble=<fn>"
 
     return build_result(
-        name=f"shapes-{arch}",
+        name=f"{stem}-{arch}",
         target=WORLD[arch],
         kind="listing",
-        summary={"source": SOURCE, "listings": listings},
-        code_sources=["bench/run_disasm.py", "bench/disasm.py", SOURCE, HEADER],
+        summary={"source": source, "listings": listings},
+        code_sources=["bench/run_disasm.py", "bench/disasm.py", source, header],
         toolchain=toolchain | {"execution": "none — compiled to an object file and disassembled"},
         machine=describe_toolchain(arch),
         conditions={
@@ -183,6 +196,7 @@ def report_differences(fresh: dict[str, Any]) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--arch", choices=(*WORLD, "all"), default="all")
+    parser.add_argument("--source", choices=(*SOURCES, "all"), default="all")
     parser.add_argument(
         "--check",
         action="store_true",
@@ -191,19 +205,21 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     arches = sorted(WORLD) if args.arch == "all" else [args.arch]
+    stems = sorted(SOURCES) if args.source == "all" else [args.source]
     status = 0
-    for arch in arches:
-        payload = capture(arch)
-        if args.check:
-            status |= report_differences(payload)
-        else:
-            path = write_result(payload)
-            listings = payload["summary"]["listings"]
-            instructions = sum(entry["instructions"] for entry in listings.values())
-            print(
-                f"wrote {Path(path).relative_to(ROOT)} "
-                f"({len(listings)} function(s), {instructions} instructions)"
-            )
+    for stem in stems:
+        for arch in arches:
+            payload = capture(arch, stem)
+            if args.check:
+                status |= report_differences(payload)
+            else:
+                path = write_result(payload)
+                listings = payload["summary"]["listings"]
+                instructions = sum(entry["instructions"] for entry in listings.values())
+                print(
+                    f"wrote {Path(path).relative_to(ROOT)} "
+                    f"({len(listings)} function(s), {instructions} instructions)"
+                )
     return status
 
 

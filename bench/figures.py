@@ -27,7 +27,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 from bench import tables
-from bench.diagrams import two_target_map
+from bench.diagrams import toolchain_stages, two_target_map
 
 
 @dataclass(frozen=True)
@@ -105,6 +105,27 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         symbol="sysfs_clamp",
         # RISC-V first: it is the target the reader has already booted by this point in ch00.
         results=("shapes-riscv64", "shapes-aarch64"),
+    ),
+    # -- ch01 ---------------------------------------------------------------------------
+    "ch01-stages": Diagram(
+        draw=toolchain_stages,
+        alt="The four stages of the toolchain, what each hands on, and what each discards.",
+    ),
+    "ch01-stage-sizes": Table(
+        render=tables.stage_sizes_table,
+        result="stagewalk-riscv64",
+    ),
+    "ch01-linking": Table(
+        render=tables.linking_cost_table,
+        result="stagewalk-riscv64",
+    ),
+    "ch01-folded": Listing(
+        symbol="sysfs_sum_folded",
+        results=("stages-riscv64",),
+    ),
+    "ch01-counted": Listing(
+        symbol="sysfs_sum_counted",
+        results=("stages-riscv64",),
     ),
     "ch00-board": Table(
         render=tables.board_identity_table,
