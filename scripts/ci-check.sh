@@ -31,6 +31,20 @@ python3 -m pytest tests/ -q -m "not problem"
 echo "== benchmark result stamps =="
 python3 scripts/verify-numbers.py
 
+echo "== a fresh xv6 boot still gives the answers the book publishes =="
+# The complement to verify-numbers.py, and the one check it cannot perform. That script hashes
+# the *files* a result names, and the xv6 submodule commit is not a file — neither is the set of
+# patches under xv6/patches/, as far as a fingerprint over source is concerned. So bumping the
+# submodule or adding a kernel patch can change what the kernel reports while every fingerprint
+# still matches, and the book goes on publishing a number nothing produces any more.
+#
+# ch06 did exactly that: its census patch grew the kernel and its workload added a user program,
+# and the committed setup result described the kernel of five chapters earlier. This check lived
+# only in .github/workflows/quality.yml at the time, so six commits passed `make check` locally
+# while CI was red. That is the whole argument for this script being the single source of truth:
+# a check CI runs and a contributor cannot is a check that fails after the push.
+python3 -m bench.run_setup --target xv6 --check
+
 echo "== disassembly listings still match the compiler =="
 # The one artefact in the book that CI can regenerate rather than trust. A listing depends on the
 # compiler, not on the machine, so re-capturing it here asks a question no other check can: does

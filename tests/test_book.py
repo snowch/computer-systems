@@ -555,3 +555,32 @@ def test_a_written_chapter_shows_the_reader_something(chapter: Chapter):
     assert "_generated/" in text or "_figures/" in text, (
         f"{chapter.label} is finished but includes no table, listing or diagram"
     )
+
+
+def test_ci_runs_nothing_a_contributor_cannot_run():
+    """`make check` must be exactly what CI runs, or a check only fires after the push.
+
+    It was not. `bench.run_setup --check` lived in the workflow alone, so six commits passed
+    locally while CI was red on a result ch06's kernel patch had made stale. A check a
+    contributor cannot run is one that reports at the worst possible moment, and it is worth a
+    test rather than a convention because the drift is invisible: both files stay valid.
+
+    Two commands are exempt. `verify-setup.py` is a record of what the runner can reach rather
+    than a check — it is run with `|| true` — and `ci-check.sh` is the thing itself.
+    """
+    import yaml  # noqa: PLC0415
+
+    workflow = yaml.safe_load((ROOT / ".github" / "workflows" / "quality.yml").read_text())
+    allowed = ("verify-setup.py", "ci-check.sh")
+    smuggled = [
+        step.get("name", step["run"].strip().splitlines()[0])
+        for job in workflow["jobs"].values()
+        for step in job["steps"]
+        if "run" in step
+        and ("python3 -m bench." in step["run"] or "scripts/" in step["run"])
+        and not any(permitted in step["run"] for permitted in allowed)
+    ]
+    assert not smuggled, (
+        "these workflow steps check something scripts/ci-check.sh does not, so `make check` is "
+        f"no longer what CI runs: {smuggled}"
+    )
