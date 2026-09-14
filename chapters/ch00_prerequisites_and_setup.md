@@ -136,6 +136,14 @@ advice than it looks. A pinned version is wrong within a year, cannot be re-veri
 release, and teaches you to check a string instead of a machine — while the failure it is meant
 to prevent stays perfectly possible on the version that was correct when it was written.
 
+A *minimum* version would be worse still, and the reason is specific rather than pedantic. What
+went wrong on the Pi 5 was a **regression**, so the node was present in the older kernel and
+absent in the newer one; a floor selects for the broken configurations rather than against them.
+A range would work and would need maintaining forever — and it would still have to be written
+once per kernel tree, because the Raspberry Pi kernel and mainline are different trees that
+disagree about this today @rpi-dt-bcm2712. The version number is not the thing. The device tree
+in `/boot/firmware/` is the thing, and your machine will read it out for you.
+
 So the book does the other thing. Every `host` result stamps the board, the operating system, the
 kernel and whether `perf` could count and sample, and the table at the end of this chapter is
 that stamp. It tells you what produced the book's numbers; it is not a requirement for yours.
@@ -233,13 +241,24 @@ when you are standing in front of a shop rather than reading a chapter.
 A Pi is a well-trodden path and the Raspberry Pi documentation is the authority on it. What
 follows is the shape of the task and the parts this book depends on.
 
-**1. Write a 64-bit image.** Raspberry Pi OS (64-bit) or Ubuntu Server for ARM, written with
-Raspberry Pi Imager, which will also set the hostname, your SSH key and your WiFi while it
-writes. Use its advanced options — it saves the whole "find it on the network and change the
-default password" dance.
+**1. Write a 64-bit image.** Raspberry Pi OS (64-bit), written with Raspberry Pi Imager, which
+will also set the hostname, your SSH key and your WiFi while it writes. Use its advanced options
+— it saves the whole "find it on the network and change the default password" dance.
 
 It has to be a **64-bit** image. A 32-bit userspace on ARMv7 does not get you the ARMv8 PMU, and
 you would spend an afternoon finding that out.
+
+It also has to be an image whose **device tree describes the PMU**, and that is a real choice
+rather than a formality. The counters are in every Pi 5's silicon; whether Linux is told about
+them depends on the `.dtb` your image ships. Reading the sources @rpi-dt-bcm2712: the Raspberry Pi
+kernel carries an `arm-pmu` node for the Cortex-A76, with one overflow interrupt per core, and
+every Pi 5 variant inherits it. Mainline Linux's own BCM2712 tree carries no such node at all.
+
+So prefer an image built on the Raspberry Pi kernel, which is what Raspberry Pi OS and the
+Raspberry Pi builds of other distributions use. A general-purpose distribution running a mainline
+kernel with mainline device trees on the same board may have no hardware PMU exposed to it
+whatever — not because the chip lacks one, but because nothing told the kernel it was there. One
+command settles it either way, and it is the next section.
 
 **2. Boot it, wired if you can.** WiFi works; wired is one fewer variable when a measurement
 looks strange.

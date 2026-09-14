@@ -162,5 +162,11 @@ and `perf` saw nothing.
 But a pinned version is the wrong lesson as well as a perishable one. It is wrong within a year,
 it cannot be re-verified on every release, and it teaches a reader to compare a string instead of
 asking the machine — while the failure it is meant to prevent remains perfectly possible on the
-version that was correct when it was written. `verify-setup.py` asks the machine. That answer
-stays true.
+version that was correct when it was written.
+
+A *minimum* version is worse, because that failure was a regression: the node was in the older
+kernel and missing from the newer one, so a floor selects for the broken configurations. What
+decides it is the device tree the image ships, not the version it reports. The Raspberry Pi
+kernel carries an `arm-pmu` node for the Cortex-A76 and every Pi 5 variant inherits it; mainline
+Linux's BCM2712 tree carries none @rpi-dt-bcm2712. So the image matters and the number does not,
+and `verify-setup.py` asks the machine. That answer stays true.
