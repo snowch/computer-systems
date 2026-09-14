@@ -102,6 +102,19 @@ REQUIRED_STAMPS = (
 #: intended behaviour and the reason it happens once, in the chapter that introduces the clock.
 CORE_SOURCES: tuple[str, ...] = ("bench/measure.py",)
 
+#: Sources that are core to *one target only*, keyed by target.
+#:
+#: ch14 adds the book's clock, through which every duration in Part III is read — so a change to
+#: it changes what every `host` figure means, and belongs in those figures' fingerprints. It does
+#: not belong in an xv6 result's: a page-table census does not depend on how the book tells the
+#: time, and putting it in CORE_SOURCES made every structural result in Parts I and II churn the
+#: moment the clock was touched. The plan said that would happen once. It would in fact have
+#: happened on every edit to the clock for the rest of the book, which is the kind of noise that
+#: teaches people to re-stamp without reading what moved.
+TARGET_SOURCES: dict[str, tuple[str, ...]] = {
+    "host": ("sysfs/lib/timing.c", "sysfs/include/sysfs/timing.h"),
+}
+
 
 class StaleFingerprintError(RuntimeError):
     """A result was produced by code that is no longer what is checked in."""
@@ -110,8 +123,13 @@ class StaleFingerprintError(RuntimeError):
 # -- the code hash -----------------------------------------------------------------------
 
 
-def code_fingerprint(sources: str | list[str] | tuple[str, ...] | None = None) -> str:
-    """Hash the sources a result depends on: :data:`CORE_SOURCES` plus the runner's own.
+def code_fingerprint(
+    sources: str | list[str] | tuple[str, ...] | None = None, target: str | None = None
+) -> str:
+    """Hash the sources a result depends on.
+
+    :data:`CORE_SOURCES`, plus whatever :data:`TARGET_SOURCES` says is core to this target, plus
+    the runner's own.
 
     Paths are repo-relative, so a result generated in one checkout matches the same code checked
     out anywhere else — an absolute path would make every fingerprint differ between a laptop, the
@@ -124,7 +142,7 @@ def code_fingerprint(sources: str | list[str] | tuple[str, ...] | None = None) -
     if isinstance(sources, str):
         sources = [sources]
     digest = hashlib.sha256()
-    for name in [*CORE_SOURCES, *(sources or ())]:
+    for name in [*CORE_SOURCES, *TARGET_SOURCES.get(target or "", ()), *(sources or ())]:
         path = ROOT / name
         if not path.exists():
             raise FileNotFoundError(f"cannot fingerprint missing source: {name}")
@@ -362,7 +380,7 @@ def build_result(
         "machine": machine,
         "recorded_on": describe_recorder(),
         "toolchain": toolchain,
-        "code_fingerprint": code_fingerprint(list(code_sources)),
+        "code_fingerprint": code_fingerprint(list(code_sources), target),
         "code_sources": list(code_sources),
         "conditions": conditions or {},
         "summary": summary,

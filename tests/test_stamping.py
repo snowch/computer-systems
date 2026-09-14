@@ -66,7 +66,8 @@ def test_every_committed_result_carries_every_stamp():
 def test_every_committed_result_matches_the_code_it_names():
     for path in sorted(RESULTS_DIR.glob("*.json")):
         payload = json.loads(path.read_text())
-        assert payload["code_fingerprint"] == code_fingerprint(payload["code_sources"]), (
+        expected = code_fingerprint(payload["code_sources"], payload["target"])
+        assert payload["code_fingerprint"] == expected, (
             f"{path.name} was produced by code that has since changed — re-run its runner"
         )
 

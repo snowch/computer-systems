@@ -350,6 +350,22 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
             f"{BOARD} (`bench/results/bridge-host.json`)."
         ),
     ),
+    # -- ch14 ---------------------------------------------------------------------------
+    "ch14-clock": Table(
+        render=tables.clock_table,
+        result="measuring-host",
+        pending=f"The instrument has not been measured yet: {BOARD} (`bench/results/measuring-host.json`).",
+    ),
+    "ch14-spread": Table(
+        render=tables.spread_table,
+        result="measuring-host",
+        pending=f"The distribution has not been taken yet: {BOARD} (`bench/results/measuring-host.json`).",
+    ),
+    "ch14-bias": Table(
+        render=tables.bias_table,
+        result="measuring-host",
+        pending=f"The bias experiment has not been run yet: {BOARD} (`bench/results/measuring-host.json`).",
+    ),
     "ch00-board": Table(
         render=tables.board_identity_table,
         result="setup-host",

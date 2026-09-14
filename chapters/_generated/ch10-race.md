@@ -22,4 +22,4 @@
    c:	ret
 ```
 
-*Conditions: target `host`; aarch64 cross compiler, any machine — nothing here was executed; aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `-O2 -Wall -Wextra -c`; 2026-09-14. Source: `bench/results/ordering-aarch64.json`, code hash `ad73d82dd07b0996`.*
+*Conditions: target `host`; aarch64 cross compiler, any machine — nothing here was executed; aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `-O2 -Wall -Wextra -c`; 2026-09-14. Source: `bench/results/ordering-aarch64.json`, code hash `045b5dd6e24c3fd7`.*

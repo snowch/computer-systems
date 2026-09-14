@@ -566,6 +566,42 @@ Performance* — and the pointer-chase microbenchmark, which is folklore and app
 - **Citations**: the measurement-bias paper is cited as a primary source in "Where to go next";
   no textbook is used for content.
 
+## ch14 · Measuring
+
+**Closest in subject.** *Performance Analysis and Tuning on Modern CPUs* and *Systems Performance*
+both open with measurement methodology; Mytkowicz et al. on measurement bias; the benchmarking
+advice in the Google Benchmark and Criterion documentation; and "how to benchmark" blog posts
+without number.
+
+**How this differs, and the care taken.**
+
+- **The chapter is placed and shaped by this book's own argument.** It exists because ch13 has just
+  shown the structural model failing, and it measures the instrument before anything is measured
+  with it. Its four sections are the four ways this book's own figures could be wrong.
+- **Measurement bias is demonstrated rather than cited**, by an experiment the reader runs: the
+  same binary, the same work, three answers, differing only in how many bytes of stack were
+  claimed first. The paper is credited for the finding and the experiment here is this book's.
+- **Thermal throttling is treated as a measurement hazard rather than a hardware fact**, because
+  the reference machine does it — the clock moves under the benchmark and a comparison run
+  back-to-back can rank two implementations by which went first. That framing follows from the
+  board this book chose and is why every host result stamps the machine's state.
+- **The library deliberately provides no "benchmark this function" macro**, and the header says
+  why: deciding what to repeat, what to warm up and what to report is the skill, and a macro that
+  made those decisions invisibly would remove it.
+- **Problem 14.4 has no test and no known answer**, and asks the reader to falsify a claim ch00
+  makes about this book's own setup advice. Handing a reader an unmeasured claim from your own
+  text and inviting them to knock it down is not a form any comparable work uses.
+- **The problems' keys are computed from the definitions rather than written down**, and 14.3's
+  definition has a second clause — the discarded prefix must actually have been slow — that exists
+  because the first draft of it let a mid-run spike justify throwing away every good measurement
+  before it. The scaffolding test caught that, which is recorded in the stub's own comment.
+- **`sysfs/lib/timing.c` joins the fingerprint for `host` results only.** The plan said it would
+  join CORE_SOURCES and invalidate every host result once; in fact CORE_SOURCES invalidates
+  everything, and would have done so on every future edit to the clock. The mechanism is now
+  target-aware and `bench/stamp.py` records why.
+- **Citations are primary only**: the measurement-bias paper and the Linux manual pages. The
+  benchmarking textbooks are not cited at all.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the

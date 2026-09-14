@@ -627,3 +627,39 @@ def bridge_cost_table(name: str) -> str:
         ["Ratio the instruction counts predict", f"{run['predicted_ratio']:.1f}x"],
     ]
     return render_table(["", "Nanoseconds per element"], rows)
+
+
+def clock_table(name: str) -> str:
+    """What the instrument costs and what it can resolve, before anything is measured with it."""
+    clock = load_result(name)["summary"]["clock"]
+    rows = [
+        ["Cost of reading the clock", f"{clock['cost_ns']} ns"],
+        ["Smallest change the clock ever reports", f"{clock['resolution_ns']} ns"],
+        ["Work that would be half instrument", f"{clock['cost_ns']} ns"],
+    ]
+    return render_table(["", "Measured"], rows)
+
+
+def spread_table(name: str) -> str:
+    """One fixed workload, many times. The row that is not there is "the time it took"."""
+    spread = load_result(name)["summary"]["spread"]
+    rows = [
+        ["Repetitions", spread["count"]],
+        ["Fastest", f"{spread['min']} ns"],
+        ["Median", f"{spread['median']} ns"],
+        ["90th percentile", f"{spread['p90']} ns"],
+        ["Slowest", f"{spread['max']} ns"],
+        ["Mean", f"{spread['mean']} ns"],
+        ["Slowest over fastest", f"{spread['max'] / spread['min']:.1f}x"],
+    ]
+    return render_table(["", "Nanoseconds"], rows)
+
+
+def bias_table(name: str) -> str:
+    """The same work, three times, differing only in something that cannot matter."""
+    bias = load_result(name)["summary"]["bias"]
+    rows = [
+        [f"{padding} bytes of stack claimed first", f"{run['min']} ns", f"{run['median']} ns"]
+        for padding, run in sorted(bias.items(), key=lambda kv: int(kv[0]))
+    ]
+    return render_table(["What was changed", "Fastest", "Median"], rows)

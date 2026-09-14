@@ -113,7 +113,7 @@ def check_results(problems: list[str]) -> int:
             problems.append(f"{name}.json has no code_fingerprint — regenerate it")
         else:
             try:
-                expected = code_fingerprint(payload.get("code_sources"))
+                expected = code_fingerprint(payload.get("code_sources"), payload.get("target"))
             except FileNotFoundError as exc:
                 problems.append(f"{name}.json names a source that no longer exists: {exc}")
                 expected = None
