@@ -29,7 +29,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from bench.stamp import classify_machine, compiler_version  # noqa: E402
+from bench.stamp import classify_machine, compiler_version, cpuinfo_fields  # noqa: E402
 
 OK, WARN, FAIL = "  ok  ", " warn ", " FAIL "
 
@@ -146,11 +146,10 @@ def check_host_target(report: Report) -> bool:
         report.say(OK, f"running natively on {model}")
         report.facts["board_model"] = model
 
-        fields = {}
-        for line in Path("/proc/cpuinfo").read_text().splitlines():
-            key, _, value = line.partition(":")
-            if key.strip() in {"isa", "uarch", "mvendorid", "marchid", "mimpid"}:
-                fields.setdefault(key.strip(), value.strip())
+        # The same fields a stamped result records, from the same function — so that what this
+        # script prints and what the book publishes cannot come to disagree. RISC-V reports an ISA
+        # string and three implementation IDs; ARM an implementer, part and feature list.
+        fields = cpuinfo_fields()
         for key, value in fields.items():
             report.say(OK, f"{key}: {value}")
         report.facts["cpu"] = fields
@@ -168,7 +167,8 @@ def check_host_target(report: Report) -> bool:
 
     explanation = {
         "qemu": "this is a Linux guest inside QEMU, which models no cache and no pipeline",
-        "qemu-user": "this is user-mode emulation: real RV64 instructions, invented timing",
+        "qemu-user": f"this is user-mode emulation: real {platform.machine()} instructions, "
+        "invented timing",
         "other": f"this is a {platform.machine()} machine, not one of the architectures the "
         "book measures on",
     }[kind]

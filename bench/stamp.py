@@ -16,6 +16,10 @@ weakest number, so every result written under ``bench/results/`` records five th
 
 ``scripts/verify-numbers.py`` checks all five on every file in ``bench/results/`` and fails CI
 when one is missing, stale, or measured somewhere it should not have been.
+
+A result also declares its **kind**. Almost every one is a ``measurement``; a ``listing`` is
+disassembly captured from a compiler so a chapter can show machine code without pasting it. The
+two are held to different rules and neither set would be right for the other — see :data:`KINDS`.
 """
 
 from __future__ import annotations
@@ -37,6 +41,18 @@ RESULTS_DIR = ROOT / "bench" / "results"
 #: whole book: ``xv6`` tells you what a program *does*, ``host`` tells you what it *costs*.
 TARGETS = ("host", "xv6")
 
+#: What a result *is*. Nearly all of them are measurements — a machine was asked a question and
+#: this is what it answered. A ``listing`` is different in kind: it is what a compiler emitted,
+#: captured so that a chapter can show machine code without pasting it (``bench/disasm.py``).
+#:
+#: The distinction earns its place because the two have opposite provenance rules. A measurement's
+#: worth depends entirely on *where* it was taken, which is why a ``host`` figure must come from
+#: the board. A listing does not depend on the machine at all — the same compiler and flags give
+#: the same instructions on a laptop, on CI and on the board — so demanding a board for one would
+#: be theatre. In exchange a listing must carry no timings whatsoever, on either target: it is
+#: evidence about what the compiler chose, and never about what that choice cost.
+KINDS = ("measurement", "listing")
+
 #: Architectures a ``host`` figure may be measured on.
 #:
 #: The two targets no longer share an instruction set, and that is a deliberate choice rather
@@ -54,6 +70,7 @@ BOARD_ARCHES = ("aarch64", "riscv64")
 REQUIRED_STAMPS = (
     "name",
     "target",
+    "kind",
     "generated_at",
     "machine",
     "toolchain",
@@ -143,8 +160,13 @@ _CPU_KEYS = frozenset(
 )
 
 
-def _cpuinfo_fields() -> dict[str, str]:
-    """The lines of ``/proc/cpuinfo`` that identify the core, whichever architecture it is."""
+def cpuinfo_fields() -> dict[str, str]:
+    """The lines of ``/proc/cpuinfo`` that identify the core, whichever architecture it is.
+
+    Public because ``scripts/verify-setup.py`` prints the same fields a result records. Two
+    separate lists of interesting keys would drift, and the first sign of it would be a setup
+    script confidently reporting nothing at all about a core.
+    """
     fields: dict[str, str] = {}
     for line in _read("/proc/cpuinfo").splitlines():
         key, _, value = line.partition(":")
@@ -198,7 +220,7 @@ def describe_recorder() -> dict[str, Any]:
     model = _read("/proc/device-tree/model")
     if model:
         recorder["model"] = model
-    cpu = {k: v for k, v in _cpuinfo_fields().items() if k != "processor"}
+    cpu = {k: v for k, v in cpuinfo_fields().items() if k != "processor"}
     if cpu:
         recorder["cpu"] = cpu
     nproc = _read("/sys/devices/system/cpu/online")
@@ -217,6 +239,23 @@ def describe_board() -> dict[str, Any]:
     machine = describe_recorder()
     machine["measured_under"] = "native"
     return machine
+
+
+def describe_toolchain(arch: str) -> dict[str, Any]:
+    """The "machine" of a listing, which is a compiler rather than a computer.
+
+    Every other result answers a question a machine was asked, so its machine block says which
+    computer. A listing answers a question the *compiler* was asked, and the honest answer to
+    "where was this produced" is anywhere: same compiler, same flags, same instructions. Saying so
+    explicitly is better than leaving the field out, because it puts the reason in the result,
+    where the next person to wonder why CI is allowed to regenerate this will find it.
+    """
+    return {
+        "kind": "toolchain",
+        "arch": arch,
+        "measured_under": "compilation",
+        "model": f"{arch} cross compiler, any machine — nothing here was executed",
+    }
 
 
 def describe_qemu(xv6_dir: Path | None = None) -> dict[str, Any]:
@@ -280,13 +319,17 @@ def build_result(
     toolchain: dict[str, Any],
     machine: dict[str, Any],
     conditions: dict[str, Any] | None = None,
+    kind: str = "measurement",
 ) -> dict[str, Any]:
     """Assemble a result payload. Kept separate from writing it so tests can check the shape."""
     if target not in TARGETS:
         raise ValueError(f"unknown target {target!r}; expected one of {TARGETS}")
+    if kind not in KINDS:
+        raise ValueError(f"unknown kind {kind!r}; expected one of {KINDS}")
     return {
         "name": name,
         "target": target,
+        "kind": kind,
         "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "machine": machine,
         "recorded_on": describe_recorder(),
@@ -349,29 +392,90 @@ def _walk_keys(value: Any, prefix: str = "") -> list[str]:
     return []
 
 
+def timing_keys(summary: Any) -> list[str]:
+    """Summary keys that look like a duration, wherever they are nested."""
+    return sorted({key for key in _walk_keys(summary) if _TIMING_KEYS.search(key)})
+
+
+def _listing_problems(name: str, payload: dict[str, Any]) -> list[str]:
+    """What a listing has to be, given that it is exempt from the board rule.
+
+    The exemption is sound — instructions do not depend on which computer ran the compiler — but
+    it is also the one loophole in the whole scheme: a timing relabelled ``kind: listing`` would
+    walk straight past the check that exists to stop exactly that. So a listing has to look like
+    one. It carries no durations on either target, its summary contains nothing but listings, and
+    it says outright that nothing was executed.
+    """
+    problems: list[str] = []
+    machine = payload.get("machine", {})
+    summary = payload.get("summary", {})
+
+    if machine.get("measured_under") != "compilation":
+        problems.append(
+            f"{name} is a listing but records measured_under="
+            f"{machine.get('measured_under')!r}. A listing is compiled, not run."
+        )
+
+    timing = timing_keys(summary)
+    if timing:
+        problems.append(
+            f"{name} is a listing carrying what looks like a timing: {', '.join(timing)}. A "
+            "listing is evidence about what the compiler chose, never about what it cost — record "
+            "the cost as a host measurement on the board instead."
+        )
+
+    listings = summary.get("listings")
+    if not isinstance(listings, dict) or not listings:
+        problems.append(f"{name} is a listing but its summary has no 'listings' mapping")
+        return problems
+
+    for symbol, entry in sorted(listings.items()):
+        if not isinstance(entry, dict) or set(entry) != {"symbol", "text", "instructions"}:
+            problems.append(
+                f"{name}: listing {symbol!r} is not shaped like one "
+                "(expected exactly symbol, text and instructions)"
+            )
+        elif not str(entry.get("text", "")).strip():
+            problems.append(f"{name}: listing {symbol!r} is empty")
+
+    return problems
+
+
 def provenance_problems(name: str, payload: dict[str, Any]) -> list[str]:
-    """Whether this result was measured somewhere it is allowed to have been measured.
+    """Whether this result was produced somewhere it is allowed to have been produced.
 
     This is the rule the book's credibility actually rests on, so it lives beside the definition
-    of a result rather than inside a script. Two claims it refuses:
+    of a result rather than inside a script. Three claims it refuses:
 
-    * a ``host`` figure that was not measured natively on RISC-V hardware. An emulated duration
-      is indistinguishable from a real one once it is a number in a table, so the check has to
-      happen where the provenance is still attached;
+    * a ``host`` measurement that was not taken natively on the board. An emulated duration is
+      indistinguishable from a real one once it is a number in a table, so the check has to happen
+      while the provenance is still attached;
     * an ``xv6`` result that contains a duration at all. QEMU models no cache, no branch
       predictor and no pipeline, so a time measured inside it is not a slow measurement — it is
-      not a measurement.
+      not a measurement;
+    * a ``listing`` that is anything other than disassembly. Listings are exempt from the first
+      rule, so they have to be held to their own.
+
+    A result with no ``kind`` is a measurement. That was the only thing a result could be when the
+    field did not exist, and reading it that way means an old file is judged by the stricter rules
+    rather than slipping past both.
     """
     problems: list[str] = []
     target = payload.get("target")
     machine = payload.get("machine", {})
+    kind = payload.get("kind", "measurement")
+
+    if kind not in KINDS:
+        return [f"{name} declares kind {kind!r}, which is not one of {KINDS}"]
+    if kind == "listing":
+        return _listing_problems(name, payload)
 
     if target == "host":
         if machine.get("kind") != "board":
             problems.append(
                 f"{name} declares target 'host' but was produced on a "
-                f"{machine.get('kind', 'unknown')!r} machine. Host figures are measured natively "
-                "on the VisionFive 2 Lite; an emulated timing is not a measurement."
+                f"{machine.get('kind', 'unknown')!r} machine. Host figures are measured "
+                "natively on the reference machine; an emulated timing is not a measurement."
             )
         if machine.get("measured_under") != "native":
             problems.append(
@@ -385,9 +489,7 @@ def provenance_problems(name: str, payload: dict[str, Any]) -> list[str]:
                 f"{name} declares target 'xv6' but machine.kind is "
                 f"{machine.get('kind')!r}, not 'qemu'."
             )
-        timing = sorted(
-            {key for key in _walk_keys(payload.get("summary", {})) if _TIMING_KEYS.search(key)}
-        )
+        timing = timing_keys(payload.get("summary", {}))
         if timing:
             problems.append(
                 f"{name} is an xv6 result carrying what looks like a timing: "

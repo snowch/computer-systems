@@ -106,8 +106,9 @@ another, one instruction set against another. Attributing a difference to the wr
 commonest way to be confidently wrong about performance, and that chapter is where you practise
 separating them.
 
-Only three chapters read disassembly at all. The rest is method, and method does not have an
-architecture.
+Machine code appears in four chapters. Chapter 0 shows one small function compiled for both, so
+that the difference is concrete rather than promised; ch04, ch16 and ch17 are the three that
+depend on reading it. The rest is method, and method does not have an architecture.
 
 ### One argument, not two tutorials
 

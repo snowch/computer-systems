@@ -13,7 +13,8 @@ short_title: "ch00 Prerequisites and Setup"
 |---|---|
 | **Target** | `xv6` and `host` — every example says which |
 | **Prerequisites** | none |
-| **What it measures** | That both targets work, and exactly what they are: `bench/results/setup-xv6.json` and `bench/results/setup-host.json` |
+| **What it measures** | That both targets work, and exactly what they are: `bench/results/setup-xv6.json`, `bench/results/setup-host.json` |
+| **What it captures** | What the compiler emits for each architecture: `bench/results/shapes-riscv64.json`, `bench/results/shapes-aarch64.json` — listings, not measurements |
 :::
 
 ## The question
@@ -395,9 +396,10 @@ python3 scripts/verify-setup.py
 
 It reports each target separately, because most machines can run one of them. On a laptop it
 confirms the cross compiler, QEMU, the submodule and a usable debugger, then explains that the
-`host` target is read-only here and says whether an RV64 correctness path is available. On the
-board it reads the device tree and `/proc/cpuinfo`, prints the ISA string and the core's vendor
-and architecture IDs, and checks that `perf` reaches hardware.
+`host` target is read-only here and says whether a cross-built correctness path is available. On
+the machine itself it reads the device tree and `/proc/cpuinfo`, prints whatever that kernel says
+identifies the core — an implementer and part number on ARM, an ISA string and three
+implementation IDs on RISC-V — and checks that `perf` reaches hardware.
 
 Notice what it does *not* do: look anything up. Every fact it prints is read from the machine in
 front of it. A specification describes a product line; `/proc/cpuinfo` describes the silicon that
@@ -406,7 +408,8 @@ one it measured.
 
 ### The same program in both worlds
 
-The last check is the most interesting one, because it produces this chapter's first real result.
+Two checks remain, and they are the interesting ones. The first produces this chapter's first real
+result.
 
 `sysfs/include/sysfs/probe.h` asks the machine a handful of questions it can answer without a
 library: how big is each scalar type, where may it start, what does the compiler do to a struct,
@@ -430,6 +433,67 @@ Run it in both worlds:
 make bench-xv6                                   # boots xv6, runs the probe, stamps the result
 python3 -m pytest tests/test_xv6.py -q           # asserts the two targets agree
 ```
+
+### The same function in two instruction sets
+
+The probe compares two C *implementations*. The other half of the comparison is what the two
+machines are actually told to do, and it is worth seeing once, now, while the question is still
+"does my setup work" rather than "why is this slow".
+
+Here is a function with no cleverness in it at all:
+
+```{literalinclude} ../sysfs/lib/shapes.c
+:language: c
+:start-at: /* Two conditionals and three exits
+:end-before: /* A loop with a carried dependency
+```
+
+Compiled for each of the book's two architectures, at the same optimisation level, by the same
+version of the same compiler — the conditions line under each listing says exactly which:
+
+```{include} _generated/ch00-clamp.md
+```
+
+Read the second comparison in each. AArch64 settles it with `csel` — compute both candidates,
+select one, never branch. RV64GC cannot: there is no conditional select in `rv64gc`
+@riscv-isa-unprivileged, which is what xv6 and every RISC-V example here are built for, so the same
+decision has to be a branch and the function comes out with three separate exits.
+
+That is a real difference and you should resist the obvious conclusion about it. Nothing above
+says which is faster. A predicted branch is nearly free and an unpredictable one is not; `csel`
+pays a fixed price either way and creates a dependency the branch does not have. Which wins
+depends on the data, and finding out takes a machine — [ch16](#ch16) and [ch17](#ch17) are where
+that happens. Here it is enough to have seen that the choice exists.
+
+Two smaller things in the same listings, both worth checking yourself:
+
+```bash
+make bench-listings                                   # leaves both object files in sysfs/build/
+riscv64-linux-gnu-readelf -rW sysfs/build/shapes-riscv64.o
+aarch64-linux-gnu-readelf -rW sysfs/build/shapes-aarch64.o
+```
+
+The RISC-V listing has `.L4` and `.L6` sitting *inside* the function, and the first command says
+why: there is a relocation for every branch in it, naming those labels. The assembler did not
+settle its own branch distances, because the linker is still allowed to shorten instructions —
+RISC-V calls that relaxation @riscv-psabi — and a distance settled before that would be wrong
+afterwards. The AArch64 object has no relocations in its text at all; its assembler knew the
+answers and the labels were discarded. The same job, divided differently between the assembler and
+the linker.
+
+The second thing is `sext.w`, which RISC-V emits on each path and AArch64 does not emit anywhere:
+one keeps a 32-bit `int` in a 64-bit register and has to say so, the other has a 32-bit view of the
+register and uses it. Neither is in the C. Both are the kind of thing [ch04](#ch04) is for.
+
+:::{note} None of that was typed
+`bench/run_disasm.py` compiled `sysfs/lib/shapes.c` for each architecture, ran `objdump` on the
+object file, and wrote a stamped result. The block above is rendered from those results, and CI
+regenerates both on every push and fails if one instruction differs.
+
+It can do that because a listing depends on the compiler and not on the machine — so unlike every
+number in Part III, this one is checked automatically, every time. Both halves of that sentence
+matter, and [ch14](#ch14) is about the half that cannot be.
+:::
 
 ## What we measured
 

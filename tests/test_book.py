@@ -220,14 +220,23 @@ def test_host_chapter_headers_do_not_name_a_specific_board():
     """The hardware requirement is a capability (ch00), so a header naming one board is wrong.
 
     Every host chapter said 'VisionFive 2 Lite' until this was caught — nine chapters that would
-    have been inaccurate for any reader who bought something else.
+    have been inaccurate for any reader who bought something else. The reference machine has since
+    changed once, which is the argument for this test rather than against it: the pattern names
+    both the old board and the current one, because a header pinned to either is the same mistake.
+
+    Two exemptions, both by construction. ch00 is the chapter that recommends a specific machine,
+    and does so in its body, having first said what the machine has to be able to do. And the
+    **Assumes** row is where naming the reference core is the whole point — a chapter that depends
+    on a 4-wide out-of-order pipeline has to say which one it measured, or the row tells the reader
+    nothing they can act on.
     """
     offenders = []
     for chapter in CHAPTERS:
         if chapter.target != "host":
             continue
         header = (ROOT / chapter.path).read_text().split(":::", 2)[1]
-        if re.search(r"VisionFive|StarFive|JH7110", header):
+        rows = [row for row in header.splitlines() if not row.startswith("| **Assumes** |")]
+        if re.search(r"VisionFive|StarFive|JH7110|Raspberry|BCM2712|Cortex-A", "\n".join(rows)):
             offenders.append(chapter.label)
     assert not offenders, f"these host chapters name a specific board in their header: {offenders}"
 

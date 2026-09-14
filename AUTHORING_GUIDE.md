@@ -66,6 +66,21 @@ Quote it from the working tree, so it cannot drift:
 Anchor on `:start-at:` / `:end-before:` **text**, never `:lines:` — line numbers rot on the first
 edit above them, and `tests/test_book.py` fails a chapter that uses them.
 
+**Machine code is not an exception, it just has its own mechanism.** A disassembly listing cannot
+be quoted from the tree, because it does not exist there until a compiler runs — so it is captured
+as a stamped result instead, exactly like a measurement:
+
+1. put the function in a real source file (`sysfs/lib/shapes.c` is the one ch00 uses);
+2. add its name to `SYMBOLS` in `bench/run_disasm.py`;
+3. `make bench-listings` to capture it and commit the result;
+4. declare a `Listing` figure in `bench/figures.py` naming the symbol and the results to show;
+5. `make figures`, and `{include}` the fragment.
+
+The listing then carries the compiler, its flags and the exact `objdump` command that produced it,
+and CI re-captures it on every push and fails if a single instruction has changed. Never paste
+objdump output into a chapter: it looks authoritative, nobody can check it, and it stops being
+true the first time the toolchain moves.
+
 ### Never type a number into prose
 
 Numbers come from `bench/results/*.json`. Declare the figure in `bench/figures.py`, render it, and
@@ -182,9 +197,17 @@ else — see CLAUDE.md §5, which is binding.
 
 ## Figures
 
-Drawn by code in `bench/diagrams.py`, as SVG, deterministically. Not matplotlib: its output embeds
-font paths and a version, so `--check` would fail on an upgrade that changed nothing visible, and
-a check people learn to ignore is worse than no check.
+Three kinds, all declared in `bench/figures.py` and all rendered by `scripts/render-figures.py`:
+
+| Kind | What it is | Where it comes from |
+|---|---|---|
+| `Table` | A markdown table of measured figures | one stamped result, via a renderer in `bench/tables.py` |
+| `Diagram` | An SVG | a function in `bench/diagrams.py` |
+| `Listing` | A function's disassembly | one `kind: listing` result per architecture (`make bench-listings`) |
+
+Diagrams are drawn by code, as SVG, deterministically. Not matplotlib: its output embeds font
+paths and a version, so `--check` would fail on an upgrade that changed nothing visible, and a
+check people learn to ignore is worse than no check.
 
 Every figure must show a mechanism. If it would still make sense with the labels removed, it is
 decoration.

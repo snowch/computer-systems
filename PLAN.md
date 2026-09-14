@@ -315,7 +315,7 @@ The hinge of the book.
 
 ### Part III — Where the cycles go
 
-Target `host` throughout: the VisionFive 2 Lite, natively. Every figure in this part is measured
+Target `host` throughout: the reference machine, natively. Every figure in this part is measured
 on the board and stamped; nothing here may come from an emulator.
 
 #### ch14 · Measuring — target `host`
@@ -531,15 +531,16 @@ The code lives in the **same repository** as the book, so a chapter and its code
 computer-systems/
 ├── sysfs/                  # the companion C library and tools, built up across the book
 │   ├── include/sysfs/      # headers, shared between the two targets
-│   ├── lib/                # bits.c (ch02), timing.c (ch14), ...
+│   ├── lib/                # shapes.c (the functions ch04 reads), bits.c (ch02), timing.c (ch14)
 │   ├── tools/              # elfdump, framewalk, sysprobe, profile.sh
 │   └── bench/              # the host-target microbenchmarks (Part III)
 ├── bench/                  # the book's Python tooling
 │   ├── outline.py          # the book's shape, machine-readable
 │   ├── stamp.py            # what a result must carry, and where it may come from
 │   ├── measure.py          # building and running C; repetition and statistics
+│   ├── disasm.py           # objdump output as a stamped artefact
 │   ├── xv6.py              # staging, building and driving the teaching kernel
-│   ├── figures.py          # every table and diagram, declared once
+│   ├── figures.py          # every table, listing and diagram, declared once
 │   ├── tables.py           # results to markdown
 │   ├── diagrams.py         # figures, drawn by code, as deterministic SVG
 │   ├── run_*.py            # the runners that produce results
@@ -570,17 +571,39 @@ Chapter text quotes code from the working tree with MyST's `{literalinclude}`, a
 them. `tests/test_book.py` fails a chapter that uses `:lines:`. Code is never pasted into prose:
 copy-pasted code goes stale within two chapters.
 
+**Machine code is the one thing that cannot be quoted from the tree**, because it does not exist
+there until a compiler has run. Chapters 4, 16 and 17 need it anyway, so `bench/disasm.py`
+compiles a named function to an object file, disassembles it with the matching `objdump`, and
+writes the output as a stamped result — see §6.3.
+
 ### 6.3 How numbers get into the book
 
 1. A runner under `bench/run_*.py` produces a result and writes it to `bench/results/<name>.json`
    via `bench.stamp.write_result`, which stamps target, machine, kernel, toolchain, flags, and a
    content hash over `CORE_SOURCES` plus the runner's own sources.
 2. Each figure is declared once in `bench/figures.py` and rendered to `chapters/_generated/*.md`
-   (tables) or `chapters/_figures/*.svg` (diagrams) by `scripts/render-figures.py`. Chapters pull
-   them in with `{include}` and `{figure}`.
-3. Two CI guards: `scripts/verify-numbers.py` (every cited result exists, carries its stamps,
-   matches the code checked in, and was measured somewhere it was allowed to be measured) and
-   `scripts/render-figures.py --check` (every committed fragment still matches the results).
+   (tables and listings) or `chapters/_figures/*.svg` (diagrams) by `scripts/render-figures.py`.
+   Chapters pull them in with `{include}` and `{figure}`.
+3. Three CI guards: `scripts/verify-numbers.py` (every cited result exists, carries its stamps,
+   matches the code checked in, and was produced somewhere it was allowed to be produced),
+   `scripts/render-figures.py --check` (every committed fragment still matches the results), and
+   `python3 -m bench.run_disasm --check` (every listing is still what this compiler emits).
+
+**Listings are a second kind of result.** A result declares a `kind`: almost all are
+`measurement`, and disassembly is a `listing`. The two need opposite provenance rules, which is
+why the distinction exists rather than being a naming convention:
+
+| | `measurement` | `listing` |
+|---|---|---|
+| Depends on | the machine it ran on | the compiler that produced it |
+| A `host` one requires | the reference machine, natively | nothing — any machine with the cross compiler |
+| May contain a duration | yes, on `host` | **never**, on either target |
+| CI can regenerate it | no | **yes, and does, on every push** |
+
+The last row is the payoff and the third row is its price. Exempting listings from the board rule
+would otherwise be a one-word way round the check the whole scheme rests on, so
+`bench.stamp.provenance_problems` holds a listing to its own shape: no timing keys anywhere in it,
+`measured_under: compilation`, and a summary containing nothing but listings.
 
 **Chapters contain no executable cells.** Rendering figures by executing code during the book
 build makes every deploy depend on a toolchain, and here it would make the deploy depend on a
@@ -601,8 +624,11 @@ carrying a cost unit and fails the build. A cited specification is allowed, mark
 ### 6.4 Correctness testing
 
 - Every `xv6` example is exercised by booting the kernel under QEMU in CI.
-- Every `host` example is cross-compiled for RV64 and run under user-mode QEMU in CI. Correctness
-  only — and the flags differ from the board's, which the chapter says wherever it matters.
+- Every `host` example is cross-compiled for the reference architecture and run under user-mode
+  QEMU in CI. Correctness only — and the flags differ from the board's (`-static`), which the
+  chapter says wherever it matters.
+- Every disassembly listing the book prints is re-captured in CI and diffed against what is
+  committed, so a compiler that changes its mind fails the build rather than a reader's afternoon.
 - Timing tests are marked `board` and skip everywhere else.
 - The reader's problems are marked `problem` and deselected in CI; the **scaffolding** beside each
   is not, so CI proves every problem is answerable without asserting anyone has answered it.
@@ -701,7 +727,7 @@ bind both the author and any assistant, are **CLAUDE.md §5**. In summary:
 | Milestone | Contents | State |
 |---|---|---|
 | **M0 — scaffold** | Repository, pipeline, stamping mechanism, xv6 submodule and staging, `verify-setup.py`, ch00 complete, stubs for everything else | **done** |
-| **M1 — the board** | `make bench-board` run on the VisionFive 2 Lite; `setup-host` committed; Appendix C generated | needs the hardware |
+| **M1 — the board** | `make bench-board` run on the reference machine; `setup-host` committed; Appendix C generated | needs the hardware |
 | **M2 — Part I** | ch01–ch05, `sysfs/lib/bits.c`, `elfdump`, `framewalk` | next |
 | **M3 — Part II** | ch06–ch12 with kernel patches and per-chapter instrumentation | |
 | **M4 — the hinge** | ch13, both targets, first real comparison | needs M1 |
@@ -780,9 +806,9 @@ Recorded so they are not relitigated.
 2. **The targets do not share an instruction set, and Part III is ARM.** Decided on evidence
    ([§5](#5-hardware-and-execution-strategy)): no purchasable RISC-V core both counts and samples,
    which would have cost ch20 and ch21. Instruction-set continuity was worth less than two
-   chapters, and only three chapters read disassembly at all. Revisit if a RISC-V board appears
-   that counts, samples, has RVV 1.0 and upstream Linux support — at which point the reference
-   machine can move back and only `hardware/` and five chapter headers change.
+   chapters, and only ch04, ch16 and ch17 depend on reading disassembly. Revisit if a RISC-V
+   board appears that counts, samples, has RVV 1.0 and upstream Linux support — at which point
+   the reference machine can move back and only `hardware/` and five chapter headers change.
 3. **xv6 as a submodule plus patches, never a fork.** `ls xv6/patches/` must remain a complete
    answer to what the book changed.
 4. **The board is the only place a timing may be measured.** Enforced in code, not in prose.
@@ -804,7 +830,7 @@ Recorded so they are not relitigated.
 
 ## 14. Immediate next steps
 
-1. Run `make bench-board` on the VisionFive 2 Lite, commit `bench/results/setup-host.json`, and
+1. Run `make bench-board` on the reference machine, commit `bench/results/setup-host.json`, and
    remove the `pending=` marker on `ch00-board` in `bench/figures.py` (M1).
 2. Generate Appendix C from the board — the `perf` events it actually has.
 3. Write ch01 with the per-chapter prompt, following

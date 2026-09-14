@@ -42,6 +42,17 @@ started with a RISC-V SBC" vendor guides and blog posts.
   for this book, as were the two deliberately-ordered structs used to show padding. Struct padding
   is a standard topic; this pair of structs, this framing (the same members costing different
   amounts) and the cross-target agreement test are not taken from anywhere.
+- **The two-architecture disassembly is the chapter's own.** Showing a conditional move against a
+  branch is a standard teaching move — *Computer Systems: A Programmer's Perspective* has a
+  well-known section on it, and it is the first thing anyone reaches for. Two things here are
+  different, and both were chosen because the standard version was the obvious one. The comparison
+  is across *architectures* rather than across compiler flags on one, so the point is not "the
+  compiler is clever" but "the instruction set does not offer the same choices" — a claim only a
+  two-target book can make, and the concrete form of this book's argument for having two targets.
+  And `sysfs_clamp` is not anyone's example function: a three-way clamp with two conditionals and
+  three exits, picked because base RV64GC has to branch where AArch64 selects. The listings are
+  generated from the repository's own compiler (`bench/disasm.py`) and re-checked by CI, not
+  transcribed from a book.
 - **The problems are original and are tests.** Deciding which of five stamped results may be
   published, predicting a five-member struct's layout before compiling it, and writing a first xv6
   program checked by booting the kernel. No comparable setup chapter has problems at all, let

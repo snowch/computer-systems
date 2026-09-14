@@ -4,9 +4,10 @@ Three markers, one per capability. A test that needs something this machine does
 itself with a message that names what is missing, rather than failing and teaching everyone to
 ignore a red suite.
 
-    board   the machine being measured. Timing only, and never satisfied by an emulator.
-    xv6     qemu-system-riscv64 plus the submodule.
-    riscv   any way to execute RV64 — the board natively, or user-mode QEMU in CI.
+    board     the machine being measured. Timing only, and never satisfied by an emulator.
+    xv6       qemu-system-riscv64 plus the submodule.
+    hostcode  any way to build and run host-target code for a board architecture — the machine
+              itself, or a cross compiler plus user-mode QEMU in CI.
 """
 
 from __future__ import annotations

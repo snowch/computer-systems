@@ -14,13 +14,14 @@ from pathlib import Path
 
 import pytest
 
-from bench.figures import FIGURES, Diagram, Table, cited_results, pending_results
+from bench.figures import FIGURES, KINDS, Table, cited_results, pending_results
 from bench.stamp import (
     REQUIRED_STAMPS,
     RESULTS_DIR,
     ROOT,
     build_result,
     code_fingerprint,
+    describe_toolchain,
     measurement_differences,
     normalise_isa,
     provenance_problems,
@@ -85,6 +86,78 @@ def test_fingerprint_changes_when_a_source_changes(tmp_path: Path, monkeypatch):
 def test_fingerprint_refuses_a_missing_source():
     with pytest.raises(FileNotFoundError):
         code_fingerprint(["sysfs/lib/does-not-exist.c"])
+
+
+def listing_sample(**overrides) -> dict:
+    payload = build_result(
+        name="sample-listing",
+        target="host",
+        kind="listing",
+        summary={
+            "source": "sysfs/lib/shapes.c",
+            "listings": {
+                "f": {"symbol": "f", "text": "0 <f>:\n  0:\tret", "instructions": 1},
+            },
+        },
+        code_sources=["bench/run_disasm.py"],
+        toolchain={"cc": "gcc (test)", "flags": "-O2 -c"},
+        machine=describe_toolchain("aarch64"),
+    )
+    payload.update(overrides)
+    return payload
+
+
+def test_a_listing_needs_no_board():
+    """The exemption. Instructions do not depend on which computer ran the compiler, so a `host`
+    listing produced on a CI runner is exactly as good as one produced on the board."""
+    assert provenance_problems("fake", listing_sample()) == []
+
+
+def test_a_timing_relabelled_as_a_listing_is_still_rejected():
+    """The exemption's cost, and the reason listings have rules of their own.
+
+    Without this, `kind: listing` would be a one-word way round the check the whole repository is
+    built on: declare a laptop timing a listing and it would skip the board rule entirely.
+    """
+    payload = listing_sample()
+    payload["summary"]["median_ns"] = 120
+    problems = provenance_problems("fake", payload)
+    assert problems and "timing" in " ".join(problems).lower()
+
+
+def test_a_listing_that_claims_to_have_run_is_rejected():
+    payload = listing_sample(machine={"kind": "board", "measured_under": "native"})
+    problems = provenance_problems("fake", payload)
+    assert problems and "compiled, not run" in " ".join(problems)
+
+
+def test_an_empty_listing_is_rejected():
+    """A chapter with a blank code block in it is worse than one with no code block."""
+    payload = listing_sample()
+    payload["summary"]["listings"]["f"]["text"] = "\n  \n"
+    problems = provenance_problems("fake", payload)
+    assert problems and "empty" in " ".join(problems)
+
+
+def test_a_result_with_no_kind_is_judged_as_a_measurement():
+    """Old results predate the field. Reading absence as 'measurement' holds them to the stricter
+    rules; reading it as 'listing' would let them past both sets."""
+    payload = sample(target="host", machine={"kind": "other", "measured_under": "native"})
+    del payload["kind"]
+    assert provenance_problems("fake", payload)
+
+
+def test_unknown_kind_is_refused():
+    with pytest.raises(ValueError, match="unknown kind"):
+        build_result(
+            name="x",
+            target="xv6",
+            kind="anecdote",
+            summary={},
+            code_sources=[],
+            toolchain={},
+            machine={},
+        )
 
 
 def test_unknown_target_is_refused():
@@ -152,9 +225,9 @@ def test_pending_figures_name_the_command_that_fixes_them():
             )
 
 
-def test_every_figure_is_a_table_or_a_diagram():
+def test_every_figure_is_a_kind_something_renders():
     for name, figure in FIGURES.items():
-        assert isinstance(figure, (Table, Diagram)), name
+        assert isinstance(figure, KINDS), name
 
 
 def test_isa_strings_normalise():

@@ -236,10 +236,7 @@ def run_host() -> dict[str, Any]:
     if summary["world"] != "host":
         raise ProbeError(f"expected the host build of the probe, got {summary['world']!r}")
 
-    machine = describe_board()
-    cpu = machine.get("cpu", {})
     summary |= {
-        "ids": " / ".join(str(cpu.get(key, "?")) for key in ("mvendorid", "marchid", "mimpid")),
         "native_cc": compiler_version(target.cc),
         "native_flags": flags_string(target.flags),
     }
