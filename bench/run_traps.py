@@ -37,18 +37,24 @@ from bench.stamp import (
     write_result,
 )
 
-#: The workload. Fixed and small, because the census counts everything the machine does and a
-#: workload that varies produces a number that cannot be compared with itself.
-WORKLOAD = ["echo trapcensus workload", "ls"]
+#: The workload: a program that asks for one thing a known number of times.
+#:
+#: Counting the shell was the obvious first try and it does not work. How many times the shell
+#: calls `read` depends on how the console delivered its characters, which depends on timing,
+#: which inside QEMU is a property of the laptop — two runs of the identical workload disagreed,
+#: which is how this was found. `trapload` removes the question: nothing else in the system calls
+#: `getpid`, so that entry in the census is a number this program decided.
+WORKLOAD = ["trapload"]
+
+#: What `trapload` asks for, and how many times. Kept in step with the program by a test.
+PROBE_SYSCALL = 11  # getpid
+PROBE_CALLS = 1000
 
 #: Ctrl-T, which the patch binds to printing the census.
 DUMP = "\x14"
 
 #: The two halves of the trap path, both in trampoline.S: the way in and the way out.
 PATH_SYMBOLS = ("uservec", "userret")
-
-#: Supervisor timer interrupt. Excluded from the recorded census: see read_census.
-TIMER_CAUSE = 5
 
 
 class CensusError(RuntimeError):
@@ -59,6 +65,7 @@ def read_census(transcript: str) -> dict[str, Any]:
     totals: dict[str, int] = {}
     exceptions: dict[str, int] = {}
     interrupts: dict[str, int] = {}
+    syscalls: dict[str, int] = {}
     complete = False
     for raw in transcript.splitlines():
         # The first census line lands on the same line as the shell prompt that was waiting for
@@ -81,23 +88,31 @@ def read_census(transcript: str) -> dict[str, Any]:
                 exceptions[code] = int(count)
             case ["interrupt", code, count]:
                 interrupts[code] = int(count)
+            case ["syscall", number, count]:
+                syscalls[number] = int(count)
     if not complete or not totals:
         raise CensusError(f"no census in the transcript:\n{transcript[-2000:]}")
 
-    # No interrupt is counted, and the omission is the honest half of this measurement.
+    # Only what the workload decided is recorded as a number, and the rest as a list of what
+    # occurred. The distinction is not fastidiousness — it is the difference between a figure that
+    # means something and one that moves when the laptop is busy.
     #
-    # An exception is caused by an instruction the program executed, so for a fixed workload the
-    # count is fixed: run it again and the same instructions trap the same number of times. An
-    # interrupt is caused by a device or a timer deciding to interrupt, which depends on how long
-    # things took — and how long things take inside QEMU is a property of the laptop it is running
-    # on. Recorded as counts, those numbers would move on every run and every machine while
-    # looking exactly like the ones either side of them.
+    # `trapload` asks for one thing a fixed number of times, so that entry is reproducible on any
+    # machine. Everything else in the census is the shell going about its business: how many times
+    # it read the console depends on how the console delivered characters, and how many times a
+    # device interrupted depends on how long that took. Those counts differ between two runs of
+    # the identical workload — which is how this was found out, rather than assumed.
     #
-    # So which interrupts occurred is recorded and how many times is not. ch19 counts them
-    # properly, on a machine where the question means something.
+    # Even a count of *how many distinct* calls the run used is unsafe, and was tried: the shell
+    # occasionally makes one it otherwise does not, so the number moved between two runs of the
+    # same workload. What survives here is a number the workload fixed and lists of what occurred.
+    #
+    # ch19 counts the lot, on a machine where elapsed time is a fact about the machine.
+    probe = syscalls.get(str(PROBE_SYSCALL), 0)
     return {
-        "syscalls": totals["from_user"],
-        "exceptions": exceptions,
+        "probe_syscall": PROBE_SYSCALL,
+        "probe_calls_counted": probe,
+        "exception_causes_seen": sorted(int(code) for code in exceptions),
         "interrupt_causes_seen": sorted(int(code) for code in interrupts),
     }
 
@@ -168,16 +183,23 @@ def capture() -> dict[str, Any]:
     result = xv6.boot([*WORKLOAD, DUMP])
     if result.timed_out:
         raise CensusError(f"xv6 did not finish the workload:\n{result.transcript[-2000:]}")
-    summary = {
-        "census": read_census(result.transcript),
-        "path": measure_path(),
-        "workload": WORKLOAD,
-    }
+    census = read_census(result.transcript)
+    if census["probe_calls_counted"] != PROBE_CALLS:
+        raise CensusError(
+            f"trapload asked for {PROBE_CALLS} and the kernel counted "
+            f"{census['probe_calls_counted']}. Either the program or the patch has changed."
+        )
+    summary = {"census": census, "path": measure_path(), "workload": WORKLOAD}
     return build_result(
         name="traps-xv6",
         target="xv6",
         summary=summary,
-        code_sources=["bench/run_traps.py", "bench/xv6.py", "xv6/patches/06-trap-census.patch"],
+        code_sources=[
+            "bench/run_traps.py",
+            "bench/xv6.py",
+            "xv6/apps/trapload.c",
+            "xv6/patches/06-trap-census.patch",
+        ],
         toolchain={
             "cc": compiler_version("riscv64-linux-gnu-gcc"),
             "flags": "xv6's own CFLAGS",

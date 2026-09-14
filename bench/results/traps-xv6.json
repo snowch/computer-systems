@@ -1,16 +1,17 @@
 {
-  "code_fingerprint": "9cce96b4dacc09b4",
+  "code_fingerprint": "87f0718df5343dee",
   "code_sources": [
     "bench/run_traps.py",
     "bench/xv6.py",
+    "xv6/apps/trapload.c",
     "xv6/patches/06-trap-census.patch"
   ],
   "conditions": {
     "cpus": 3,
     "note": "counts only \u2014 QEMU models no timing, so none is recorded (ch00)",
-    "workload": "echo trapcensus workload ; ls"
+    "workload": "trapload"
   },
-  "generated_at": "2026-09-14T19:18:56+00:00",
+  "generated_at": "2026-09-14T19:24:53+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",
@@ -35,14 +36,15 @@
   },
   "summary": {
     "census": {
-      "exceptions": {
-        "8": 878
-      },
+      "exception_causes_seen": [
+        8
+      ],
       "interrupt_causes_seen": [
         5,
         9
       ],
-      "syscalls": 878
+      "probe_calls_counted": 1000,
+      "probe_syscall": 11
     },
     "path": {
       "userret": {
@@ -59,8 +61,7 @@
       }
     },
     "workload": [
-      "echo trapcensus workload",
-      "ls"
+      "trapload"
     ]
   },
   "target": "xv6",

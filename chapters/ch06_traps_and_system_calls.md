@@ -103,28 +103,37 @@ Ctrl-T, the way it already prints the process table on Ctrl-P:
 :end-before: +// Printed on Ctrl-T
 ```
 
-Run a fixed workload and ask:
+Then run a workload and ask:
 
 ```{include} _generated/ch06-census.md
 ```
 
-Two things in that table are worth a paragraph each.
+**Most of that table is a list rather than a count, and the reason is worth more than the numbers
+would have been.**
 
-**Almost nine hundred system calls to list a directory and echo a line.** Not because the shell is
-wasteful — because a system call is the unit in which a program talks to the world, and reading a
-directory means opening it, reading it in pieces, and closing it, while printing means writing.
-The number is large because the granularity is fine.
+The obvious thing to measure was the shell: boot, run `ls`, and report how many system calls it
+took. That produced a satisfyingly large number — and a different one each time. How many times
+the shell calls `read` depends on how the console delivered its characters, which depends on
+timing, and elapsed time inside QEMU is a property of the laptop running it. Two runs of an
+identical workload disagreed, which is how this was found out rather than assumed.
 
-**The interrupt counts are deliberately absent**, and the absence is a measurement decision rather
-than an omission. An exception is caused by an instruction your program executed: run the same
-program again and the same instructions trap the same number of times. An interrupt is caused by a
-device or a timer deciding to interrupt, which depends on *how long things took* — and how long
-things take inside QEMU is a property of the laptop it is running on. Recorded as a number it
-would move on every run and every machine while looking exactly like the number above it.
+An exception is caused by an instruction your program executed, so for a *fixed sequence of
+instructions* it is reproducible. The trouble is that "run the shell" is not a fixed sequence of
+instructions. So the workload is a program that removes the question:
 
-So the causes are recorded and the counts are not. This is the discipline of [ch00](#ch00) applied
-to a case where it costs something: a figure that would have been easy to print, left out because
-it would not have meant anything.
+```{literalinclude} ../xv6/apps/trapload.c
+:language: c
+:start-at: int main(void)
+```
+
+Nothing else in the system calls `getpid`, so that row of the census is a number this program
+decided and the shell's noise lands elsewhere. It asks a thousand times and the kernel counts a
+thousand — which is a much smaller claim than the one that was almost printed, and unlike it, true
+on every machine.
+
+That is the discipline of [ch00](#ch00) meeting a case where it costs something. The large number
+was easy, impressive, and meaningless. [ch19](#ch19) counts the lot, on a machine where elapsed
+time is a fact about the machine.
 
 ### The register census, and why it is not thirty-two
 

@@ -266,27 +266,30 @@ def trap_path_table(name: str) -> str:
 
 
 def trap_census_table(name: str) -> str:
-    """What a fixed workload asked the kernel for, and what interrupted it."""
-    result = load_result(name)
-    census = result["summary"]["census"]
+    """What the kernel was entered for, recording only what the workload decided."""
+    census = load_result(name)["summary"]["census"]
     causes = {
-        "8": "system call (`ecall` from user mode)",
-        "13": "load page fault",
-        "15": "store page fault",
-        "12": "instruction page fault",
-        "2": "illegal instruction",
+        2: "illegal instruction",
+        8: "system call (`ecall` from user mode)",
+        12: "instruction page fault",
+        13: "load page fault",
+        15: "store page fault",
     }
     rows = [
-        [causes.get(code, f"exception {code}"), count]
-        for code, count in sorted(census["exceptions"].items(), key=lambda kv: -kv[1])
-    ]
-    rows.append(
         [
-            "interrupt causes seen (counts deliberately not recorded)",
+            f"`getpid` calls the workload asked for (syscall {census['probe_syscall']})",
+            census["probe_calls_counted"],
+        ],
+        [
+            "Exception causes seen",
+            ", ".join(causes.get(c, str(c)) for c in census["exception_causes_seen"]),
+        ],
+        [
+            "Interrupt causes seen (counts deliberately not recorded)",
             ", ".join(str(c) for c in census["interrupt_causes_seen"]),
-        ]
-    )
-    return render_table(["What the kernel was entered for", "Times"], rows)
+        ],
+    ]
+    return render_table(["What the kernel was entered for", "This run"], rows)
 
 
 def xv6_environment_table(name: str) -> str:

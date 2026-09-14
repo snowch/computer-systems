@@ -111,3 +111,18 @@ def test_volatile_keeps_every_read():
     )
     assert plain.text.count("lw") == 1, "ch03 says the plain version reads once:\n" + plain.text
     assert marked.text.count("lw") == 4, "ch03 says volatile keeps all four reads:\n" + marked.text
+
+
+def test_the_trap_probe_matches_the_program_it_counts():
+    """ch06's census is only reproducible while the runner and the workload agree.
+
+    `trapload.c` decides how many times it calls `getpid` and `bench/run_traps.py` asserts that
+    the kernel counted exactly that many. Two constants in two languages, and nothing but this
+    keeps them in step.
+    """
+    from bench.run_traps import PROBE_CALLS  # noqa: PLC0415
+
+    source = (ROOT / "xv6" / "apps" / "trapload.c").read_text()
+    assert f"#define SYSFS_TRAPLOAD_CALLS {PROBE_CALLS}" in source, (
+        f"bench/run_traps.py expects {PROBE_CALLS} calls; trapload.c disagrees"
+    )
