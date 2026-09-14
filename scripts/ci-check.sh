@@ -87,6 +87,13 @@ echo "== the fault census still costs what the book prints =="
 # the handler declined a fault.
 python3 -m bench.run_faults --check
 
+echo "== the interrupt census still says what the book prints =="
+# ch09's disk figure depends on the filesystem image as well as on the code, and nothing else in
+# the stamping scheme covers fs.img — so this check is the only thing that would notice a later
+# chapter adding an xv6 program and moving the number. The console counts this deliberately does
+# not record are the ones that vary; see the runner's docstring.
+python3 -m bench.run_interrupts --check
+
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check
 

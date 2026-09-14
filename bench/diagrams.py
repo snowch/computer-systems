@@ -1105,6 +1105,89 @@ def fault_decision(result: str) -> str:
     return _svg(width, note_y + 92, body, "What a kernel does with a page fault")
 
 
+def interrupt_sources(result: str) -> str:
+    """Where interrupts come from, and which of them a workload decides the number of.
+
+    Drawn rather than tabulated because the asymmetry is the whole content, and a table with an
+    empty cell in it invites the reader to think a number is merely missing. Two of these three
+    sources produce counts this book will not print, and the figure says which and why on the
+    face of it.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    run = load_result(result)["summary"]["intrload"]
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "Three sources, and only one countable answer",
+        "The work was fixed. Whether the interrupt count was fixed too depends on the device.",
+    )
+
+    sources = [
+        (
+            "Disk",
+            "one completion per request",
+            f"{run['disk_interrupts']} interrupts, every run",
+            True,
+        ),
+        (
+            "Console",
+            "\u201cready for more\u201d, whenever that is",
+            "a different number every run",
+            False,
+        ),
+        (
+            "Timer",
+            "once per tick of elapsed time",
+            "a fact about the host, not the guest",
+            False,
+        ),
+    ]
+    box_w = (width - 2 * margin - 2 * 20) / 3
+    row_y = margin + 62
+    for index, (title, mechanism, verdict, countable) in enumerate(sources):
+        box_x = margin + index * (box_w + 20)
+        body.append(_rect(box_x, row_y, box_w, 132, fill=PANEL))
+        body.append(_text(box_x + 16, row_y + 30, title, size=15, weight="700"))
+        body.append(_text(box_x + 16, row_y + 54, mechanism, size=11.5, fill=MUTED))
+        body.append(_line(box_x + 12, row_y + 72, box_x + box_w - 12, row_y + 72, dash="3 3"))
+        body.append(
+            _text(
+                box_x + 16,
+                row_y + 94,
+                "recorded" if countable else "not recorded",
+                size=11,
+                weight="700",
+                fill=INK if countable else WARN,
+            )
+        )
+        body.append(_text(box_x + 16, row_y + 114, verdict, size=11.5, fill=MUTED))
+
+    note_y = row_y + 190
+    body.append(
+        _text(
+            margin,
+            note_y,
+            "A block request is completed once. \u201cReady for more\u201d is not a unit of anything.",
+            size=13.5,
+            weight="700",
+        )
+    )
+    body += footnote(
+        margin,
+        note_y + 42,
+        width - 2 * margin,
+        [
+            "Same image, same workload: the disk count was identical on every run and the console "
+            "count was not, over a spread of nearly a third.",
+            "So one of these is a property of the work and the other is a property of the "
+            "afternoon, and only one of them belongs in a table.",
+        ],
+    )
+    return _svg(width, note_y + 92, body, "Where interrupts come from")
+
+
 #: fragment name -> the function that draws it
 DIAGRAMS = {
     "ch00-targets": two_target_map,
@@ -1117,4 +1200,5 @@ DIAGRAMS = {
     "ch07-walk": sv39_walk,
     "ch07-address-spaces": address_space_cost,
     "ch08-decision": fault_decision,
+    "ch09-sources": interrupt_sources,
 }

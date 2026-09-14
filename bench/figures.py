@@ -31,6 +31,7 @@ from bench.diagrams import (
     address_space_cost,
     dispatch_table,
     fault_decision,
+    interrupt_sources,
     sections_to_segments,
     stack_frame,
     struct_padding,
@@ -278,6 +279,16 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "ch08-causes": Table(
         render=tables.fault_causes_table,
         result="faults-xv6",
+    ),
+    # -- ch09 ---------------------------------------------------------------------------
+    "ch09-sources": Diagram(
+        draw=interrupt_sources,
+        alt="Three interrupt sources, and which of them a fixed workload gives a fixed count for.",
+        result="interrupts-xv6",
+    ),
+    "ch09-cost": Table(
+        render=tables.interrupt_cost_table,
+        result="interrupts-xv6",
     ),
     "ch00-board": Table(
         render=tables.board_identity_table,

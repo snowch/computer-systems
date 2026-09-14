@@ -387,6 +387,42 @@ famous assignments, so both are deliberately not set — and the reason is not o
   and exists because ch06 was got wrong first.
 - **Citations are primary only**: the RISC-V privileged specification and xv6's own source.
 
+## ch09 · Interrupts and Drivers
+
+**Closest in subject.** The xv6 book's chapter on device drivers and interrupts, which walks the
+same `uart.c` and PLIC; MIT 6.1810's networking lab; *Operating Systems: Three Easy Pieces* on I/O
+devices and interrupts; and the device-driver chapter of any OS text, all of which explain the
+top-half/bottom-half split.
+
+**How this differs, and the care taken.**
+
+- **The chapter's finding is a negative result, arrived at by measurement.** A fixed workload
+  gives a fixed disk-interrupt count and a varying console-interrupt count, on the same image, run
+  after run. The comparable material presents interrupt handling as a mechanism to understand;
+  this asks whether it can be counted, finds that the answer depends on what the interrupt
+  *means*, and prints only the half that survives. No comparable text reports this because none is
+  under an obligation to justify every number it publishes.
+- **The zero is the chapter, and it is about the instrument.** xv6's console driver is written to
+  sleep when the transmitter is busy, and this measurement shows it never once did: the emulated
+  device is never slow. So the book can show the structure and not the pressure that produced it,
+  and says so rather than narrating the standard explanation as though it had been demonstrated.
+  Turning "what this target cannot show" into the section a reader remembers is this book's shape.
+- **The patch counts and changes nothing**, as in ch08 — no driver is added, no policy altered.
+- **The filesystem-image dependency is named.** The disk figure depends on `mkfs`'s layout, which
+  nothing in the stamping scheme covers; the result records the image's digest and the chapter
+  explains why a later chapter will move the number. That is bookkeeping no textbook has, because
+  no textbook regenerates its figures.
+- **The problems are original.** 9.1 is PLAN's "make the console lose characters" as a bounded-
+  buffer predictor with xv6's own buffer size, graded from event strings the test wrote. 9.2 asks
+  for a count and requires "undecidable" for the device whose count the workload does not
+  determine. 9.3 is graded *against the machine* — the test boots several times and compares
+  censuses — and degrades to "inconclusive" rather than failing a reader when the experiment
+  cannot settle a counter. A problem whose answer key is the hardware's own behaviour is not a
+  form any of the comparable material uses.
+- **Deliberately not set**: adding a driver for a virtual device, which was in the plan and which
+  is close to a well-known lab, and which no test could grade without becoming one.
+- **Citations are primary only**: the RISC-V privileged specification and xv6's own source.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the

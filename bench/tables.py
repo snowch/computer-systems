@@ -469,3 +469,23 @@ def fault_causes_table(name: str) -> str:
         ["Faults the handler declined", "—", run["refused"]],
     ]
     return render_table(["Cause", "`scause`", "Count"], rows)
+
+
+def interrupt_cost_table(name: str) -> str:
+    """What a fixed amount of I/O cost in interrupts — for the device where that question has an
+    answer.
+
+    One device per row would be the obvious shape and would be dishonest, because only one of the
+    two rows could be filled in. The console's interrupt count is not in this table and the reason
+    is the chapter.
+    """
+    run = load_result(name)["summary"]["intrload"]
+    rows = [
+        ["Block operations the workload performed", run["block_operations"]],
+        ["Interrupts the disk raised", run["disk_interrupts"]],
+        ["Characters the workload asked to be written", run["chars_requested"]],
+        ["Characters the writing process handed over itself", run["chars_the_writer_moved_itself"]],
+        ["Times it had to stop and wait for the device", run["times_the_writer_had_to_wait"]],
+        ["Characters arriving from the keyboard", run["chars_received"]],
+    ]
+    return render_table(["What happened", "Count"], rows)
