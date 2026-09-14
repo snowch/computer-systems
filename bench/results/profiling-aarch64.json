@@ -1,0 +1,56 @@
+{
+  "code_fingerprint": "0723faba7f825e3d",
+  "code_sources": [
+    "bench/run_disasm.py",
+    "bench/disasm.py",
+    "sysfs/lib/profiling.c",
+    "sysfs/include/sysfs/profiling.h"
+  ],
+  "conditions": {
+    "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "note": "no timing: this records what the compiler chose, not what it cost"
+  },
+  "generated_at": "2026-09-14T22:37:11+00:00",
+  "kind": "listing",
+  "machine": {
+    "arch": "aarch64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "aarch64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "profiling-aarch64",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "5600.47",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.80GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v24",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "listings": {
+      "sysfs_tally_decode": {
+        "instructions": 22,
+        "symbol": "sysfs_tally_decode",
+        "text": "0000000000000030 <sysfs_tally_decode>:\n  30:\tmov\tx7, x0\n  34:\tcbz\tx1, 80 <sysfs_tally_decode+0x50>\n  38:\tmov\tw8, #0x79b1                \t// #31153\n  3c:\tmov\tx5, #0x0                   \t// #0\n  40:\tmov\tx0, #0x0                   \t// #0\n  44:\tmovk\tw8, #0x9e37, lsl #16\n  48:\tldr\tw4, [x7, x5, lsl #2]\n  4c:\teor\tw4, w4, w4, lsr #11\n  50:\tmul\tw4, w4, w8\n  54:\tcmp\twzr, w4, lsr #24\n  58:\tb.eq\t64 <sysfs_tally_decode+0x34>  // b.none\n  5c:\teor\tw4, w4, w4, lsr #15\n  60:\tadd\tx0, x0, #0x1\n  64:\tudiv\tw6, w4, w3\n  68:\tmsub\tw4, w6, w3, w4\n  6c:\tstr\tw4, [x2, x5, lsl #2]\n  70:\tadd\tx5, x5, #0x1\n  74:\tcmp\tx1, x5\n  78:\tb.ne\t48 <sysfs_tally_decode+0x18>  // b.any\n  7c:\tret\n  80:\tmov\tx0, #0x0                   \t// #0\n  84:\tret"
+      },
+      "sysfs_tally_scatter": {
+        "instructions": 45,
+        "symbol": "sysfs_tally_scatter",
+        "text": "0000000000000090 <sysfs_tally_scatter>:\n  90:\tstp\tx29, x30, [sp, #-48]!\n  94:\tmov\tx6, x2\n  98:\tmov\tx29, sp\n  9c:\tstp\tx19, x20, [sp, #16]\n  a0:\tmov\tx20, x0\n  a4:\tmov\tx19, x1\n  a8:\tstp\tx21, x22, [sp, #32]\n  ac:\tmov\tw22, w3\n  b0:\tcbz\tw3, 12c <sysfs_tally_scatter+0x9c>\n  b4:\tmov\tx0, x6\n  b8:\tmov\tw21, w3\n  bc:\tubfiz\tx2, x22, #2, #32\n  c0:\tmov\tw1, #0x0                   \t// #0\n  c4:\tbl\t0 <memset>\n  c8:\tmov\tx6, x0\n  cc:\tcbz\tx19, fc <sysfs_tally_scatter+0x6c>\n  d0:\tmov\tx4, #0x0                   \t// #0\n  d4:\tnop\n  d8:\tldr\tw2, [x20, x4, lsl #2]\n  dc:\tadd\tx4, x4, #0x1\n  e0:\tldr\tw5, [x6, x2, lsl #2]\n  e4:\tadd\tw5, w5, #0x1\n  e8:\tstr\tw5, [x6, x2, lsl #2]\n  ec:\tcmp\tx19, x4\n  f0:\tb.hi\td8 <sysfs_tally_scatter+0x48>  // b.pmore\n  f4:\tcbz\tw22, 130 <sysfs_tally_scatter+0xa0>\n  f8:\tmov\tw21, w22\n  fc:\tsub\tx6, x6, #0x4\n 100:\tmov\tx1, #0x1                   \t// #1\n 104:\tmov\tx0, #0x0                   \t// #0\n 108:\tldr\tw3, [x6, x1, lsl #2]\n 10c:\tcmp\tx21, x1\n 110:\tmadd\tx0, x3, x1, x0\n 114:\tadd\tx1, x1, #0x1\n 118:\tb.ne\t108 <sysfs_tally_scatter+0x78>  // b.any\n 11c:\tldp\tx19, x20, [sp, #16]\n 120:\tldp\tx21, x22, [sp, #32]\n 124:\tldp\tx29, x30, [sp], #48\n 128:\tret\n 12c:\tcbnz\tx1, d0 <sysfs_tally_scatter+0x40>\n 130:\tldp\tx19, x20, [sp, #16]\n 134:\tmov\tx0, #0x0                   \t// #0\n 138:\tldp\tx21, x22, [sp, #32]\n 13c:\tldp\tx29, x30, [sp], #48\n 140:\tret"
+      }
+    },
+    "source": "sysfs/lib/profiling.c"
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 compiled to an object file and disassembled",
+    "flags": "-O2 -Wall -Wextra -c",
+    "objdump": "aarch64-linux-gnu-objdump -d --no-show-raw-insn --disassemble=<fn>"
+  }
+}

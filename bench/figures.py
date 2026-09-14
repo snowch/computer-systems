@@ -32,6 +32,7 @@ from bench.diagrams import (
     dispatch_table,
     fault_decision,
     interrupt_sources,
+    sampling_profile,
     sections_to_segments,
     stack_frame,
     struct_padding,
@@ -457,6 +458,34 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         pending=(
             "The call that traps and the call that does not have not been put side by side yet: "
             f"{BOARD} (`bench/results/vdso-host.json`)."
+        ),
+    ),
+    # -- ch20 ---------------------------------------------------------------------------
+    "ch20-census": Table(
+        render=tables.tally_census_table,
+        result="tally-census",
+    ),
+    "ch20-sampling": Diagram(
+        draw=sampling_profile,
+        alt="A cycle counter overflowing into an interrupt, the PC written down, and the loop "
+        "where the instruction blamed is not the instruction that waited.",
+        result="profiling-aarch64",
+    ),
+    "ch20-scatter": Listing(
+        symbol="sysfs_tally_scatter",
+        results=("profiling-aarch64",),
+    ),
+    "ch20-profile": Table(
+        render=tables.profile_table,
+        result="profile-host",
+        pending=(f"Nothing has been profiled yet: {BOARD} (`bench/results/profile-host.json`)."),
+    ),
+    "ch20-skid": Table(
+        render=tables.skid_table,
+        result="skid-host",
+        pending=(
+            "The samples have not been read instruction by instruction yet: "
+            f"{BOARD} (`bench/results/skid-host.json`)."
         ),
     ),
     "ch00-board": Table(

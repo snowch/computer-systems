@@ -769,6 +769,49 @@ chapter; and the many published "how expensive is a system call" microbenchmarks
 - **Citations are primary only**: the ARM architecture reference manual for the exception model,
   and Linux's own generic system-call table for the number in the listing.
 
+## ch20 · Whole-Machine Profiling
+
+**Closest in subject.** *Systems Performance*'s profiling and flame-graph chapters; *Performance
+Analysis and Tuning on Modern CPUs* on `perf` and on skid; the `perf` wiki and tutorial; the
+profiling chapter of *Computer Systems: A Programmer's Perspective*; and the large body of
+writing on sampling profilers' pitfalls.
+
+**How this differs, and the care taken.**
+
+- **The chapter's method is a pre-registration, and that is its actual contribution.** The program
+  is censused — records, table width, lines reached, how lopsided the decoy branch is — and the
+  census is stamped and committed *before* any profile exists. The stated reason is that a profile
+  with nothing written down beforehand is trivially easy to agree with. No treatment consulted
+  does this; they profile first and explain afterwards.
+- **The runner enforces the pre-registration.** `bench/run_profile.py` refuses to stamp a census
+  in which the two arrangements stop agreeing, the scattered pass stops reaching every cache line,
+  or the conditional stops being lopsided — each of which would leave the chapter confidently
+  pointing at the wrong phase while still producing a table.
+- **The example program is the book's own and is built round a specific misdirection.** The phase
+  with the conspicuous arithmetic and a conditional is cheap; the phase that is three lines long
+  is the cost. Neither the program nor the misdirection is anyone else's, and the payoff is a
+  census row the reader can already interpret from ch17 and ch18.
+- **The line-holds-a-run observation is reused rather than introduced.** That the keys miss two
+  thirds of the counters and still touch every line is ch18's coherence-works-in-lines argument
+  reappearing as a capacity argument, and the chapter says so rather than presenting it fresh.
+- **Skid is derived from the mechanism rather than stated as a caveat.** The diagram draws the
+  counter overflowing into an interrupt — ch09's mechanism, met already, doing a job unrelated to
+  a device — and the attribution error follows from that, with the chapter's rule being "read the
+  neighbourhood, never the line".
+- **Problem 20.3 is the chapter's original contribution to a well-worn topic.** Aliasing between a
+  fixed sampling period and a fixed loop period is reduced to a number of visited positions, from
+  which the reason real profilers randomise the period follows arithmetically rather than by
+  assertion. The scaffolding shows a one-cycle change taking a profile from one position to all
+  of them.
+- **Problem 20.2 asks for a derivation, not a rule of thumb.** The closed form for how many
+  samples a share needs is the reader's to find, and the tests assert the two properties worth
+  carrying around — quartering behaviour in the width, and that a rare symbol is cheap to resolve
+  only in its own terms.
+- **The limitations section refuses the chapter's own frame** — it says that a profile is a map of
+  where time went and not of what is responsible, and that this chapter's own expensive phase is
+  expensive because of a decision made in a different phase that no amount of sampling points at.
+- **Citations are primary only**: `perf_event_open(2)` and the measurement-bias paper.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the

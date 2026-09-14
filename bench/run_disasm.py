@@ -66,6 +66,11 @@ SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
             "sysfs_call_through",
         ),
     ),
+    "profiling": (
+        "sysfs/lib/profiling.c",
+        "sysfs/include/sysfs/profiling.h",
+        ("sysfs_tally_decode", "sysfs_tally_scatter"),
+    ),
     "pipeline": (
         "sysfs/lib/pipeline.c",
         "sysfs/include/sysfs/pipeline.h",

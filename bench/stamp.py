@@ -304,6 +304,28 @@ def describe_toolchain(arch: str) -> dict[str, Any]:
     }
 
 
+def describe_counted_run(arch: str) -> dict[str, Any]:
+    """The machine of an artefact whose program was *run* — for its counts, never for a duration.
+
+    Some artefacts are read off a compiler's output and some have to be executed to be read at
+    all: a census of what a program touches is not deducible from its object file. Running it is
+    allowed here because a count is not a cost — the same program on the same inputs reaches the
+    same cache lines on every machine, emulated or not — and ``_compiled_problems`` still refuses
+    any summary that looks like a timing.
+
+    ``measured_under`` therefore stays ``"compilation"``. It names the provenance class, which is
+    "this figure does not belong to a machine", and that is exactly what is being claimed. The
+    model string is where the honesty about execution goes, because that is what a reader sees
+    under the table.
+    """
+    return {
+        "kind": "toolchain",
+        "arch": arch,
+        "measured_under": "compilation",
+        "model": f"{arch} cross build, any machine — run under user-mode QEMU for counts only",
+    }
+
+
 def describe_qemu(xv6_dir: Path | None = None) -> dict[str, Any]:
     """The system an ``xv6`` result describes: xv6 at a known commit, under a known QEMU.
 

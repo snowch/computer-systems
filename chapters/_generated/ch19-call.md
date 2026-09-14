@@ -12,4 +12,4 @@
   24:	ret
 ```
 
-*Conditions: target `host`; aarch64 cross compiler, any machine — nothing here was executed; aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `-O2 -Wall -Wextra -c`; 2026-09-14. Source: `bench/results/oscalls-aarch64.json`, code hash `e6ea602b298e066d`.*
+*Conditions: target `host`; aarch64 cross compiler, any machine — nothing here was executed; aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `-O2 -Wall -Wextra -c`; 2026-09-14. Source: `bench/results/oscalls-aarch64.json`, code hash `95d35df4981b4b42`.*

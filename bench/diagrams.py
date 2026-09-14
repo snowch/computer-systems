@@ -1189,6 +1189,90 @@ def interrupt_sources(result: str) -> str:
 
 
 #: fragment name -> the function that draws it
+def sampling_profile(result: str) -> str:
+    """How one cycle becomes one line in a report, and where the attribution goes wrong.
+
+    Drawn because the shape explains both of the chapter's surprises at once. A profiler does not
+    watch your program; it arranges to be interrupted every so often and writes down where the
+    program was. Everything a profile can and cannot tell you follows from that sentence — it is
+    why the answer is statistical, why a rare-but-slow function can be invisible, and why the
+    instruction blamed is not the instruction that was waiting.
+
+    The loop's shape comes from the stamped listing, so the figure cannot describe a loop the
+    compiler is not emitting.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    listing = load_result(result)["summary"]["listings"]["sysfs_tally_scatter"]
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "A profile is a sample of where the program was, not a record of where it went",
+        "Nothing watches the program. Something interrupts it, and writes down an address.",
+    )
+
+    stages = [
+        ("a counter", "counts cycles"),
+        ("overflow", "it wraps"),
+        ("interrupt", "the core traps"),
+        ("the PC", "written down"),
+        ("a symbol", "looked up later"),
+    ]
+    row_y = margin + 64
+    parts, _ = chain(margin, row_y, stages, box_width=132, box_height=52, gap=18)
+    body += parts
+
+    # Where the attribution goes wrong, drawn as the loop it goes wrong in.
+    loop_y = row_y + 104
+    body.append(_text(margin, loop_y, "The loop the samples land in", size=13.5, weight="700"))
+    steps = [
+        ("load the key", "sequential — in cache", False),
+        ("load the counter", "scattered — this is the wait", True),
+        ("add one, store it back", "cannot start until the load returns", False),
+        ("test and branch", "where the sample is often written down", False),
+    ]
+    step_y = loop_y + 22
+    for index, (what, why, culprit) in enumerate(steps):
+        y = step_y + index * 40
+        body.append(_rect(margin, y, width - 2 * margin, 34, fill=PANEL))
+        body.append(_mono(margin + 14, y + 22, what))
+        body.append(
+            _text(
+                margin + 226,
+                y + 22,
+                why,
+                size=12,
+                fill=WARN if culprit else MUTED,
+                weight="700" if culprit else "400",
+            )
+        )
+
+    note_y = step_y + len(steps) * 40 + 30
+    body.append(
+        _text(
+            margin,
+            note_y,
+            "The interrupt arrives some instructions after the one that caused the stall.",
+            size=13.5,
+            weight="700",
+            fill=WARN,
+        )
+    )
+    body += footnote(
+        margin,
+        note_y + 44,
+        width - 2 * margin,
+        [
+            "So the report blames a cheap instruction standing next to an expensive one. The fix "
+            "is to read the neighbourhood, never the line.",
+            f"The loop above is the one the compiler emitted for this book\u2019s scatter pass, "
+            f"{listing['instructions']} instructions in total.",
+        ],
+    )
+    return _svg(width, note_y + 96, body, "How a sampling profiler attributes a cycle")
+
+
 DIAGRAMS = {
     "ch00-targets": two_target_map,
     "ch01-stages": toolchain_stages,
@@ -1201,4 +1285,5 @@ DIAGRAMS = {
     "ch07-address-spaces": address_space_cost,
     "ch08-decision": fault_decision,
     "ch09-sources": interrupt_sources,
+    "ch20-sampling": sampling_profile,
 }

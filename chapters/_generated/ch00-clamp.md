@@ -20,7 +20,7 @@
   1a:	ret
 ```
 
-*Conditions: target `xv6`; riscv64 cross compiler, any machine — nothing here was executed; riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c`; 2026-09-14. Source: `bench/results/shapes-riscv64.json`, code hash `02d8b951b59b4707`.*
+*Conditions: target `xv6`; riscv64 cross compiler, any machine — nothing here was executed; riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c`; 2026-09-14. Source: `bench/results/shapes-riscv64.json`, code hash `1eab2cf5a2f0af53`.*
 
 **`sysfs_clamp` compiled for aarch64** — the `host` target's instruction set, 7 instructions.
 
@@ -35,4 +35,4 @@
   18:	ret
 ```
 
-*Conditions: target `host`; aarch64 cross compiler, any machine — nothing here was executed; aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `-O2 -Wall -Wextra -c`; 2026-09-14. Source: `bench/results/shapes-aarch64.json`, code hash `05591ec188cf8857`.*
+*Conditions: target `host`; aarch64 cross compiler, any machine — nothing here was executed; aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `-O2 -Wall -Wextra -c`; 2026-09-14. Source: `bench/results/shapes-aarch64.json`, code hash `5f92411c289983d4`.*

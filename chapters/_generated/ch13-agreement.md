@@ -9,4 +9,4 @@
 | Instructions in the sequential route (AArch64) | 13 |
 | Instructions in the chased route (AArch64) | 18 |
 
-*Conditions: target `xv6`; riscv64 cross compiler, any machine — nothing here was executed; riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `xv6's own CFLAGS on one side; the book's portable flags on the other`; 2026-09-14. Source: `bench/results/bridge-both.json`, code hash `ef50db1a7d4dd471`.*
+*Conditions: target `xv6`; riscv64 cross build, any machine — run under user-mode QEMU for counts only; riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `xv6's own CFLAGS on one side; the book's portable flags on the other`; 2026-09-14. Source: `bench/results/bridge-both.json`, code hash `7d62ec5ae7f2cbec`.*

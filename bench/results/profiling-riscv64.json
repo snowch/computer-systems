@@ -1,0 +1,56 @@
+{
+  "code_fingerprint": "a2610e7699deab9c",
+  "code_sources": [
+    "bench/run_disasm.py",
+    "bench/disasm.py",
+    "sysfs/lib/profiling.c",
+    "sysfs/include/sysfs/profiling.h"
+  ],
+  "conditions": {
+    "compiler": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "note": "no timing: this records what the compiler chose, not what it cost"
+  },
+  "generated_at": "2026-09-14T22:37:11+00:00",
+  "kind": "listing",
+  "machine": {
+    "arch": "riscv64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "riscv64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "profiling-riscv64",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "5600.47",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.80GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v24",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "listings": {
+      "sysfs_tally_decode": {
+        "instructions": 25,
+        "symbol": "sysfs_tally_decode",
+        "text": "000000000000002c <sysfs_tally_decode>:\n  2c:\tbeqz\ta1,72 <.L13>\n  2e:\tslli\ta1,a1,0x2\n  30:\tlui\tt1,0x9e378\n  34:\tmv\ta4,a0\n  36:\tadd\ta7,a0,a1\n  3a:\taddiw\tt1,t1,-1615 # ffffffff9e3779b1 <.L56+0xffffffff9e377717>\n  3e:\tli\ta0,0\n\n0000000000000040 <.L12>:\n  40:\tlw\ta5,0(a4)\n  42:\taddi\ta4,a4,4\n  44:\tsrliw\ta1,a5,0xb\n  48:\txor\ta5,a5,a1\n  4a:\tmulw\ta5,a5,t1\n  4e:\tsrliw\ta1,a5,0xf\n  52:\tsrliw\ta6,a5,0x18\n  56:\txor\ta1,a1,a5\n  58:\tbeqz\ta6,62 <.L11>\n  5c:\tsext.w\ta5,a1\n  60:\taddi\ta0,a0,1\n\n0000000000000062 <.L11>:\n  62:\tremuw\ta5,a5,a3\n  66:\taddi\ta2,a2,4\n  68:\tsw\ta5,-4(a2)\n  6c:\tbne\ta7,a4,40 <.L12>\n  70:\tret\n\n0000000000000072 <.L13>:\n  72:\tli\ta0,0\n  74:\tret"
+      },
+      "sysfs_tally_scatter": {
+        "instructions": 61,
+        "symbol": "sysfs_tally_scatter",
+        "text": "0000000000000076 <sysfs_tally_scatter>:\n  76:\taddi\tsp,sp,-48\n  78:\tsd\ts0,32(sp)\n  7a:\tsd\ts2,16(sp)\n  7c:\tsd\ts3,8(sp)\n  7e:\tsd\tra,40(sp)\n  80:\tsd\ts1,24(sp)\n  82:\tmv\ts3,a3\n  84:\tmv\ts0,a0\n  86:\tmv\ts2,a1\n  88:\tmv\ta4,a2\n  8a:\tbeqz\ta3,f8 <.L19>\n  8c:\tslli\ts1,a3,0x20\n  90:\tsrli\ts1,s1,0x20\n  92:\tmv\ta0,a4\n  94:\tslli\ta2,s1,0x2\n  98:\tli\ta1,0\n  9a:\tauipc\tra,0x0\n  9e:\tjalr\tra # 9a <sysfs_tally_scatter+0x24>\n  a2:\tmv\ta4,a0\n  a4:\tbeqz\ts2,cc <.L21>\n\n00000000000000a8 <.L20>:\n  a8:\tmv\ta0,s0\n  aa:\tli\ta6,0\n\n00000000000000ac <.L23>:\n  ac:\tlwu\ta5,0(a0)\n  b0:\taddi\ta6,a6,1\n  b2:\taddi\ta0,a0,4\n  b4:\tslli\ta5,a5,0x2\n  b6:\tadd\ta5,a5,a4\n  b8:\tlw\ta2,0(a5)\n  ba:\taddiw\ta2,a2,1\n  bc:\tsw\ta2,0(a5)\n  be:\tbltu\ta6,s2,ac <.L23>\n  c2:\tbeqz\ts3,fa <.L22>\n  c6:\tslli\ts1,s3,0x20\n  ca:\tsrli\ts1,s1,0x20\n\n00000000000000cc <.L21>:\n  cc:\tslli\ta3,s1,0x2\n  d0:\tmv\ta2,a4\n  d2:\tadd\ta3,a3,a4\n  d4:\tli\ta0,0\n  d6:\tli\ta4,1\n\n00000000000000d8 <.L24>:\n  d8:\tlwu\ta5,0(a2)\n  dc:\taddi\ta2,a2,4\n  de:\tmul\ta5,a5,a4\n  e2:\taddi\ta4,a4,1\n  e4:\tadd\ta0,a0,a5\n  e6:\tbne\ta2,a3,d8 <.L24>\n  ea:\tld\tra,40(sp)\n  ec:\tld\ts0,32(sp)\n  ee:\tld\ts1,24(sp)\n  f0:\tld\ts2,16(sp)\n  f2:\tld\ts3,8(sp)\n  f4:\taddi\tsp,sp,48\n  f6:\tret\n\n00000000000000f8 <.L19>:\n  f8:\tbnez\ta1,a8 <.L20>\n\n00000000000000fa <.L22>:\n  fa:\tld\tra,40(sp)\n  fc:\tld\ts0,32(sp)\n  fe:\tld\ts1,24(sp)\n 100:\tld\ts2,16(sp)\n 102:\tld\ts3,8(sp)\n 104:\tli\ta0,0\n 106:\taddi\tsp,sp,48\n 108:\tret"
+      }
+    },
+    "source": "sysfs/lib/profiling.c"
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 compiled to an object file and disassembled",
+    "flags": "-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c",
+    "objdump": "riscv64-linux-gnu-objdump -d --no-show-raw-insn --disassemble=<fn>"
+  }
+}

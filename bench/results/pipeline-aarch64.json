@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "d03c8e2738ea4a99",
+  "code_fingerprint": "09e21823ae1414b9",
   "code_sources": [
     "bench/run_disasm.py",
     "bench/disasm.py",
@@ -10,7 +10,7 @@
     "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
     "note": "no timing: this records what the compiler chose, not what it cost"
   },
-  "generated_at": "2026-09-14T22:30:46+00:00",
+  "generated_at": "2026-09-14T22:37:10+00:00",
   "kind": "listing",
   "machine": {
     "arch": "aarch64",

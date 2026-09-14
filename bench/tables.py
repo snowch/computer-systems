@@ -883,3 +883,58 @@ def vdso_table(name: str) -> str:
         for call, data in sorted(run.items(), key=lambda item: item[1]["ns"])
     ]
     return render_table(["Call", "Route", "Measured"], rows)
+
+
+def tally_census_table(name: str) -> str:
+    """What the program under ch20's profiler does, counted before anybody times it.
+
+    Written as a prediction. Everything here is a property of the program and its sizes, so it is
+    the same on every machine, and the chapter's method is to commit to it and then find out
+    whether the profile agrees.
+    """
+    run = load_result(name)["summary"]
+    lines_in_table = run["table_bytes"] // run["line_bytes"]
+    rows = [
+        ["Records", f"{run['records']:,}"],
+        ["Counters in the table", f"{run['entries']:,} ({run['table_bytes']:,} bytes)"],
+        ["Counters the keys actually reach", f"{run['distinct_keys']:,}"],
+        [
+            "Cache lines they reach",
+            f"{run['lines_touched']:,}"
+            + (" — every line in the table" if run["lines_touched"] == lines_in_table else ""),
+        ],
+        [
+            "Decode's conditional, taken",
+            f"{run['decode_taken']:,} of {run['records']:,}",
+        ],
+        [
+            "Table in play at once, partitioned",
+            f"{run['slice_entries']:,} ({run['slice_bytes']:,} bytes)",
+        ],
+        [
+            "Key traffic partitioning adds",
+            f"{run['key_reads']:,} reads, {run['key_writes']:,} writes",
+        ],
+    ]
+    return render_table(["Counted before the profile", "Value"], rows)
+
+
+def profile_table(name: str) -> str:
+    """Where the samples landed, before and after the change."""
+    run = load_result(name)["summary"]["symbols"]
+    rows = [
+        [f"`{symbol}`", f"{data['before_pct']}%", f"{data['after_pct']}%"]
+        for symbol, data in sorted(
+            run.items(), key=lambda item: item[1]["before_pct"], reverse=True
+        )
+    ]
+    return render_table(["Symbol", "Before", "After"], rows)
+
+
+def skid_table(name: str) -> str:
+    """The instruction the samples were attributed to, and the one that was waiting."""
+    run = load_result(name)["summary"]["instructions"]
+    rows = [
+        [f"`{entry['text']}`", f"+{entry['offset']}", f"{entry['samples_pct']}%"] for entry in run
+    ]
+    return render_table(["Instruction", "Offset", "Samples"], rows)

@@ -27,7 +27,7 @@ from bench.stamp import (
     ROOT,
     build_result,
     compiler_version,
-    describe_toolchain,
+    describe_counted_run,
     load_result,
     measurement_differences,
     write_result,
@@ -126,7 +126,7 @@ def capture() -> dict[str, Any]:
             "flags": "xv6's own CFLAGS on one side; the book's portable flags on the other",
             "execution": "qemu-system-riscv64 for xv6; user-mode QEMU for the host target's answers",
         },
-        machine=describe_toolchain("riscv64"),
+        machine=describe_counted_run("riscv64"),
         conditions={
             "note": "answers and instruction counts only; no duration appears here by design",
             "why": "a host-target timing is only taken on the board, by make bench-board",
