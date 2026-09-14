@@ -999,3 +999,39 @@ def vector_speedup_table(name: str) -> str:
         for symbol, data in sorted(run.items())
     ]
     return render_table(["Loop", "Measured", "Arithmetic bound", "Of the bound"], rows)
+
+
+def xv6_file_map_table(name: str) -> str:
+    """Which file of the kernel each chapter of Part II reads, and how long it is.
+
+    Ordered by chapter rather than alphabetically, because the reader arrives here from a chapter
+    and wants its rows together. The line counts are walked from the submodule at its pinned
+    commit, so they are numbers a reader can check with `wc -l` on the tree they have.
+    """
+    run = load_result(name)["summary"]
+    rows = [
+        [
+            f"`kernel/{file}`",
+            run["files"][file]["lines"],
+            f"[{entry['chapter']}](#{entry['chapter']})",
+            entry["for"],
+        ]
+        for file, entry in sorted(
+            run["reads"].items(), key=lambda item: (item[1]["chapter"], item[0])
+        )
+    ]
+    return render_table(["File", "Lines", "Read by", "For"], rows)
+
+
+def xv6_kernel_size_table(name: str) -> str:
+    """How much kernel there is, and how much of it this book actually opens."""
+    run = load_result(name)["summary"]
+    mapped = len(run["reads"])
+    rows = [
+        ["Files in `kernel/`", len(run["files"])],
+        ["Lines in all of them", run["total_lines"]],
+        ["Files a chapter reads", mapped],
+        ["Lines in those", run["mapped_lines"]],
+        ["Files nothing in this book opens", len(run["files"]) - mapped],
+    ]
+    return render_table(["The kernel, counted", "Value"], rows)

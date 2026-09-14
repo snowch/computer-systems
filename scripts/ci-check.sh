@@ -120,6 +120,9 @@ python3 -m bench.run_sharing --check
 echo "== ch20's program still has the shape the chapter profiles =="
 python3 -m bench.run_profile --check
 
+echo "== appendix D still describes the kernel tree that is checked out =="
+python3 -m bench.run_filemap --check
+
 echo "== the compiler still refuses ch21's three loops =="
 python3 -m bench.run_vectors --check
 

@@ -476,6 +476,17 @@ def test_every_appendix_says_what_it_will_hold(appendix: Appendix):
     """
     assert appendix.holds and appendix.source, f"Appendix {appendix.letter} is undescribed"
     text = (ROOT / appendix.path).read_text()
+
+    if "[DRAFT]" not in text:
+        # The promise is discharged once the page exists, exactly as a written chapter's `owes`
+        # row is. What replaces it is the stricter requirement: a page with its marker off must
+        # not still be carrying the scaffolding a stub is made of.
+        leftovers = [marker for marker in ("Not written yet", "[To write") if marker in text]
+        assert not leftovers, (
+            f"Appendix {appendix.letter} has lost its [DRAFT] marker but still contains {leftovers}"
+        )
+        return
+
     assert appendix.holds in text, f"Appendix {appendix.letter} does not say what it will hold"
     assert appendix.source in text, f"Appendix {appendix.letter} does not say where it comes from"
 
@@ -486,6 +497,51 @@ def test_the_appendices_are_not_all_the_same_page():
         (ROOT / appendix.path).read_text().split("# Appendix", 1)[1] for appendix in APPENDICES
     }
     assert len(bodies) == len(APPENDICES), "two appendices are the same page under two titles"
+
+
+def _verify_numbers_module():
+    """Import the script by path. Its name has a hyphen in it, so `import` will not do."""
+    import importlib.util  # noqa: PLC0415
+
+    spec = importlib.util.spec_from_file_location("vn", ROOT / "scripts" / "verify-numbers.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+CAUGHT = [
+    "the median was 120 ns",
+    "it took 1.5 ms",
+    "3.2x faster than before",
+    "a 15% improvement",
+    "83 instructions of trap path",
+    "2,400 cycles",
+]
+
+#: Things that look like a figure to a careless regex and are not one. The vector arrangement
+#: specifiers are the ones that actually got through: `v0.4s` contains `0.4s`, and appendix F is
+#: made of them.
+NOT_CAUGHT = [
+    "`v0.4s` is four 32-bit lanes",
+    "`movi v0.2s, #0` is how a float zero is made",
+    "the `v0.16b` form",
+    "register `x8` carries the call number",
+    "Sv39 has three levels",
+]
+
+
+def test_the_typed_number_rule_catches_a_figure_and_not_a_register_name():
+    """The guard on the guard, added when the rule reported a vector register as a duration.
+
+    Both halves matter. A rule that stopped catching figures would let the book's whole premise
+    quietly lapse; a rule that fires on `v0.4s` teaches an author to reach for the exemption
+    comment, which is worse, because the exemption is meant to be rare enough to read.
+    """
+    pattern = _verify_numbers_module().MEASURED_FIGURE
+    missed = [line for line in CAUGHT if not pattern.search(line)]
+    assert not missed, f"a measured figure typed into prose would now go through: {missed}"
+    spurious = {line: pattern.findall(line) for line in NOT_CAUGHT if pattern.search(line)}
+    assert not spurious, f"not measurements, and reported as such: {spurious}"
 
 
 def test_every_published_page_is_checked_for_typed_numbers():

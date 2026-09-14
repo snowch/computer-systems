@@ -515,6 +515,15 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
             f"{BOARD} (`bench/results/vectors-host.json`)."
         ),
     ),
+    # -- appendix D ---------------------------------------------------------------------
+    "appendix-d-map": Table(
+        render=tables.xv6_file_map_table,
+        result="filemap-xv6",
+    ),
+    "appendix-d-size": Table(
+        render=tables.xv6_kernel_size_table,
+        result="filemap-xv6",
+    ),
     "ch00-board": Table(
         render=tables.board_identity_table,
         result="setup-host",

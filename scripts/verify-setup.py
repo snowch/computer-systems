@@ -117,13 +117,33 @@ def check_xv6_target(report: Report) -> bool:
         report.say(FAIL, "xv6 submodule is empty — run `make submodule`")
         ready = False
 
+    # Ask each candidate whether it knows the architecture rather than trusting its name. A
+    # distribution's plain `gdb` is on every PATH and is usually built for the host only; it
+    # connects to QEMU quite happily and then fails with `Truncated register 37 in remote 'g'
+    # packet`, which is a long way from the word "gdb" being present. Appendix B sends people
+    # here, so this check has to be about capability.
+    found = None
     for debugger in ("gdb-multiarch", "riscv64-unknown-elf-gdb", "riscv64-elf-gdb", "gdb"):
-        if shutil.which(debugger):
-            report.say(OK, f"debugger for the kernel: {debugger} (Appendix B)")
-            report.facts["gdb"] = debugger
+        if not shutil.which(debugger):
+            continue
+        speaks_riscv = subprocess.run(
+            [debugger, "-q", "-nx", "--batch", "-ex", "set architecture riscv:rv64"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if speaks_riscv.returncode == 0:
+            found = debugger
             break
+    if found:
+        report.say(OK, f"debugger for the kernel: {found} (Appendix B)")
+        report.facts["gdb"] = found
     else:
-        report.say(WARN, "no RISC-V-capable gdb — chapters 4 and 7 want one, nothing else does")
+        report.say(
+            WARN,
+            "no gdb here understands riscv:rv64 — install gdb-multiarch. Appendix B needs it; "
+            "nothing else does",
+        )
 
     report.facts["xv6_ready"] = ready
     report.say(
