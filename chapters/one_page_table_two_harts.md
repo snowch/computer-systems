@@ -58,6 +58,14 @@ would make the program vanish. The third is the interesting one — a different 
 pointing at the same physical memory, so that afterwards two addresses a gigabyte apart name one
 byte.
 
+```{figure} _figures/one-page-table-two-harts-alias.svg
+:alt: Three gigapage entries: two identity mappings and one alias into RAM.
+:width: 100%
+
+Two entries send a gigabyte to itself, so the running program does not vanish the moment
+translation comes on. The third is the whole demonstration.
+```
+
 Switching it on is one register and one instruction:
 
 ```{literalinclude} ../sysfs/bare/paging.c

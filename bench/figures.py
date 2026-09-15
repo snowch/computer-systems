@@ -32,7 +32,9 @@ from bench.diagrams import (
     bare_trap,
     dispatch_table,
     fault_decision,
+    gigapage_alias,
     interrupt_sources,
+    privilege_path,
     sampling_profile,
     sections_to_segments,
     stack_frame,
@@ -561,9 +563,19 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.bare_claims_table,
         result="trap-bare",
     ),
+    "interrupts-and-privilege-path": Diagram(
+        draw=privilege_path,
+        alt="Machine mode drops to supervisor with mret, and a refused instruction traps it back.",
+        result="privilege-bare",
+    ),
     "interrupts-and-privilege-privilege": Table(
         render=tables.bare_claims_table,
         result="privilege-bare",
+    ),
+    "one-page-table-two-harts-alias": Diagram(
+        draw=gigapage_alias,
+        alt="Three gigapage entries: two identity mappings and one alias into RAM.",
+        result="paging-bare",
     ),
     "one-page-table-two-harts-paging": Table(
         render=tables.bare_claims_table,

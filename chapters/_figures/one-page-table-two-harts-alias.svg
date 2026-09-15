@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 386" width="780" height="386" role="img">
+  <title>Three gigapage entries, one of them an alias</title>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1a1a1a"/></marker></defs>
+  <rect width="780" height="386" fill="#ffffff"/>
+  <text x="24" y="36" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1a1a1a" text-anchor="start">One table, three entries, and an address with two names</text>
+  <text x="24" y="56" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">Each entry is a leaf covering a gigabyte, so there is no second level to walk.</text>
+  <text x="34" y="82" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#5b6270" text-anchor="start">virtual</text>
+  <text x="454" y="82" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#5b6270" text-anchor="start">physical</text>
+  <rect x="34" y="96" width="210" height="44" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="46" y="123" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">0x0000_0000</text>
+  <text x="34" y="154" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="start">devices: the UART, the timer</text>
+  <rect x="34" y="158" width="210" height="44" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="46" y="185" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">0x4000_0000</text>
+  <text x="34" y="216" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="start">the alias — unused by anything else</text>
+  <rect x="34" y="220" width="210" height="44" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="46" y="247" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">0x8000_0000</text>
+  <text x="34" y="278" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="normal" fill="#5b6270" text-anchor="start">RAM: the program itself</text>
+  <rect x="454" y="96" width="210" height="44" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="466" y="123" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">0x0000_0000</text>
+  <rect x="454" y="220" width="210" height="44" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="466" y="247" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">0x8000_0000</text>
+  <line x1="250" y1="118" x2="448" y2="118" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <line x1="250" y1="242" x2="448" y2="242" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <line x1="250" y1="180" x2="448" y2="236" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+  <text x="284" y="172" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#5b6270" text-anchor="start">the alias</text>
+  <line x1="24" y1="314" x2="756" y2="314" stroke="#c9ced6"/>
+  <text x="24" y="336" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">The two arrows into RAM are the point: addresses 1 GiB apart read the same byte.</text>
+  <text x="24" y="354" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">Machine mode ignores satp entirely, so none of this applies until the program leaves it.</text>
+</svg>

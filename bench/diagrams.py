@@ -1372,3 +1372,135 @@ def bare_trap(result: str) -> str:
         ],
     )
     return _svg(760, int(tail + 50), body, "What the hardware does at a trap, and what it does not")
+
+
+def gigapage_alias(result: str) -> str:
+    """Three entries, and the one of them that makes two addresses name one byte.
+
+    Deliberately not the address split — ch15 draws that, and this chapter does not walk an
+    address at all. A top-level entry may be a leaf covering a whole gigabyte, so ch06's table has
+    no second level and no third, and what there is to see is the mapping rather than the
+    traversal: two of the entries send a gigabyte to itself, and the third sends a different
+    gigabyte to the same place.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    run = load_result(result)["summary"]
+    apart = run["alias_distance_gigabytes"]
+
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "One table, three entries, and an address with two names",
+        "Each entry is a leaf covering a gigabyte, so there is no second level to walk.",
+    )
+
+    left, right, top, row = margin + 10, margin + 430, 96, 62
+    body += [
+        _text(left, top - 14, "virtual", size=12.5, weight="700", fill=MUTED),
+        _text(right, top - 14, "physical", size=12.5, weight="700", fill=MUTED),
+    ]
+
+    virtual = [
+        ("0x0000_0000", "devices: the UART, the timer"),
+        ("0x4000_0000", "the alias — unused by anything else"),
+        ("0x8000_0000", "RAM: the program itself"),
+    ]
+    physical = [("0x0000_0000", "devices"), ("", ""), ("0x8000_0000", "RAM")]
+
+    for index, (label, note) in enumerate(virtual):
+        y = top + index * row
+        body.append(_rect(left, y, 210, 44, fill=PANEL))
+        body.append(_mono(left + 12, y + 27, label, size=12.5))
+        body.append(_text(left, y + 58, note, size=11, fill=MUTED))
+
+    for index, (label, _note) in enumerate(physical):
+        if not label:
+            continue
+        y = top + index * row
+        body.append(_rect(right, y, 210, 44, fill=PANEL))
+        body.append(_mono(right + 12, y + 27, label, size=12.5))
+
+    # Two identity mappings, and the alias crossing to join the third.
+    body.append(_arrow(left + 216, top + 22, right - 6, top + 22))
+    body.append(_arrow(left + 216, top + 2 * row + 22, right - 6, top + 2 * row + 22))
+    body.append(_arrow(left + 216, top + row + 22, right - 6, top + 2 * row + 16))
+    body.append(_text(left + 250, top + row + 14, "the alias", size=11.5, weight="700", fill=MUTED))
+
+    tail = top + 3 * row + 54
+    body += footnote(
+        margin,
+        tail,
+        width - 2 * margin,
+        [
+            f"The two arrows into RAM are the point: addresses {apart} GiB apart read the same byte.",
+            "Machine mode ignores satp entirely, so none of this applies until the program leaves it.",
+        ],
+    )
+    return _svg(width, int(tail + 50), body, "Three gigapage entries, one of them an alias")
+
+
+def privilege_path(result: str) -> str:
+    """Down a privilege level and back, and the refusal that is the only way back.
+
+    The shape is the lesson. Machine mode leaves on purpose, by writing the level it wants into
+    mstatus and executing the instruction that returns from a trap; it cannot simply come back,
+    because there is no instruction for going *up*. Something has to trap.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    run = load_result(result)["summary"]
+    refusal = run["refusal_code"]
+
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "Leaving machine mode, and the only way back",
+        "There is no instruction for gaining privilege. A trap is the entire mechanism.",
+    )
+
+    stages, _ = chain(
+        margin + 8,
+        margin + 62,
+        [
+            ("machine", "may do anything"),
+            ("mret", "MPP says where to"),
+            ("supervisor", "may not do this"),
+            ("trap", f"cause {refusal}"),
+            ("machine", "handler decides"),
+        ],
+        box_width=132,
+        box_height=52,
+        gap=18,
+    )
+    body += stages
+
+    detail, height = column(
+        margin + 8,
+        margin + 152,
+        300,
+        [
+            ("mstatus.MPP = 1", "supervisor is where mret will land"),
+            ("mepc = &supervisor_probe", "and this is where it starts"),
+            ("mret", "the same instruction that returns from a trap"),
+            ("csrr t0, mhartid", "a machine-mode register, refused"),
+            (f"mcause = {refusal}", "illegal instruction — the refusal is a trap"),
+            ("mstatus.MPP = 3, mret", "the handler chooses to come back up"),
+        ],
+        row_height=32,
+    )
+    body += detail
+
+    tail = margin + 152 + height + 48
+    body += footnote(
+        margin,
+        tail,
+        width - 2 * margin,
+        [
+            "mret restores no registers. Machine-mode code resuming here has the supervisor",
+            "caller's sp and ra, and must put its own back before it returns anywhere.",
+        ],
+    )
+    return _svg(width, int(tail + 50), body, "Dropping to supervisor mode and trapping back")

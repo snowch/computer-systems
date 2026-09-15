@@ -1019,6 +1019,10 @@ Easy Pieces*; the many "bare-metal RISC-V" tutorials that walk through `mtvec` a
   list of what to save. This chapter has the compiler doing it, explains that it could only do so
   because both sides were compiled together, and uses the removal of that condition as the reason
   ch07 exists.
+- **Its figure draws what the hardware does *not* do.** Every trap diagram consulted shows the
+  jump and the saved state; this one gives equal space to the registers and the stack that are
+  left untouched, because that absence is the chapter's argument and the thing a reader coming
+  from a language with exceptions will not expect.
 - The linker script, entry code and console are this book's own, written for the book.
 
 ## ch05 · Interrupts, and Who Is Allowed To
@@ -1039,6 +1043,9 @@ the CLINT.
   previous chapter's program rather than stating a rule about asynchrony.
 - The PMP paragraph exists because the omission cost real time; no tutorial consulted mentions it
   at the point where it bites.
+- **The figure is about the asymmetry**, not about the levels: leaving is an instruction you
+  execute, returning is something that has to happen *to* you. Presentations of privilege
+  conventionally draw a ring diagram, which shows the levels and hides exactly that.
 
 ## ch06 · One Page Table, Two Harts
 
@@ -1057,6 +1064,11 @@ and the concurrency chapter of any operating-systems text for the lost update.
   deferred to ch09, where a per-process page actually needs one.
 - **That machine mode ignores `satp`** is given as the reason the chapter needs ch05, rather than
   as a caveat.
+- **The figure is the mapping, not the address split.** The split is the standard Sv39 diagram and
+  this book draws it in ch15, where an address is actually walked; drawing it here too would be
+  decoration, because this chapter's table has no level to walk. What is drawn instead is the
+  alias — two virtual gigabytes arriving at one physical one — which is the thing the program
+  demonstrates.
 
 ## ch07 · A System Call of Your Own
 
