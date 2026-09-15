@@ -282,6 +282,149 @@ def test_a_chapter_that_shows_a_program_says_how_to_run_it(chapter: Chapter):
     )
 
 
+#: Spelled-out numbers, which is how this book writes a count in prose. Digits in prose are
+#: already policed by `scripts/verify-numbers.py`; words are the hole it cannot see through, and
+#: three real contradictions went in through it — a preface claiming four parts and twenty-four
+#: chapters, a status box that went stale twice, and a chapter saying "one instruction each"
+#: directly above a generated caption saying two.
+NUMBER_WORDS = {
+    word: value
+    for value, word in enumerate(
+        [
+            "zero",
+            "one",
+            "two",
+            "three",
+            "four",
+            "five",
+            "six",
+            "seven",
+            "eight",
+            "nine",
+            "ten",
+            "eleven",
+            "twelve",
+            "thirteen",
+            "fourteen",
+            "fifteen",
+            "sixteen",
+            "seventeen",
+            "eighteen",
+            "nineteen",
+            "twenty",
+        ]
+    )
+}
+NUMBER_WORDS.update(
+    {
+        "twenty-one": 21,
+        "twenty-two": 22,
+        "twenty-three": 23,
+        "twenty-four": 24,
+        "twenty-five": 25,
+        "twenty-six": 26,
+        "twenty-seven": 27,
+        "twenty-eight": 28,
+        "twenty-nine": 29,
+        "thirty": 30,
+        "thirty-one": 31,
+        "thirty-two": 32,
+    }
+)
+
+#: The preface's claims about the shape of the whole book. Narrow on purpose: "Five chapters
+#: depend on the reference machine" is a true statement about a subset and has to stay sayable, so
+#: only a claim about a total is checked, and only where the preface makes one.
+TOTAL_CLAIMS = (
+    (re.compile(r"in (\S+) parts and (\S+) chapters"), ("parts", "chapters")),
+    (re.compile(r"All (\S+) chapters are written"), ("chapters",)),
+    (re.compile(r"(\S+) of the (\S+) chapters are written"), ("written", "chapters")),
+    (re.compile(r"(\S+) of the (\S+) appendices"), ("written_appendices", "appendices")),
+)
+
+
+def test_the_prefaces_counts_agree_with_the_outline():
+    """A count written as a word is still a number, and still goes stale.
+
+    `scripts/verify-numbers.py` polices digits in prose and cannot see through a word, which is
+    how the preface came to claim four parts and twenty-four chapters, and how its status box went
+    stale twice more. This checks only the sentences that state a total, because a subset claim is
+    legitimate and common.
+
+    It also insists the preface still makes at least one such claim, so that rewording a sentence
+    cannot quietly retire the check along with it.
+    """
+    text = (ROOT / "index.md").read_text()
+    written = len([c for c in CHAPTERS if "[DRAFT]" not in (ROOT / c.path).read_text()])
+    truth = {
+        "parts": len(PART_PAGES),
+        "chapters": len(CHAPTERS),
+        "written": written,
+        "appendices": len(APPENDICES),
+        "written_appendices": len(
+            [a for a in APPENDICES if "[DRAFT]" not in (ROOT / a.path).read_text()]
+        ),
+    }
+
+    wrong, matched = [], 0
+    for pattern, names in TOTAL_CLAIMS:
+        for found in pattern.finditer(text):
+            matched += 1
+            for word, name in zip(found.groups(), names, strict=True):
+                value = NUMBER_WORDS.get(word.lower())
+                if value is None:
+                    wrong.append(
+                        f"{word!r} is not a number this check can read, in {found.group(0)!r}"
+                    )
+                elif value != truth[name]:
+                    wrong.append(f"the preface says {word} {name}; the outline has {truth[name]}")
+    assert matched, (
+        "the preface no longer states how many chapters, parts or appendices the book has in any "
+        "form this check recognises — reword it back, or teach TOTAL_CLAIMS the new shape"
+    )
+    assert not wrong, "\n".join(wrong)
+
+
+INCLUDES_A_FIGURE = re.compile(r"```\{include\}\s+_generated/([\w-]+)\.md\s*\n```")
+#: "One instruction each", "two instructions in total" — prose claiming to count a whole listing.
+#: "One instruction in `acquire` does the mutual exclusion" counts a subset and is not this.
+COUNTS_THE_WHOLE_LISTING = re.compile(
+    r"\b([A-Za-z]+(?:-[a-z]+)?|\d+)\s+instructions?\s+(?:each|in total|altogether)\b",
+    re.IGNORECASE,
+)
+CAPTION_COUNT = re.compile(r"(\d+)\s+instructions?\b")
+
+
+def test_prose_beside_a_listing_agrees_with_it_about_how_many_instructions():
+    """The third contradiction, and the one no existing check could have caught.
+
+    ch01 said "One instruction each" in the paragraph under a listing whose own caption, generated
+    from a stamped result, said two. Both numbers were on the same screen. `--strict` sees a valid
+    document and `verify-numbers.py` sees no digits in the prose, because the prose spelled it.
+    """
+    wrong = []
+    for chapter in CHAPTERS:
+        text = (ROOT / chapter.path).read_text()
+        for match in INCLUDES_A_FIGURE.finditer(text):
+            generated = ROOT / "chapters" / "_generated" / f"{match.group(1)}.md"
+            if not generated.exists():
+                continue
+            stated = CAPTION_COUNT.search(generated.read_text())
+            if not stated:
+                continue
+            # The paragraph immediately after the include is the one talking about this listing.
+            after = text[match.end() : match.end() + 400]
+            for word in COUNTS_THE_WHOLE_LISTING.findall(after):
+                claimed = int(word) if word.isdigit() else NUMBER_WORDS.get(word.lower())
+                if claimed is None or claimed == int(stated.group(1)):
+                    continue
+                wrong.append(
+                    f"{chapter.path} says {word!r} instructions beside {match.group(1)}, "
+                    f"whose caption says {stated.group(1)}"
+                )
+    assert not wrong, "\n".join(wrong)
+
+
 def test_appendices_exist_and_are_listed():
     for appendix in APPENDICES:
         assert (ROOT / appendix.path).exists(), appendix.path

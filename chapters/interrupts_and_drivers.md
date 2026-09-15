@@ -91,6 +91,15 @@ Three sources. Same workload, repeated: one count came back identical every time
 The disk count is in the table. The console count is not, and its absence is the finding rather
 than an omission.
 
+So is a second absence, arrived at later and the harder of the two. The table used to carry a row
+for how many characters the writing process handed to the device itself, which reads like a
+companion to the row above it and is not one: the counter behind it is incremented for every
+character *the kernel* sends, so it counts the boot log, the shell's prompt and the echo of what
+was typed as well as the workload's output. It reported more characters than the workload had
+asked for, which is what gave it away, and it came back one different between identical runs often
+enough to fail the check that re-runs this measurement. The same argument that keeps the console's
+interrupt count out of the table keeps that row out of it.
+
 Run the identical workload five times and the disk raises the same number of interrupts every
 time. Run it five times and the console raises a different number every time, over a spread of
 nearly a third. Nothing about the workload changed between those runs, so the console's count is

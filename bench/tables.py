@@ -514,7 +514,6 @@ def interrupt_cost_table(name: str) -> str:
         ["Block operations the workload performed", run["block_operations"]],
         ["Interrupts the disk raised", run["disk_interrupts"]],
         ["Characters the workload asked to be written", run["chars_requested"]],
-        ["Characters the writing process handed over itself", run["chars_the_writer_moved_itself"]],
         ["Times it had to stop and wait for the device", run["times_the_writer_had_to_wait"]],
         ["Characters arriving from the keyboard", run["chars_received"]],
     ]
