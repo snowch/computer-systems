@@ -210,7 +210,7 @@ then `recover_from_log`, which is what makes those five lines mean anything.
 `kernel/fs.c` and `kernel/bio.c` are the layers underneath, and `bio.c` is now the third thing in
 this book to turn out to be a cache with a lock around it.
 
-[ch21](#the-same-program-on-both-targets) is the hinge. Everything Part IV has established is about what a program *does*, on a
+[ch21](#the-same-program-on-both-targets) is the hinge. Everything [Part IV](#part4) has established is about what a program *does*, on a
 target chosen because you can stop it and look. The next chapter puts the same program on a machine
 where you cannot, and asks what the first instrument failed to tell you — which is the question the
 whole of [Part V](#part5) exists to answer.

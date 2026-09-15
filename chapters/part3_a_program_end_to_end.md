@@ -30,7 +30,7 @@ other than what its name suggests.
 
 It sits before [Part IV](#part4) for a reason that is nearly a pun: a kernel is a program. You
 cannot usefully read one until you know what a program is, what a compiler leaves unfinished, and
-who finishes it. [ch13](#linking-and-loading) ends at `exec`, which is precisely where Part IV begins.
+who finishes it. [ch13](#linking-and-loading) ends at `exec`, which is precisely where [Part IV](#part4) begins.
 
 ## What it leaves out
 

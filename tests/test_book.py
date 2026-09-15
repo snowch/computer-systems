@@ -34,6 +34,17 @@ TOC_FILES = [child["file"] for entry in TOC if "children" in entry for child in 
 
 CHAPTER_IDS = [chapter.label for chapter in CHAPTERS]
 
+ROMAN_TO_NUMBER = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5}
+
+#: Every page a reader reads, in reading order. Generated files are excluded: their prose comes
+#: from `bench/figures.py`, so a rule about how to write a sentence cannot be applied to them.
+PROSE_FILES = (
+    [Path("index.md")]
+    + [Path(part.path) for part in PART_PAGES]
+    + [Path(chapter.path) for chapter in CHAPTERS]
+    + [Path(appendix.path) for appendix in APPENDICES]
+)
+
 
 @pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
 def test_chapter_file_exists(chapter: Chapter):
@@ -480,27 +491,58 @@ def test_every_chapter_link_uses_the_books_own_form():
     )
 
 
-MENTIONS_A_PART = re.compile(r"(?<!\[)\bPart (I{1,3}|IV|V)\b(?!\]\()")
-LINKS_A_PART = re.compile(r"\[Part (I{1,3}|IV|V)\]\(")
+PART_SELF = {part.path: part.number for part in PART_PAGES}
+
+#: Regions a part mention is allowed to be plain text in: frontmatter, code, a heading, a MyST
+#: label or directive, a comment, and the inside of a link that is already there.
+NOT_PROSE = (
+    (re.compile(r"\A---\n.*?\n---\n", re.S), 0),
+    (re.compile(r"```.*?```", re.S), 0),
+    (re.compile(r"`[^`\n]+`"), 0),
+    (re.compile(r"^#{1,6} .*$", re.M), 0),
+    (re.compile(r"^\(\w+\)=.*$", re.M), 0),
+    (re.compile(r"^:::.*$", re.M), 0),
+    (re.compile(r"^%.*$", re.M), 0),
+    (re.compile(r"\[[^\]\n]*\]\([^)\n]*\)"), 0),
+)
 
 
-@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
-def test_a_part_a_chapter_names_is_reachable_from_it(chapter: Chapter):
-    """Naming a part without ever linking it leaves the reader with nowhere to go.
+def _prose_mentions_of_a_part(text: str) -> list[tuple[int, str]]:
+    """Every ``Part IV`` in running prose, as (line number, roman numeral).
 
-    The part pages are newer than most of the prose, so every mention written before they existed
-    was plain text — including the preface's "You do not need OS internals. That is Part IV",
-    which is exactly where a reader deciding whether the book is for them would want to look.
-
-    One link per part per page is the rule, not every mention: a paragraph that links the same
-    part four times is worse than one that links it once.
+    Plural enumerations — "Parts I, II and III" — are not references to one part and are left
+    alone; ``\bPart `` does not match them, which is the whole reason the word is singular here.
     """
-    text = (ROOT / chapter.path).read_text()
-    linked = set(LINKS_A_PART.findall(text))
-    unreachable = sorted({m for m in MENTIONS_A_PART.findall(text) if m not in linked})
-    assert not unreachable, (
-        f"{chapter.path} names Part {', Part '.join(unreachable)} and never links "
-        f"{'them' if len(unreachable) > 1 else 'it'}"
+    skip = [m.span() for pattern, _ in NOT_PROSE for m in pattern.finditer(text)]
+    return [
+        (text[: m.start()].count("\n") + 1, m.group(1))
+        for m in re.finditer(r"\bPart (I{1,3}|IV|V)\b", text)
+        if not any(a <= m.start() < b for a, b in skip)
+    ]
+
+
+@pytest.mark.parametrize("path", PROSE_FILES, ids=[str(p) for p in PROSE_FILES])
+def test_every_prose_mention_of_a_part_is_a_link(path):
+    """A part reference is a link, every time, exactly as a chapter reference is.
+
+    The book links a chapter on every mention — the same ``chNN`` target appears as a link seven
+    times in one paragraph of ch00 — so a part that is a link once at the top of a page and plain
+    text for the next two hundred lines reads as an oversight rather than as restraint. It was
+    one: the preface said "The kernel Part IV reads has its own commentary" six lines below a
+    table that linked Part IV, and the bare one is the one a reader meets in a sentence.
+
+    A page does not link to itself, so a part page's own number is exempt.
+    """
+    text = (ROOT / path).read_text()
+    mine = PART_SELF.get(str(path))
+    bare = [
+        f"line {line}: Part {roman}"
+        for line, roman in _prose_mentions_of_a_part(text)
+        if ROMAN_TO_NUMBER[roman] != mine
+    ]
+    assert not bare, (
+        f"{path} names a part in prose without linking it, and every chapter reference on the "
+        f"same page is a link:\n  " + "\n  ".join(bare)
     )
 
 

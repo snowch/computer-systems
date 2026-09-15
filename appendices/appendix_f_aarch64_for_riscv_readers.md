@@ -145,8 +145,8 @@ register is not evidence of vectorisation. This compiler builds a floating-point
 ## What this cannot tell you
 
 **How the two architectures differ where this book does not go.** Exceptions, privilege levels,
-the MMU, system registers — all different, none of it here, because Part V does not read the
-kernel and Part IV does not run on AArch64.
+the MMU, system registers — all different, none of it here, because [Part V](#part5) does not read the
+kernel and [Part IV](#part4) does not run on AArch64.
 
 **Which is better.** They make different choices and the book uses both for what each is good for.
 Nothing on this page is an argument.

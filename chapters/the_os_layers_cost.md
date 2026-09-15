@@ -153,8 +153,8 @@ one figure here that CI regenerates and diffs on every push.
 
 Everything with a duration in it is pending, and waits on the machine: what the three services
 cost against their baselines, what separates a minor fault from a major one, and what the vDSO
-saves. The counts they will be compared against are already in the book, taken in Part IV, which
-is the point of having spent Part IV counting.
+saves. The counts they will be compared against are already in the book, taken in [Part IV](#part4), which
+is the point of having spent it counting.
 
 ## What this cannot tell you
 
@@ -173,12 +173,12 @@ hardening options or booted with different mitigations, is a different measureme
 takes one, on one kernel, and records which — it does not survey them, and a reader who needs the
 comparison has to take it themselves.
 
-**What xv6 charges.** Part IV's counts stay counts. There is no version of this chapter that
+**What xv6 charges.** [Part IV](#part4)'s counts stay counts. There is no version of this chapter that
 prices the kernel the reader can stop mid-trap, because the machine it runs on is a program, and
 that is the trade the two targets were chosen to make.
 
 **Whether the model explains the cost.** The bound in problem 19.2 says what the call cannot beat.
-If the measurement is far above it, this chapter has established that Part IV's account is
+If the measurement is far above it, this chapter has established that [Part IV](#part4)'s account is
 incomplete without establishing what is missing — and the instruction count is not where the
 answer will be found.
 
