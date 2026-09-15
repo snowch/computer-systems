@@ -130,7 +130,7 @@ compiler is entitled to judge differently.
 
 **What a wider or different vector unit does.** NEON is a fixed width. Scalable vector extensions
 on both of this book's architectures express the same loops without a compile-time width, which
-changes the tail arithmetic in problem 21.1 fundamentally rather than in degree. The reference
+changes the tail arithmetic in problem 29.1 fundamentally rather than in degree. The reference
 machine does not have one, so this book has nothing to say about it that would be worth reading.
 
 **Whether to write intrinsics.** Nothing here is written in intrinsics, deliberately: a chapter
@@ -175,7 +175,7 @@ python3 -m pytest tests/vectors/test_problem_3_bound.py
 The ARM architecture reference manual's Advanced SIMD chapter is the specification for what those
 instructions do, and the RISC-V vector extension @riscv-isa-unprivileged is worth reading beside
 it for the same reason [ch26](#memory-ordering-on-real-hardware) put two memory models side by side: it solves the tail
-problem in problem 21.1 by not having a compile-time width at all, and seeing one design makes the
+problem in problem 29.1 by not having a compile-time width at all, and seeing one design makes the
 other's choices visible as choices.
 
 That is the last measurement in the book. [Appendix A](#appendix-a) collects the reference cards,

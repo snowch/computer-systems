@@ -171,7 +171,7 @@ Both are questions about hardware, and [ch26](#memory-ordering-on-real-hardware)
 QEMU is entitled to but does not perform them: it executes each hart's instructions in order.
 So every program in this chapter would behave identically with the fences removed, on this target,
 and would be broken on real hardware. That is an uncomfortable property of the instrument and the
-reason problem 10.2 asks about the model rather than about a run.
+reason problem 18.2 asks about the model rather than about a run.
 
 **Anything about fairness.** xv6's lock is a plain spin: whoever's swap happens to succeed gets
 in, and a hart can be unlucky indefinitely. Real kernels care, use queues and tickets, and pay for

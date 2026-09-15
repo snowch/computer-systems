@@ -159,7 +159,7 @@ regenerates the measurement on every push, so a change is reported rather than a
 
 Interrupts raised by the disk for a fixed number of block operations, and what the console driver
 did with a fixed number of characters. The two counts the census prints and this book does not
-record are named in the result itself rather than quietly dropped, and problem 9.3 asks the reader
+record are named in the result itself rather than quietly dropped, and problem 17.3 asks the reader
 to work out which they are before being told.
 
 ## What this cannot tell you

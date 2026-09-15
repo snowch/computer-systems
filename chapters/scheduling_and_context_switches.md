@@ -102,7 +102,7 @@ it returns from a function call it made an arbitrary time ago.
 The dangerous part is the gap. If the sleeper checks a condition, finds it false, and then sleeps,
 a wakeup arriving in between hits a process that is not yet asleep, hits nothing, and is not
 repeated. That is a lost wakeup, it is the reason sleep is handed the lock that guards the
-condition rather than being called after releasing it, and problem 11.2 is about being able to
+condition rather than being called after releasing it, and problem 19.2 is about being able to
 spot it in an ordering rather than recognising it in a diagram.
 
 ## What we measured
@@ -174,7 +174,7 @@ python3 -m pytest tests/scheduling_and_context_switches/test_problem_3_policy.py
 
 xv6's `kernel/proc.c` @xv6-riscv-source — `scheduler`, `sched`, `yield`, `sleep` and `wakeup` are
 about a hundred lines between them and are now readable in full. The comment above `sched` stating
-the invariants it requires is the densest paragraph in the kernel; read it after problem 11.2 and
+the invariants it requires is the densest paragraph in the kernel; read it after problem 19.2 and
 it will say something it would not have said before.
 
 `kernel/swtch.S` is the fourteen stores and fourteen loads this chapter counted, and was the

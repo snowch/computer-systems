@@ -36,7 +36,7 @@ three things meet a machine with a clock, and the counts become a model that can
 Every figure in that table was counted rather than timed, and each is still true — an instruction
 count is a property of the kernel as built, not of the machine that ran it. What they are not is
 a cost. They are a *floor*: the work has to happen, so the call cannot be cheaper than executing
-it, and problem 19.2 turns the count into that bound.
+it, and problem 27.2 turns the count into that bound.
 
 A bound is worth having because of what it does when the measurement arrives. Come in under it
 and the model is wrong — some of those instructions are not on the path, or are not being
@@ -119,7 +119,7 @@ data came from, and QEMU's storage is a host file.
 
 Both faults in that table enter the kernel by exactly the path [ch14](#traps-and-system-calls) traced, and leave it
 the same way. Nothing about the trap differs. What differs is whether the kernel could answer
-from memory it already had or had to go and ask storage, and problem 19.3 is the classification:
+from memory it already had or had to go and ask storage, and problem 27.3 is the classification:
 four facts about an address, and the order the rules apply in.
 
 The order is most of the content. A page the process never asked for is fatal however good it
@@ -177,7 +177,7 @@ comparison has to take it themselves.
 prices the kernel the reader can stop mid-trap, because the machine it runs on is a program, and
 that is the trade the two targets were chosen to make.
 
-**Whether the model explains the cost.** The bound in problem 19.2 says what the call cannot beat.
+**Whether the model explains the cost.** The bound in problem 27.2 says what the call cannot beat.
 If the measurement is far above it, this chapter has established that [Part IV](#part4)'s account is
 incomplete without establishing what is missing — and the instruction count is not where the
 answer will be found.

@@ -91,8 +91,46 @@ def sync_problems(path: Path, text: str) -> str:
     return PROBLEM.sub(lambda m: f"**{chapter.number}.{m.group(1)} — ", text)
 
 
+#: `problem 11.2`, and `[ch18](#locks-and-memory-ordering)'s problem 10.2` — prose *pointing at* a
+#: problem, as opposed to the heading that defines one.
+PROBLEM_REFERENCE = re.compile(
+    r"(?:\[ch(\d+)\]\(#[\w-]+\)(?P<possessive>['\u2019]s) )?problem (\d+)\.(\d+)"
+)
+
+
+def sync_problem_references(path: Path, text: str) -> str:
+    """Renumber prose that points at a problem, the way :func:`sync_problems` renumbers the
+    heading that defines one.
+
+    Only the headings were derived, so for a long time every chapter's problems were numbered
+    correctly and every sentence pointing at one was not. Seventeen references across eleven
+    chapters were stale by exactly eight — the width of the two parts inserted ahead of them —
+    and being stale by a whole number of chapters is the worst version of this: ch19 said "problem
+    11.2", ch11 exists, and ch11 has a second problem. The reader is not sent nowhere. They are
+    sent somewhere real and wrong, and nothing in the build can tell.
+
+    A reference names its own chapter's problem unless it is written as another chapter's
+    possessive, which is the only form the book uses to point across a chapter boundary. The part
+    after the dot is the problem's own and is never touched.
+    """
+    here = next((c for c in CHAPTERS if path.name == Path(c.path).name), None)
+    if here is None:
+        return text
+
+    def renumber(m: re.Match[str]) -> str:
+        owner, possessive, _, index = m.group(1), m.group("possessive"), m.group(3), m.group(4)
+        if owner is None:
+            return f"problem {here.number}.{index}"
+        target = next((c for c in CHAPTERS if c.number == int(owner)), None)
+        if target is None:
+            return m.group(0)
+        return f"[{target.label}](#{target.anchor}){possessive} problem {target.number}.{index}"
+
+    return PROBLEM_REFERENCE.sub(renumber, text)
+
+
 def sync_page(path: Path, text: str) -> str:
-    text = sync_problems(path, sync_titles(sync_links(text)))
+    text = sync_problem_references(path, sync_problems(path, sync_titles(sync_links(text))))
     for chapter in CHAPTERS:
         if path.name != Path(chapter.path).name:
             continue

@@ -78,7 +78,7 @@ matched against symbols.
 Everything a profile can and cannot tell you follows from those sentences.
 
 It is statistical, so a symbol holding a small share of the time has a count that is mostly noise
-— problem 20.2 is how many samples a claim needs before it is worth making, and the answer is
+— problem 28.2 is how many samples a claim needs before it is worth making, and the answer is
 often more than the profile you are looking at contains.
 
 It is attributed to an address, so what you get is *exclusive* time: the samples that landed in
@@ -115,7 +115,7 @@ There is a second way a profile misleads, and unlike skid it leaves no trace.
 
 A profiler sampling at a fixed period, over a loop of fixed length, does not sample the loop
 evenly. The sample positions walk around the loop in steps of the sampling period, and that walk
-does not visit every position — it visits the multiples of a number that problem 20.3 asks you to
+does not visit every position — it visits the multiples of a number that problem 28.3 asks you to
 find. When the two periods share a large factor, the profile lands on a handful of positions out
 of thousands, every time, on every run, reproducibly.
 
