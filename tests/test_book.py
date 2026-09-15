@@ -14,6 +14,7 @@ from pathlib import Path
 import pytest
 import yaml
 
+from bench.figures import FIGURES
 from bench.outline import (
     APPENDICES,
     CHAPTERS,
@@ -23,7 +24,6 @@ from bench.outline import (
     Appendix,
     Chapter,
     Part,
-    by_number,
     in_part,
     reading_disassembly,
 )
@@ -34,6 +34,11 @@ TOC = MYST["project"]["toc"]
 TOC_FILES = [child["file"] for entry in TOC if "children" in entry for child in entry["children"]]
 
 CHAPTER_IDS = [chapter.label for chapter in CHAPTERS]
+
+#: The page that helps a reader choose hardware. It was ch00's "What to buy" until that section
+#: became an appendix — it had no stamped result of its own, which makes a thin chapter and a
+#: perfectly ordinary reference.
+CHOOSING_THE_MACHINE = next(a for a in APPENDICES if a.slug == "choosing_the_machine")
 
 ROMAN_TO_NUMBER = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5}
 
@@ -355,6 +360,9 @@ TOTAL_CLAIMS = (
     # Added when Part II's `bare` target went unmentioned on the page whose job is to say what
     # the book runs on. The preface said "two" for as long as there had been three.
     (re.compile(r"## (\S+) targets on (\S+) machines"), ("targets", "machines")),
+    # The board has not reported, so this one grows every time a Part V figure is declared. It
+    # said thirteen while nineteen were waiting.
+    (re.compile(r"(\S+) figures are marked \*pending\*"), ("pending",)),
     (
         re.compile(r"picks one target and lives with its limitations\. This one uses\s+(\S+?),"),
         ("targets",),
@@ -385,6 +393,7 @@ def test_the_prefaces_counts_agree_with_the_outline():
             [a for a in APPENDICES if "[DRAFT]" not in (ROOT / a.path).read_text()]
         ),
         # "both" is a way of saying two of the others, not a target of its own.
+        "pending": len([f for f in FIGURES.values() if getattr(f, "pending", None)]),
         "targets": len(TARGET_MACHINE),
         "machines": len(set(TARGET_MACHINE.values())),
     }
@@ -797,9 +806,9 @@ def test_the_board_prompt_is_linked_rather_than_copied():
     assert "find-a-board.txt" in notes, "hardware/README.md no longer points at the prompt"
     assert signature not in notes, "hardware/README.md has pasted the prompt instead of linking it"
 
-    chapter = (ROOT / by_number(0).path).read_text()
-    assert "hardware/README.md" in chapter, "ch00 no longer points anywhere for the alternative"
-    assert signature not in chapter, "ch00 has pasted the prompt"
+    page = (ROOT / CHOOSING_THE_MACHINE.path).read_text()
+    assert "hardware/README.md" in page, "appendix H no longer points anywhere for the alternative"
+    assert signature not in page, "appendix H has pasted the prompt"
 
 
 def test_the_hardware_notes_are_not_published_as_a_chapter():
@@ -827,12 +836,18 @@ def test_hardware_assumption_is_in_the_chapter_header(chapter: Chapter):
 
 
 @pytest.mark.parametrize("chapter", HARDWARE_SENSITIVE, ids=[c.label for c in HARDWARE_SENSITIVE])
-def test_chapter_zero_names_every_hardware_sensitive_chapter(chapter: Chapter):
-    """ch00 promises a complete list. A chapter added later must not quietly escape it."""
-    ch00 = (ROOT / by_number(0).path).read_text()
-    section = ch00[ch00.index("### Which chapters actually depend on the hardware") :]
+def test_the_hardware_appendix_names_every_hardware_sensitive_chapter(chapter: Chapter):
+    """The buying advice promises a complete list. A chapter added later must not escape it.
+
+    The list moved out of ch00 with the rest of the shopping, which is why this asks appendix H
+    rather than the chapter. What it checks is unchanged: a chapter that declares `assumes` is
+    making a claim about the reader's hardware, and the page that helps them choose hardware has
+    to say so before they spend the money.
+    """
+    page = (ROOT / CHOOSING_THE_MACHINE.path).read_text()
+    section = page[page.index("## Which chapters actually depend on the hardware") :]
     assert f"[{chapter.label}](#{chapter.anchor})" in section, (
-        f"{chapter.label} assumes something about the hardware but ch00's list omits it"
+        f"{chapter.label} assumes something about the hardware but appendix H's list omits it"
     )
 
 
@@ -878,7 +893,7 @@ def test_the_hardware_advice_carries_its_caveat():
     """The book points readers at third-party tools and then at shops. Both pages say whose
     decision that is, and the note is the kind of thing that gets tidied away in an edit."""
     notes = (ROOT / "hardware" / "README.md").read_text()
-    chapter = (ROOT / by_number(0).path).read_text()
+    chapter = (ROOT / CHOOSING_THE_MACHINE.path).read_text()
     for text, where in ((notes, "hardware/README.md"), (chapter, "ch00")):
         lowered = text.lower()
         assert "return policy" in lowered, f"{where} does not mention checking the return policy"

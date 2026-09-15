@@ -11,7 +11,7 @@ short_title: "Introduction"
 
 | | |
 |---|---|
-| **Chapters** | [ch04](#a-trap-with-nothing-else)–[ch09](#fork-built-rather-than-read) |
+| **Chapters** | [ch05](#a-trap-with-nothing-else)–[ch10](#fork-built-rather-than-read) |
 | **Target** | `bare` — the same machine under QEMU with no operating system on it |
 | **Assumes** | [Part I](#part1) |
 :::
@@ -33,10 +33,10 @@ descriptor table with `read` and `write` over it, and finally a second process m
 first.
 
 They do not all come from the same place, and the division is the part's shape.
-[ch04](#a-trap-with-nothing-else)–[ch07](#a-system-call-of-your-own) are things the *hardware*
+[ch05](#a-trap-with-nothing-else)–[ch08](#a-system-call-of-your-own) are things the *hardware*
 hands you: a trap vector, a saved program counter and the instruction that returns from a trap are
 in the privileged specification, not in anybody's kernel.
-[ch08](#a-small-integer-that-means-a-device) and [ch09](#fork-built-rather-than-read) are not.
+[ch09](#a-small-integer-that-means-a-device) and [ch10](#fork-built-rather-than-read) are not.
 A descriptor table, and a second process made from the first, are inventions of software — no
 hardware has heard of either — and that is exactly why they are built here instead of read about
 later. A descriptor turns out to be an index into an array, and `fork()` turns out to be a copy;
@@ -54,11 +54,11 @@ things you have built, rather than a wall of new ideas.
 Everything that makes a kernel a kernel. No scheduling policy, no file system, no device beyond the
 one serial port needed to see anything at all, no allocator beyond what a page table requires.
 
-What a descriptor *finds* — anything more than the two backends [ch08](#a-small-integer-that-means-a-device)
+What a descriptor *finds* — anything more than the two backends [ch09](#a-small-integer-that-means-a-device)
 needs to make the indirection visible. There is no disk here and nothing to open, so the table
 holds the serial port and a byte array with a cursor, which is enough to show that the calling
 code does not change and not enough to be a file system. The several kinds of open file that make
-a table of them worth keeping are [ch20](#the-file-system).
+a table of them worth keeping are [ch21](#the-file-system).
 
 **A pipe**, and the reason is worth more than the pipe would be. A pipe is not a buffer; it is a
 buffer plus what happens when the buffer is empty. The reader blocks, something else runs, and
@@ -66,18 +66,18 @@ somebody wakes them — and this machine's entire scheduler is *when a process l
 one on*. It moves one way and never comes back, so a process here cannot wait for another and then
 continue. What could be built is a shared array with a cursor, which is the easy half of a pipe and
 teaches the wrong thing by leaving out the half that defines it. Blocking needs a scheduler that
-can switch both ways, which is [ch19](#scheduling-and-context-switches), and sleeping and waking
+can switch both ways, which is [ch20](#scheduling-and-context-switches), and sleeping and waking
 are settled there.
 
 And one thing it leaves out on purpose, which is worth saying plainly: **you will use a linker
 script and read assembly here, and neither is explained until [Part III](#part3).** Treat them as
-recipes. [ch12](#machine-level-code-on-riscv) covers the instructions and [ch13](#linking-and-loading) covers the script. This part needs
+recipes. [ch13](#machine-level-code-on-riscv) covers the instructions and [ch14](#linking-and-loading) covers the script. This part needs
 them working rather than understood, and the alternative ordering — linkers before traps — puts
 three chapters of file format between you and the first interesting thing the machine does.
 
 ## Where to start
 
-[ch04](#a-trap-with-nothing-else), in order, and this is the one part of the book with no routing in it. Each chapter's
+[ch05](#a-trap-with-nothing-else), in order, and this is the one part of the book with no routing in it. Each chapter's
 machine is the previous chapter's machine plus one mechanism, and each program is the previous
 program extended. Skipping ahead means reading code that assumes work you have not done.
 

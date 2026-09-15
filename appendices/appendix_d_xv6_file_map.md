@@ -27,7 +27,7 @@ and the rest is not hidden from you — it is just not what any chapter needed.
 ```{include} ../chapters/_generated/appendix-d-map.md
 ```
 
-Keep this open from [ch14](#traps-and-system-calls) onwards. The rows are grouped by chapter because that is how you
+Keep this open from [ch15](#traps-and-system-calls) onwards. The rows are grouped by chapter because that is how you
 will arrive here: a chapter is discussing something, and the question is which of forty-odd files
 to open beside it.
 
@@ -45,7 +45,7 @@ have seen once and a poor thing to study in isolation.
 
 **Nothing in `user/` is mapped either.** The book's own programs live in `xv6/apps/`, and the
 kernel's user programs are read in passing rather than studied — with one exception the chapters
-name, which is that [ch14](#traps-and-system-calls) explains why the shell is the worst possible thing to measure.
+name, which is that [ch15](#traps-and-system-calls) explains why the shell is the worst possible thing to measure.
 
 ## What this cannot tell you
 
@@ -53,7 +53,7 @@ name, which is that [ch14](#traps-and-system-calls) explains why the shell is th
 question faster than any table could, and stays right when upstream moves something.
 
 **What the file does.** The "For" column says what a chapter goes there *for*, which is narrower
-on purpose. `fs.c` does a great deal that [ch20](#the-file-system) never mentions.
+on purpose. `fs.c` does a great deal that [ch21](#the-file-system) never mentions.
 
 **Anything about a different xv6.** The commit is pinned and recorded in the conditions line under
 each table. MIT's xv6 changes; a map of one version describing another is exactly the failure this

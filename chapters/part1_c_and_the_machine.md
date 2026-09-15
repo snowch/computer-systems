@@ -11,14 +11,14 @@ short_title: "Introduction"
 
 | | |
 |---|---|
-| **Chapters** | [ch01](#memory-is-one-array)–[ch03](#c-for-people-who-will-read-a-kernel) |
+| **Chapters** | [ch02](#memory-is-one-array)–[ch04](#c-for-people-who-will-read-a-kernel) |
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Assumes** | [ch00](#prerequisites-and-setup), and fluency in some other language |
 :::
 
 ## What this part is for
 
-Three chapters and one job: enough C to read a kernel and change it, and no more.
+Four chapters and one job: enough C to read a kernel and change it, and no more.
 
 That "no more" is a real limit rather than modesty. C is a large language and most of it never
 appears in the code this book reads. A part that set out to cover the language would spend most of
@@ -39,7 +39,7 @@ out. None of those is an exercise in the language. All of them are impossible wi
 Control flow, operators and functions. You already have these, and C spells them much as your
 language does. Where it differs the chapters say so and move on.
 
-The standard library, which is [ch02](#c-without-a-runtime)'s subject from the opposite direction: a kernel has
+The standard library, which is [ch03](#c-without-a-runtime)'s subject from the opposite direction: a kernel has
 almost none of it, and the interesting question is what it does instead. Floating point, for the
 same reason — the kernel does not use it, and why it does not is a better question than how it
 works.
@@ -52,12 +52,12 @@ needs, and it is reachable in three chapters, which the craft is not.
 
 ## Where to start
 
-**If you already write C**, start at [ch02](#c-without-a-runtime). ch01 is the on-ramp and you do not need it.
+**If you already write C**, start at [ch03](#c-without-a-runtime). ch01 is the on-ramp and you do not need it.
 ch02 is about the habits that stop working when there is no library underneath you, and it is
 written for you.
 
 **If you program fluently in something else and have never written C**, start at
-[ch01](#memory-is-one-array). You are not being taught to program.
+[ch02](#memory-is-one-array). You are not being taught to program.
 
 **If you have tried C before and bounced off pointers**, also start at ch01, and notice that it
 does not open with them. It opens with one complete program that prints four numbers, and the

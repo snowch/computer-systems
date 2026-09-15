@@ -31,7 +31,7 @@ shows how to catch it; a cooler means you meet it deliberately rather than in ev
 That is a change from an earlier plan, and the reason is worth a section of its own, because it is
 the kind of decision a book should show its working for.
 
-## Why not RISC-V, when Parts III and IV are RISC-V?
+## Why not RISC-V, when everything before Part V is RISC-V?
 
 The two targets a reader compares directly — `xv6` and `host` — no longer share an instruction
 set. (`bare` is RISC-V, like `xv6`, so the clash is the emulated pair against the real one.) That
@@ -67,10 +67,11 @@ So staying on RISC-V would have cost **two of Part V's eight chapters**, plus a 
 plus tooling that breaks between distro releases. A Raspberry Pi costs none of those things.
 
 **What it costs instead** is instruction-set continuity between Part IV and Part V — and only
-in the Part V chapters that actually read disassembly: ch24, ch25 and ch29. The other five are
+in the Part V chapters that actually read disassembly: ch25, ch26 and ch30 — ch01 introduces
+both instruction sets. The other five are
 method, and method does not have an architecture. Appendix F is the translation, written for the
-reader who learned RISC-V in ch12 and is about to read AArch64 in ch24. A reader who learned RISC-V assembly in Part III
-and then reads AArch64 in ch24 is not being failed by the book; they are being shown that the
+reader who learned RISC-V in ch13 and is about to read AArch64 in ch25. A reader who learned RISC-V assembly in Part III
+and then reads AArch64 in ch25 is not being failed by the book; they are being shown that the
 concepts were never about RISC-V. That is worth more than the tidiness it replaces.
 
 ## What the machine has to do
@@ -87,7 +88,8 @@ concepts were never about RISC-V. That is worth more than the tidiness it replac
 
 ## If you already own a RISC-V board
 
-Keep it — Parts III and IV are RISC-V and it is a perfectly good machine for the rest. For Part V
+Keep it — everything before Part V is RISC-V and it is a perfectly good machine for the rest.
+For Part V
 it will run everything that counts (ch22 through ch27), and the two chapters it cannot do say so
 in their own headers: ch28 needs sampling and ch29 needs a vector unit. Your figures will differ
 from the committed ones either way, which is expected.

@@ -1,10 +1,10 @@
 ---
 title: "The File System"
-short_title: "20 · The File System"
+short_title: "21 · The File System"
 ---
 
 (the-file-system)=
-# 20 · The File System
+# 21 · The File System
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "20 · The File System"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch19](#scheduling-and-context-switches) |
+| **Prerequisites** | [ch20](#scheduling-and-context-switches) |
 | **What it measures** | What one byte costs the disk, as a difference between two runs: `bench/results/blocks-xv6.json` |
 :::
 
@@ -62,7 +62,7 @@ Around those it writes the log's header twice: once to say what the transaction 
 afterwards to say that it no longer contains anything.
 
 So the writes a transaction costs are twice its blocks plus two, and the check in
-`bench/run_blocks.py` refuses to stamp a result where that no longer holds. Problem 12.1 is that
+`bench/run_blocks.py` refuses to stamp a result where that no longer holds. Problem 21.1 is that
 formula, and it is worth deriving before reading on.
 
 Doubling the traffic looks like a strange thing to do on purpose. It is the only thing that works.
@@ -93,7 +93,7 @@ block to the same place twice is the same as copying it once.
 
 **There is no moment at which half a transaction is visible.** That is the entire purpose of the
 exercise, and it is bought with exactly one thing: writing the header after the log and before the
-homes. Problem 12.3 asks you to check the other five orderings, and the ones that fail are the
+homes. Problem 21.3 asks you to check the other five orderings, and the ones that fail are the
 ones that look reasonable.
 
 ### Idempotence is doing the real work
@@ -119,7 +119,7 @@ Under `write` there are seven things, and each one is why one of the numbers abo
 the file descriptor that names an open file, the inode that describes a file, the directory that
 maps names to inodes, the block allocator that finds free space, the log that makes a group of
 updates atomic, the buffer cache that keeps blocks in memory and decides when they reach the disk,
-and the disk driver from [ch17](#interrupts-and-drivers).
+and the disk driver from [ch18](#interrupts-and-drivers).
 
 Four blocks were modified for one byte: the data block itself, the inode recording that the file
 is now one byte long and where that byte is, the bitmap recording that the data block is no longer
@@ -132,7 +132,7 @@ in which they become true together or not at all.
 One number is nearly zero and is worth a sentence. Creating and deleting a whole file read
 **nothing** from the disk, and writing a byte read three blocks.
 
-That is [ch17](#interrupts-and-drivers)'s buffer cache. A block already in memory is not fetched, and a short
+That is [ch18](#interrupts-and-drivers)'s buffer cache. A block already in memory is not fetched, and a short
 workload touches the same handful of blocks — the superblock, the log header, the inode block,
 the bitmap — over and over. Reads are the operation a cache can eliminate entirely; writes are the
 operation it can only delay, and a log is a design that deliberately declines to delay them very
@@ -165,7 +165,7 @@ here.
 order they were issued, and real drives have caches that reorder and acknowledge early. A file
 system that assumes otherwise is correct on paper and loses data in practice, and the machinery
 for saying "this one, really, now" is a write barrier — which is an instruction to a device rather
-than to a processor, and shares nothing with [ch18](#locks-and-memory-ordering)'s fences but a name.
+than to a processor, and shares nothing with [ch19](#locks-and-memory-ordering)'s fences but a name.
 
 **What happens when the log is too small.** xv6 panics on a transaction larger than the log, which
 is a reasonable thing for a teaching kernel to do and not a reasonable thing for a file system to
@@ -176,7 +176,7 @@ what makes a real journalling file system hard.
 
 Three, in `tests/the_file_system/filesystem.c`.
 
-**20.1 — How many block writes does a transaction cost?**
+**21.1 — How many block writes does a transaction cost?**
 Derive the formula. It is graded partly against this chapter's own measurement: whatever you
 arrive at has to turn the blocks the book logged into the writes the book counted, or one of the
 two is wrong.
@@ -185,7 +185,7 @@ two is wrong.
 python3 -m pytest tests/the_file_system/test_problem_1_writes.py
 ```
 
-**20.2 — What must recovery do after a crash at each stage?**
+**21.2 — What must recovery do after a crash at each stage?**
 Five stages; the answer changes exactly once on the way up and once on the way down. Finding where
 is the design.
 
@@ -193,7 +193,7 @@ is the design.
 python3 -m pytest tests/the_file_system/test_problem_2_crash.py
 ```
 
-**20.3 — Which orderings are safe?**
+**21.3 — Which orderings are safe?**
 Six orderings of the same three writes. Exactly one is safe at every point a crash could happen,
 and the question is not which produces the right end state — all six do, if nothing goes wrong.
 
@@ -210,7 +210,7 @@ then `recover_from_log`, which is what makes those five lines mean anything.
 `kernel/fs.c` and `kernel/bio.c` are the layers underneath, and `bio.c` is now the third thing in
 this book to turn out to be a cache with a lock around it.
 
-[ch21](#the-same-program-on-both-targets) is the hinge. Everything [Part IV](#part4) has established is about what a program *does*, on a
+[ch22](#the-same-program-on-both-targets) is the hinge. Everything [Part IV](#part4) has established is about what a program *does*, on a
 target chosen because you can stop it and look. The next chapter puts the same program on a machine
 where you cannot, and asks what the first instrument failed to tell you — which is the question the
 whole of [Part V](#part5) exists to answer.

@@ -1,10 +1,10 @@
 ---
 title: "Interrupts, and Who Is Allowed To"
-short_title: "05 · Interrupts, and Who Is Allowed To"
+short_title: "06 · Interrupts, and Who Is Allowed To"
 ---
 
 (interrupts-and-privilege)=
-# 05 · Interrupts, and Who Is Allowed To
+# 06 · Interrupts, and Who Is Allowed To
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "05 · Interrupts, and Who Is Allowed To"
 | | |
 |---|---|
 | **Target** | `bare` — the same machine under QEMU with no operating system on it |
-| **Prerequisites** | [ch04](#a-trap-with-nothing-else) |
+| **Prerequisites** | [ch05](#a-trap-with-nothing-else) |
 | **What it measures** | A timer interrupt taken with no kernel present, and an access refused because the program had dropped a privilege level. |
 :::
 
@@ -20,7 +20,7 @@ short_title: "05 · Interrupts, and Who Is Allowed To"
 
 What arrives without being asked for, and what does a privilege level actually restrict?
 
-[ch04](#a-trap-with-nothing-else)'s trap was caused. An instruction executed, and the trap was that
+[ch05](#a-trap-with-nothing-else)'s trap was caused. An instruction executed, and the trap was that
 instruction's consequence — remove the `ecall` and nothing happens. This chapter is about the other
 kind, which no instruction causes and which would arrive if the program were doing nothing at all.
 And about the machinery that makes the word "allowed" mean something, which turns out to be a
@@ -122,7 +122,7 @@ and points `mepc` at the address the program recorded before it left:
 ```
 
 `mret` restores no registers at all, which is the detail that makes this genuinely awkward and
-which `bare_enter_supervisor()` exists to handle once rather than three times. [ch09](#fork-built-rather-than-read)
+which `bare_enter_supervisor()` exists to handle once rather than three times. [ch10](#fork-built-rather-than-read)
 is where that stops being an inconvenience and becomes the subject.
 
 ## What we measured
@@ -141,11 +141,11 @@ see, and a figure you have reproduced is worth more than one you have been shown
 
 **What an interrupt costs, or how long it takes to arrive.** Not measurable here and not
 measurable under any emulator: interrupt latency is a property of a pipeline, and QEMU has none.
-[ch27](#the-os-layers-cost) asks that question on hardware.
+[ch28](#the-os-layers-cost) asks that question on hardware.
 
 **How real interrupt sources behave.** One timer is the simplest possible case: one source, no
 routing, no priority, no sharing. A real machine has an interrupt controller deciding which device
-may interrupt which core, which is [ch17](#interrupts-and-drivers) — and the controller is exactly
+may interrupt which core, which is [ch18](#interrupts-and-drivers) — and the controller is exactly
 the part this chapter leaves out.
 
 **What the other privilege level does.** There is a user mode below supervisor, and this chapter
@@ -154,7 +154,7 @@ would have taught that levels make no difference.
 
 ## Problems
 
-**5.1 — Interrupt an interrupt.**
+**6.1 — Interrupt an interrupt.**
 Arrange for the timer to fire while the handler is still running, and say what happens and why.
 Then make it happen. The test checks both your prediction and a run, and the interesting part is
 that the default answer is *nothing*, for a reason in one bit of `mstatus`.
@@ -163,7 +163,7 @@ that the default answer is *nothing*, for a reason in one bit of `mstatus`.
 python3 -m pytest tests/interrupts_and_privilege/test_problem_1_nested.py
 ```
 
-**5.2 — Advance `mepc` on an interrupt.**
+**6.2 — Advance `mepc` on an interrupt.**
 Make the handler treat the interrupt as ch04 treated the trap, and add four. Say exactly what goes
 wrong and produce a run where the damage is visible in the output rather than inferred.
 
@@ -171,7 +171,7 @@ wrong and produce a run where the damage is visible in the output rather than in
 python3 -m pytest tests/interrupts_and_privilege/test_problem_2_wrong_epc.py
 ```
 
-**5.3 — Find another refusal.**
+**6.3 — Find another refusal.**
 `csrr t0, mhartid` is one instruction supervisor mode may not execute. Find a second, of a
 different kind — not another machine-mode register — and demonstrate it, reporting its cause. The
 test checks the cause differs from 2 and that your program really did run in supervisor mode.
@@ -186,5 +186,5 @@ The privileged specification @riscv-isa-privileged defines the cause codes, `mst
 enable bits. Its table of causes is one page and worth reading in full once: most of the entries
 are things you can arrange to see from a program this size.
 
-[ch06](#one-page-table-two-harts) adds the other thing that arrives without being asked for, which
+[ch07](#one-page-table-two-harts) adds the other thing that arrives without being asked for, which
 is a second processor.

@@ -43,6 +43,13 @@ PAGES = (
     + sorted((ROOT / "appendices").glob("*.md"))
 )
 
+#: Source files whose *prose* names a chapter. Only :func:`sync_links` is applied to these: the
+#: rest of the passes are about a chapter page's own headings and problems, and would be nonsense
+#: against Python. ``bench/outline.py`` is here because its ``holds`` and ``source`` fields render
+#: onto the appendix pages, so a stale label in a docstring reaches a reader exactly as one in
+#: markdown does — three of them had, off by one and by two.
+LINK_ONLY = (ROOT / "bench" / "outline.py",)
+
 #: `[ch17](#locks-and-memory-ordering)` — the label is display, the anchor is identity.
 LINK = re.compile(r"\[ch\d\d\]\(#([a-z0-9-]+)\)")
 
@@ -94,7 +101,8 @@ def sync_problems(path: Path, text: str) -> str:
 #: `problem 11.2`, and `[ch18](#locks-and-memory-ordering)'s problem 10.2` — prose *pointing at* a
 #: problem, as opposed to the heading that defines one.
 PROBLEM_REFERENCE = re.compile(
-    r"(?:\[ch(\d+)\]\(#[\w-]+\)(?P<possessive>['\u2019]s) )?problem (\d+)\.(\d+)"
+    r"(?:\[ch(?P<owner>\d+)\]\(#[\w-]+\)(?P<possessive>['\u2019]s) )?"
+    r"(?P<word>[Pp]roblem) (?P<chapter>\d+)\.(?P<index>\d+)"
 )
 
 
@@ -103,7 +111,7 @@ def sync_problem_references(path: Path, text: str) -> str:
     heading that defines one.
 
     Only the headings were derived, so for a long time every chapter's problems were numbered
-    correctly and every sentence pointing at one was not. Seventeen references across eleven
+    correctly and every sentence pointing at one was not. Thirty-six references across seventeen
     chapters were stale by exactly eight — the width of the two parts inserted ahead of them —
     and being stale by a whole number of chapters is the worst version of this: ch19 said "problem
     11.2", ch11 exists, and ch11 has a second problem. The reader is not sent nowhere. They are
@@ -118,19 +126,47 @@ def sync_problem_references(path: Path, text: str) -> str:
         return text
 
     def renumber(m: re.Match[str]) -> str:
-        owner, possessive, _, index = m.group(1), m.group("possessive"), m.group(3), m.group(4)
+        owner, index, word = m.group("owner"), m.group("index"), m.group("word")
         if owner is None:
-            return f"problem {here.number}.{index}"
+            return f"{word} {here.number}.{index}"
         target = next((c for c in CHAPTERS if c.number == int(owner)), None)
         if target is None:
             return m.group(0)
-        return f"[{target.label}](#{target.anchor}){possessive} problem {target.number}.{index}"
+        return (
+            f"[{target.label}](#{target.anchor}){m.group('possessive')} "
+            f"{word} {target.number}.{index}"
+        )
 
     return PROBLEM_REFERENCE.sub(renumber, text)
 
 
+#: ``| ch03 | `c-for-people-who-will-read-a-kernel` | ...`` — a checkpoint row. The tag is the
+#: chapter's identity and the label is its position, so the row can correct itself.
+CHECKPOINT_ROW = re.compile(r"^\| ch(\d\d) \| `([a-z0-9-]+)` \|", re.MULTILINE)
+
+
+def sync_checkpoints(path: Path, text: str) -> str:
+    """Renumber CHECKPOINTS.md from the tag in each row.
+
+    The rows are a table rather than links, so :func:`sync_links` never saw them, and inserting a
+    chapter left every row below it naming a tag that belongs to a different chapter. The tag is
+    derived from the slug and never moves, so it is the half of the row to trust.
+    """
+    if path.name != "CHECKPOINTS.md":
+        return text
+    by_tag = {chapter.tag: chapter for chapter in CHAPTERS if chapter.tag}
+
+    def renumber(m: re.Match[str]) -> str:
+        chapter = by_tag.get(m.group(2))
+        return m.group(0) if chapter is None else f"| {chapter.label} | `{m.group(2)}` |"
+
+    return CHECKPOINT_ROW.sub(renumber, text)
+
+
 def sync_page(path: Path, text: str) -> str:
-    text = sync_problem_references(path, sync_problems(path, sync_titles(sync_links(text))))
+    text = sync_checkpoints(
+        path, sync_problem_references(path, sync_problems(path, sync_titles(sync_links(text))))
+    )
     for chapter in CHAPTERS:
         if path.name != Path(chapter.path).name:
             continue
@@ -159,9 +195,9 @@ def main() -> int:
     args = parser.parse_args()
 
     stale: list[str] = []
-    for path in PAGES:
+    for path in [*PAGES, *LINK_ONLY]:
         original = path.read_text()
-        updated = sync_page(path, original)
+        updated = sync_links(original) if path in LINK_ONLY else sync_page(path, original)
         if updated == original:
             continue
         stale.append(str(path.relative_to(ROOT)))

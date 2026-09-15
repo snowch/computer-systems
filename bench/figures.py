@@ -133,7 +133,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.probe_layout_table,
         result="setup-xv6",
     ),
-    "prerequisites-and-setup-clamp": Listing(
+    "reading-a-listing-clamp": Listing(
         symbol="sysfs_clamp",
         # RISC-V first: it is the target the reader has already booted by this point in ch00.
         results=("shapes-riscv64", "shapes-aarch64"),
@@ -597,7 +597,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.bare_claims_table,
         result="fork-bare",
     ),
-    "prerequisites-and-setup-board": Table(
+    "appendix-h-board": Table(
         render=tables.board_identity_table,
         result="setup-host",
         pending=f"The board has not reported yet: {BOARD} (`bench/results/setup-host.json`).",

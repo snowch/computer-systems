@@ -1,10 +1,10 @@
 ---
 title: "Virtual Memory"
-short_title: "15 · Virtual Memory"
+short_title: "16 · Virtual Memory"
 ---
 
 (virtual-memory)=
-# 15 · Virtual Memory
+# 16 · Virtual Memory
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "15 · Virtual Memory"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch14](#traps-and-system-calls) |
+| **Prerequisites** | [ch15](#traps-and-system-calls) |
 | **What it measures** | The page-table shape of a running process: levels, entries, and physical pages consumed per mapping: `bench/results/pagetable-xv6.json` |
 :::
 
@@ -20,8 +20,8 @@ short_title: "15 · Virtual Memory"
 
 What is an address, and who decides what it means?
 
-Every chapter so far has treated an address as a number that names a place. [ch13](#linking-and-loading) watched
-a loader put a program at the address its linker chose, and [ch14](#traps-and-system-calls) left a promise: the
+Every chapter so far has treated an address as a number that names a place. [ch14](#linking-and-loading) watched
+a loader put a program at the address its linker chose, and [ch15](#traps-and-system-calls) left a promise: the
 trampoline page is mapped into two address spaces at once, which is only a sentence anybody can
 say if an address means different things to different programs. It does. This chapter is about the
 machinery that arranges it, and about what that machinery costs — not in time, which this target
@@ -36,7 +36,7 @@ the core and the memory has to decide what that number refers to. On this machin
 made by a data structure in memory, and one register says where that structure begins.
 
 That register is `satp`. Writing to it replaces every address in the running program's world at a
-stroke, which is why [ch14](#traps-and-system-calls)'s trap path switches it and why the trampoline has to be mapped
+stroke, which is why [ch15](#traps-and-system-calls)'s trap path switches it and why the trampoline has to be mapped
 at the same address in both maps — the instruction after the switch has to still exist.
 
 So "what is an address" has a precise answer. **An address is a question, `satp` names who
@@ -75,7 +75,7 @@ page a byte is. That is why a page is the unit of everything in this chapter: it
 thing the mechanism can say anything about.
 
 **The top twenty-five bits are not spare.** Sv39 translates thirty-nine bits, and the rest of the
-word must all copy bit 38 — a sign extension, exactly as in [ch11](#representing-information). An address that fails
+word must all copy bit 38 — a sign extension, exactly as in [ch12](#representing-information). An address that fails
 that rule is not an address that is out of range; it is not an address, and the hardware refuses
 it. xv6 declines to use the top half at all, capping its address space one bit below the maximum
 so that every address it ever forms has bit 38 clear and the question never arises.
@@ -90,8 +90,8 @@ The useful consequence is that **a failed translation has a location**. It is no
 wrong" but "the walk got this far and stopped", and which level it stopped at says something
 different each time. Stopping at the top level means nothing in that gigabyte of the address space
 exists. Stopping at the bottom means the neighbourhood is mapped and this particular page is not —
-a stack that has grown one page too far, say, rather than a wild pointer. [ch16](#page-faults-as-a-feature) is about
-what a kernel can do with that distinction; problem 15.3 is about extracting it.
+a stack that has grown one page too far, say, rather than a wild pointer. [ch17](#page-faults-as-a-feature) is about
+what a kernel can do with that distinction; problem 16.3 is about extracting it.
 
 ### Two clusters and five tables
 
@@ -108,7 +108,7 @@ Why six mapped pages need five pages of table.
 ```
 
 The six are not in one place. Four are at the bottom of the address space, where the linker put
-the program. Two are at the very top: the trapframe and the trampoline, which [ch14](#traps-and-system-calls) put
+the program. Two are at the very top: the trapframe and the trampoline, which [ch15](#traps-and-system-calls) put
 there. Those two clusters are separated by almost the whole of a 512-gigabyte address space, so
 neither can reuse any of the other's tables — each forces its own chain down from the shared root.
 
@@ -152,10 +152,10 @@ The two pages at the top need another middle table and another last table, becau
 within a gigabyte of them. Two pages of table for two pages of mapping, and every process in the
 system pays it.
 
-**Those two pages are the trapframe and the trampoline.** The mechanism [ch14](#traps-and-system-calls) measured in
+**Those two pages are the trapframe and the trampoline.** The mechanism [ch15](#traps-and-system-calls) measured in
 instructions has a second price, in a currency ch13 had no way to express: per process, two pages
 of table, for as long as the process exists. Neither number is a cost in the sense this book
-usually means — [ch27](#the-os-layers-cost) is where traps get priced in time — but both are real, and the
+usually means — [ch28](#the-os-layers-cost) is where traps get priced in time — but both are real, and the
 second one is invisible unless somebody counts it.
 
 ### The model and the kernel
@@ -186,7 +186,7 @@ time, and init's is built by `exec` from a binary whose size the linker decided.
 
 The shell's address space is deliberately not recorded. xv6's shell calls `malloc` while it parses
 a command, so its size is a fact about what it has been asked to do rather than about address
-spaces, and [ch14](#traps-and-system-calls) already spent a commit learning what happens when those two get
+spaces, and [ch15](#traps-and-system-calls) already spent a commit learning what happens when those two get
 confused.
 
 ## What this cannot tell you
@@ -194,7 +194,7 @@ confused.
 **What a translation costs.** Nothing here is a duration, and the omission is not a limitation of
 effort. Translation is done by hardware that caches its results in a TLB, and QEMU models neither
 the cache nor the miss — so a walk measured here would take exactly as long as the emulator's
-bookkeeping and tell you about the laptop. [ch23](#the-memory-hierarchy) measures what a miss costs on a machine
+bookkeeping and tell you about the laptop. [ch24](#the-memory-hierarchy) measures what a miss costs on a machine
 that can charge for one, which is also where the three levels stop being free: a miss is not one
 memory access, it is up to three, before the access you asked for.
 
@@ -206,7 +206,7 @@ supporting superpages and says nothing about whether using them is a good idea.
 
 **Anything about permissions.** Every entry carries read, write, execute and user bits, and this
 chapter counted entries without looking at them. What those bits prevent, and what a kernel does
-when one of them is violated, is [ch16](#page-faults-as-a-feature).
+when one of them is violated, is [ch17](#page-faults-as-a-feature).
 
 **What a real system's address space looks like.** init maps six pages; a browser tab maps
 hundreds of thousands, in hundreds of regions, most of them nowhere near each other. The overhead
@@ -220,7 +220,7 @@ Three, and they are one program: `tests/virtual_memory/walk.c` builds a page tab
 where following it stops. Nothing in `sysfs/` does any of those, so the repository contains no
 answer to any of them.
 
-**15.1 — Build a page table, and no more of one than the addresses require.**
+**16.1 — Build a page table, and no more of one than the addresses require.**
 Write `walk_map`, allocating interior tables as you need them.
 
 The grading is the interesting part. The test does not compare your table with a stored one; it
@@ -234,7 +234,7 @@ turned into a check.
 python3 -m pytest tests/virtual_memory/test_problem_1_map.py
 ```
 
-**15.2 — Follow it.**
+**16.2 — Follow it.**
 Write `walk_translate`. The expected answers are the mappings the test asked your own 7.1 to make,
 so the target moves with your implementation rather than being a constant. Two things are easy to
 get wrong and are checked: the offset must survive, and an address that was never mapped must
@@ -248,12 +248,12 @@ kernel that uses superpages.
 python3 -m pytest tests/virtual_memory/test_problem_2_translate.py
 ```
 
-**15.3 — Say where it stopped.**
+**16.3 — Say where it stopped.**
 Write `walk_first_missing_level`. Four probes: one mapped, and one each for a walk that fails at
 the top, the middle and the bottom. Each answer follows from where the test put the mappings, so
 there is nothing to look up.
 
-This is the function a page-fault handler needs before it can decide anything, and [ch16](#page-faults-as-a-feature)
+This is the function a page-fault handler needs before it can decide anything, and [ch17](#page-faults-as-a-feature)
 is about the decisions.
 
 ```bash
@@ -264,7 +264,7 @@ python3 -m pytest tests/virtual_memory/test_problem_3_fault.py
 
 The RISC-V privileged specification @riscv-isa-privileged defines Sv39 in about four pages:
 the entry format, the walk, and the rules about which reserved encodings fault. Read it after
-problem 15.2 rather than before — the specification is describing something you will by then have
+problem 16.2 rather than before — the specification is describing something you will by then have
 built, and it is much shorter than it looks.
 
 xv6's `kernel/vm.c` @xv6-riscv-source is now readable in full. `walk` is the function you wrote
@@ -272,6 +272,6 @@ twice, with one extra argument that makes it do both jobs; `mappages` is a loop 
 `freewalk` is the same traversal a third time, and the census this chapter added is a fourth.
 Four uses of one traversal is a good thing to notice about a kernel.
 
-[ch16](#page-faults-as-a-feature) takes the failure case seriously. A walk that stops is an opportunity, not an
+[ch17](#page-faults-as-a-feature) takes the failure case seriously. A walk that stops is an opportunity, not an
 error — and a kernel that treats it that way can hand out memory it has not allocated, share pages
 until somebody writes to one, and keep a program's whole address space on disk.

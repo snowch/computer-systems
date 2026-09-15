@@ -1,10 +1,10 @@
 ---
 title: "C Without a Runtime"
-short_title: "02 · C Without a Runtime"
+short_title: "03 · C Without a Runtime"
 ---
 
 (c-without-a-runtime)=
-# 02 · C Without a Runtime
+# 03 · C Without a Runtime
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "02 · C Without a Runtime"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch01](#memory-is-one-array) |
+| **Prerequisites** | [ch02](#memory-is-one-array) |
 | **What it measures** | What the kernel as built does not have: `bench/results/kernelc-xv6.json` |
 :::
 
@@ -25,7 +25,7 @@ this chapter is about: a Java or Python programmer holds more of them than a C o
 because more has been done for them. Every assumption below is one an application programmer is
 entitled to make in any language, and none of them holds here.
 
-What goes wrong is not syntax. [ch01](#memory-is-one-array) is the syntax.
+What goes wrong is not syntax. [ch02](#memory-is-one-array) is the syntax.
 
 ## The material
 
@@ -74,9 +74,9 @@ r->next = free_list;
 free_list = r;
 ```
 
-That is [ch01](#memory-is-one-array)'s self-referential struct doing real work, and it is three
+That is [ch02](#memory-is-one-array)'s self-referential struct doing real work, and it is three
 lines of pointer arithmetic that would be undefined behaviour in an application and is the
-allocator here. [ch16](#page-faults-as-a-feature) is the chapter that measures what it costs.
+allocator here. [ch17](#page-faults-as-a-feature) is the chapter that measures what it costs.
 
 That phrase is worth being precise about, because it is not a figure of speech. C is defined in
 terms of an abstract machine in which a pointer points at an *object* — something created by a
@@ -101,7 +101,7 @@ different answers because the second read consumes the next byte to arrive.
 
 Every assumption a compiler makes about memory is wrong for those addresses — that reading twice
 gives the same answer, that a read nobody uses can be dropped, that two writes to one place can be
-combined into the last. `volatile` is how you withdraw those assumptions, and [ch03](#c-for-people-who-will-read-a-kernel) shows
+combined into the last. `volatile` is how you withdraw those assumptions, and [ch04](#c-for-people-who-will-read-a-kernel) shows
 the compiler obeying, one instruction at a time.
 
 This is why kernel source is full of a keyword application code almost never needs. It is not
@@ -111,10 +111,10 @@ for ever.
 ### Somebody else is running
 
 An application with one thread has exclusive access to its own data by default. A kernel never
-does: [ch02](#c-without-a-runtime)'s table gives this machine eight harts, every one of them able to be inside
+does: [ch03](#c-without-a-runtime)'s table gives this machine eight harts, every one of them able to be inside
 the same function as you, on data you are halfway through changing.
 
-What that costs is [ch18](#locks-and-memory-ordering)'s subject and it is not small. What matters here is the habit:
+What that costs is [ch19](#locks-and-memory-ordering)'s subject and it is not small. What matters here is the habit:
 when you read a kernel structure, the question "who else can reach this, and what are they holding
 while they do" is not paranoia, it is the first question. `static` on a file-scope variable does
 not make it yours — it makes it invisible to other *files*, and every hart runs the same file.
@@ -132,14 +132,14 @@ accrues to few, so the feature is not offered.
 
 That is the trade in miniature, and it is worth recognising because real kernels make the same one
 differently — usually by saving the registers lazily, the first time a process touches one, which
-is [ch16](#page-faults-as-a-feature)'s mechanism used for something other than memory.
+is [ch17](#page-faults-as-a-feature)'s mechanism used for something other than memory.
 
 ### Almost no library, so the kernel writes its own
 
 The table counts the functions this kernel reimplements because nothing supplies them: the string
 and memory routines, and a formatted-print routine for the console. They are a hundred lines
 between them and they are worth reading early, because they are the shortest complete C in the
-tree and they are written in exactly the style [ch01](#memory-is-one-array)'s second problem asked for — pointers
+tree and they are written in exactly the style [ch02](#memory-is-one-array)'s second problem asked for — pointers
 that move, no subscripts, a length passed alongside every buffer.
 
 One of them is a warning rather than a convenience. The kernel's string copy takes a size and
@@ -153,22 +153,22 @@ There is no exception, no unwinder, no destructor and nothing to catch. A functi
 returns something you must look at, and a caller that does not look has written the bug.
 
 This is the habit that takes longest to acquire, because in an application ignoring a failure is
-usually survivable — something above you will notice. Here, nothing is above you. Problem 2.2 is
+usually survivable — something above you will notice. Here, nothing is above you. Problem 3.2 is
 deciding which of several plausible kernel functions can fail at all, which is a question about
 where their memory comes from, and that is the whole of this chapter in one exercise.
 
 ### What the language lets you do and you must not
 
-C will not stop you. Neither will the hardware, until [ch16](#page-faults-as-a-feature). The three that cost the most
+C will not stop you. Neither will the hardware, until [ch17](#page-faults-as-a-feature). The three that cost the most
 time, all of which compile without a word of complaint:
 
 - **A pointer to a local, after the function returned.** The bytes are still there and still
   readable, right up until the next call writes over them, which is why this produces a bug that
   works in testing.
-- **Reading or writing past the end of an array.** Nothing checks. [ch11](#representing-information) has the arithmetic
+- **Reading or writing past the end of an array.** Nothing checks. [ch12](#representing-information) has the arithmetic
   that makes a bounds check look right and be wrong.
 - **Two harts writing one variable with no lock**, which works perfectly until the machine is
-  busy. [ch18](#locks-and-memory-ordering) is the chapter, and [ch26](#memory-ordering-on-real-hardware) is what it costs on real hardware.
+  busy. [ch19](#locks-and-memory-ordering) is the chapter, and [ch27](#memory-ordering-on-real-hardware) is what it costs on real hardware.
 
 ## What we measured
 
@@ -188,9 +188,9 @@ floating-point saving and a great deal more. xv6's answers are the simplest ones
 so they can be read, and reading them is what makes a bigger kernel's answers legible as choices
 rather than as complexity.
 
-**What any of it costs.** No clock in this part. The free list is [ch16](#page-faults-as-a-feature), locks are
-[ch18](#locks-and-memory-ordering) and [ch26](#memory-ordering-on-real-hardware), and the context switch that declines to save floating-point
-registers is [ch19](#scheduling-and-context-switches).
+**What any of it costs.** No clock in this part. The free list is [ch17](#page-faults-as-a-feature), locks are
+[ch19](#locks-and-memory-ordering) and [ch27](#memory-ordering-on-real-hardware), and the context switch that declines to save floating-point
+registers is [ch20](#scheduling-and-context-switches).
 
 **Whether your kernel C is correct.** Nothing here is a checker. The habits in this chapter narrow
 where to look; they do not tell you that you have looked hard enough, and the problems in [Part IV](#part4)
@@ -205,7 +205,7 @@ conformance mode.
 
 Three, in `tests/c_without_a_runtime/runtime.c`.
 
-**2.1 — Hand out objects from a pool, and take them back.**
+**3.1 — Hand out objects from a pool, and take them back.**
 No allocator. A fixed array, a way to find an unused entry, and a way to return one. Getting the
 "none left" case right is most of the exercise, because it is the case an application programmer
 has never had to write.
@@ -214,7 +214,7 @@ has never had to write.
 python3 -m pytest tests/c_without_a_runtime/test_problem_1_pool.py
 ```
 
-**2.2 — Which of these can fail?**
+**3.2 — Which of these can fail?**
 Several kernel functions described by where their memory comes from. Say which can fail and what
 each must return when it does. The answer is never "it throws".
 
@@ -222,7 +222,7 @@ each must return when it does. The answer is never "it throws".
 python3 -m pytest tests/c_without_a_runtime/test_problem_2_failure.py
 ```
 
-**2.3 — What does a missing `volatile` cost?**
+**3.3 — What does a missing `volatile` cost?**
 Given several loops over an address, say which the compiler may reduce and to what. One of them is
 a driver that receives one character for ever.
 
@@ -236,6 +236,6 @@ python3 -m pytest tests/c_without_a_runtime/test_problem_3_volatile.py
 and eighty lines between them, and between them they contain every idea above. [Appendix D](#appendix-d)
 says what else is in the tree and which chapter reads it.
 
-[ch03](#c-for-people-who-will-read-a-kernel) is the last chapter of this part and the one that puts a compiler behind the claims.
+[ch04](#c-for-people-who-will-read-a-kernel) is the last chapter of this part and the one that puts a compiler behind the claims.
 It sorts C's constructs by a single question — has the machine heard of this? — and answers it
 with disassembly rather than with assertion.

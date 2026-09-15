@@ -1,10 +1,10 @@
 ---
 title: "The Memory Hierarchy"
-short_title: "23 · The Memory Hierarchy"
+short_title: "24 · The Memory Hierarchy"
 ---
 
 (the-memory-hierarchy)=
-# 23 · The Memory Hierarchy
+# 24 · The Memory Hierarchy
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,8 +12,8 @@ short_title: "23 · The Memory Hierarchy"
 | | |
 |---|---|
 | **Target** | `host` — the reference machine, natively |
-| **Answers the cost of** | [ch11](#representing-information), [ch15](#virtual-memory) |
-| **Prerequisites** | [ch22](#measuring) |
+| **Answers the cost of** | [ch12](#representing-information), [ch16](#virtual-memory) |
+| **Prerequisites** | [ch23](#measuring) |
 | **Assumes** | A particular cache hierarchy. The numbers are this board's; the method is not. |
 | **What it measures** | The hierarchy, by asking the machine rather than reading its datasheet: `bench/results/hierarchy-host.json` |
 :::
@@ -22,7 +22,7 @@ short_title: "23 · The Memory Hierarchy"
 
 Where is the data, and what does each extra step out cost?
 
-[ch21](#the-same-program-on-both-targets) left a prediction on the table: two routes over the same array, differing by one
+[ch22](#the-same-program-on-both-targets) left a prediction on the table: two routes over the same array, differing by one
 load, so the structural model says the slower one costs somewhat under twice the faster. This is
 the chapter with the equipment to say what actually separates them, and it does not start by
 looking anything up.
@@ -59,7 +59,7 @@ fit in something — and the size at which it steps is the size of the thing it 
 That is the whole measurement. The hierarchy is not inferred from a specification; it is read off
 a curve that the machine produced when asked a question it could not avoid answering honestly.
 
-Problem 15.1 is that reading, on synthetic curves whose answers are known by construction.
+Problem 24.1 is that reading, on synthetic curves whose answers are known by construction.
 
 ### The line is the unit
 
@@ -72,17 +72,17 @@ Flat, and then it rises. While consecutive visits share a cache line, the second
 the first fetch brought both. Once the stride reaches a line, every visit is its own fetch.
 
 The stride at which it rises is the line size, and it is the same number at every level. It is
-also, quietly, the answer to a question [ch11](#representing-information) raised and could not settle: alignment and
+also, quietly, the answer to a question [ch12](#representing-information) raised and could not settle: alignment and
 padding matter because memory moves in lines, and a structure straddling two lines costs two
 fetches for one field.
 
-Problem 15.3 turns that into arithmetic, and the shape worth noticing is the ceiling: a loop gets
+Problem 24.3 turns that into arithmetic, and the shape worth noticing is the ceiling: a loop gets
 steadily worse as its stride grows and then **stops** getting worse, because one line each is as
 bad as it gets.
 
 ### Translation has a cache too, and it runs out first
 
-[ch15](#virtual-memory) established that every address is a question answered by a walk through three levels
+[ch16](#virtual-memory) established that every address is a question answered by a walk through three levels
 of page table. It did not say what happens when that walk is not cached, because that target has
 no cache to not-be-in.
 
@@ -95,14 +95,14 @@ Touch one pointer per page, so the *data* comfortably fits in the last-level cac
 The reach of a TLB is its entries multiplied by the page size, and it is far smaller than the
 cache behind it — which produces the counter-intuitive result that a program can fit its data in
 cache entirely and still be limited by memory, because every access first costs a page-table walk
-that missed. [ch15](#virtual-memory)'s three levels are three more memory accesses, and this is where that
+that missed. [ch16](#virtual-memory)'s three levels are three more memory accesses, and this is where that
 stops being a structural fact and becomes a cost.
 
 ### Back to chapter 15
 
 Now the prediction can be judged.
 
-[ch21](#the-same-program-on-both-targets)'s sequential route walks an array in order: every line is used completely before the
+[ch22](#the-same-program-on-both-targets)'s sequential route walks an array in order: every line is used completely before the
 next is touched, the pattern is exactly what a prefetcher is for, and the loads do not depend on
 each other, so the machine can have many in flight at once. Its chased route reads one pointer per
 cell, in an order chosen to defeat prediction, and each load's *address* comes from the previous
@@ -120,7 +120,7 @@ was able to do at the same time.**
 ## What we measured
 
 Latency against working-set size, latency against stride, and latency against the number of pages
-touched — each a dependent chase, each reported as a minimum over repetitions for [ch22](#measuring)'s
+touched — each a dependent chase, each reported as a minimum over repetitions for [ch23](#measuring)'s
 reason, and each pending until the board runs them.
 
 The comparison with the vendor's figures is deliberate and the rule is stated in advance: where
@@ -139,19 +139,19 @@ the same instrument and neither of which this chapter builds. A working set that
 too few sets behaves like one that does not fit, and nothing here would distinguish them.
 
 **What a write costs.** Every experiment reads. Writes have their own path — store buffers,
-write-allocate policies, and the coherence traffic [ch26](#memory-ordering-on-real-hardware) is about — and measuring reads
+write-allocate policies, and the coherence traffic [ch27](#memory-ordering-on-real-hardware) is about — and measuring reads
 and assuming writes behave similarly is a good way to be wrong by a large factor.
 
 **Whether the prefetcher is helping.** The instrument is built to defeat it, on purpose, so that a
 latency is a latency. That means every number here is a *worst case*, and a real program with a
-predictable access pattern may never see any of them. [ch24](#optimising-code) is where making a pattern
+predictable access pattern may never see any of them. [ch25](#optimising-code) is where making a pattern
 predictable becomes a thing you do deliberately.
 
 ## Problems
 
 Three, in `tests/the_memory_hierarchy/hierarchy.c`, graded against curves the tests construct with known answers.
 
-**23.1 — Where does the curve step?**
+**24.1 — Where does the curve step?**
 Four curves, including one that drifts upward without stepping. A threshold that calls that a step
 finds levels in every machine, including ones that do not have them.
 
@@ -159,7 +159,7 @@ finds levels in every machine, including ones that do not have them.
 python3 -m pytest tests/the_memory_hierarchy/test_problem_1_steps.py
 ```
 
-**23.2 — What is the line size?**
+**24.2 — What is the line size?**
 The stride at which consecutive visits stop sharing. One of the curves is flat throughout, and the
 right answer there is that there is no answer.
 
@@ -167,7 +167,7 @@ right answer there is that there is no answer.
 python3 -m pytest tests/the_memory_hierarchy/test_problem_2_line.py
 ```
 
-**23.3 — How many lines does this loop touch?**
+**24.3 — How many lines does this loop touch?**
 The arithmetic behind the curve, including the ceiling: past one line per element, a larger stride
 buys the machine nothing back.
 
@@ -182,6 +182,6 @@ The BCM2712's documentation @rpi-bcm2712 and the Cortex-A76 technical reference 
 in that order, and treat any disagreement as interesting rather than as an error — a datasheet
 describes a design and a measurement describes a chip.
 
-[ch24](#optimising-code) is the other half of this. Knowing where the data is tells you what a program costs;
+[ch25](#optimising-code) is the other half of this. Knowing where the data is tells you what a program costs;
 the next question is what the compiler will do about it unasked, and what it will never do however
 obvious it looks.
