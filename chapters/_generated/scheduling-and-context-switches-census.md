@@ -5,4 +5,4 @@
 | Children created and exited | 16 |
 | Switches out of a process that is not coming back | 17 |
 
-*Conditions: target `xv6`; qemu virt (-machine virt -bios none); QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18); xv6-riscv @ 9e3161a; riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `xv6's own CFLAGS`; 2026-09-15. Source: `bench/results/switch-xv6.json`, code hash `4cc6d66ecbb7fcfd`.*
+*Conditions: target `xv6` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · xv6-riscv @ 9e3161a · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `xv6's own CFLAGS` · 2026-09-15 · Source: `bench/results/switch-xv6.json`, code hash `4cc6d66ecbb7fcfd`.*

@@ -9,4 +9,4 @@
 | `count_over` | 14 | 2 | 1 |
 | `count_over_calling` | 29 | 6 | 0 |
 
-*Conditions: target `host`; aarch64 cross compiler, any machine — nothing here was executed; aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `as recorded in pipeline-aarch64.json`; 2026-09-15. Source: `bench/results/pipeline-shapes.json`, code hash `07c7f415ef6c60ba`.*
+*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `as recorded in pipeline-aarch64.json` · 2026-09-15 · Source: `bench/results/pipeline-shapes.json`, code hash `07c7f415ef6c60ba`.*

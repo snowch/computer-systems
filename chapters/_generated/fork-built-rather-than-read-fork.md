@@ -11,4 +11,4 @@
 | The child began with the parent's data | yes |
 | …and its writes stayed its own | yes |
 
-*Conditions: target `bare`; qemu virt (-machine virt -bios none), no firmware and no operating system; QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18); none — the program is the first thing the processor executes; riscv64-linux-gnu-gcc; `['-march=rv64g', '-mabi=lp64', '-mcmodel=medany', '-ffreestanding', '-nostdlib', '-fno-pic', '-fno-stack-protector', '-fno-builtin', '-O1', '-g', '-Wall', '-Werror']`; 2026-09-15. Source: `bench/results/fork-bare.json`, code hash `40ea053e9c6a1779`.*
+*Conditions: target `bare` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · no firmware, no kernel · riscv64-linux-gnu-gcc · `-march=rv64g -mabi=lp64 -mcmodel=medany -ffreestanding -nostdlib -fno-pic -fno-stack-protector -fno-builtin -O1 -g -Wall -Werror` · 2026-09-15 · Source: `bench/results/fork-bare.json`, code hash `40ea053e9c6a1779`.*

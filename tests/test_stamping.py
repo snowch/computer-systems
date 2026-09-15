@@ -283,3 +283,20 @@ def test_context_blocks_are_not_part_of_the_measurement():
         toolchain={"cc": "riscv64-linux-gnu-gcc 14.0.0", "flags": "-O2"},
     )
     assert measurement_differences(committed, fresh) == []
+
+
+def test_no_result_records_its_flags_as_a_list():
+    """A command line is a string, and a list reaches the page as Python's own repr.
+
+    `bench/tables.py` normalises one defensively, so this is about the stored result rather than
+    the rendered page: a result whose flags are a list has recorded a Python object where it meant
+    to record what somebody typed, and the next thing to read it will not necessarily be as
+    forgiving. The bare-metal runners did exactly this and put four lines of brackets and quotes
+    under every figure in Part II.
+    """
+    offenders = []
+    for path in sorted(RESULTS_DIR.glob("*.json")):
+        flags = json.loads(path.read_text()).get("toolchain", {}).get("flags")
+        if flags is not None and not isinstance(flags, str):
+            offenders.append(f"{path.stem} records {type(flags).__name__}")
+    assert not offenders, "; ".join(offenders)

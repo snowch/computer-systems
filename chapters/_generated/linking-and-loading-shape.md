@@ -5,4 +5,4 @@
 | `ls` | 18 | 2 | 60 | 0 |
 | `sameanswer` | 18 | 2 | 59 | 0 |
 
-*Conditions: target `xv6`; riscv64 cross compiler, any machine — nothing here was executed; cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `the reader is built for this machine; the subjects are built by xv6`; 2026-09-15. Source: `bench/results/elf-xv6.json`, code hash `90f438543b8dd128`.*
+*Conditions: target `xv6` · riscv64 cross compiler, any machine — nothing here was executed · cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `the reader is built for this machine; the subjects are built by xv6` · 2026-09-15 · Source: `bench/results/elf-xv6.json`, code hash `90f438543b8dd128`.*

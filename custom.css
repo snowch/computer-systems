@@ -28,3 +28,23 @@ img[src$=".svg"] {
   max-width: 100%;
   height: auto;
 }
+
+/* The provenance line under every figure.
+ *
+ * It is a paragraph of nothing but emphasis, which is what this selector is for: no other
+ * paragraph in the book is written that way. It has to be present -- a measurement without its
+ * conditions is an anecdote -- and it has to not dominate the figure it describes, which on a
+ * phone it did: eight lines of body-sized italic under a six-row table. */
+p > em:only-child {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  opacity: 0.72;
+  display: block;
+  margin-top: 0.4rem;
+}
+
+/* Long flag lists and file paths inside it should wrap rather than push the page sideways. */
+p > em:only-child code {
+  font-size: 0.95em;
+  overflow-wrap: anywhere;
+}

@@ -185,7 +185,7 @@ def measure(program: str) -> dict:
         toolchain={
             "cc": bare.CC,
             "cc_version": compiler_version(bare.CC),
-            "flags": list(bare.CFLAGS),
+            "flags": " ".join(bare.CFLAGS),
         },
         machine=describe_bare(),
         conditions={

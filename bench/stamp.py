@@ -362,10 +362,10 @@ def describe_bare() -> dict[str, Any]:
     return {
         "kind": "qemu",
         "arch": "riscv64",
-        "model": "qemu virt (-machine virt -bios none), no firmware and no operating system",
+        "model": "qemu virt (-machine virt -bios none)",
         "measured_under": "emulation",
         "emulator": qemu_version(),
-        "kernel": "none — the program is the first thing the processor executes",
+        "kernel": "no firmware, no kernel",
     }
 
 

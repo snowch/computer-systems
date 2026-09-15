@@ -5,4 +5,4 @@
 | `packed` | 16 bytes | 0 and 8 | yes |
 | `padded` | 128 bytes | 0 and 64 | no |
 
-*Conditions: target `host`; aarch64 cross compiler, any machine — nothing here was executed; aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `the book's portable flags`; 2026-09-15. Source: `bench/results/sharing-layout.json`, code hash `d9b3c8fbe1bdd68f`.*
+*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `the book's portable flags` · 2026-09-15 · Source: `bench/results/sharing-layout.json`, code hash `d9b3c8fbe1bdd68f`.*

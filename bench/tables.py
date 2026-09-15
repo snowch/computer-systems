@@ -60,14 +60,19 @@ def conditions(name: str) -> str:
         parts.append(machine["kernel"])
     if toolchain.get("cc"):
         parts.append(toolchain["cc"])
-    if toolchain.get("flags"):
-        parts.append(f"`{toolchain['flags']}`")
+    flags = toolchain.get("flags")
+    if flags:
+        # A runner that hands over a list rather than a command line would otherwise put Python's
+        # own repr on the page, brackets and quotes and all, which is four lines of noise on a
+        # phone. It happened.
+        if not isinstance(flags, str):
+            flags = " ".join(str(flag) for flag in flags)
+        parts.append(f"`{flags}`")
     parts.append(result["generated_at"][:10])
-    return (
-        "*Conditions: "
-        + "; ".join(parts)
-        + f". Source: `bench/results/{name}.json`, code hash `{result['code_fingerprint']}`.*"
-    )
+    parts.append(f"Source: `bench/results/{name}.json`, code hash `{result['code_fingerprint']}`")
+    # Middots rather than semicolons: these are heterogeneous facts rather than a sentence, and a
+    # reader looking for one of them is scanning rather than reading.
+    return "*Conditions: " + " · ".join(parts) + ".*"
 
 
 def listing(name: str, symbol: str) -> str:
