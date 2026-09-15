@@ -41,7 +41,7 @@ from bench.stamp import ROOT, load_result, measurement_differences, write_result
 PROGRAM = "sysfs/tools/tally.c"
 LIBRARY = "sysfs/lib/profiling.c"
 HEADER = "sysfs/include/sysfs/profiling.h"
-FIGURE = "ch27-profile and ch27-skid"
+FIGURE = "whole-machine-profiling-profile and whole-machine-profiling-skid"
 
 #: The loop ch27 reads instruction by instruction.
 HOT = "sysfs_tally_scatter"

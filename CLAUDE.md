@@ -57,7 +57,7 @@ python3 scripts/verify-setup.py
 3. **No invented figures.** A measurement that has not been taken is declared `pending=` and
    renders as a warning containing no numbers. Never a placeholder, never an estimate, never a
    number from a different machine.
-4. **Problems are tests.** Each is a stub under `tests/chNN/` with a test that passes only when
+4. **Problems are tests.** Each is a stub under `tests/<chapter-slug>/` with a test that passes only when
    solved, marked `problem` so CI deselects it. Never write the answer anywhere in the repository.
 
 ## 5. Originality — non-negotiable
@@ -151,7 +151,7 @@ the length — a short chapter still owes the reader "What this cannot tell you"
 ch00 is written. Everything else is a stub carrying its target, question, prerequisites and the
 measurements it owes, all from `bench/outline.py`; the six appendices carry what they will hold
 and where that content has to come from. Regenerate the lot with
-`python3 scripts/new-chapter.py --all --force`, which refuses to touch a written chapter. The reference machine has not yet produced `setup-host.json`, so `ch00-board`
+`python3 scripts/new-chapter.py --all --force`, which refuses to touch a written chapter. The reference machine has not yet produced `setup-host.json`, so `prerequisites-and-setup-board`
 is the one figure currently `pending=`; PLAN.md §11 has the roadmap and CHECKPOINTS.md the tag
 scheme.
 
@@ -160,8 +160,16 @@ scheme.
 is required by `tests/test_book.py` to appear in ch00's list too. A chapter must not acquire a
 hardware dependency without one.
 
-**Renumbering chapters is expensive.** `myst build --strict` catches every broken `{ref}`, which
-is where the volume is. What it cannot see is `chapters/chNN_*.md` paths in `myst.yml` (a regex
-with `\b` after the digits will not match them — underscore is a word character), prose "chapter
-NN" mentions, and tag names in `CHECKPOINTS.md`. `bench/outline.py` is the single source of truth;
-change it there and let `tests/test_book.py` find the rest.
+**A chapter's number is never an identifier.** It used to be, and moving a chapter cost a rename
+of every anchor, filename, test directory, checkpoint tag, figure id and permalink downstream of
+it — three times, each one leaving prose whose text disagreed with the chapter it linked to, which
+`--strict` cannot see because the anchor still resolves.
+
+Identity is the slug: `(#virtual-memory)`, `chapters/virtual_memory.md`, `tests/virtual_memory/`,
+`virtual-memory-walk`. The number survives only where a reader sees it — the heading, the sidebar
+title, the text of a cross-reference — and is **derived**, by `scripts/sync-labels.py`, checked in
+CI, exactly as every other number in this book is. Never type one into an identifier;
+`tests/test_book.py` fails the attempt.
+
+So inserting a chapter is now an edit to `bench/outline.py` and `myst.yml`, plus
+`python3 scripts/sync-labels.py`. Nothing else moves.

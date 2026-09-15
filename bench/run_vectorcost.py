@@ -32,7 +32,7 @@ from bench.stamp import ROOT, load_result, measurement_differences, write_result
 WORKLOAD = "sysfs/bench/vectorcost.c"
 LIBRARY = "sysfs/lib/vectors.c"
 HEADER = "sysfs/include/sysfs/vectors.h"
-FIGURE = "ch28-speedup"
+FIGURE = "vectors-speedup"
 
 #: The width of one vector register on this book's `host` architecture, in bits. NEON is fixed at
 #: 128; a scalable extension would make this a property of the running machine instead, which is

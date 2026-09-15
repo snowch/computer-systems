@@ -57,8 +57,8 @@ not a spec sheet.
 
 **The two targets do not share an instruction set, and that is deliberate.** The kernel small
 enough to read in an afternoon is a RISC-V kernel; the hardware whose counters work is an ARM
-one. `hardware/README.md` shows the evidence. Reading disassembly is confined to ch09–ch11
-(RISC-V) and ch23, ch24 and ch28 (AArch64), with Appendix F translating between them; the rest is
+one. `hardware/README.md` shows the evidence. Reading disassembly is confined to ch10–ch12
+(RISC-V) and ch24, ch25 and ch29 (AArch64), with Appendix F translating between them; the rest is
 method, and method does not have an architecture.
 
 ```bash
@@ -92,7 +92,7 @@ passes only when you have solved it. There is no answer key in the back, which m
 answer key to be wrong.
 
 ```bash
-python3 -m pytest tests/ch00 -q
+python3 -m pytest tests/prerequisites_and_setup -q
 ```
 
 ## Licence

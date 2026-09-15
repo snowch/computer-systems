@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "058336a8920a5eb1",
+  "code_fingerprint": "3de1816a548d9056",
   "code_sources": [
     "bench/run_loops.py",
     "sysfs/lib/loops.c",
@@ -8,7 +8,7 @@
   "conditions": {
     "note": "instruction counts only; what the surviving differences cost needs the board"
   },
-  "generated_at": "2026-09-15T15:09:48+00:00",
+  "generated_at": "2026-09-15T16:18:58+00:00",
   "kind": "listing",
   "machine": {
     "arch": "aarch64",

@@ -70,12 +70,42 @@ class Chapter:
     assumes: str | None = None
 
     @property
+    def anchor(self) -> str:
+        """The chapter's identity: its title, and never its position.
+
+        Everything that has to survive a chapter being inserted uses this — the MyST label, the
+        file on disk, the directory its problems live in, its checkpoint tag, the ids of the
+        figures it owns, and the URL a reader bookmarks.
+
+        The number is deliberately absent. It is a statement about where the chapter currently
+        sits, and this book has already moved it three times: Part I was added in front of
+        everything, then Part II, then a chapter inside Part II. Each of those renamed every
+        identifier downstream of it, broke cross-references that ``--strict`` could see and prose
+        that it could not, and invalidated every permalink to the published site.
+
+        That is the same failure the book already refuses everywhere else. A chapter number is a
+        number, it goes stale, and the rule here is the rule for every other number: derive it,
+        never type it. :attr:`label` is the derived form, and ``scripts/sync-labels.py`` keeps the
+        typed-looking ones in prose honest.
+        """
+        return self.slug.replace("_", "-")
+
+    @property
     def label(self) -> str:
+        """``ch17`` — what the reader sees. Derived from position, so never an identifier."""
         return f"ch{self.number:02d}"
 
     @property
     def path(self) -> str:
-        return f"chapters/{self.label}_{self.slug}.md"
+        return f"chapters/{self.slug}.md"
+
+    @property
+    def tests_dir(self) -> str:
+        return f"tests/{self.slug}"
+
+    def figure(self, name: str) -> str:
+        """The id of a figure this chapter owns, e.g. ``reading-c-firstc``."""
+        return f"{self.anchor}-{name}"
 
 
 PART_START = "Getting started"
@@ -93,7 +123,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         PART_START,
         "both",
         "What do I need on my desk, and how do I know it works?",
-        "ch00-setup",
+        "prerequisites-and-setup",
         reads_disassembly="both",
     ),
     Chapter(
@@ -103,7 +133,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         PART_C,
         "xv6",
         "How do I read a C declaration, and what does each piece of it become?",
-        "ch01-reading-c",
+        "reading-c",
         reads_disassembly="riscv",
         owes="What each construct compiles to: `p + 1` scaled by the element type, `->` as an "
         "offset on a load, and a struct's members at the addresses ch10 will explain.",
@@ -115,7 +145,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         PART_C,
         "xv6",
         "I already write C — which of my habits stop working in a kernel?",
-        "ch02-no-runtime",
+        "c-without-a-runtime",
         owes="What the kernel does not have, counted from the kernel as built: its stack size, "
         "its floating-point instructions, and how much of the C library it reimplements.",
     ),
@@ -126,7 +156,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         PART_C,
         "xv6",
         "Which parts of C are really about addresses, and how do I read them without flinching?",
-        "ch03-c",
+        "c-for-people-who-will-read-a-kernel",
         reads_disassembly="riscv",
         owes="The code the compiler emits for each construct — the disassembly is the evidence.",
     ),
@@ -137,7 +167,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         PART_BARE,
         "bare",
         "What is a trap, when nothing else is going on?",
-        "ch04-bare-trap",
+        "a-trap-with-nothing-else",
         owes="The whole of a trap in one program: where the handler was, where the interrupted "
         "instruction was, and that execution resumed after it.",
     ),
@@ -148,7 +178,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         PART_BARE,
         "bare",
         "What arrives without being asked for, and what does a privilege level actually restrict?",
-        "ch05-bare-interrupt",
+        "interrupts-and-privilege",
         owes="A timer interrupt taken with no kernel present, and an access refused because the "
         "program had dropped a privilege level.",
     ),
@@ -159,7 +189,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         PART_BARE,
         "bare",
         "What does address translation do, and what does a second core break?",
-        "ch06-bare-paging",
+        "one-page-table-two-harts",
         owes="One mapping installed by hand and an address that means something else afterwards; "
         "and a counter two harts disagree about.",
     ),
@@ -170,174 +200,185 @@ CHAPTERS: tuple[Chapter, ...] = (
         PART_BARE,
         "bare",
         "What has to exist before `ecall` is a system call rather than a trap?",
-        "ch07-bare-syscall",
+        "a-system-call-of-your-own",
         owes="A call number, arguments and a return value crossing the boundary, and the count of "
         "registers this handler has to save once the caller is a stranger.",
     ),
     Chapter(
         8,
+        "a_small_integer_that_means_a_device",
+        "A Small Integer That Means a Device",
+        PART_BARE,
+        "bare",
+        "Why does a program name what it reads by number, and what does that number find?",
+        "a-small-integer-that-means-a-device",
+        owes="One `write` call reaching two unrelated destinations through one table, and the "
+        "table itself printed before and after a descriptor is duplicated.",
+    ),
+    Chapter(
+        9,
         "fork_built_rather_than_read",
         "fork, Built Rather Than Read",
         PART_BARE,
         "bare",
         "What is the least a machine needs before two programs can run on it?",
-        "ch08-bare-fork",
-        owes="Two address spaces from one, a return value that differs between them, and the "
-        "count of pages copied — beside what xv6 copies for the same call.",
+        "fork-built-rather-than-read",
+        owes="Two address spaces from one, a return value that differs between them, and the count "
+        "of pages copied — beside what xv6 copies for the same call.",
     ),
     Chapter(
-        9,
+        10,
         "what_a_computer_does_with_a_program",
         "What a Computer Does With a Program",
         PART_MACHINE,
         "both",
         "What actually happens between a source file and a result, and which of it costs anything?",
-        "ch09-whole-stack",
+        "what-a-computer-does-with-a-program",
         reads_disassembly="riscv",
         owes="Object and section sizes at each toolchain stage (`xv6`), and instruction counts for "
         "the same program under `perf stat` (`host`).",
     ),
     Chapter(
-        10,
+        11,
         "representing_information",
         "Representing Information",
         PART_MACHINE,
         "xv6",
         "What is a number to this machine, and when does that answer bite?",
-        "ch10-bits",
+        "representing-information",
         reads_disassembly="riscv",
         owes="Type sizes, alignments and struct layouts, and what signed overflow and shifts "
         "actually compile to.",
     ),
     Chapter(
-        11,
+        12,
         "machine_level_code_on_riscv",
         "Machine-Level Code on RISC-V",
         PART_MACHINE,
         "xv6",
         "What did the compiler actually emit, and how do I read it?",
-        "ch11-asm",
+        "machine-level-code-on-riscv",
         reads_disassembly="riscv",
         owes="Instruction mix and frame sizes for a set of small functions at `-O0` and `-O2`. "
         "Static facts about emitted code, never timings.",
     ),
     Chapter(
-        12,
+        13,
         "linking_and_loading",
         "Linking and Loading",
         PART_MACHINE,
         "xv6",
         "How does a file on disk become an address space?",
-        "ch12-elf",
+        "linking-and-loading",
         owes="Section and segment tables for xv6's own binaries, and what `exec` maps where.",
     ),
     Chapter(
-        13,
+        14,
         "traps_and_system_calls",
         "Traps and System Calls",
         PART_OS,
         "xv6",
         "What does the hardware do when a program asks the kernel for something?",
-        "ch13-traps",
+        "traps-and-system-calls",
         owes="Instructions on the trap path, counted by instrumentation rather than timed, and the "
         "register and CSR state saved and restored.",
     ),
     Chapter(
-        14,
+        15,
         "virtual_memory",
         "Virtual Memory",
         PART_OS,
         "xv6",
         "What is an address, and who decides what it means?",
-        "ch14-vm",
+        "virtual-memory",
         owes="The page-table shape of a running process: levels, entries, and physical pages "
         "consumed per mapping.",
     ),
     Chapter(
-        15,
+        16,
         "page_faults_as_a_feature",
         "Page Faults as a Feature",
         PART_OS,
         "xv6",
         "What can a kernel do with a fault it expected?",
-        "ch15-faults",
+        "page-faults-as-a-feature",
         owes="Fault counts and pages allocated for one workload, with each feature and without it.",
     ),
     Chapter(
-        16,
+        17,
         "interrupts_and_drivers",
         "Interrupts and Drivers",
         PART_OS,
         "xv6",
         "How does a device get the CPU's attention, and what does the CPU do about it?",
-        "ch16-devices",
+        "interrupts-and-drivers",
         owes="Interrupt counts by source over a defined workload, and buffer occupancy under load.",
     ),
     Chapter(
-        17,
+        18,
         "locks_and_memory_ordering",
         "Locks and Memory Ordering",
         PART_OS,
         "xv6",
         "What breaks when two harts touch the same memory, and what is the minimum fix?",
-        "ch17-locks",
+        "locks-and-memory-ordering",
         owes="What a lock is made of, in instructions: the atomic that excludes, the fence that "
         "orders, and what turning interrupts off costs beside them.",
     ),
     Chapter(
-        18,
+        19,
         "scheduling_and_context_switches",
         "Scheduling and Context Switches",
         PART_OS,
         "xv6",
         "What exactly is saved, and what does it mean to say a thread 'runs'?",
-        "ch18-sched",
+        "scheduling-and-context-switches",
         owes="Context switches per workload, bytes saved per switch, and the exact register set.",
     ),
     Chapter(
-        19,
+        20,
         "the_file_system",
         "The File System",
         PART_OS,
         "xv6",
         "What has to be true on the disk for a crash mid-write to be survivable?",
-        "ch19-fs",
+        "the-file-system",
         owes="Block reads and writes for a traced operation, and the amplification between a "
         "one-byte write and the disk traffic it causes.",
     ),
     Chapter(
-        20,
+        21,
         "the_same_program_on_both_targets",
         "The Same Program on Both Targets",
         PART_OS,
         "both",
         "What does watching a program in a debugger fail to tell me about what it costs?",
-        "ch20-bridge",
-        answers=("ch11", "ch13", "ch14"),
+        "the-same-program-on-both-targets",
+        answers=("machine-level-code-on-riscv", "traps-and-system-calls", "virtual-memory"),
         owes="The same structural facts from both targets, and the first side-by-side timing: the "
         "board's, against QEMU's meaningless equivalent, shown deliberately.",
     ),
     Chapter(
-        21,
+        22,
         "measuring",
         "Measuring",
         PART_COST,
         "host",
         "How do I get a number I would defend, and how would I know it was wrong?",
-        "ch21-measuring",
+        "measuring",
         owes="Clock resolution and read cost; one fixed workload's distribution over many "
         "repetitions; the same benchmark made to give three answers by changing what should "
         "not matter.",
     ),
     Chapter(
-        22,
+        23,
         "the_memory_hierarchy",
         "The Memory Hierarchy",
         PART_COST,
         "host",
         "Where is the data, and what does each extra step out cost?",
-        "ch22-memory",
-        answers=("ch10", "ch14"),
+        "the-memory-hierarchy",
+        answers=("representing-information", "virtual-memory"),
         assumes="a particular cache hierarchy — the levels, sizes, line size and TLB reach "
         "are this core's. The method transfers to any machine; the numbers do not, and "
         "measuring your own is the exercise.",
@@ -345,28 +386,28 @@ CHAPTERS: tuple[Chapter, ...] = (
         "against the vendor's figures; TLB reach.",
     ),
     Chapter(
-        23,
+        24,
         "optimising_code",
         "Optimising Code",
         PART_COST,
         "host",
         "What will the compiler do for me, and what will it never do?",
-        "ch23-optimising",
-        answers=("ch11",),
+        "optimising-code",
+        answers=("machine-level-code-on-riscv",),
         reads_disassembly="aarch64",
         owes="Each transformation at `-O0`, `-O2` and `-O3` with the disassembly that explains it, "
         "including one where the optimisation does nothing because the compiler had already "
         "done it.",
     ),
     Chapter(
-        24,
+        25,
         "the_cpu",
         "The CPU",
         PART_COST,
         "host",
         "What is this core doing between fetching an instruction and finishing it?",
-        "ch24-cpu",
-        answers=("ch11",),
+        "the-cpu",
+        answers=("machine-level-code-on-riscv",),
         reads_disassembly="aarch64",
         assumes="a specific microarchitecture. The reference is an out-of-order, 4-wide "
         "Cortex-A76; core width, branch predictor and PMU event names all differ elsewhere, "
@@ -375,14 +416,14 @@ CHAPTERS: tuple[Chapter, ...] = (
         "length; the cost of a mispredict, derived and stated as derived.",
     ),
     Chapter(
-        25,
+        26,
         "memory_ordering_on_real_hardware",
         "Memory Ordering on Real Hardware",
         PART_COST,
         "host",
         "What do four cores cost each other, and what does a fence actually buy?",
-        "ch25-concurrency",
-        answers=("ch17",),
+        "memory-ordering-on-real-hardware",
+        answers=("locks-and-memory-ordering",),
         assumes="four cores, and this interconnect's coherence behaviour. A different core "
         "count moves the scaling curve without changing the mechanism; two cores make the "
         "chapter thin.",
@@ -390,25 +431,29 @@ CHAPTERS: tuple[Chapter, ...] = (
         "cost; scaling from one core to four.",
     ),
     Chapter(
-        26,
+        27,
         "the_os_layers_cost",
         "The OS Layer's Cost on Real Hardware",
         PART_COST,
         "host",
         "What does Linux charge for the services xv6 showed me?",
-        "ch26-os-cost",
-        answers=("ch13", "ch15", "ch18"),
+        "the-os-layers-cost",
+        answers=(
+            "traps-and-system-calls",
+            "page-faults-as-a-feature",
+            "scheduling-and-context-switches",
+        ),
         owes="The cost of a system call, a fault and a switch, each beside the cheapest available "
         "baseline; a minor fault against a major one; `vDSO` against a real trap.",
     ),
     Chapter(
-        27,
+        28,
         "whole_machine_profiling",
         "Whole-Machine Profiling",
         PART_COST,
         "host",
         "How do I find the bottleneck in something I did not write?",
-        "ch27-profiling",
+        "whole-machine-profiling",
         assumes="that perf can sample. ARM PMUs support counter-overflow interrupts as "
         "standard, so this works on the reference machine — but most affordable RISC-V cores "
         "do not, and a reader following Part V on one will find this the chapter they "
@@ -417,13 +462,13 @@ CHAPTERS: tuple[Chapter, ...] = (
         "deliberately.",
     ),
     Chapter(
-        28,
+        29,
         "vectors",
         "Vectors",
         PART_COST,
         "host",
         "What does vectorising actually buy, and when will the compiler do it for me?",
-        "ch28-vectors",
+        "vectors",
         reads_disassembly="aarch64",
         assumes="a vector unit — NEON on the reference core. This chapter became measurable "
         "when Part V moved to AArch64; on a RISC-V board without RVV 1.0 it reverts to "
@@ -481,7 +526,7 @@ APPENDICES: tuple[Appendix, ...] = (
         holds="Attaching to QEMU, the xv6 workflow, watchpoints on physical memory, and what to "
         "do when the stack is nonsense.",
         source="Procedures verified against the repository's own `make xv6-gdb`, so every "
-        "sequence here is one that has been run. [ch00](#ch00) sets the debugger up; this is "
+        "sequence here is one that has been run. [ch00](#prerequisites-and-setup) sets the debugger up; this is "
         "where the workflow lives.",
     ),
     Appendix(
@@ -498,7 +543,7 @@ APPENDICES: tuple[Appendix, ...] = (
         "xv6_file_map",
         "An xv6 File Map",
         holds="What lives in which file of the kernel, and which chapter reads it. The companion "
-        "to Part IV, and the page to keep open while reading [ch13](#ch13) onwards.",
+        "to Part IV, and the page to keep open while reading [ch13](#traps-and-system-calls) onwards.",
         source="The submodule at its pinned commit, so the map describes the tree a reader "
         "actually has rather than a version of xv6 from a paper.",
     ),
@@ -516,8 +561,8 @@ APPENDICES: tuple[Appendix, ...] = (
         "AArch64 for RISC-V Readers",
         holds="Registers and calling convention, the load/store and branch forms, atomics and "
         "fences — each beside its RISC-V equivalent from Part III.",
-        source="A translation, not a reference. Written for someone who has read [ch11](#ch11) "
-        "and is about to read [ch23](#ch23), and organised as *you know this already, here it "
+        source="A translation, not a reference. Written for someone who has read [ch11](#machine-level-code-on-riscv) "
+        "and is about to read [ch23](#optimising-code), and organised as *you know this already, here it "
         "is again*. It takes its shape from ch23, so it is drafted after it.",
     ),
     Appendix(
@@ -532,14 +577,111 @@ APPENDICES: tuple[Appendix, ...] = (
     ),
 )
 
-PARTS: tuple[str, ...] = (
-    PART_START,
-    PART_C,
-    PART_BARE,
-    PART_MACHINE,
-    PART_OS,
-    PART_COST,
+
+@dataclass(frozen=True)
+class Part:
+    """A part of the book, and the page that says what it is for.
+
+    Parts were unclickable sidebar labels for a long time: ``myst.yml`` gave each one a ``title``
+    and a list of children and no page of its own, so the only statement of what a part was for
+    lived in one hand-maintained row of the preface table — which is exactly where Part II went
+    missing for a while without any check noticing, because ``myst build --strict`` verifies that
+    an anchor resolves and not that the words around it are true.
+
+    What that arrangement could not hold is anything part-shaped. Part I's routing note — *if you
+    already write C, skip to ch02* — sat inside ch01, so a reader who took its advice only ever
+    saw it by accident. Part V's dependence on the reference machine was stated five times, once
+    per chapter header, with nowhere to say it properly. A part page is where those go.
+
+    The content rule is narrow on purpose: **a part page states a claim and a boundary, and never
+    summarises its chapters.** The chapter list is already in the sidebar and in the preface, and
+    a page that repeats it is the "in this part we will" filler CLAUDE.md §7 bans.
+    """
+
+    #: 1-5, matching the Roman numeral in :attr:`title`. ``0`` is *Getting started*, which is a
+    #: part in the table of contents but has no page: it holds one chapter, and the preface
+    #: already does the job a part page would.
+    number: int
+    slug: str
+    title: str
+    #: The target its chapters run on, in the vocabulary of :data:`TARGET_MEANING`. A part-level
+    #: fact rather than a per-chapter one — Part II is ``bare`` throughout, and the rule that
+    #: nothing in it may be timed is the part's rule, not five separate chapters' rules.
+    target: str
+    #: What the part asserts, in one line. Mirrors :attr:`Chapter.question`: prose kept in the
+    #: data so a stub can state it and a test can find it, rather than being invented afresh on
+    #: the page and drifting from the preface's description of the same part.
+    claim: str
+    #: False only for *Getting started*.
+    page: bool = True
+
+    @property
+    def label(self) -> str:
+        return f"part{self.number}"
+
+    @property
+    def path(self) -> str:
+        return f"chapters/{self.label}_{self.slug}.md"
+
+    @property
+    def name(self) -> str:
+        """``"Part III"`` — the title without its subtitle."""
+        return self.title.split(" \u2014 ")[0]
+
+    @property
+    def subtitle(self) -> str:
+        """``"What a computer does with a program"`` — the title without its number."""
+        return self.title.split(" \u2014 ", 1)[-1]
+
+
+PARTS: tuple[Part, ...] = (
+    Part(
+        0,
+        "getting_started",
+        PART_START,
+        "both",
+        "Two targets working, and a script that says what this machine can currently run.",
+        page=False,
+    ),
+    Part(
+        1,
+        "c_and_the_machine",
+        PART_C,
+        "xv6",
+        "Enough C to read a kernel, and no more.",
+    ),
+    Part(
+        2,
+        "the_bare_machine",
+        PART_BARE,
+        "bare",
+        "Each primitive of the machine built on its own, before a kernel presents them entangled.",
+    ),
+    Part(
+        3,
+        "a_program_end_to_end",
+        PART_MACHINE,
+        "both",
+        "One program from source text to result, with nothing in between left as magic.",
+    ),
+    Part(
+        4,
+        "the_operating_system_layer",
+        PART_OS,
+        "xv6",
+        "A kernel small enough to read, taken apart one mechanism at a time.",
+    ),
+    Part(
+        5,
+        "where_the_cycles_go",
+        PART_COST,
+        "host",
+        "Part IV's chapters asked again as questions about time.",
+    ),
 )
+
+#: The five parts that have a page. *Getting started* is the exception and always will be.
+PART_PAGES: tuple[Part, ...] = tuple(part for part in PARTS if part.page)
 
 
 def reading_disassembly(instruction_set: str) -> tuple[str, ...]:
@@ -563,5 +705,6 @@ def by_number(number: int) -> Chapter:
     raise KeyError(f"no chapter {number}")
 
 
-def in_part(part: str) -> list[Chapter]:
-    return [chapter for chapter in CHAPTERS if chapter.part == part]
+def in_part(part: str | Part) -> list[Chapter]:
+    title = part.title if isinstance(part, Part) else part
+    return [chapter for chapter in CHAPTERS if chapter.part == title]

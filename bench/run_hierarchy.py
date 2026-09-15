@@ -29,7 +29,7 @@ from bench.board import governor, require_board, stamp_timing, timed_run
 from bench.stamp import ROOT, load_result, measurement_differences, write_result
 
 WORKLOAD = "sysfs/bench/hierarchy.c"
-FIGURE = "ch22-levels, ch22-line and ch22-vendor"
+FIGURE = "the-memory-hierarchy-levels, the-memory-hierarchy-line and the-memory-hierarchy-vendor"
 
 #: How much slower one point has to be than the one before it to count as a step rather than as
 #: noise. A latency curve over a cache boundary roughly doubles; a run-to-run wobble does not
