@@ -4,7 +4,7 @@
  *
  * None of these is in the repository.
  *
- *   python3 -m pytest tests/reading_c
+ *   python3 -m pytest tests/memory_is_one_array
  */
 
 #include <stdint.h>

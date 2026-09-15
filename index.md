@@ -64,7 +64,7 @@ read a kernel.
 tutorial: control flow, functions and operators are assumed from whatever language you already
 use. What it teaches is the part your language was built to hide — that memory is one array of
 bytes and everything in it has an index — and then the assumptions that stop holding when there is
-no runtime underneath you. [Chapter 1](#reading-c) is the on-ramp; [chapter 2](#c-without-a-runtime) is the unlearning;
+no runtime underneath you. [Chapter 1](#memory-is-one-array) is the on-ramp; [chapter 2](#c-without-a-runtime) is the unlearning;
 [chapter 3](#c-for-people-who-will-read-a-kernel) sorts C's constructs by a single question, *has the machine heard of this?*
 
 **You do not need OS internals.** That is Part IV, and it is the point of using a kernel small
@@ -82,7 +82,7 @@ missing a concept; you have a correct one that means something else here.
 
 | You already know | Here it is | Where |
 |---|---|---|
-| A reference | An index into one array of bytes, with a type saying how wide a step is | [ch01](#reading-c) |
+| A reference | An index into one array of bytes, with a type saying how wide a step is | [ch01](#memory-is-one-array) |
 | `new`, and a collector | A fixed array decided at compile time, or a free list built out of the free memory | [ch02](#c-without-a-runtime) |
 | An exception | A returned value the caller is expected to look at, and sometimes no way to report at all | [ch02](#c-without-a-runtime) |
 | `volatile`, meaning *ordered between threads* | `volatile`, meaning *do not remove this access* — and **not** a threading primitive | [ch03](#c-for-people-who-will-read-a-kernel), [ch18](#locks-and-memory-ordering) |
@@ -216,7 +216,7 @@ commonest way to be confidently wrong about performance, and that chapter is whe
 separating them.
 
 Reading disassembly is a small part of the book, and this is the whole of what the split costs
-you. In Parts I and III it is RISC-V: [ch01](#reading-c), [ch03](#c-for-people-who-will-read-a-kernel), [ch10](#what-a-computer-does-with-a-program), [ch11](#representing-information) and
+you. In Parts I and III it is RISC-V: [ch01](#memory-is-one-array), [ch03](#c-for-people-who-will-read-a-kernel), [ch10](#what-a-computer-does-with-a-program), [ch11](#representing-information) and
 [ch12](#machine-level-code-on-riscv). In Part V it is AArch64: [ch24](#optimising-code), [ch25](#the-cpu) and [ch29](#vectors).
 [Chapter 0](#prerequisites-and-setup) shows one small function compiled both ways, so the difference is concrete
 rather than promised, and [Appendix F](#appendix-f) is a translation between the two for the

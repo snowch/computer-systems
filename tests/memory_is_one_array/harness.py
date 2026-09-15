@@ -8,7 +8,7 @@ from pathlib import Path
 from bench.measure import PORTABLE_FLAGS, HostTarget, compile_program
 from bench.stamp import ROOT
 
-DECLARATIONS = ROOT / "tests" / "reading_c" / "declarations.c"
+DECLARATIONS = ROOT / "tests" / "memory_is_one_array" / "declarations.c"
 NATIVE = HostTarget(name="native-other", cc="cc", flags=PORTABLE_FLAGS)
 
 D_VALUE, D_POINTER, D_ARRAY, D_ARRAY_PTR, D_PTR_ARRAY, D_FUNC_PTR, D_FUNC = range(7)

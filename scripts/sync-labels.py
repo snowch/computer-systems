@@ -60,7 +60,7 @@ def sync_links(text: str) -> str:
 def sync_titles(text: str) -> str:
     """Fix a label sitting immediately before its chapter's title.
 
-    ``## ch01 · Reading C``, ``| ch23 The Memory Hierarchy |``, ``ch08-descriptors`` in a
+    ``## ch01 · Memory Is One Array``, ``| ch23 The Memory Hierarchy |``, ``ch08-descriptors`` in a
     checkpoint list — wherever the title is right there, the title is the identity and the number
     beside it is derived. A bare ``ch14`` with nothing to disambiguate it is left alone: there is
     no way to tell this book's from another book's, and guessing is worse than leaving it.

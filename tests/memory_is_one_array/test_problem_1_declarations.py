@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pytest
 
-from tests.reading_c.harness import (
+from tests.memory_is_one_array.harness import (
     D_ARRAY,
     D_ARRAY_PTR,
     D_FUNC,

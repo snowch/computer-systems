@@ -12,7 +12,7 @@ short_title: "02 · C Without a Runtime"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch01](#reading-c) |
+| **Prerequisites** | [ch01](#memory-is-one-array) |
 | **What it measures** | What the kernel as built does not have: `bench/results/kernelc-xv6.json` |
 :::
 
@@ -25,7 +25,7 @@ this chapter is about: a Java or Python programmer holds more of them than a C o
 because more has been done for them. Every assumption below is one an application programmer is
 entitled to make in any language, and none of them holds here.
 
-What goes wrong is not syntax. [ch01](#reading-c) is the syntax.
+What goes wrong is not syntax. [ch01](#memory-is-one-array) is the syntax.
 
 ## The material
 
@@ -74,7 +74,7 @@ r->next = free_list;
 free_list = r;
 ```
 
-That is [ch01](#reading-c)'s self-referential struct doing real work, and it is three lines of pointer
+That is [ch01](#memory-is-one-array)'s self-referential struct doing real work, and it is three lines of pointer
 arithmetic that would be undefined behaviour in an application and is the allocator here.
 [ch16](#page-faults-as-a-feature) is the chapter that measures what it costs.
 
@@ -124,7 +124,7 @@ is [ch16](#page-faults-as-a-feature)'s mechanism used for something other than m
 The table counts the functions this kernel reimplements because nothing supplies them: the string
 and memory routines, and a formatted-print routine for the console. They are a hundred lines
 between them and they are worth reading early, because they are the shortest complete C in the
-tree and they are written in exactly the style [ch01](#reading-c)'s second problem asked for — pointers
+tree and they are written in exactly the style [ch01](#memory-is-one-array)'s second problem asked for — pointers
 that move, no subscripts, a length passed alongside every buffer.
 
 One of them is a warning rather than a convenience. The kernel's string copy takes a size and

@@ -11,14 +11,14 @@ short_title: "Introduction"
 
 | | |
 |---|---|
-| **Chapters** | [ch01](#reading-c)–[ch03](#c-for-people-who-will-read-a-kernel) |
+| **Chapters** | [ch01](#memory-is-one-array)–[ch03](#c-for-people-who-will-read-a-kernel) |
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Assumes** | [ch00](#prerequisites-and-setup), and fluency in some other language |
 :::
 
 ## What this part is for
 
-Three chapters and one job: enough C to read a kernel, and no more.
+Three chapters and one job: enough C to read a kernel and change it, and no more.
 
 That "no more" is a real limit rather than modesty. C is a large language and most of it never
 appears in the code this book reads. A part that set out to cover the language would spend most of
@@ -29,10 +29,10 @@ What stops people is the model. Your language was built to hide it: memory is on
 everything in it has an index, and a type is mostly a statement about how wide a step is. Every
 language has that underneath. Yours decided you did not need to see it; C decided you did.
 
-This part is first because everything after it is *reading* rather than writing. [Part II](#part2)
-builds the machine's primitives in C, [Part IV](#part4) reads a kernel written in it, and
-[Part V](#part5) compiles C and reads what came out. None of those is an exercise in C. All of them
-are illegible without the model.
+This part is first because everything after it is written in C and half of it asks you to change
+some. [Part II](#part2) builds the machine's primitives in C and its problems have you rewriting a
+trap handler; [Part IV](#part4) reads a kernel; [Part V](#part5) compiles C and reads what came
+out. None of those is an exercise in the language. All of them are impossible without the model.
 
 ## What it leaves out
 
@@ -44,10 +44,11 @@ almost none of it, and the interesting question is what it does instead. Floatin
 same reason — the kernel does not use it, and why it does not is a better question than how it
 works.
 
-And the craft of *writing* C: ownership discipline, API design, build systems, the long list of
-ways to invoke undefined behaviour. Reading is a much smaller skill than writing, and this part
-teaches only reading. That is not a soft option — it is the whole of what the rest of the book
-needs, and it is reachable in three chapters, which writing is not.
+And the craft of C as a language you would *build something in*: ownership discipline, API design,
+build systems, the long list of ways to invoke undefined behaviour. The problems in this book ask
+you to change a program that exists and predict what the change does — which needs the model and
+almost none of the craft. That is not a soft option; it is the whole of what the rest of the book
+needs, and it is reachable in three chapters, which the craft is not.
 
 ## Where to start
 
@@ -56,7 +57,7 @@ ch02 is about the habits that stop working when there is no library underneath y
 written for you.
 
 **If you program fluently in something else and have never written C**, start at
-[ch01](#reading-c). You are not being taught to program.
+[ch01](#memory-is-one-array). You are not being taught to program.
 
 **If you have tried C before and bounced off pointers**, also start at ch01, and notice that it
 does not open with them. It opens with one complete program that prints four numbers, and the
@@ -76,5 +77,6 @@ answer it.
 
 ## Where this leaves you
 
-Not a C programmer. Able to read one — which is the thing the rest of the book actually requires,
-and [Part II](#part2) starts requiring it immediately.
+Not a C programmer. Able to read one, and to change one and say what the change will do — which is
+the thing the rest of the book actually requires, and [Part II](#part2) starts requiring it
+immediately.

@@ -15,7 +15,7 @@ feels like "the standard way to present this", that is the signal to design a di
 
 ---
 
-## ch01 · Reading C
+## ch01 · Memory Is One Array
 
 **Closest in subject.** Every introduction to C ever written, and in particular the pointer and
 declaration chapters of K&R and of the many "C for programmers who know another language" guides;

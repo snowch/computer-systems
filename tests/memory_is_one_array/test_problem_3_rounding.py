@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import pytest
 
-from tests.reading_c.harness import ask
+from tests.memory_is_one_array.harness import ask
 
 PAGE = 4096
 CASES = [

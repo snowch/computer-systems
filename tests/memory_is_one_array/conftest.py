@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from tests.reading_c.harness import build
+from tests.memory_is_one_array.harness import build
 
 
 @pytest.fixture(scope="session")

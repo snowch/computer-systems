@@ -115,7 +115,7 @@ class Chapter:
         return f"tests/{self.slug}"
 
     def figure(self, name: str) -> str:
-        """The id of a figure this chapter owns, e.g. ``reading-c-firstc``."""
+        """The id of a figure this chapter owns, e.g. ``memory-is-one-array-firstc``."""
         return f"{self.anchor}-{name}"
 
 
@@ -139,12 +139,12 @@ CHAPTERS: tuple[Chapter, ...] = (
     ),
     Chapter(
         1,
-        "reading_c",
-        "Reading C",
+        "memory_is_one_array",
+        "Memory Is One Array",
         PART_C,
         "xv6",
-        "How do I read a C declaration, and what does each piece of it become?",
-        "reading-c",
+        "If memory is one array of bytes, what is a C declaration saying about it?",
+        "memory-is-one-array",
         reads_disassembly="riscv",
         owes="What each construct compiles to: `p + 1` scaled by the element type, `->` as an "
         "offset on a load, and a struct's members at the addresses ch10 will explain.",
@@ -659,7 +659,7 @@ PARTS: tuple[Part, ...] = (
         "c_and_the_machine",
         PART_C,
         "xv6",
-        "Enough C to read a kernel, and no more.",
+        "Enough C to read a kernel and change it, and no more.",
     ),
     Part(
         2,
