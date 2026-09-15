@@ -117,7 +117,7 @@ reorders**, so learning to attribute cycles on one is the skill that transfers.
 want the clean version too, an in-order Cortex-A53 — a Pi 3 or Pi Zero 2 W — costs very little,
 and running ch24's experiments on both is an instructive afternoon.
 
-### It is an ARM machine, and Parts III and IV are RISC-V
+### It is an ARM machine, and everything before Part V is RISC-V
 
 That is deliberate: `perf` has to both count *and* sample, no affordable RISC-V core does both,
 and choosing one would have cost two chapters of [Part V](#part5). The preface has the evidence; this
