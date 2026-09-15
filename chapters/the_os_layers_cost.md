@@ -186,7 +186,7 @@ answer will be found.
 
 Three, in `tests/the_os_layers_cost/oscost.c`.
 
-**19.1 — Where does the clock go?**
+**27.1 — Where does the clock go?**
 Two harnesses, identical except for where they read the clock, and what each reports. Do this
 before writing any timing code in the chapters that follow.
 
@@ -194,7 +194,7 @@ before writing any timing code in the chapters that follow.
 python3 -m pytest tests/the_os_layers_cost/test_problem_1_instrument.py
 ```
 
-**19.2 — What can it not be cheaper than?**
+**27.2 — What can it not be cheaper than?**
 Turn [ch14](#traps-and-system-calls)'s instruction count into a floor, given an IPC and a clock. Divide once at the
 end: a bound that has been rounded twice is an estimate.
 
@@ -202,7 +202,7 @@ end: a bound that has been rounded twice is an estimate.
 python3 -m pytest tests/the_os_layers_cost/test_problem_2_bound.py
 ```
 
-**19.3 — Which fault is this?**
+**27.3 — Which fault is this?**
 Four facts about an address and a stated precedence. The minor-against-major split is the one
 worth orders of magnitude, and it is not a fact about the fault.
 

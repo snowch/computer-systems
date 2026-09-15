@@ -1,0 +1,74 @@
+{
+  "code_fingerprint": "ab86e55c88535763",
+  "code_sources": [
+    "sysfs/bare/start.S",
+    "sysfs/bare/console.c",
+    "sysfs/bare/syscalls.c",
+    "sysfs/bare/descriptors.c",
+    "sysfs/bare/bare.ld",
+    "sysfs/bare/bare.h"
+  ],
+  "conditions": {
+    "harts": 1,
+    "note": "counts and yes-or-no answers only; nothing on this target may be timed"
+  },
+  "generated_at": "2026-09-15T16:57:12+00:00",
+  "kind": "measurement",
+  "machine": {
+    "arch": "riscv64",
+    "emulator": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "kernel": "none \u2014 the program is the first thing the processor executes",
+    "kind": "qemu",
+    "measured_under": "emulation",
+    "model": "qemu virt (-machine virt -bios none), no firmware and no operating system"
+  },
+  "name": "descriptors-bare",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "backends": 2,
+    "closed_slot_refused": 1,
+    "descriptor_slots": 4,
+    "dup_returned": 3,
+    "dup_shares_the_open_file": 1,
+    "harts": 1,
+    "memory_kept_the_bytes": 1,
+    "open_file_slots": 4,
+    "program": "descriptors",
+    "read_back": 6,
+    "same_call_reached_both": 1,
+    "shared_cursor": 7,
+    "unexpected_trap": 0,
+    "wrote_to_console": 6,
+    "wrote_to_memory": 6
+  },
+  "target": "bare",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc",
+    "cc_version": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "flags": [
+      "-march=rv64g",
+      "-mabi=lp64",
+      "-mcmodel=medany",
+      "-ffreestanding",
+      "-nostdlib",
+      "-fno-pic",
+      "-fno-stack-protector",
+      "-fno-builtin",
+      "-O1",
+      "-g",
+      "-Wall",
+      "-Werror"
+    ]
+  }
+}

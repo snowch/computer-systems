@@ -116,6 +116,7 @@ __attribute__((weak)) void bare_secondary(uint64 hartid) {
 
 volatile uint64 bare_resume_at;
 volatile uint64 bare_resume_sp;
+volatile uint64 bare_resume_ra;
 
 __attribute__((aligned(16))) char bare_stacks[BARE_STACK_BYTES * 8];
 

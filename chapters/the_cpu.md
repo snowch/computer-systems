@@ -147,7 +147,7 @@ when told the reordering is permitted. Which is a flag, and a decision, and not 
 
 Three.
 
-**17.1 — Which of these loops still contains a branch?**
+**25.1 — Which of these loops still contains a branch?**
 Predict before compiling, and be graded against the compiler. The stub records that this book
 predicted wrongly.
 
@@ -155,7 +155,7 @@ predicted wrongly.
 python3 -m pytest tests/the_cpu/test_problem_1_branchy.py
 ```
 
-**17.2 — How long is the critical path?**
+**25.2 — How long is the critical path?**
 Each accumulator's share plus the combining tree. Then notice what the model predicts and what
 actually stops it.
 
@@ -163,7 +163,7 @@ actually stops it.
 python3 -m pytest tests/the_cpu/test_problem_2_path.py
 ```
 
-**17.3 — How many does a two-bit predictor get wrong?**
+**25.3 — How many does a two-bit predictor get wrong?**
 Simulate the saturating counter. The alternating sequence is the one that explains why two bits
 and not one.
 

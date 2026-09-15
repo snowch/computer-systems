@@ -55,24 +55,36 @@ void bare_secondary(uint64 hartid);
  * way back has to be arranged before leaving: the address to resume at, and — the part that is
  * easy to miss and hard to diagnose — the stack pointer to resume with.
  *
- * `mret` does not restore a stack. The supervisor-mode code runs on the same stack and leaves it
- * deeper than it found it, and the handler's own entry and exit move it again, so a machine-mode
- * function that resumes without putting `sp` back is running its own epilogue against somebody
- * else's frame. It does not fault. It returns to whatever that frame happened to contain.
+ * `mret` restores no registers at all. The handler that brings us back has just reloaded the
+ * *supervisor* caller's whole register set from its frame, so at the resume label every register
+ * holds somebody else's value — `sp` points into the supervisor code's stack, and `ra` is the
+ * supervisor code's return address. A machine-mode function that resumes and then returns is
+ * jumping wherever that other program was going to.
+ *
+ * So `sp` and `ra` are put back explicitly, and everything else is declared clobbered, which
+ * makes the compiler spill anything it was keeping in a register to the stack — where the stack
+ * is the one this macro just restored. That is a context switch with the interesting parts taken
+ * out, and ch19 is the version with them left in.
  */
 extern volatile uint64 bare_resume_at;
 extern volatile uint64 bare_resume_sp;
+extern volatile uint64 bare_resume_ra;
 
-#define bare_enter_supervisor()                                \
-    asm volatile("la   t0, 8f\n"                               \
-                 "sd   t0, bare_resume_at, t1\n"               \
-                 "sd   sp, bare_resume_sp, t1\n"               \
-                 "mret\n"                                      \
-                 "8:\n"                                        \
-                 "ld   sp, bare_resume_sp\n"                   \
-                 :                                             \
-                 :                                             \
-                 : "t0", "t1", "memory")
+#define bare_enter_supervisor()                                             \
+    asm volatile("la   t0, 8f\n"                                            \
+                 "sd   t0, bare_resume_at, t1\n"                            \
+                 "sd   sp, bare_resume_sp, t1\n"                            \
+                 "sd   ra, bare_resume_ra, t1\n"                            \
+                 "mret\n"                                                   \
+                 "8:\n"                                                     \
+                 "ld   sp, bare_resume_sp\n"                                \
+                 "ld   ra, bare_resume_ra\n"                                \
+                 :                                                          \
+                 :                                                          \
+                 : "t0", "t1", "t2", "t3", "t4", "t5", "t6", "memory",       \
+                   "a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7",           \
+                   "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7",           \
+                   "s8", "s9", "s10", "s11")
 
 /* Open all of memory to supervisor and user mode.
  *
@@ -84,6 +96,17 @@ extern volatile uint64 bare_resume_sp;
         bare_csr_write(pmpaddr0, 0x3fffffffffffffUL);          \
         bare_csr_write(pmpcfg0, 0xf);                          \
     } while (0)
+
+/* The shared system-call layer (sysfs/bare/syscalls.c), for the programs that need calls and
+ * are not about calls. `bare_syscall` is what a program supplies; everything else is ch07's. */
+#define BARE_SYS_LEAVE 0 /* return to machine mode; every program's last call */
+
+void bare_trap_entry(void);
+void bare_run_in_supervisor(void (*entry)(void));
+uint64 bare_call(uint64 number, uint64 a, uint64 b, uint64 c);
+uint64 bare_syscall(uint64 number, uint64 *frame);
+void bare_process_left(void);
+extern uint64 bare_trap_was_unexpected;
 
 /* Entered from start.S. */
 void bare_start(uint64 hartid);

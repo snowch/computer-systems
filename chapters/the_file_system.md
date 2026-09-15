@@ -176,7 +176,7 @@ what makes a real journalling file system hard.
 
 Three, in `tests/the_file_system/filesystem.c`.
 
-**12.1 — How many block writes does a transaction cost?**
+**20.1 — How many block writes does a transaction cost?**
 Derive the formula. It is graded partly against this chapter's own measurement: whatever you
 arrive at has to turn the blocks the book logged into the writes the book counted, or one of the
 two is wrong.
@@ -185,7 +185,7 @@ two is wrong.
 python3 -m pytest tests/the_file_system/test_problem_1_writes.py
 ```
 
-**12.2 — What must recovery do after a crash at each stage?**
+**20.2 — What must recovery do after a crash at each stage?**
 Five stages; the answer changes exactly once on the way up and once on the way down. Finding where
 is the design.
 
@@ -193,7 +193,7 @@ is the design.
 python3 -m pytest tests/the_file_system/test_problem_2_crash.py
 ```
 
-**12.3 — Which orderings are safe?**
+**20.3 — Which orderings are safe?**
 Six orderings of the same three writes. Exactly one is safe at every point a crash could happen,
 and the question is not which produces the right end state — all six do, if nothing goes wrong.
 

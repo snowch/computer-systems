@@ -30,10 +30,7 @@ tell you* is mandatory, and it is where the target, the tooling or the hardware 
 usually the most useful part of the chapter.
 
 :::{note} Where this book is
-Twenty-four of the thirty chapters are written, and six of the seven appendices. The six
-still being drafted are all of [Part II](#part2), which teaches each primitive of the machine on
-its own before Part IV meets them entangled inside a kernel; each carries its target, its question
-and the measurements it owes you, so the table of contents is already a map of where it is going.
+All thirty chapters are written, and six of the seven appendices.
 
 Thirteen figures are marked *pending*: they are `host` measurements that have to be taken on the
 reference machine, and until they are you will see a box saying so rather than a number. Appendix C

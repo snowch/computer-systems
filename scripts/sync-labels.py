@@ -74,8 +74,25 @@ def sync_titles(text: str) -> str:
     return text
 
 
+#: `**4.2 — ` at the start of a problem. The number before the dot is the chapter's, which moves.
+PROBLEM = re.compile(r"^\*\*\d+\.(\d+) — ", re.MULTILINE)
+
+
+def sync_problems(path: Path, text: str) -> str:
+    """Renumber a chapter's problems to match the chapter.
+
+    These went stale the same way everything else did: a chapter written as ch04 kept calling its
+    problems 4.1 and 4.2 after becoming ch12. The part after the dot is the problem's own and is
+    left alone; only the chapter's half is derived.
+    """
+    chapter = next((c for c in CHAPTERS if path.name == Path(c.path).name), None)
+    if chapter is None:
+        return text
+    return PROBLEM.sub(lambda m: f"**{chapter.number}.{m.group(1)} — ", text)
+
+
 def sync_page(path: Path, text: str) -> str:
-    text = sync_titles(sync_links(text))
+    text = sync_problems(path, sync_titles(sync_links(text)))
     for chapter in CHAPTERS:
         if path.name != Path(chapter.path).name:
             continue

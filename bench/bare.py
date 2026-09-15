@@ -31,6 +31,14 @@ OBJDUMP = "riscv64-linux-gnu-objdump"
 #: stack and zeroes the bss, and a console that puts bytes in a device register.
 RUNTIME = ("start.S", "console.c")
 
+#: Programs that need ch07's system-call machinery without being about it. ch07 itself is absent
+#: on purpose: its whole subject is the stub, so it writes its own out rather than calling a
+#: tidied one, and a reader comparing the two is comparing the same code twice.
+EXTRA_SOURCES: dict[str, tuple[str, ...]] = {
+    "descriptors": ("syscalls.c",),
+    "fork": ("syscalls.c",),
+}
+
 #: Why each flag is here, because on this target a missing one does not produce an error — it
 #: produces a machine that stops for a reason three layers away from the cause.
 #:
@@ -78,7 +86,8 @@ def sources_for(program: str) -> tuple[str, ...]:
     entry code and console it was linked against, because a change to the stack layout in
     ``start.S`` can change what a program prints without its own source moving at all.
     """
-    return tuple(f"sysfs/bare/{name}" for name in (*RUNTIME, f"{program}.c")) + (
+    parts = (*RUNTIME, *EXTRA_SOURCES.get(program, ()), f"{program}.c")
+    return tuple(f"sysfs/bare/{name}" for name in parts) + (
         "sysfs/bare/bare.ld",
         "sysfs/bare/bare.h",
     )
@@ -97,11 +106,40 @@ def build(program: str) -> Path:
         "-o",
         str(elf),
         *[str(BARE_DIR / name) for name in RUNTIME],
+        *[str(BARE_DIR / name) for name in EXTRA_SOURCES.get(program, ())],
         str(BARE_DIR / f"{program}.c"),
     ]
     result = subprocess.run(command, capture_output=True, text=True)
     if result.returncode != 0:
         raise RuntimeError(f"building {program} failed:\n{result.stderr}")
+    return elf
+
+
+def build_from(sources: list[Path], name: str, build_dir: Path | None = None) -> Path:
+    """Build a program from sources the caller names, rather than from `sysfs/bare/<name>.c`.
+
+    This is what lets a problem ask the reader to *write* a bare-metal program: their file is
+    linked against the same runtime, with the same flags and the same linker script, so what they
+    get is the machine the chapters describe and not an approximation of it.
+    """
+    require_bare()
+    directory = build_dir or BUILD_DIR
+    directory.mkdir(parents=True, exist_ok=True)
+    elf = directory / f"{name}.elf"
+    command = [
+        CC,
+        *CFLAGS,
+        "-T",
+        str(BARE_DIR / "bare.ld"),
+        f"-I{BARE_DIR}",
+        "-o",
+        str(elf),
+        *[str(BARE_DIR / runtime) for runtime in RUNTIME],
+        *[str(source) for source in sources],
+    ]
+    result = subprocess.run(command, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(f"building {name} failed:\n{result.stderr}")
     return elf
 
 
@@ -134,7 +172,13 @@ class BareRun:
         return found
 
 
-def run(program: str, *, harts: int = 1, timeout: int = 60) -> BareRun:
+def run(
+    program: str,
+    *,
+    harts: int = 1,
+    timeout: int = 60,
+    image: Path | None = None,
+) -> BareRun:
     """Boot one program and collect everything it printed.
 
     The program stops itself by writing the board's test finisher, so a run that reaches its end
@@ -142,7 +186,7 @@ def run(program: str, *, harts: int = 1, timeout: int = 60) -> BareRun:
     is the usual cause — and the timeout is what turns that into a failed check rather than a CI
     job that never finishes.
     """
-    elf = build(program)
+    elf = build(program) if image is None else image
     command = [
         "qemu-system-riscv64",
         "-machine",

@@ -183,7 +183,7 @@ a measurement with the same measurement is circular.
 
 Three, in `tests/whole_machine_profiling/profiler.c`.
 
-**20.1 — Flat to inclusive.**
+**28.1 — Flat to inclusive.**
 Given a call tree and the profiler's exclusive counts, work out what each function cost including
 everything it called. The symbol you can change is never the one at the top of the flat list.
 
@@ -191,7 +191,7 @@ everything it called. The symbol you can change is never the one at the top of t
 python3 -m pytest tests/whole_machine_profiling/test_problem_1_inclusive.py
 ```
 
-**20.2 — How many samples is a claim?**
+**28.2 — How many samples is a claim?**
 Derive the closed form for the number of samples a share needs before it is worth believing. It is
 small enough to do in your head with a profile on the screen, which is the point of deriving it.
 
@@ -199,7 +199,7 @@ small enough to do in your head with a profile on the screen, which is the point
 python3 -m pytest tests/whole_machine_profiling/test_problem_2_noise.py
 ```
 
-**20.3 — Why the period is random.**
+**28.3 — Why the period is random.**
 A fixed sampling period over a fixed loop visits only some positions. Work out how many, and the
 reason real profilers jitter will follow from the formula rather than from being told.
 

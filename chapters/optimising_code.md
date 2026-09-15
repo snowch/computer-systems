@@ -144,12 +144,12 @@ machine together.
 Three. The first two are predictions about this book's own stamped result; the third is graded by
 compiling.
 
-**16.1 — Which variants does the compiler equalise?**
+**24.1 — Which variants does the compiler equalise?**
 From the source alone, group the five by whether they come out the same at `-O2`. Graded against
 `bench/results/loops-aarch64.json`, which CI regenerates — so a future compiler that changes its
 mind changes the right answer rather than making the book wrong.
 
-**16.2 — Which hand-optimisation backfired, and what does `-O3` do to it?**
+**24.2 — Which hand-optimisation backfired, and what does `-O3` do to it?**
 Name the variant that costs more instructions than writing the loop plainly, and say whether
 raising the level helps.
 
@@ -157,7 +157,7 @@ raising the level helps.
 python3 -m pytest tests/optimising_code/test_problem_1_equalised.py
 ```
 
-**16.3 — Which benchmark loops survive the compiler?**
+**24.3 — Which benchmark loops survive the compiler?**
 Five functions, identical arithmetic, differing only in what becomes of the result. Two are
 removed. Two of the five are traps and they are traps in opposite directions.
 

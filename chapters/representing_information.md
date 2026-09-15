@@ -217,7 +217,7 @@ on a machine whose kernel does save them.
 
 Three, and none of their answers is anywhere in this repository.
 
-**2.1 — Two operations the library does not have.**
+**11.1 — Two operations the library does not have.**
 `tests/representing_information/bitops.c` asks for a byte-order swap and the index of the lowest set bit. Neither is
 in `sysfs/lib/bits.c`, so there is nothing to copy. The test checks *properties* rather than
 cases: swapping twice must give back what you started with, and the bit you name must be set with
@@ -227,7 +227,7 @@ nothing set below it. A property holds for every input, so it cannot be satisfie
 python3 -m pytest tests/representing_information/test_problem_1_bitops.py
 ```
 
-**2.2 — Pack the struct.**
+**11.2 — Pack the struct.**
 Five members, declared in an order that wastes space. Give the order that wastes least. The test
 compiles your arrangement and compares it against the best that arrangement of those types can
 do — it does not tell you the number, and the two rules at the top of this chapter are enough to
@@ -237,7 +237,7 @@ work it out.
 python3 -m pytest tests/representing_information/test_problem_2_reorder.py
 ```
 
-**2.3 — Find the input that makes it wrong.**
+**11.3 — Find the input that makes it wrong.**
 A bounds check that looks correct and is not. Find one triple of values where it says a read fits
 and the read would run off the end.
 

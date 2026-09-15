@@ -139,7 +139,7 @@ tried to prove the locking correct.
 
 Three, in `tests/scheduling_and_context_switches/scheduling.c`.
 
-**11.1 — Must the switch save this register?**
+**19.1 — Must the switch save this register?**
 Given the register's role under [ch12](#machine-level-code-on-riscv)'s convention and whether the value is still needed,
 say whether `swtch` itself has to preserve it.
 
@@ -151,7 +151,7 @@ rather than surprising.
 python3 -m pytest tests/scheduling_and_context_switches/test_problem_1_save.py
 ```
 
-**11.2 — Does the sleeper wake?**
+**19.2 — Does the sleeper wake?**
 Six event sequences; say which loses a wakeup. Two of them use exactly the same six events in
 different orders and have different answers, which is the entire lesson.
 
@@ -159,7 +159,7 @@ different orders and have different answers, which is the entire lesson.
 python3 -m pytest tests/scheduling_and_context_switches/test_problem_2_wakeup.py
 ```
 
-**11.3 — What order does each policy run them in?**
+**19.3 — What order does each policy run them in?**
 Three jobs, three policies, three different answers. First-come-first-served, shortest-job-first
 and round-robin with a quantum of one, on burst lengths chosen so that no two policies agree.
 
