@@ -54,6 +54,12 @@ repository root, so without this every stop reports `No such file or directory` 
 source. It is not that the debug information is missing; it is that the paths in it are relative to
 somewhere else.
 
+**The terminal will look frozen, and it is not.** `make xv6-gdb` starts QEMU halted before the
+first instruction, so there is no boot log and no prompt — that is the `-S` doing its job. `Ctrl-A`
+then `C` switches to QEMU's monitor, where `info registers` answers and confirms the machine is
+alive and stopped; `Ctrl-A` then `C` returns. `Ctrl-A` then `X` exits, and works whether or not
+gdb is attached.
+
 **Port 26000.** Not 1234. xv6's own `.gdbinit` template says 1234 and this repository does not use
 it, because a fixed well-known port is a good way to attach to somebody else's QEMU.
 

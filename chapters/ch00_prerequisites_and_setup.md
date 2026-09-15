@@ -483,8 +483,19 @@ make xv6-qemu
 ```
 
 You should get a boot log, a shell prompt, and `ls` should list a couple of dozen programs.
-`Ctrl-A X` quits QEMU; xv6 itself has no way to halt the machine, which is the first of many
-small reminders that it is a teaching kernel and not a product.
+
+**Getting out again is `Ctrl-A` then `X`.** It is a sequence rather than a chord: hold control and
+press A, let both go, then press X. QEMU exits immediately.
+
+That it is QEMU's key and not xv6's is the point. xv6 has no way to halt the machine — no
+`shutdown`, no `halt`, nothing — so there is nothing to type at the shell prompt that would end
+the session. You are stopping the emulator out from under a kernel that has no opinion about it,
+which is the first of many small reminders that this is a teaching kernel and not a product.
+
+`Ctrl-A` then `C` switches the same terminal to QEMU's own monitor, where `quit` also exits and
+`info registers` works without a debugger attached. `Ctrl-A` then `C` again switches back. This is
+worth knowing before you need it: when [Appendix B](#appendix-b) has QEMU halted at reset waiting
+for a debugger, the terminal looks frozen, and the monitor is how you confirm it is not.
 
 The same thing non-interactively, which is how the tests do it:
 
