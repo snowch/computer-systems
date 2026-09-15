@@ -65,7 +65,7 @@ slowest run is a multiple of the fastest. Nothing was wrong with any of those me
 are all correct observations of what happened.
 
 So "how long does it take" has no answer, and the question has to be replaced. What is reported
-instead is a distribution, which is why `sysfs_summarise` exists and why problem 14.1 asks you to
+instead is a distribution, which is why `sysfs_summarise` exists and why problem 22.1 asks you to
 write it.
 
 **Why the minimum is usually the number to look at.** Everything that can happen to a measurement

@@ -94,7 +94,7 @@ element at several predictability levels and the misprediction rate at each, and
 slope between them. A derived quantity is a fine thing to publish and a bad thing to publish
 without the word "derived" next to it.
 
-The predictor itself is a small saturating counter per branch, and problem 17.3 is simulating one.
+The predictor itself is a small saturating counter per branch, and problem 25.3 is simulating one.
 The alternating pattern is the case that explains the design: a one-bit predictor gets *every*
 branch of `TNTNTN` wrong, because it always predicts what happened last time, and two bits fixes
 exactly that by requiring two surprises before it changes its mind.

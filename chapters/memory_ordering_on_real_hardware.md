@@ -130,7 +130,7 @@ and through padding decisions made in libraries. Finding it in something you did
 **What the memory model permits.** This chapter measures what the machine *does*, and a weak
 memory model is a statement about what it is *allowed* to do. Those are different, and the
 difference is dangerous: a reordering that never happens on this chip may be permitted, and code
-that relies on not seeing it is broken on a chip that does. [ch18](#locks-and-memory-ordering)'s problem 10.2 is about
+that relies on not seeing it is broken on a chip that does. [ch18](#locks-and-memory-ordering)'s problem 18.2 is about
 the permission, deliberately, and no measurement can replace it.
 
 **The cost of getting it wrong.** Every fence in this chapter is correct. What an incorrect one

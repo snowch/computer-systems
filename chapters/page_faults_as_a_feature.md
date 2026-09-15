@@ -162,7 +162,7 @@ kernel can do but kill the process.
 
 So laziness moves a failure from a place where the program can handle it to a place where it
 cannot. That is the whole reason an operating system which overcommits memory needs a policy for
-choosing something to kill, and problem 8.3 is about being able to say precisely when each
+choosing something to kill, and problem 16.3 is about being able to say precisely when each
 version finds out.
 
 ## What we measured

@@ -91,7 +91,7 @@ wrong" but "the walk got this far and stopped", and which level it stopped at sa
 different each time. Stopping at the top level means nothing in that gigabyte of the address space
 exists. Stopping at the bottom means the neighbourhood is mapped and this particular page is not —
 a stack that has grown one page too far, say, rather than a wild pointer. [ch16](#page-faults-as-a-feature) is about
-what a kernel can do with that distinction; problem 7.3 is about extracting it.
+what a kernel can do with that distinction; problem 15.3 is about extracting it.
 
 ### Two clusters and five tables
 
@@ -264,7 +264,7 @@ python3 -m pytest tests/virtual_memory/test_problem_3_fault.py
 
 The RISC-V privileged specification @riscv-isa-privileged defines Sv39 in about four pages:
 the entry format, the walk, and the rules about which reserved encodings fault. Read it after
-problem 7.2 rather than before — the specification is describing something you will by then have
+problem 15.2 rather than before — the specification is describing something you will by then have
 built, and it is much shorter than it looks.
 
 xv6's `kernel/vm.c` @xv6-riscv-source is now readable in full. `walk` is the function you wrote

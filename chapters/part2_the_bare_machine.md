@@ -60,6 +60,15 @@ holds the serial port and a byte array with a cursor, which is enough to show th
 code does not change and not enough to be a file system. The several kinds of open file that make
 a table of them worth keeping are [ch20](#the-file-system).
 
+**A pipe**, and the reason is worth more than the pipe would be. A pipe is not a buffer; it is a
+buffer plus what happens when the buffer is empty. The reader blocks, something else runs, and
+somebody wakes them — and this machine's entire scheduler is *when a process leaves, put the next
+one on*. It moves one way and never comes back, so a process here cannot wait for another and then
+continue. What could be built is a shared array with a cursor, which is the easy half of a pipe and
+teaches the wrong thing by leaving out the half that defines it. Blocking needs a scheduler that
+can switch both ways, which is [ch19](#scheduling-and-context-switches), and sleeping and waking
+are settled there.
+
 And one thing it leaves out on purpose, which is worth saying plainly: **you will use a linker
 script and read assembly here, and neither is explained until [Part III](#part3).** Treat them as
 recipes. [ch12](#machine-level-code-on-riscv) covers the instructions and [ch13](#linking-and-loading) covers the script. This part needs
