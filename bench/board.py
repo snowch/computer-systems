@@ -122,5 +122,80 @@ def governor() -> str:
 
 
 def perf_available() -> bool:
-    """Whether `perf` can be run at all here. ch22's runners need it; nothing else does."""
-    return subprocess.run(["perf", "--version"], capture_output=True, check=False).returncode == 0
+    """Whether `perf` can be run at all here.
+
+    Catches OSError rather than letting it out. A missing binary raises FileNotFoundError from
+    subprocess, so the obvious one-liner turns "perf is not installed" — the single most likely
+    state of a board out of its box — into a traceback rather than the message below that says
+    how to fix it. Found by running it on a machine without perf.
+    """
+    try:
+        return (
+            subprocess.run(["perf", "--version"], capture_output=True, check=False).returncode == 0
+        )
+    except OSError:
+        return False
+
+
+class PerfUnavailableError(RuntimeError):
+    """perf is missing, or this kernel will not let this user read counters."""
+
+
+#: What the kernel has to allow before an unprivileged process may count anything.
+PARANOID = Path("/proc/sys/kernel/perf_event_paranoid")
+
+
+def require_perf(what: str) -> None:
+    """Fail with the remedy rather than with a traceback.
+
+    Both failures are ordinary on a fresh machine and both have a one-line fix, so saying which
+    happened is worth more than any amount of stack. `scripts/verify-setup.py` checks the same two
+    things, so a reader who ran it has seen this once already.
+    """
+    if not perf_available():
+        raise PerfUnavailableError(
+            f"{what} needs perf, which is not on PATH.\n"
+            "  Debian / Ubuntu / Raspberry Pi OS:  sudo apt install linux-perf"
+        )
+    try:
+        paranoid = PARANOID.read_text().strip()
+    except OSError:
+        paranoid = "unreadable"
+    probe = subprocess.run(
+        ["perf", "stat", "-e", "instructions", "true"], capture_output=True, text=True, check=False
+    )
+    if probe.returncode != 0:
+        last = probe.stderr.strip().splitlines()
+        raise PerfUnavailableError(
+            f"{what} needs perf counters and this kernel refused them "
+            f"(perf_event_paranoid={paranoid}).\n"
+            "  sudo sysctl kernel.perf_event_paranoid=1\n"
+            f"perf said: {last[-1] if last else 'nothing'}"
+        )
+
+
+def perf_counters(events: list[str], command: list[str]) -> dict[str, int]:
+    """Count `events` over one run of `command`, as event name to count.
+
+    `-x,` asks for machine-readable output rather than perf's aligned report, because parsing the
+    report means parsing thousands separators that depend on the locale.
+
+    A counter this hardware does not have comes back as `<not supported>` and is recorded as
+    absent rather than as zero. Zero is a measurement; not having the counter is not, and a
+    chapter that printed 0% mispredicts because the PMU lacks the event would be worse than one
+    that printed nothing.
+    """
+    result = subprocess.run(
+        ["perf", "stat", "-x,", "-e", ",".join(events), "--", *command],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise PerfUnavailableError(f"perf stat failed:\n{result.stderr[-2000:]}")
+    counts: dict[str, int] = {}
+    for line in result.stderr.splitlines():
+        fields = line.split(",")
+        if len(fields) >= 3 and fields[0].strip().isdigit():
+            counts[fields[2].strip()] = int(fields[0])
+    return counts

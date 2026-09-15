@@ -26,6 +26,7 @@ BOARD_RUNNERS = {
     "hierarchy-host": "bench.run_hierarchy",
     "bridge-host": "bench.run_bridgecost",
     "loops-host": "bench.run_loopcost",
+    "pipeline-host": "bench.run_pipelinecost",
 }
 
 #: Figures still waiting for a runner to be written, not just for the board to exist.
@@ -37,7 +38,6 @@ BOARD_RUNNERS = {
 RUNNER_NOT_WRITTEN = {
     "faultcost-host",
     "oscost-host",
-    "pipeline-host",
     "profile-host",
     "sharing-host",
     "skid-host",
