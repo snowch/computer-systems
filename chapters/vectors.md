@@ -1,10 +1,10 @@
 ---
 title: "Vectors"
-short_title: "ch29 Vectors"
+short_title: "29 · Vectors"
 ---
 
 (vectors)=
-# ch29 · Vectors
+# 29 · Vectors
 
 :::{note} Chapter header
 :class: dropdown

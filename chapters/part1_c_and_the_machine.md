@@ -1,6 +1,6 @@
 ---
 title: "Part I — C, and what the machine does with it"
-short_title: "Part I"
+short_title: "Introduction"
 ---
 
 (part1)=

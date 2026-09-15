@@ -1,10 +1,10 @@
 ---
 title: "Page Faults as a Feature"
-short_title: "ch16 Page Faults as a Feature"
+short_title: "16 · Page Faults as a Feature"
 ---
 
 (page-faults-as-a-feature)=
-# ch16 · Page Faults as a Feature
+# 16 · Page Faults as a Feature
 
 :::{note} Chapter header
 :class: dropdown

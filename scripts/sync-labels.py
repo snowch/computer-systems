@@ -67,7 +67,7 @@ def sync_titles(text: str) -> str:
     """
     for chapter in CHAPTERS:
         text = re.sub(
-            rf"ch\d\d(\s*·\s*|\s+){re.escape(chapter.title)}",
+            rf"(?<![#\w])ch\d\d(\s*·\s*|\s+){re.escape(chapter.title)}",
             lambda m, c=chapter: f"{c.label}{m.group(1)}{c.title}",
             text,
         )
@@ -83,14 +83,14 @@ def sync_page(path: Path, text: str) -> str:
         draft = " [DRAFT]" if re.search(r'^title: ".*\[DRAFT\]"$', text, re.M) else ""
         text = re.sub(
             r'^short_title: ".*"$',
-            f'short_title: "{chapter.label} {chapter.title}"',
+            f'short_title: "{chapter.display} · {chapter.title}"',
             text,
             count=1,
             flags=re.MULTILINE,
         )
         text = re.sub(
             r"^# .*$",
-            f"# {chapter.label} · {chapter.title}{draft}",
+            f"# {chapter.display} · {chapter.title}{draft}",
             text,
             count=1,
             flags=re.MULTILINE,

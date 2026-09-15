@@ -1,10 +1,10 @@
 ---
 title: "Linking and Loading"
-short_title: "ch13 Linking and Loading"
+short_title: "13 · Linking and Loading"
 ---
 
 (linking-and-loading)=
-# ch13 · Linking and Loading
+# 13 · Linking and Loading
 
 :::{note} Chapter header
 :class: dropdown

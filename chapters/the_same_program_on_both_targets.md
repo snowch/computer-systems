@@ -1,10 +1,10 @@
 ---
 title: "The Same Program on Both Targets"
-short_title: "ch21 The Same Program on Both Targets"
+short_title: "21 · The Same Program on Both Targets"
 ---
 
 (the-same-program-on-both-targets)=
-# ch21 · The Same Program on Both Targets
+# 21 · The Same Program on Both Targets
 
 :::{note} Chapter header
 :class: dropdown

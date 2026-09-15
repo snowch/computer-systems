@@ -1,10 +1,10 @@
 ---
 title: "The Memory Hierarchy"
-short_title: "ch23 The Memory Hierarchy"
+short_title: "23 · The Memory Hierarchy"
 ---
 
 (the-memory-hierarchy)=
-# ch23 · The Memory Hierarchy
+# 23 · The Memory Hierarchy
 
 :::{note} Chapter header
 :class: dropdown

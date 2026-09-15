@@ -1,10 +1,10 @@
 ---
 title: "Machine-Level Code on RISC-V"
-short_title: "ch12 Machine-Level Code on RISC-V"
+short_title: "12 · Machine-Level Code on RISC-V"
 ---
 
 (machine-level-code-on-riscv)=
-# ch12 · Machine-Level Code on RISC-V
+# 12 · Machine-Level Code on RISC-V
 
 :::{note} Chapter header
 :class: dropdown

@@ -1,10 +1,10 @@
 ---
 title: "One Page Table, Two Harts [DRAFT]"
-short_title: "ch06 One Page Table, Two Harts"
+short_title: "06 · One Page Table, Two Harts"
 ---
 
 (one-page-table-two-harts)=
-# ch06 · One Page Table, Two Harts [DRAFT]
+# 06 · One Page Table, Two Harts [DRAFT]
 
 :::{note} Chapter header
 :class: dropdown

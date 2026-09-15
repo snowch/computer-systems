@@ -1,10 +1,10 @@
 ---
 title: "Locks and Memory Ordering"
-short_title: "ch18 Locks and Memory Ordering"
+short_title: "18 · Locks and Memory Ordering"
 ---
 
 (locks-and-memory-ordering)=
-# ch18 · Locks and Memory Ordering
+# 18 · Locks and Memory Ordering
 
 :::{note} Chapter header
 :class: dropdown

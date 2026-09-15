@@ -1,10 +1,10 @@
 ---
 title: "Representing Information"
-short_title: "ch11 Representing Information"
+short_title: "11 · Representing Information"
 ---
 
 (representing-information)=
-# ch11 · Representing Information
+# 11 · Representing Information
 
 :::{note} Chapter header
 :class: dropdown

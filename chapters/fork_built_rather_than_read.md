@@ -1,10 +1,10 @@
 ---
 title: "fork, Built Rather Than Read [DRAFT]"
-short_title: "ch09 fork, Built Rather Than Read"
+short_title: "09 · fork, Built Rather Than Read"
 ---
 
 (fork-built-rather-than-read)=
-# ch09 · fork, Built Rather Than Read [DRAFT]
+# 09 · fork, Built Rather Than Read [DRAFT]
 
 :::{note} Chapter header
 :class: dropdown

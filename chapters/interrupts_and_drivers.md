@@ -1,10 +1,10 @@
 ---
 title: "Interrupts and Drivers"
-short_title: "ch17 Interrupts and Drivers"
+short_title: "17 · Interrupts and Drivers"
 ---
 
 (interrupts-and-drivers)=
-# ch17 · Interrupts and Drivers
+# 17 · Interrupts and Drivers
 
 :::{note} Chapter header
 :class: dropdown

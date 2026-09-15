@@ -1,10 +1,10 @@
 ---
 title: "Interrupts, and Who Is Allowed To [DRAFT]"
-short_title: "ch05 Interrupts, and Who Is Allowed To"
+short_title: "05 · Interrupts, and Who Is Allowed To"
 ---
 
 (interrupts-and-privilege)=
-# ch05 · Interrupts, and Who Is Allowed To [DRAFT]
+# 05 · Interrupts, and Who Is Allowed To [DRAFT]
 
 :::{note} Chapter header
 :class: dropdown

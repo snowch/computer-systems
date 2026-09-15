@@ -1,10 +1,10 @@
 ---
 title: "C Without a Runtime"
-short_title: "ch02 C Without a Runtime"
+short_title: "02 · C Without a Runtime"
 ---
 
 (c-without-a-runtime)=
-# ch02 · C Without a Runtime
+# 02 · C Without a Runtime
 
 :::{note} Chapter header
 :class: dropdown

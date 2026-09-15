@@ -1,10 +1,10 @@
 ---
 title: "A Small Integer That Means a Device [DRAFT]"
-short_title: "ch08 A Small Integer That Means a Device"
+short_title: "08 · A Small Integer That Means a Device"
 ---
 
 (a-small-integer-that-means-a-device)=
-# ch08 · A Small Integer That Means a Device [DRAFT]
+# 08 · A Small Integer That Means a Device [DRAFT]
 
 :::{note} Chapter header
 :class: dropdown

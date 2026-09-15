@@ -1,10 +1,10 @@
 ---
 title: "Traps and System Calls"
-short_title: "ch14 Traps and System Calls"
+short_title: "14 · Traps and System Calls"
 ---
 
 (traps-and-system-calls)=
-# ch14 · Traps and System Calls
+# 14 · Traps and System Calls
 
 :::{note} Chapter header
 :class: dropdown

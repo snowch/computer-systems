@@ -1,10 +1,10 @@
 ---
 title: "A Trap, With Nothing Else in the Machine [DRAFT]"
-short_title: "ch04 A Trap, With Nothing Else in the Machine"
+short_title: "04 · A Trap, With Nothing Else in the Machine"
 ---
 
 (a-trap-with-nothing-else)=
-# ch04 · A Trap, With Nothing Else in the Machine [DRAFT]
+# 04 · A Trap, With Nothing Else in the Machine [DRAFT]
 
 :::{note} Chapter header
 :class: dropdown

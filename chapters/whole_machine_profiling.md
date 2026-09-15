@@ -1,10 +1,10 @@
 ---
 title: "Whole-Machine Profiling"
-short_title: "ch28 Whole-Machine Profiling"
+short_title: "28 · Whole-Machine Profiling"
 ---
 
 (whole-machine-profiling)=
-# ch28 · Whole-Machine Profiling
+# 28 · Whole-Machine Profiling
 
 :::{note} Chapter header
 :class: dropdown

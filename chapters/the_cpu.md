@@ -1,10 +1,10 @@
 ---
 title: "The CPU"
-short_title: "ch25 The CPU"
+short_title: "25 · The CPU"
 ---
 
 (the-cpu)=
-# ch25 · The CPU
+# 25 · The CPU
 
 :::{note} Chapter header
 :class: dropdown

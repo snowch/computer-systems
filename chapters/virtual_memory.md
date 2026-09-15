@@ -1,10 +1,10 @@
 ---
 title: "Virtual Memory"
-short_title: "ch15 Virtual Memory"
+short_title: "15 · Virtual Memory"
 ---
 
 (virtual-memory)=
-# ch15 · Virtual Memory
+# 15 · Virtual Memory
 
 :::{note} Chapter header
 :class: dropdown

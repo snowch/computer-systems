@@ -1,10 +1,10 @@
 ---
 title: "The OS Layer's Cost on Real Hardware"
-short_title: "ch27 The OS Layer's Cost on Real Hardware"
+short_title: "27 · The OS Layer's Cost on Real Hardware"
 ---
 
 (the-os-layers-cost)=
-# ch27 · The OS Layer's Cost on Real Hardware
+# 27 · The OS Layer's Cost on Real Hardware
 
 :::{note} Chapter header
 :class: dropdown

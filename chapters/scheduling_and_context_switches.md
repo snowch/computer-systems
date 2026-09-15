@@ -1,10 +1,10 @@
 ---
 title: "Scheduling and Context Switches"
-short_title: "ch19 Scheduling and Context Switches"
+short_title: "19 · Scheduling and Context Switches"
 ---
 
 (scheduling-and-context-switches)=
-# ch19 · Scheduling and Context Switches
+# 19 · Scheduling and Context Switches
 
 :::{note} Chapter header
 :class: dropdown

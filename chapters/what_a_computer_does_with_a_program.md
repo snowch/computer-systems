@@ -1,10 +1,10 @@
 ---
 title: "What a Computer Does With a Program"
-short_title: "ch10 What a Computer Does With a Program"
+short_title: "10 · What a Computer Does With a Program"
 ---
 
 (what-a-computer-does-with-a-program)=
-# ch10 · What a Computer Does With a Program
+# 10 · What a Computer Does With a Program
 
 :::{note} Chapter header
 :class: dropdown

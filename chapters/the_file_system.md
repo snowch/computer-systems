@@ -1,10 +1,10 @@
 ---
 title: "The File System"
-short_title: "ch20 The File System"
+short_title: "20 · The File System"
 ---
 
 (the-file-system)=
-# ch20 · The File System
+# 20 · The File System
 
 :::{note} Chapter header
 :class: dropdown

@@ -1,10 +1,10 @@
 ---
 title: "A System Call of Your Own [DRAFT]"
-short_title: "ch07 A System Call of Your Own"
+short_title: "07 · A System Call of Your Own"
 ---
 
 (a-system-call-of-your-own)=
-# ch07 · A System Call of Your Own [DRAFT]
+# 07 · A System Call of Your Own [DRAFT]
 
 :::{note} Chapter header
 :class: dropdown

@@ -1,10 +1,10 @@
 ---
 title: "Memory Ordering on Real Hardware"
-short_title: "ch26 Memory Ordering on Real Hardware"
+short_title: "26 · Memory Ordering on Real Hardware"
 ---
 
 (memory-ordering-on-real-hardware)=
-# ch26 · Memory Ordering on Real Hardware
+# 26 · Memory Ordering on Real Hardware
 
 :::{note} Chapter header
 :class: dropdown

@@ -1,10 +1,10 @@
 ---
 title: "Reading C"
-short_title: "ch01 Reading C"
+short_title: "01 · Reading C"
 ---
 
 (reading-c)=
-# ch01 · Reading C
+# 01 · Reading C
 
 :::{note} Chapter header
 :class: dropdown

@@ -1,10 +1,10 @@
 ---
 title: "Optimising Code"
-short_title: "ch24 Optimising Code"
+short_title: "24 · Optimising Code"
 ---
 
 (optimising-code)=
-# ch24 · Optimising Code
+# 24 · Optimising Code
 
 :::{note} Chapter header
 :class: dropdown

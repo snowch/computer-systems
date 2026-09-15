@@ -1,10 +1,10 @@
 ---
 title: "Measuring"
-short_title: "ch22 Measuring"
+short_title: "22 · Measuring"
 ---
 
 (measuring)=
-# ch22 · Measuring
+# 22 · Measuring
 
 :::{note} Chapter header
 :class: dropdown
