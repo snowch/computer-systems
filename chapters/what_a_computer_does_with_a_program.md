@@ -1,10 +1,10 @@
 ---
 title: "What a Computer Does With a Program"
-short_title: "10 · What a Computer Does With a Program"
+short_title: "11 · What a Computer Does With a Program"
 ---
 
 (what-a-computer-does-with-a-program)=
-# 10 · What a Computer Does With a Program
+# 11 · What a Computer Does With a Program
 
 :::{note} Chapter header
 :class: dropdown
@@ -112,7 +112,7 @@ And the second:
 That is a loop: a counter, an accumulation, and a branch backwards. It also has a case for zero
 and a pair of shifts at the top, which are there because `span` is a 32-bit `unsigned` living in
 a 64-bit register and the compiler has to say which half of it means anything —
-[ch11](#representing-information)'s subject, arriving early and uninvited, as it tends to.
+[ch12](#representing-information)'s subject, arriving early and uninvited, as it tends to.
 
 **Nothing about the source said one of these was expensive.** The difference is entirely about
 what the compiler could *prove*. It may replace a loop with its answer only when it can establish
@@ -168,7 +168,7 @@ And then linking:
 The last two rows are the same program. One is linked statically against the GNU C library; the
 other is linked by xv6 against its own user library, which is a few hundred lines and knows how
 to do almost nothing. The difference between them is not your program — your program is
-identical — it is the cost of everything `printf` is prepared to do if asked. [ch13](#linking-and-loading) opens
+identical — it is the cost of everything `printf` is prepared to do if asked. [ch14](#linking-and-loading) opens
 that binary up and says where it all went.
 
 ### The same program in both worlds
@@ -184,14 +184,14 @@ Both print the same six lines. The folded route and the counted route agree, as 
 compute the same sum, and the compiler is not permitted to change the answer, only the work.
 
 What the two targets will not tell you is which route was faster. QEMU has no opinion about time
-worth listening to, and the board is not attached to this chapter. [ch21](#the-same-program-on-both-targets) puts that
-question properly, and [ch24](#optimising-code) answers it.
+worth listening to, and the board is not attached to this chapter. [ch22](#the-same-program-on-both-targets) puts that
+question properly, and [ch25](#optimising-code) answers it.
 
 ## What this cannot tell you
 
 **Nothing here is a cost.** The sizes above are how much space a compiler used, and space is not
 time: a smaller binary is not automatically a faster one, and a function that compiles to two
-instructions is not automatically cheaper than one that compiles to ten. [ch23](#the-memory-hierarchy) shows a
+instructions is not automatically cheaper than one that compiles to ten. [ch24](#the-memory-hierarchy) shows a
 case where more instructions run faster, for reasons entirely outside the instruction count.
 
 **It is one compiler, at one optimisation level.** Everything in this chapter is what `gcc` at
@@ -226,7 +226,7 @@ the text.
 Three. Each has a test that passes only when you have solved it, and none of them has an answer
 stored anywhere in this repository.
 
-**10.1 — Which stage produced this?**
+**11.1 — Which stage produced this?**
 `tests/what_a_computer_does_with_a_program/problem_1_stages.py` gives you fragments of the four files and asks which program
 wrote each one. The fragments are real. The fastest way to solve it is not to stare at them but
 to run `sysfs/tools/stages.sh` yourself and look at your own.
@@ -235,7 +235,7 @@ to run `sysfs/tools/stages.sh` yourself and look at your own.
 python3 -m pytest tests/what_a_computer_does_with_a_program/test_problem_1_stages.py
 ```
 
-**10.2 — Predict the ripple.**
+**11.2 — Predict the ripple.**
 Four edits to the program. For each one, say which stages produce a different file afterwards.
 
 This test stores no expected answers. It makes each change, runs the toolchain, and compares the
@@ -247,7 +247,7 @@ believed that was not true.
 python3 -m pytest tests/what_a_computer_does_with_a_program/test_problem_2_ripple.py
 ```
 
-**10.3 — Take the folding away.**
+**11.3 — Take the folding away.**
 Write a function that computes the same sum and that the compiler *cannot* evaluate for you. It
 must still contain a loop, and the machine must actually run it — the test disassembles what came
 out and looks for a backward branch, so returning a constant will not pass and neither will a
@@ -263,12 +263,12 @@ twice says what the compiler has to be able to prove; take away whichever of tho
 ## Where to go next
 
 The ELF specification @elf-abi defines the object format the assembler writes and the linker
-reads: sections, symbols and relocations, all of which [ch13](#linking-and-loading) takes apart properly. It is
+reads: sections, symbols and relocations, all of which [ch14](#linking-and-loading) takes apart properly. It is
 worth skimming now purely to see that the thing `nm` printed is a documented structure rather
 than a convention.
 
 The RISC-V psABI @riscv-psabi says which relocation types exist and what each one means, and is
 the document that explains why a call to `printf` looks the way it does in the object file.
 
-[ch11](#representing-information) goes back to the thing the compiler was manipulating in the first place: what a
+[ch12](#representing-information) goes back to the thing the compiler was manipulating in the first place: what a
 number is to this machine, and when that answer bites.

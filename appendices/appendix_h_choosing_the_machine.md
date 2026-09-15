@@ -18,7 +18,7 @@ machine at all is in the preface; this is the shopping and the checking.
 A **Raspberry Pi 5 with 4 GB or more**, and an active cooler. That is the whole decision. Every Pi
 5 has the counters this book needs — same SoC, same four cores, no variant where they are missing
 — so there is no specification to compare and nothing to get wrong except the RAM, and only
-because [ch26](#memory-ordering-on-real-hardware) wants four cores with room to work.
+because [ch27](#memory-ordering-on-real-hardware) wants four cores with room to work.
 
 | | What | Why this one |
 |---|---|---|
@@ -33,7 +33,7 @@ holds an SSH key. It never measures anything.
 
 **The cooler earns its line in the table.** A Pi 5 that throttles is running a benchmark at one
 clock speed and finishing it at another, which is not a slow measurement but a wrong one, and one
-of the more instructive ways to be wrong. [ch22](#measuring) treats throttling as a measurement hazard
+of the more instructive ways to be wrong. [ch23](#measuring) treats throttling as a measurement hazard
 and shows how to catch it happening; a cooler means you meet it deliberately rather than in every
 run you ever take.
 
@@ -60,7 +60,7 @@ spent runs through enough machinery that a small experiment occasionally comes o
 Two reasons that is the right trade anyway. The in-order RISC-V option could not sample, which
 cost more than legibility bought. And **every machine you are likely to care about optimising
 reorders**, so learning to attribute cycles on one is the skill that transfers.
-[ch25](#the-cpu) is harder for it, says so in its own header, and is more useful as a result. If you
+[ch26](#the-cpu) is harder for it, says so in its own header, and is more useful as a result. If you
 want the clean version too, an in-order Cortex-A53 — a Pi 3 or Pi Zero 2 W — costs very little,
 and running ch24's experiments on both is an instructive afternoon.
 
@@ -73,12 +73,12 @@ chapter is about getting the machine working.
 % number-ok: SoC specification from @rpi-bcm2712; every figure in this book comes from the machine itself
 Its SoC is a BCM2712: four Arm Cortex-A76 cores at 2.4 GHz, 64 kB of L1 instruction and data
 cache each, 512 kB of L2 per core, and 2 MB of L3 shared between them @rpi-bcm2712. Those are the
-vendor's numbers, and the book does not repeat them anywhere else — [ch23](#the-memory-hierarchy) measures that
+vendor's numbers, and the book does not repeat them anywhere else — [ch24](#the-memory-hierarchy) measures that
 hierarchy rather than quoting it, and comparing what it finds against this paragraph is one of the
 more satisfying results in [Part V](#part5).
 
 Three levels with a private L2 and a shared L3 is a genuinely good shape to learn on. The private
-level shows you locality; the shared one is where [ch26](#memory-ordering-on-real-hardware)'s cores collide.
+level shows you locality; the shared one is where [ch27](#memory-ordering-on-real-hardware)'s cores collide.
 
 ## If you already own something else
 
@@ -89,10 +89,10 @@ is about Raspberry Pis. What a machine actually has to do is short:
 |---|---|---|
 | **Must** | 64-bit Linux, reachable over SSH | |
 | **Must** | `perf stat -e cycles,instructions -- true` returns real counts | **The one requirement with no workaround.** [Part V](#part5) does not exist without it |
-| **Must** | `perf record` can sample | [ch28](#whole-machine-profiling) is entirely sampling. A different capability from counting |
-| **Must** | 4 GB RAM, 4 cores | [ch26](#memory-ordering-on-real-hardware) measures what cores cost each other |
-| **Nice** | NVMe or a fast SSD | Builds and [ch20](#the-file-system) are far less tedious |
-| **Nice** | A SIMD unit the compiler targets — NEON, or RVV 1.0 | [ch29](#vectors) measures vectorisation |
+| **Must** | `perf record` can sample | [ch29](#whole-machine-profiling) is entirely sampling. A different capability from counting |
+| **Must** | 4 GB RAM, 4 cores | [ch27](#memory-ordering-on-real-hardware) measures what cores cost each other |
+| **Nice** | NVMe or a fast SSD | Builds and [ch21](#the-file-system) are far less tedious |
+| **Nice** | A SIMD unit the compiler targets — NEON, or RVV 1.0 | [ch30](#vectors) measures vectorisation |
 | **Nice** | Few kinds of core, and a clock that holds still | Not required. It is why the reference is a Pi rather than a laptop |
 
 An old laptop, a spare desktop, a Rock 5B, another single-board computer you have in a drawer: run
@@ -168,19 +168,19 @@ being told.
 
 | Chapter | What it assumes | What changes on a different machine |
 |---|---|---|
-| [ch23](#the-memory-hierarchy) | A particular cache hierarchy — levels, sizes, line size, TLB reach | The numbers, entirely. The method is the chapter, and measuring *your own* hierarchy is the exercise |
-| [ch25](#the-cpu) | An out-of-order, 4-wide core, and the PMU events it exposes | Width, predictor and event names all differ. On an **in-order** core these experiments get easier to read, not harder |
-| [ch26](#memory-ordering-on-real-hardware) | Four cores, and this interconnect's coherence behaviour | A different core count moves the scaling curve without changing the mechanism. Two cores make the chapter thin |
-| [ch28](#whole-machine-profiling) | That `perf` can **sample**, not only count | Standard on a mainline ARM kernel. Most affordable RISC-V cores cannot, so this is the chapter a RISC-V reader will find they cannot run |
-| [ch29](#vectors) | A vector unit — NEON here | On a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run |
+| [ch24](#the-memory-hierarchy) | A particular cache hierarchy — levels, sizes, line size, TLB reach | The numbers, entirely. The method is the chapter, and measuring *your own* hierarchy is the exercise |
+| [ch26](#the-cpu) | An out-of-order, 4-wide core, and the PMU events it exposes | Width, predictor and event names all differ. On an **in-order** core these experiments get easier to read, not harder |
+| [ch27](#memory-ordering-on-real-hardware) | Four cores, and this interconnect's coherence behaviour | A different core count moves the scaling curve without changing the mechanism. Two cores make the chapter thin |
+| [ch29](#whole-machine-profiling) | That `perf` can **sample**, not only count | Standard on a mainline ARM kernel. Most affordable RISC-V cores cannot, so this is the chapter a RISC-V reader will find they cannot run |
+| [ch30](#vectors) | A vector unit — NEON here | On a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run |
 
 The pattern is worth noticing, because it is the same one the two targets follow. A chapter's
 *mechanism* survives a change of hardware; its *numbers* do not. That is why the book insists on
-stamping every figure with the machine that produced it, and why [ch23](#the-memory-hierarchy) is written as an
+stamping every figure with the machine that produced it, and why [ch24](#the-memory-hierarchy) is written as an
 instruction rather than a table — a cache hierarchy you measured is worth more than one you read.
 
 If none of your numbers resemble the committed ones and you want to know whether that is your
-board or your method: it is almost always your board, and [ch22](#measuring) is where you learn to
+board or your method: it is almost always your board, and [ch23](#measuring) is where you learn to
 tell the difference.
 
 `hardware/README.md` has the requirements, the prompt and the verification step in one place, for

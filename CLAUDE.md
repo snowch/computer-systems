@@ -163,7 +163,7 @@ the length — a short chapter still owes the reader "What this cannot tell you"
 
 ## Chapter status
 
-All thirty chapters are written, and seven of the eight appendices. Appendix C waits for the
+All thirty-one chapters are written, and seven of the eight appendices. Appendix C waits for the
 reference machine: which events a board exposes is a property of its silicon, kernel and firmware
 together and cannot be drafted from a desk. Nineteen figures are `pending=` for the same reason —
 they are `host` measurements and the board has not produced them yet. Regenerate a stub with

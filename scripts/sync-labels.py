@@ -140,8 +140,33 @@ def sync_problem_references(path: Path, text: str) -> str:
     return PROBLEM_REFERENCE.sub(renumber, text)
 
 
+#: ``| ch03 | `c-for-people-who-will-read-a-kernel` | ...`` — a checkpoint row. The tag is the
+#: chapter's identity and the label is its position, so the row can correct itself.
+CHECKPOINT_ROW = re.compile(r"^\| ch(\d\d) \| `([a-z0-9-]+)` \|", re.MULTILINE)
+
+
+def sync_checkpoints(path: Path, text: str) -> str:
+    """Renumber CHECKPOINTS.md from the tag in each row.
+
+    The rows are a table rather than links, so :func:`sync_links` never saw them, and inserting a
+    chapter left every row below it naming a tag that belongs to a different chapter. The tag is
+    derived from the slug and never moves, so it is the half of the row to trust.
+    """
+    if path.name != "CHECKPOINTS.md":
+        return text
+    by_tag = {chapter.tag: chapter for chapter in CHAPTERS if chapter.tag}
+
+    def renumber(m: re.Match[str]) -> str:
+        chapter = by_tag.get(m.group(2))
+        return m.group(0) if chapter is None else f"| {chapter.label} | `{m.group(2)}` |"
+
+    return CHECKPOINT_ROW.sub(renumber, text)
+
+
 def sync_page(path: Path, text: str) -> str:
-    text = sync_problem_references(path, sync_problems(path, sync_titles(sync_links(text))))
+    text = sync_checkpoints(
+        path, sync_problem_references(path, sync_problems(path, sync_titles(sync_links(text))))
+    )
     for chapter in CHAPTERS:
         if path.name != Path(chapter.path).name:
             continue

@@ -1,10 +1,10 @@
 ---
 title: "A Trap, With Nothing Else in the Machine"
-short_title: "04 · A Trap, With Nothing Else in the Machine"
+short_title: "05 · A Trap, With Nothing Else in the Machine"
 ---
 
 (a-trap-with-nothing-else)=
-# 04 · A Trap, With Nothing Else in the Machine
+# 05 · A Trap, With Nothing Else in the Machine
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "04 · A Trap, With Nothing Else in the Machine"
 | | |
 |---|---|
 | **Target** | `bare` — the same machine under QEMU with no operating system on it |
-| **Prerequisites** | [Part II](#part2), [ch03](#c-for-people-who-will-read-a-kernel) |
+| **Prerequisites** | [Part II](#part2), [ch04](#c-for-people-who-will-read-a-kernel) |
 | **What it measures** | The whole of a trap in one program: where the handler was, where the interrupted instruction was, and that execution resumed after it. |
 :::
 
@@ -51,7 +51,7 @@ will: there is no loader to interpret program headers, and no runtime to call be
 
 And the console is two device registers. Writing a byte to one sends it; the other says whether
 the device is ready for the next. That is the whole driver, and it is worth seeing at this size
-once, because the kernel's version in [ch17](#interrupts-and-drivers) is these same two registers
+once, because the kernel's version in [ch18](#interrupts-and-drivers) is these same two registers
 underneath a great deal of machinery about sleeping and waking.
 
 ```{literalinclude} ../sysfs/bare/console.c
@@ -79,7 +79,7 @@ Build it and boot it on a machine with nothing on it:
 
 That is the installation, complete. There is no table of handlers, no registration, and nothing to
 tell the processor which kinds of trap this handler wants — it gets all of them, and sorting out
-which is which is the handler's problem, which is `mcause`'s job and [ch05](#interrupts-and-privilege)'s
+which is which is the handler's problem, which is `mcause`'s job and [ch06](#interrupts-and-privilege)'s
 subject.
 
 ### Where it was, and the mistake that loops for ever
@@ -131,7 +131,7 @@ Here the compiler covers for us:
 It can only do that because it can see both sides. The handler and the code it interrupts were
 compiled together, so the compiler knows which registers are live and saves those. Take that away
 — make the caller a program the compiler has never seen — and there is nobody left to work it out.
-That is [ch07](#a-system-call-of-your-own), and it is why its handler saves all thirty-one by hand.
+That is [ch08](#a-system-call-of-your-own), and it is why its handler saves all thirty-one by hand.
 
 ### Proving it
 
@@ -158,7 +158,7 @@ describing a different processor.
 **How long a trap takes.** Nothing on this target may be timed, and the reason is the reason the
 whole book has two targets: QEMU models no cache, no branch predictor, no store buffer and no
 memory latency, so a duration measured here is a fact about the laptop running the emulator. What
-a trap *costs* is [ch27](#the-os-layers-cost), on hardware, and the answer is more interesting
+a trap *costs* is [ch28](#the-os-layers-cost), on hardware, and the answer is more interesting
 than this chapter could make it look.
 
 **What a real board does before your code runs.** QEMU with `-bios none` hands the processor over
@@ -175,7 +175,7 @@ traps, and one more privilege level is enough to remove it.
 
 Three, and the second one is the one that catches people.
 
-**4.1 — Why four, and when is it not?**
+**5.1 — Why four, and when is it not?**
 The handler adds four to `mepc`. Say what that four actually is, and give a case in this
 instruction set where adding four would resume in the wrong place. The test asks for both, and
 checks the second against an assembled instruction rather than against a claim.
@@ -184,7 +184,7 @@ checks the second against an assembled instruction rather than against a claim.
 python3 -m pytest tests/a_trap_with_nothing_else/test_problem_1_advance.py
 ```
 
-**4.2 — Make it loop, then explain it.**
+**5.2 — Make it loop, then explain it.**
 Remove the line that advances `mepc` and run the program. Record how the harness reports what
 happens, and say precisely which instruction executes how many times. The test checks that your
 description matches a run it performs itself, so "it hangs" does not pass.
@@ -193,7 +193,7 @@ description matches a run it performs itself, so "it hangs" does not pass.
 python3 -m pytest tests/a_trap_with_nothing_else/test_problem_2_forever.py
 ```
 
-**4.3 — Take the compiler's help away.**
+**5.3 — Take the compiler's help away.**
 Rewrite the handler without `interrupt("machine")`, as an ordinary function, and make the program
 still print `register_survived yes`. You will need to say what `mret` is and where it has to go.
 The test compiles your handler, boots it, and checks both the output and that the attribute is
@@ -209,6 +209,6 @@ The privileged specification @riscv-isa-privileged is the source for `mtvec`, `m
 and is worth opening at the machine-mode trap chapter now rather than later: it is short, and
 everything in it is something this program did.
 
-[ch05](#interrupts-and-privilege) adds the thing that arrives without being asked for.
-[ch14](#traps-and-system-calls) is this mechanism again with a kernel around it, which is a good
+[ch06](#interrupts-and-privilege) adds the thing that arrives without being asked for.
+[ch15](#traps-and-system-calls) is this mechanism again with a kernel around it, which is a good
 deal easier to read having built the middle of it.

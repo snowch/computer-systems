@@ -47,6 +47,7 @@ project:
     - title: Part I — C, and what the machine does with it
       children:
         - file: chapters/part1_c_and_the_machine.md
+        - file: chapters/reading_a_listing.md
         - file: chapters/memory_is_one_array.md
         - file: chapters/c_without_a_runtime.md
         - file: chapters/c_for_people_who_will_read_a_kernel.md

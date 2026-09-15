@@ -1,10 +1,10 @@
 ---
 title: "Measuring"
-short_title: "22 · Measuring"
+short_title: "23 · Measuring"
 ---
 
 (measuring)=
-# 22 · Measuring
+# 23 · Measuring
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "22 · Measuring"
 | | |
 |---|---|
 | **Target** | `host` — the reference machine, natively |
-| **Prerequisites** | [ch21](#the-same-program-on-both-targets) |
+| **Prerequisites** | [ch22](#the-same-program-on-both-targets) |
 | **What it measures** | The instrument, before anything is measured with it: `bench/results/measuring-host.json` |
 :::
 
@@ -20,7 +20,7 @@ short_title: "22 · Measuring"
 
 How do I get a number I would defend, and how would I know it was wrong?
 
-[ch21](#the-same-program-on-both-targets) established that the structural model does not predict cost, and pointed at a
+[ch22](#the-same-program-on-both-targets) established that the structural model does not predict cost, and pointed at a
 machine that can answer. Before asking it anything, this chapter asks what it costs to ask — and
 then arranges, deliberately, for the same program to give three different answers.
 
@@ -49,7 +49,7 @@ takes. What it can *resolve* is the smallest change it will ever report — a cl
 nanoseconds and still only ever move in steps of a hundred of them, in which case a measurement of
 anything shorter is a coin toss between zero and one step.
 
-Problem 22.2 turns this into the arithmetic you actually need: given what the work costs and what
+Problem 23.2 turns this into the arithmetic you actually need: given what the work costs and what
 the clock costs, how many repetitions must go inside one timed region before the instrument is
 small enough to ignore.
 
@@ -65,7 +65,7 @@ slowest run is a multiple of the fastest. Nothing was wrong with any of those me
 are all correct observations of what happened.
 
 So "how long does it take" has no answer, and the question has to be replaced. What is reported
-instead is a distribution, which is why `sysfs_summarise` exists and why problem 22.1 asks you to
+instead is a distribution, which is why `sysfs_summarise` exists and why problem 23.1 asks you to
 write it.
 
 **Why the minimum is usually the number to look at.** Everything that can happen to a measurement
@@ -81,13 +81,13 @@ statistics, and the mistake is not picking the wrong one but not noticing there 
 ### Warming up is not a ritual
 
 The first few measurements are slower, always, and for three reasons this book takes apart
-either side of this chapter: [ch16](#page-faults-as-a-feature)'s pages are not yet faulted in, [ch23](#the-memory-hierarchy)'s caches hold somebody
-else's data, and the branch predictor of [ch25](#the-cpu) has never seen this loop.
+either side of this chapter: [ch17](#page-faults-as-a-feature)'s pages are not yet faulted in, [ch24](#the-memory-hierarchy)'s caches hold somebody
+else's data, and the branch predictor of [ch26](#the-cpu) has never seen this loop.
 
 Discarding them is standard practice and is usually done wrong. Warm-up is a property of
 *position*: the first samples are slow because they are first. A slow sample in the middle is
 interference, it is not warm-up, and discarding everything before it throws away good
-measurements in order to hide a bad one. Problem 22.3 is exactly that distinction, and the
+measurements in order to hide a bad one. Problem 23.3 is exactly that distinction, and the
 definition it asks you to implement has a second clause for no other reason.
 
 ### The same program, three answers
@@ -132,7 +132,7 @@ over a link that interrupts it, which brings up something the book has to admit.
 
 [ch00](#prerequisites-and-setup) recommends wiring the board rather than using its radio, and gives a mechanism: a
 wireless driver takes interrupts and runs deferred work on the cores being measured, which is
-[ch17](#interrupts-and-drivers)'s subject arriving where it is least wanted.
+[ch18](#interrupts-and-drivers)'s subject arriving where it is least wanted.
 
 The mechanism is real. The effect on these measurements has never been measured, and ch00 says so.
 That is an unmeasured claim about hardware behaviour in a book whose whole discipline is refusing
@@ -155,7 +155,7 @@ them: landing them is one command.
 particular board, a particular kernel and a particular thermal design. The *method* is what
 transfers, which is the reason this chapter comes before any result.
 
-**How much repetition is enough.** Problem 22.2 gives the arithmetic for making the clock
+**How much repetition is enough.** Problem 23.2 gives the arithmetic for making the clock
 negligible, and that is a necessary condition rather than a sufficient one. How many samples you
 need before the distribution is trustworthy is a question about the distribution's shape, which
 you do not know until you have sampled it.
@@ -163,11 +163,11 @@ you do not know until you have sampled it.
 **What to do about a bimodal result.** Sometimes a benchmark genuinely has two answers — one where
 the data was resident and one where it was not — and every summary statistic in this chapter
 reports something that happened in neither case. When the histogram has two humps, the right
-answer is to find out what distinguishes them, which is [ch28](#whole-machine-profiling)'s equipment.
+answer is to find out what distinguishes them, which is [ch29](#whole-machine-profiling)'s equipment.
 
 **Anything about the compiler having deleted your benchmark.** The loop measured here is written
 so it cannot be optimised away, and the technique — a dependent chain feeding a value the program
-later uses — is stated rather than demonstrated. [ch24](#optimising-code) shows what happens when it is
+later uses — is stated rather than demonstrated. [ch25](#optimising-code) shows what happens when it is
 forgotten, which is a benchmark that measures an empty loop and reports an enormous speedup.
 
 ## Problems
@@ -175,7 +175,7 @@ forgotten, which is a benchmark that measures an empty loop and reports an enorm
 Four. The first three are in `tests/measuring/measuring.c` and are graded against definitions the tests
 compute for themselves. The fourth has no test and no known answer.
 
-**22.1 — Report the distribution.**
+**23.1 — Report the distribution.**
 Minimum, median, 90th percentile and mean, to the definitions in the stub. The even-length case is
 the one that matters: the median of an even set is a sample that happened, not the average of two
 that did.
@@ -184,7 +184,7 @@ that did.
 python3 -m pytest tests/measuring/test_problem_1_summary.py
 ```
 
-**22.2 — How many repetitions?**
+**23.2 — How many repetitions?**
 Given what the work costs and what the clock costs, the smallest count for which the instrument is
 within budget. One of the cases has the answer "one", and one has the answer "this is not a
 question", and both are worth getting right.
@@ -193,7 +193,7 @@ question", and both are worth getting right.
 python3 -m pytest tests/measuring/test_problem_2_repetitions.py
 ```
 
-**22.3 — How much of this is warm-up?**
+**23.3 — How much of this is warm-up?**
 The definition has two clauses and the second is the whole problem: the prefix you discard has to
 have actually been slow. Leave it out and a single spike in the middle lets you throw away every
 good measurement before it.
@@ -202,7 +202,7 @@ good measurement before it.
 python3 -m pytest tests/measuring/test_problem_3_warmup.py
 ```
 
-**22.4 — Falsify something this book says.**
+**23.4 — Falsify something this book says.**
 [ch00](#prerequisites-and-setup) claims that a wireless link adds interrupt and deferred work to the cores being
 measured, and admits it has not measured the effect. Measure it: run one of this chapter's
 workloads with the board on Ethernet and on its radio, with and without traffic, and report
@@ -219,10 +219,10 @@ useful thing to read after this chapter. The experiment is simple enough to repe
 is bad enough to change your habits.
 
 `man 2 clock_gettime` and `man 7 vdso` are worth twenty minutes: the reason reading the clock is
-as cheap as it is, on Linux, is that it usually is not a system call at all — [ch14](#traps-and-system-calls)'s trap
-path is avoided by mapping a page of kernel data into every process, which is [ch15](#virtual-memory)'s
-mechanism used for something [ch15](#virtual-memory) had no reason to mention.
+as cheap as it is, on Linux, is that it usually is not a system call at all — [ch15](#traps-and-system-calls)'s trap
+path is avoided by mapping a page of kernel data into every process, which is [ch16](#virtual-memory)'s
+mechanism used for something [ch16](#virtual-memory) had no reason to mention.
 
-[ch23](#the-memory-hierarchy) is the first chapter to ask the machine a question, and it is the one this book's
-running example has been waiting for: [ch21](#the-same-program-on-both-targets)'s two routes differ because of where the data
+[ch24](#the-memory-hierarchy) is the first chapter to ask the machine a question, and it is the one this book's
+running example has been waiting for: [ch22](#the-same-program-on-both-targets)'s two routes differ because of where the data
 is, and the next chapter measures that hierarchy rather than looking it up.

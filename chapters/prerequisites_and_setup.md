@@ -63,7 +63,7 @@ contains a duration at all.
 
 :::{note} You can start with one target
 The emulated targets run on any laptop and cover Parts I to IV. If the Pi has
-not arrived yet, set up the xv6 half now and come back to the rest before [ch21](#the-same-program-on-both-targets). Nothing
+not arrived yet, set up the xv6 half now and come back to the rest before [ch22](#the-same-program-on-both-targets). Nothing
 in Parts I to IV depends on hardware you do not have.
 :::
 
@@ -104,11 +104,11 @@ command settles it either way, and it is the next section.
 the network, so bandwidth, latency and the grade of cable are all irrelevant to every number in
 this book. What a radio does is make the machine do work you did not ask for: its driver takes
 interrupts and runs softirqs on the same cores your benchmark is running on, and a lossy link adds
-`sshd` wakeups on top. [ch26](#memory-ordering-on-real-hardware) and [ch27](#the-os-layers-cost), which measure small per-operation costs,
+`sshd` wakeups on top. [ch27](#memory-ordering-on-real-hardware) and [ch28](#the-os-layers-cost), which measure small per-operation costs,
 are where that is most likely to show.
 
 Most likely, and not measured. This book has not put a number on it, which means you should treat
-the advice as hygiene rather than as a result — and [ch22](#measuring) will hand you the tools to
+the advice as hygiene rather than as a result — and [ch23](#measuring) will hand you the tools to
 settle it yourself, because "the same benchmark, one thing changed that should not matter" is
 exactly that chapter's subject. Run it both ways and find out whether you can tell.
 
@@ -258,13 +258,13 @@ extension @riscv-sscofpmf, and a kernel on a core without it says so at boot and
 riscv-pmu-sbi: Perf sampling/filtering is not supported as sscof extension is not available
 ```
 
-[ch28](#whole-machine-profiling) is entirely about sampling, so on a machine that cannot do it that chapter has
+[ch29](#whole-machine-profiling) is entirely about sampling, so on a machine that cannot do it that chapter has
 nothing to measure. `verify-setup.py` reports the two capabilities separately, precisely so you
 find out now rather than three hundred pages in.
 
 The distinction generalises well beyond RISC-V, which is why it is worth learning here: a
 profiler that samples is answering a different question, with different failure modes, from a
-counter that totals. [ch22](#measuring) takes that apart properly and [ch28](#whole-machine-profiling) depends on it.
+counter that totals. [ch23](#measuring) takes that apart properly and [ch29](#whole-machine-profiling) depends on it.
 
 ## Setting up the xv6 target
 
@@ -450,7 +450,7 @@ decision has to be a branch and the function comes out with three separate exits
 That is a real difference and you should resist the obvious conclusion about it. Nothing above
 says which is faster. A predicted branch is nearly free and an unpredictable one is not; `csel`
 pays a fixed price either way and creates a dependency the branch does not have. Which wins
-depends on the data, and finding out takes a machine — [ch24](#optimising-code) and [ch25](#the-cpu) are where
+depends on the data, and finding out takes a machine — [ch25](#optimising-code) and [ch26](#the-cpu) are where
 that happens. Here it is enough to have seen that the choice exists.
 
 Two smaller things in the same listings, both worth checking yourself:
@@ -471,7 +471,7 @@ the linker.
 
 The second thing is `sext.w`, which RISC-V emits on each path and AArch64 does not emit anywhere:
 one keeps a 32-bit `int` in a 64-bit register and has to say so, the other has a 32-bit view of the
-register and uses it. Neither is in the C. Both are the kind of thing [ch12](#machine-level-code-on-riscv) is for.
+register and uses it. Neither is in the C. Both are the kind of thing [ch13](#machine-level-code-on-riscv) is for.
 
 :::{note} None of that was typed
 `bench/run_disasm.py` compiled `sysfs/lib/shapes.c` for each architecture, ran `objdump` on the
@@ -480,7 +480,7 @@ regenerates both on every push and fails if one instruction differs.
 
 It can do that because a listing depends on the compiler and not on the machine — so unlike every
 number in [Part V](#part5), this one is checked automatically, every time. Both halves of that sentence
-matter, and [ch22](#measuring) is about the half that cannot be.
+matter, and [ch23](#measuring) is about the half that cannot be.
 :::
 
 ## What we measured
@@ -499,7 +499,7 @@ This is the **LP64** data model: `long` and pointers are 64-bit, `int` stays 32-
 scalar type's alignment equals its size. RISC-V spells its variant LP64D, for the
 double-precision float ABI @riscv-psabi; AArch64 arrives at the same layout by its own route. If
 you have only ever worked on 64-bit Linux this will look like the way things are. It is a choice
-the ABI made — twice, independently — and [ch11](#representing-information) takes it apart.
+the ABI made — twice, independently — and [ch12](#representing-information) takes it apart.
 
 The third table is the one worth staring at. Two structs, the same three members, different
 declaration order:
@@ -510,7 +510,7 @@ declaration order:
 The compiler did not reorder them — C forbids it — so writing them in the order that happened to
 occur to you cost bytes that hold nothing at all. On one struct that is an oddity. Across an array
 of a few million of them it is the difference between fitting in cache and not, which is
-[ch23](#the-memory-hierarchy)'s subject and the first place this chapter's dry table turns into a number of
+[ch24](#the-memory-hierarchy)'s subject and the first place this chapter's dry table turns into a number of
 nanoseconds.
 
 ## What this cannot tell you
@@ -545,7 +545,7 @@ and the five chapters whose reading depends on this particular core say so in th
 can be measuring a different clock at the end than at the start. That is not a flaw in the board —
 it is what most real hardware does, including the laptop you are reading this on, and a book that
 measured on a machine which never throttled would be teaching you to ignore something that
-matters. [ch22](#measuring) deals with it properly.
+matters. [ch23](#measuring) deals with it properly.
 
 ## Problems
 
@@ -573,7 +573,7 @@ from one rule — and it is the same rule on both architectures, which is the po
 `tests/prerequisites_and_setup/ch00ping.c` is a program that prints nothing. Make `ch00ping 41` print `pong 42`. The
 arithmetic is not the exercise: the exercise is the path from a file in a test directory, through
 the cross compiler, into xv6's user library, onto a file system image, into QEMU, and out of a
-shell. If any link in that chain is missing you want to find out now, not in [ch14](#traps-and-system-calls).
+shell. If any link in that chain is missing you want to find out now, not in [ch15](#traps-and-system-calls).
 
 ```bash
 python3 -m pytest tests/prerequisites_and_setup -q          # all three, including the ones you have not solved
@@ -596,7 +596,7 @@ separates a confident answer from a correct one.
 
 For the reference machine, Raspberry Pi's own documentation @rpi-bcm2712 gives the SoC and its
 cache hierarchy, and Arm's Cortex-A76 technical reference manual @arm-a76-trm gives the pipeline
-and the PMU events [ch25](#the-cpu) reads. The RISC-V hardware the preface argues against is
+and the PMU events [ch26](#the-cpu) reads. The RISC-V hardware the preface argues against is
 documented at @starfive-jh7110 and @sifive-u74 if you want to follow that thread. Either way the
 caveat stands: where a document and a measurement disagree, the book prints the measurement and
 says so.
@@ -605,10 +605,10 @@ The study behind that decision is @riscv-pmu-profiling, and it is worth reading 
 touch RISC-V — it is a good example of what it looks like to establish what a machine can actually
 do, rather than what its documentation says it has.
 
-The xv6 source @xv6-riscv-source is worth browsing before [ch10](#what-a-computer-does-with-a-program), without trying to
+The xv6 source @xv6-riscv-source is worth browsing before [ch11](#what-a-computer-does-with-a-program), without trying to
 understand it. Its authors also wrote a commentary on it, which is excellent and which this book
 deliberately does not follow the structure of; if you want a second account of the same kernel
 after [Part IV](#part4), that is the one to read.
 
-[ch10](#what-a-computer-does-with-a-program) takes a single program and follows it from source text to a result on both targets,
+[ch11](#what-a-computer-does-with-a-program) takes a single program and follows it from source text to a result on both targets,
 and asks — for the first of many times — which parts of that journey cost anything.

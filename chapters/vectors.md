@@ -1,10 +1,10 @@
 ---
 title: "Vectors"
-short_title: "29 · Vectors"
+short_title: "30 · Vectors"
 ---
 
 (vectors)=
-# 29 · Vectors
+# 30 · Vectors
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "29 · Vectors"
 | | |
 |---|---|
 | **Target** | `host` — the reference machine, natively |
-| **Prerequisites** | [ch28](#whole-machine-profiling) |
+| **Prerequisites** | [ch29](#whole-machine-profiling) |
 | **Assumes** | a vector unit — NEON on the reference core. This chapter became measurable when [Part V](#part5) moved to AArch64; on a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run. |
 | **What it measures** | Which of five loops the compiler widens, at three sets of flags: `bench/results/vectors-census.json` |
 :::
@@ -53,7 +53,7 @@ out how many full vectors there are, and handling the elements left over at the 
 
 **That tail is the part worth carrying away.** A loop shorter than one vector gains nothing at all
 and pays for all of that code, and a loop one element past a vector pays a whole scalar iteration
-for it. Problem 29.1 is the arithmetic, and the shape it produces is a sawtooth rather than a
+for it. Problem 30.1 is the arithmetic, and the shape it produces is a sawtooth rather than a
 slope.
 
 ### The one that is refused, and why it is right
@@ -73,7 +73,7 @@ output to make it faster.
 The third column is that permission granted. `-ffast-math` says the answer may change, and the
 loop widens immediately, which is the proof that the refusal was never a limitation.
 
-Problem 29.2 is the disagreement itself. You write both orders, the test supplies an input where
+Problem 30.2 is the disagreement itself. You write both orders, the test supplies an input where
 they differ, and you compare the bit patterns. Being told that floating-point addition is not
 associative is not the same as watching the two answers come out different.
 
@@ -84,7 +84,7 @@ associative is not the same as watching the two answers come out different.
 
 Each element needs the one before it. Lanes run at the same time, and the second lane cannot start
 until the first has finished — so there is nothing for the width to do, and no flag changes that.
-This is [ch25](#the-cpu)'s dependence chain again, at a different granularity and with the same
+This is [ch26](#the-cpu)'s dependence chain again, at a different granularity and with the same
 conclusion.
 
 The other refusal is the gather: the elements are independent, but their addresses are not known
@@ -130,7 +130,7 @@ compiler is entitled to judge differently.
 
 **What a wider or different vector unit does.** NEON is a fixed width. Scalable vector extensions
 on both of this book's architectures express the same loops without a compile-time width, which
-changes the tail arithmetic in problem 29.1 fundamentally rather than in degree. The reference
+changes the tail arithmetic in problem 30.1 fundamentally rather than in degree. The reference
 machine does not have one, so this book has nothing to say about it that would be worth reading.
 
 **Whether to write intrinsics.** Nothing here is written in intrinsics, deliberately: a chapter
@@ -138,7 +138,7 @@ about what the compiler decides cannot be written in a notation that takes the d
 it. What that costs is that the book never shows you the ceiling — a hand-written version might
 beat every row of the last table, and this chapter would not know.
 
-**Whether any of this is where your time is going.** [ch28](#whole-machine-profiling) is the chapter for that, and
+**Whether any of this is where your time is going.** [ch29](#whole-machine-profiling) is the chapter for that, and
 the order matters. A loop vectorised to a quarter of its scalar cost, in code holding a hundredth
 of the running time, has bought you well under one per cent.
 
@@ -146,7 +146,7 @@ of the running time, has bought you well under one per cent.
 
 Three, in `tests/vectors/lanes.c`.
 
-**29.1 — What the tail costs.**
+**30.1 — What the tail costs.**
 Speedup from a lane count and a trip count. The case to get right is the loop shorter than one
 vector, which gains nothing and pays for all the code.
 
@@ -154,7 +154,7 @@ vector, which gains nothing and pays for all the code.
 python3 -m pytest tests/vectors/test_problem_1_tail.py
 ```
 
-**29.2 — The same numbers, two orders.**
+**30.2 — The same numbers, two orders.**
 Write the sequential sum and the lane-wise one, and watch them disagree. This is the refusal
 above, reproduced rather than described.
 
@@ -162,7 +162,7 @@ above, reproduced rather than described.
 python3 -m pytest tests/vectors/test_problem_2_reassociation.py
 ```
 
-**29.3 — The speedup you were allowed.**
+**30.3 — The speedup you were allowed.**
 A measured speedup as a fraction of the arithmetic bound. Do not clamp it: the value over a
 hundred is the one that tells you something.
 
@@ -174,8 +174,8 @@ python3 -m pytest tests/vectors/test_problem_3_bound.py
 
 The ARM architecture reference manual's Advanced SIMD chapter is the specification for what those
 instructions do, and the RISC-V vector extension @riscv-isa-unprivileged is worth reading beside
-it for the same reason [ch26](#memory-ordering-on-real-hardware) put two memory models side by side: it solves the tail
-problem in problem 29.1 by not having a compile-time width at all, and seeing one design makes the
+it for the same reason [ch27](#memory-ordering-on-real-hardware) put two memory models side by side: it solves the tail
+problem in problem 30.1 by not having a compile-time width at all, and seeing one design makes the
 other's choices visible as choices.
 
 That is the last measurement in the book. [Appendix A](#appendix-a) collects the reference cards,

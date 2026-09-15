@@ -1,10 +1,10 @@
 ---
 title: "The Same Program on Both Targets"
-short_title: "21 · The Same Program on Both Targets"
+short_title: "22 · The Same Program on Both Targets"
 ---
 
 (the-same-program-on-both-targets)=
-# 21 · The Same Program on Both Targets
+# 22 · The Same Program on Both Targets
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,8 +12,8 @@ short_title: "21 · The Same Program on Both Targets"
 | | |
 |---|---|
 | **Target** | both — `xv6` and `host`, the same source compiled and run on each |
-| **Answers the cost of** | [ch12](#machine-level-code-on-riscv), [ch14](#traps-and-system-calls), [ch15](#virtual-memory) |
-| **Prerequisites** | [ch20](#the-file-system) |
+| **Answers the cost of** | [ch13](#machine-level-code-on-riscv), [ch15](#traps-and-system-calls), [ch16](#virtual-memory) |
+| **Prerequisites** | [ch21](#the-file-system) |
 | **What it measures** | Everything the two targets agree about: `bench/results/bridge-both.json`, and the timing that is not among them |
 :::
 
@@ -53,7 +53,7 @@ target and for the reference machine, run on both, they agree:
 
 That table is worth reading as a statement of how much this book has established. The same source
 produces the same answer on two machines with different kernels, different instruction sets and
-different everything else — because [ch11](#representing-information) checked the data model matched, and because the
+different everything else — because [ch12](#representing-information) checked the data model matched, and because the
 answer is a property of the arithmetic rather than of the machine.
 
 ### What the structure predicts
@@ -121,7 +121,7 @@ very program. A model built on counting instructions is a model of one compiler 
 architecture.
 
 **The memory layout is structural and does transfer**, but not automatically: it transfers because
-both targets are LP64 with the same alignment rules, which [ch11](#representing-information) measured rather than
+both targets are LP64 with the same alignment rules, which [ch12](#representing-information) measured rather than
 assumed. A book that had chosen a 32-bit target for [Part III](#part3) would have had to say something quite
 different here.
 
@@ -149,7 +149,7 @@ predicts the cost badly — is *argued* in this chapter and *demonstrated* in th
 
 **Which of the three differences matters most.** Naming the confound is not separating it. Doing
 that needs configurations this book does not ship: a Linux image for the RISC-V target, or a
-second board. [ch22](#measuring) starts from the machine the book does have.
+second board. [ch23](#measuring) starts from the machine the book does have.
 
 **Whether the structural model is useless.** It is not, and the chapter would be dishonest to
 imply it. It predicts the answer exactly, predicts the layout exactly, and predicts which of two
@@ -161,7 +161,7 @@ ratio, and knowing which questions your model answers is worth more than a bette
 Three, in `tests/the_same_program_on_both_targets/crossing.c`. All three are graded against a table of six configurations that
 the tests read for themselves, so there is no key to find.
 
-**21.1 — What does comparing these two configurations isolate?**
+**22.1 — What does comparing these two configurations isolate?**
 All thirty-six pairs. A comparison isolates a variable only when it is the single thing that
 differs; otherwise it confounds, and the pair this book's own two targets form confounds all
 three.
@@ -170,7 +170,7 @@ three.
 python3 -m pytest tests/the_same_program_on_both_targets/test_problem_1_isolates.py
 ```
 
-**21.2 — Which configuration would test this claim?**
+**22.2 — Which configuration would test this claim?**
 Somebody says the difference is caused by the emulator, or the kernel, or the instruction set.
 Given where you are, name the configuration that would settle it — or say that none of the six
 will, which happens and is the right answer when it does.
@@ -179,7 +179,7 @@ will, which happens and is the right answer when it does.
 python3 -m pytest tests/the_same_program_on_both_targets/test_problem_2_pair.py
 ```
 
-**21.3 — Does this observation transfer?**
+**22.3 — Does this observation transfer?**
 Six things you could observe about the program. Sorting them into structure and cost gets two of
 them wrong.
 
@@ -190,7 +190,7 @@ python3 -m pytest tests/the_same_program_on_both_targets/test_problem_3_transfer
 ## Where to go next
 
 [Part V](#part5). Every chapter of it names the earlier chapter whose cost it measures, and the first of
-them is about the instrument rather than the machine: before measuring anything, [ch22](#measuring)
+them is about the instrument rather than the machine: before measuring anything, [ch23](#measuring)
 asks how you would know a measurement was wrong, which on a board that throttles under sustained
 load is not a rhetorical question.
 

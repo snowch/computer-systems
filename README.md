@@ -59,8 +59,9 @@ not a spec sheet.
 **The emulated targets and the real one do not share an instruction set, and that is
 deliberate.** The kernel small
 enough to read in an afternoon is a RISC-V kernel; the hardware whose counters work is an ARM
-one. `hardware/README.md` shows the evidence. Reading disassembly is confined to ch10–ch12
-(RISC-V) and ch24, ch25 and ch29 (AArch64), with Appendix F translating between them; the rest is
+one. `hardware/README.md` shows the evidence. Reading disassembly is confined to ch11–ch13
+(RISC-V) and ch25, ch26 and ch30 (AArch64), with ch01 introducing both and Appendix F
+translating between them; the rest is
 method, and method does not have an architecture.
 
 ```bash

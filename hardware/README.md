@@ -67,10 +67,11 @@ So staying on RISC-V would have cost **two of Part V's eight chapters**, plus a 
 plus tooling that breaks between distro releases. A Raspberry Pi costs none of those things.
 
 **What it costs instead** is instruction-set continuity between Part IV and Part V — and only
-in the Part V chapters that actually read disassembly: ch24, ch25 and ch29. The other five are
+in the Part V chapters that actually read disassembly: ch25, ch26 and ch30 — ch01 introduces
+both instruction sets. The other five are
 method, and method does not have an architecture. Appendix F is the translation, written for the
-reader who learned RISC-V in ch12 and is about to read AArch64 in ch24. A reader who learned RISC-V assembly in Part III
-and then reads AArch64 in ch24 is not being failed by the book; they are being shown that the
+reader who learned RISC-V in ch13 and is about to read AArch64 in ch25. A reader who learned RISC-V assembly in Part III
+and then reads AArch64 in ch25 is not being failed by the book; they are being shown that the
 concepts were never about RISC-V. That is worth more than the tidiness it replaces.
 
 ## What the machine has to do

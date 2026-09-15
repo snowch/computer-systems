@@ -1,10 +1,10 @@
 ---
 title: "Memory Is One Array"
-short_title: "01 · Memory Is One Array"
+short_title: "02 · Memory Is One Array"
 ---
 
 (memory-is-one-array)=
-# 01 · Memory Is One Array
+# 02 · Memory Is One Array
 
 :::{note} Chapter header
 :class: dropdown
@@ -28,7 +28,7 @@ each answer against what was actually compiled, rather than against a rule about
 Change the program as you go. `./run firstc` builds and runs it, and the fastest way to find out
 whether you have the model is to predict what an edit will print before you make it.
 
-If you are not sure whether you want this chapter or [ch02](#c-without-a-runtime), [Part I](#part1) routes you.
+If you are not sure whether you want this chapter or [ch03](#c-without-a-runtime), [Part I](#part1) routes you.
 
 ## The material
 
@@ -166,11 +166,11 @@ whatever binds tightest first.** `[]` and `()` bind tighter than `*`, and parent
 | `int *const p` | `p` is a pointer you may not repoint |
 
 The two pairs that differ only by parentheses are the ones worth doing slowly, and they are not a
-puzzle for its own sake: `int (*f)(void)` is how every device driver in [ch17](#interrupts-and-drivers) is reached,
+puzzle for its own sake: `int (*f)(void)` is how every device driver in [ch18](#interrupts-and-drivers) is reached,
 and `const int *` against `int *const` is a distinction the kernel relies on constantly to say
 which of two things it promises not to change.
 
-Problem 1.1 is this table, generated rather than reproduced, with declarations you have not seen.
+Problem 2.1 is this table, generated rather than reproduced, with declarations you have not seen.
 
 ### Arrays, and the promise that decays
 
@@ -179,8 +179,8 @@ one. Pass an array to a function and what arrives is a pointer — the length do
 it, and cannot, because there is nowhere in a pointer to put it.
 
 That is why every kernel function that takes a buffer also takes a count. It is not a style
-preference; there is no alternative. [ch03](#c-for-people-who-will-read-a-kernel) shows the compiler discarding a length written
-into a parameter's brackets, and [ch11](#representing-information) has the bug it causes.
+preference; there is no alternative. [ch04](#c-for-people-who-will-read-a-kernel) shows the compiler discarding a length written
+into a parameter's brackets, and [ch12](#representing-information) has the bug it causes.
 
 A string in C is this with one extra convention: a run of bytes ending in a zero one. The zero is
 the length, stored at the end instead of the beginning, which makes finding the length a loop
@@ -204,7 +204,7 @@ the time the machine sees this; they became the numbers in those two load instru
 when the file was compiled. `a->b` is exactly `(*a).b`, and both are exactly "an offset on a
 load".
 
-Which offsets, and why they are not simply the sum of the sizes before them, is [ch11](#representing-information)'s
+Which offsets, and why they are not simply the sum of the sizes before them, is [ch12](#representing-information)'s
 subject. What matters here is that the offsets are fixed at compile time and the name is gone.
 
 ### Casts, and the two kinds of arithmetic
@@ -221,7 +221,7 @@ arithmetic are different:
 - **Address arithmetic** does not. `(uint64)p + 1` moves by one byte.
 
 Rounding an address to a page boundary is address arithmetic, which is why the kernel's rounding
-macros cast to an integer type first and back afterwards. Problem 1.3 is writing the pair, and the
+macros cast to an integer type first and back afterwards. Problem 2.3 is writing the pair, and the
 thing to get right is that rounding *up* and rounding *down* are not the same expression with a
 different sign.
 
@@ -238,7 +238,7 @@ struct node {
 
 A struct cannot contain itself — it would have no size — but it can contain the *index* of another
 one, because an index has a size regardless of what it points at. That single fact is what every
-list, tree and queue in the kernel is built from, and [ch02](#c-without-a-runtime) shows the free list xv6 makes
+list, tree and queue in the kernel is built from, and [ch03](#c-without-a-runtime) shows the free list xv6 makes
 out of the free memory itself.
 
 ## What we measured
@@ -250,7 +250,7 @@ that `*&x` is `x`, and that consecutive elements are one element apart rather th
 runner refuses to stamp a run where either stops holding, because both are things the chapter asks
 the reader to take on trust for exactly as long as it takes to run the program.
 
-Then three listings, captured by the machinery [ch10](#what-a-computer-does-with-a-program) explains and re-captured by CI on
+Then three listings, captured by the machinery [ch11](#what-a-computer-does-with-a-program) explains and re-captured by CI on
 every push, showing the same two facts from underneath: that `p + 1` compiles to a different
 offset for different element types, and that `->` compiles to an offset on a load with no lookup
 of any kind.
@@ -264,31 +264,31 @@ standard @iso-c17 and would hold on a compiler emitting entirely different instr
 are assumed from whatever language you already use, and C spells them much as it does. What is not
 assumed is the memory model, because that is the part your other language was built to hide.
 
-**What any of this costs.** No chapter in this part has a clock in it. [ch23](#the-memory-hierarchy) is where
+**What any of this costs.** No chapter in this part has a clock in it. [ch24](#the-memory-hierarchy) is where
 following a pointer acquires a price, and the price turns out to depend on something no listing
 here can show.
 
 **Why the struct offsets are what they are.** This chapter shows that `->` becomes an offset. It
 does not say how the offsets were chosen, and the answer is not "add up the sizes" —
-[ch11](#representing-information) takes it apart.
+[ch12](#representing-information) takes it apart.
 
 **Whether your pointer is valid.** C has no answer to this and neither does the hardware, until
-[ch16](#page-faults-as-a-feature). A pointer is an index; nothing checks that the index means anything.
+[ch17](#page-faults-as-a-feature). A pointer is an index; nothing checks that the index means anything.
 
 ## Problems
 
 Three, in `tests/memory_is_one_array/declarations.c`.
 
-**1.1 — Say what each declaration names.**
+**2.1 — Say what each declaration names.**
 The test generates declarations and asks you to classify them. The two that differ only by
 parentheses are the point of the exercise, and they are the two you will meet again in
-[ch17](#interrupts-and-drivers).
+[ch18](#interrupts-and-drivers).
 
 ```bash
 python3 -m pytest tests/memory_is_one_array/test_problem_1_declarations.py
 ```
 
-**1.2 — Walk a buffer without an index.**
+**2.2 — Walk a buffer without an index.**
 Reimplement three of the routines the kernel supplies for itself, using pointers that move rather
 than a subscript. The versions in `kernel/string.c` are written this way, and this is so you can
 read them.
@@ -297,7 +297,7 @@ read them.
 python3 -m pytest tests/memory_is_one_array/test_problem_2_walking.py
 ```
 
-**1.3 — Round an address both ways.**
+**2.3 — Round an address both ways.**
 Given an address and a power-of-two alignment, round up and round down. Address arithmetic, not
 pointer arithmetic, and the kernel does this on every page it touches.
 
@@ -311,7 +311,7 @@ The C standard @iso-c17 is the authority on the claims here that are about the l
 than about a compiler — §6.5.6 on what adding an integer to a pointer means, and §6.7.6 on how a
 declaration is assembled from the inside out.
 
-[ch02](#c-without-a-runtime) is the other half of this part, and the half for a reader who already writes C. Every
+[ch03](#c-without-a-runtime) is the other half of this part, and the half for a reader who already writes C. Every
 assumption an application programmer is entitled to make — that allocation succeeds, that the
 library is there, that memory is memory, that one thread is looking — stops holding, and the
 chapter counts what is missing rather than asserting it.
