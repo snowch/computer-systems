@@ -1,10 +1,10 @@
 ---
 title: "The Same Program on Both Targets"
-short_title: "ch20 The Same Program on Both Targets"
+short_title: "ch21 The Same Program on Both Targets"
 ---
 
 (the-same-program-on-both-targets)=
-# ch20 · The Same Program on Both Targets
+# ch21 · The Same Program on Both Targets
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,8 +12,8 @@ short_title: "ch20 The Same Program on Both Targets"
 | | |
 |---|---|
 | **Target** | both — `xv6` and `host`, the same source compiled and run on each |
-| **Answers the cost of** | [ch11](#machine-level-code-on-riscv), [ch13](#traps-and-system-calls), [ch14](#virtual-memory) |
-| **Prerequisites** | [ch19](#the-file-system) |
+| **Answers the cost of** | [ch12](#machine-level-code-on-riscv), [ch14](#traps-and-system-calls), [ch15](#virtual-memory) |
+| **Prerequisites** | [ch20](#the-file-system) |
 | **What it measures** | Everything the two targets agree about: `bench/results/bridge-both.json`, and the timing that is not among them |
 :::
 
@@ -53,7 +53,7 @@ target and for the reference machine, run on both, they agree:
 
 That table is worth reading as a statement of how much this book has established. The same source
 produces the same answer on two machines with different kernels, different instruction sets and
-different everything else — because [ch10](#representing-information) checked the data model matched, and because the
+different everything else — because [ch11](#representing-information) checked the data model matched, and because the
 answer is a property of the arithmetic rather than of the machine.
 
 ### What the structure predicts
@@ -121,7 +121,7 @@ very program. A model built on counting instructions is a model of one compiler 
 architecture.
 
 **The memory layout is structural and does transfer**, but not automatically: it transfers because
-both targets are LP64 with the same alignment rules, which [ch10](#representing-information) measured rather than
+both targets are LP64 with the same alignment rules, which [ch11](#representing-information) measured rather than
 assumed. A book that had chosen a 32-bit target for Part III would have had to say something quite
 different here.
 
@@ -149,7 +149,7 @@ predicts the cost badly — is *argued* in this chapter and *demonstrated* in th
 
 **Which of the three differences matters most.** Naming the confound is not separating it. Doing
 that needs configurations this book does not ship: a Linux image for the RISC-V target, or a
-second board. [ch21](#measuring) starts from the machine the book does have.
+second board. [ch22](#measuring) starts from the machine the book does have.
 
 **Whether the structural model is useless.** It is not, and the chapter would be dishonest to
 imply it. It predicts the answer exactly, predicts the layout exactly, and predicts which of two
@@ -190,7 +190,7 @@ python3 -m pytest tests/the_same_program_on_both_targets/test_problem_3_transfer
 ## Where to go next
 
 Part V. Every chapter of it names the earlier chapter whose cost it measures, and the first of
-them is about the instrument rather than the machine: before measuring anything, [ch21](#measuring)
+them is about the instrument rather than the machine: before measuring anything, [ch22](#measuring)
 asks how you would know a measurement was wrong, which on a board that throttles under sustained
 load is not a rhetorical question.
 

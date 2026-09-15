@@ -20,27 +20,28 @@ a tag in the repository yet are planned, not published.
 | ch05 | `interrupts-and-privilege` | `bare/timer.c`, `bare/privilege.c` — the CLINT, and a refusal |
 | ch06 | `one-page-table-two-harts` | `bare/paging.c`, `bare/harts.c` — one mapping, and two cores |
 | ch07 | `a-system-call-of-your-own` | `bare/syscall.c` — a number, arguments, a result, a dispatch |
-| ch08 | `fork-built-rather-than-read` | `bare/fork.c` — a process table, a copied address space, two of them |
-| ch09 | `what-a-computer-does-with-a-program` | `sysfs/tools/stages.sh`, the two-route sum, and `sameanswer` on both targets |
-| ch10 | `representing-information` | `sysfs/lib/bits.c` — the bit operations, tested; `signedness.c`, the four functions ch10 reads |
-| ch11 | `machine-level-code-on-riscv` | `sysfs/tools/framewalk.c` — walk a stack from a frame pointer; `sysfs/lib/frames.c` |
-| ch12 | `linking-and-loading` | `sysfs/tools/elfdump.c` — an ELF reader with no `<elf.h>` in it |
-| ch13 | `traps-and-system-calls` | First kernel patch: the per-cause trap census, printed on Ctrl-T |
-| ch14 | `virtual-memory` | Page-table dumper; `sysfs/tools/sv39.c` |
-| ch15 | `page-faults-as-a-feature` | Lazy allocation and copy-on-write, with reference counting |
-| ch16 | `interrupts-and-drivers` | Per-source interrupt counters; a driver for a simple device |
-| ch17 | `locks-and-memory-ordering` | Lock contention counters |
-| ch18 | `scheduling-and-context-switches` | Context-switch counters and per-process accounting |
-| ch19 | `the-file-system` | Block-I/O tracing through all seven layers |
-| ch20 | `the-same-program-on-both-targets` | The bridge program, built for both targets from one source |
-| ch21 | `measuring` | `sysfs/lib/timing.c` — the book's clock. **Joins `CORE_SOURCES` here** |
-| ch22 | `the-memory-hierarchy` | `pointer_chase.c`, `stride.c` — the hierarchy, measured |
-| ch23 | `optimising-code` | `loops.c` — the transformation set |
-| ch24 | `the-cpu` | `branches.c`, `ilp.c` |
-| ch25 | `memory-ordering-on-real-hardware` | `sharing.c`, `atomics.c` — four cores, and what they cost each other |
-| ch26 | `the-os-layers-cost` | `syscall.c`, `fault.c`, `switch.c` |
-| ch27 | `whole-machine-profiling` | `profile.sh`, and the program to diagnose with it |
-| ch28 | `vectors` | `sysfs/bench/vectorisable.c` — loops that do and do not auto-vectorise |
+| ch08 | `a-small-integer-that-means-a-device` | `bare/descriptors.c` — one table, two backends, and `read`/`write` through it |
+| ch09 | `fork-built-rather-than-read` | `bare/fork.c` — a process table, a copied address space, two of them |
+| ch10 | `what-a-computer-does-with-a-program` | `sysfs/tools/stages.sh`, the two-route sum, and `sameanswer` on both targets |
+| ch11 | `representing-information` | `sysfs/lib/bits.c` — the bit operations, tested; `signedness.c`, the four functions ch11 reads |
+| ch12 | `machine-level-code-on-riscv` | `sysfs/tools/framewalk.c` — walk a stack from a frame pointer; `sysfs/lib/frames.c` |
+| ch13 | `linking-and-loading` | `sysfs/tools/elfdump.c` — an ELF reader with no `<elf.h>` in it |
+| ch14 | `traps-and-system-calls` | First kernel patch: the per-cause trap census, printed on Ctrl-T |
+| ch15 | `virtual-memory` | Page-table dumper; `sysfs/tools/sv39.c` |
+| ch16 | `page-faults-as-a-feature` | Lazy allocation and copy-on-write, with reference counting |
+| ch17 | `interrupts-and-drivers` | Per-source interrupt counters; a driver for a simple device |
+| ch18 | `locks-and-memory-ordering` | Lock contention counters |
+| ch19 | `scheduling-and-context-switches` | Context-switch counters and per-process accounting |
+| ch20 | `the-file-system` | Block-I/O tracing through all seven layers |
+| ch21 | `the-same-program-on-both-targets` | The bridge program, built for both targets from one source |
+| ch22 | `measuring` | `sysfs/lib/timing.c` — the book's clock. **Joins `CORE_SOURCES` here** |
+| ch23 | `the-memory-hierarchy` | `pointer_chase.c`, `stride.c` — the hierarchy, measured |
+| ch24 | `optimising-code` | `loops.c` — the transformation set |
+| ch25 | `the-cpu` | `branches.c`, `ilp.c` |
+| ch26 | `memory-ordering-on-real-hardware` | `sharing.c`, `atomics.c` — four cores, and what they cost each other |
+| ch27 | `the-os-layers-cost` | `syscall.c`, `fault.c`, `switch.c` |
+| ch28 | `whole-machine-profiling` | `profile.sh`, and the program to diagnose with it |
+| ch29 | `vectors` | `sysfs/bench/vectorisable.c` — loops that do and do not auto-vectorise |
 | — | `v1.0` | Appendices complete, every figure measured, errata reconciled |
 
 ## Two tags that mean something different
@@ -57,7 +58,7 @@ has been generated from the board, and `ERRATA.md` has nothing outstanding.
 
 ```bash
 ./scripts/ci-check.sh                     # must be clean
-git tag -a virtual-memory -m "ch14 — Virtual Memory"
+git tag -a virtual-memory -m "ch15 — Virtual Memory"
 git push origin virtual-memory
 ```
 

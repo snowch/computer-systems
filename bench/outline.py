@@ -206,6 +206,17 @@ CHAPTERS: tuple[Chapter, ...] = (
     ),
     Chapter(
         8,
+        "a_small_integer_that_means_a_device",
+        "A Small Integer That Means a Device",
+        PART_BARE,
+        "bare",
+        "Why does a program name what it reads by number, and what does that number find?",
+        "a-small-integer-that-means-a-device",
+        owes="One `write` call reaching two unrelated destinations through one table, and the "
+        "table itself printed before and after a descriptor is duplicated.",
+    ),
+    Chapter(
+        9,
         "fork_built_rather_than_read",
         "fork, Built Rather Than Read",
         PART_BARE,
@@ -216,7 +227,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "of pages copied — beside what xv6 copies for the same call.",
     ),
     Chapter(
-        9,
+        10,
         "what_a_computer_does_with_a_program",
         "What a Computer Does With a Program",
         PART_MACHINE,
@@ -228,7 +239,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "the same program under `perf stat` (`host`).",
     ),
     Chapter(
-        10,
+        11,
         "representing_information",
         "Representing Information",
         PART_MACHINE,
@@ -240,7 +251,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "actually compile to.",
     ),
     Chapter(
-        11,
+        12,
         "machine_level_code_on_riscv",
         "Machine-Level Code on RISC-V",
         PART_MACHINE,
@@ -252,7 +263,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "Static facts about emitted code, never timings.",
     ),
     Chapter(
-        12,
+        13,
         "linking_and_loading",
         "Linking and Loading",
         PART_MACHINE,
@@ -262,7 +273,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         owes="Section and segment tables for xv6's own binaries, and what `exec` maps where.",
     ),
     Chapter(
-        13,
+        14,
         "traps_and_system_calls",
         "Traps and System Calls",
         PART_OS,
@@ -273,7 +284,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "register and CSR state saved and restored.",
     ),
     Chapter(
-        14,
+        15,
         "virtual_memory",
         "Virtual Memory",
         PART_OS,
@@ -284,7 +295,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "consumed per mapping.",
     ),
     Chapter(
-        15,
+        16,
         "page_faults_as_a_feature",
         "Page Faults as a Feature",
         PART_OS,
@@ -294,7 +305,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         owes="Fault counts and pages allocated for one workload, with each feature and without it.",
     ),
     Chapter(
-        16,
+        17,
         "interrupts_and_drivers",
         "Interrupts and Drivers",
         PART_OS,
@@ -304,7 +315,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         owes="Interrupt counts by source over a defined workload, and buffer occupancy under load.",
     ),
     Chapter(
-        17,
+        18,
         "locks_and_memory_ordering",
         "Locks and Memory Ordering",
         PART_OS,
@@ -315,7 +326,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "orders, and what turning interrupts off costs beside them.",
     ),
     Chapter(
-        18,
+        19,
         "scheduling_and_context_switches",
         "Scheduling and Context Switches",
         PART_OS,
@@ -325,7 +336,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         owes="Context switches per workload, bytes saved per switch, and the exact register set.",
     ),
     Chapter(
-        19,
+        20,
         "the_file_system",
         "The File System",
         PART_OS,
@@ -336,7 +347,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "one-byte write and the disk traffic it causes.",
     ),
     Chapter(
-        20,
+        21,
         "the_same_program_on_both_targets",
         "The Same Program on Both Targets",
         PART_OS,
@@ -348,7 +359,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "board's, against QEMU's meaningless equivalent, shown deliberately.",
     ),
     Chapter(
-        21,
+        22,
         "measuring",
         "Measuring",
         PART_COST,
@@ -360,7 +371,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "not matter.",
     ),
     Chapter(
-        22,
+        23,
         "the_memory_hierarchy",
         "The Memory Hierarchy",
         PART_COST,
@@ -375,7 +386,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "against the vendor's figures; TLB reach.",
     ),
     Chapter(
-        23,
+        24,
         "optimising_code",
         "Optimising Code",
         PART_COST,
@@ -389,7 +400,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "done it.",
     ),
     Chapter(
-        24,
+        25,
         "the_cpu",
         "The CPU",
         PART_COST,
@@ -405,7 +416,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "length; the cost of a mispredict, derived and stated as derived.",
     ),
     Chapter(
-        25,
+        26,
         "memory_ordering_on_real_hardware",
         "Memory Ordering on Real Hardware",
         PART_COST,
@@ -420,7 +431,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "cost; scaling from one core to four.",
     ),
     Chapter(
-        26,
+        27,
         "the_os_layers_cost",
         "The OS Layer's Cost on Real Hardware",
         PART_COST,
@@ -436,7 +447,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "baseline; a minor fault against a major one; `vDSO` against a real trap.",
     ),
     Chapter(
-        27,
+        28,
         "whole_machine_profiling",
         "Whole-Machine Profiling",
         PART_COST,
@@ -451,7 +462,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "deliberately.",
     ),
     Chapter(
-        28,
+        29,
         "vectors",
         "Vectors",
         PART_COST,

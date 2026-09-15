@@ -1,10 +1,10 @@
 ---
 title: "The OS Layer's Cost on Real Hardware"
-short_title: "ch26 The OS Layer's Cost on Real Hardware"
+short_title: "ch27 The OS Layer's Cost on Real Hardware"
 ---
 
 (the-os-layers-cost)=
-# ch26 · The OS Layer's Cost on Real Hardware
+# ch27 · The OS Layer's Cost on Real Hardware
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,8 +12,8 @@ short_title: "ch26 The OS Layer's Cost on Real Hardware"
 | | |
 |---|---|
 | **Target** | `host` — the reference machine, natively |
-| **Answers the cost of** | [ch13](#traps-and-system-calls), [ch15](#page-faults-as-a-feature), [ch18](#scheduling-and-context-switches) |
-| **Prerequisites** | [ch25](#memory-ordering-on-real-hardware) |
+| **Answers the cost of** | [ch14](#traps-and-system-calls), [ch16](#page-faults-as-a-feature), [ch19](#scheduling-and-context-switches) |
+| **Prerequisites** | [ch26](#memory-ordering-on-real-hardware) |
 | **What it measures** | The trap instruction and the call that hides it: `bench/results/oscalls-aarch64.json` |
 :::
 
@@ -52,7 +52,7 @@ Here is a system call written as the instruction it is.
 
 Three ideas and nothing else: put the call number where the kernel's convention says to put it,
 execute the instruction that changes privilege level, come back. There is no stack frame, because
-by [ch11](#machine-level-code-on-riscv)'s rule a function that calls nothing needs none — and this function does not
+by [ch12](#machine-level-code-on-riscv)'s rule a function that calls nothing needs none — and this function does not
 call anything. It traps.
 
 Note which convention that is. The register holding the call number is not one the C calling
@@ -76,7 +76,7 @@ crossed, and the compiler will not tell you, because the compiler does not know 
 
 ### The instrument and the thing
 
-[ch21](#measuring) built the clock and, more usefully, measured what reading it costs. This is the
+[ch22](#measuring) built the clock and, more usefully, measured what reading it costs. This is the
 chapter where that second number decides whether a measurement means anything.
 
 The trap is small. If the thing being timed is of the same order as the instrument, a harness
@@ -112,12 +112,12 @@ cost me".
 ```{include} _generated/the-os-layers-cost-faults.md
 ```
 
-[ch15](#page-faults-as-a-feature) counted faults and made the case that a fault is a feature — the mechanism by which
+[ch16](#page-faults-as-a-feature) counted faults and made the case that a fault is a feature — the mechanism by which
 a page arrives only when it is wanted. It counted them because that target could not price them,
 and it could not price them because the interesting difference between two faults is where the
 data came from, and QEMU's storage is a host file.
 
-Both faults in that table enter the kernel by exactly the path [ch13](#traps-and-system-calls) traced, and leave it
+Both faults in that table enter the kernel by exactly the path [ch14](#traps-and-system-calls) traced, and leave it
 the same way. Nothing about the trap differs. What differs is whether the kernel could answer
 from memory it already had or had to go and ask storage, and problem 19.3 is the classification:
 four facts about an address, and the order the rules apply in.
@@ -136,7 +136,7 @@ process, and a few requests — reading the clock is the one that matters here �
 running that code with no privilege change at all. The answer comes from memory the kernel keeps
 up to date, and the process never traps.
 
-This closes a loop opened five chapters earlier. [ch21](#measuring)'s clock is cheap enough to time
+This closes a loop opened five chapters earlier. [ch22](#measuring)'s clock is cheap enough to time
 things with *because* of this mechanism; a clock that trapped would be an instrument of the same
 order as much of what Part V measures, and most of this book's timings would be impossible to
 take in the form they are taken.
@@ -166,7 +166,7 @@ dividing this chapter's figure into it would explain none of it.
 **What it costs your program.** These calls are made in a loop, with the caches and the TLB warm
 and the branch predictor already trained on the path. A call made once, in the middle of other
 work, also evicts what that work had cached, and the eviction is charged to the code that runs
-next rather than to the call. Finding that in a real program is [ch27](#whole-machine-profiling)'s equipment.
+next rather than to the call. Finding that in a real program is [ch28](#whole-machine-profiling)'s equipment.
 
 **Anything about a differently configured kernel.** The same source, built with different
 hardening options or booted with different mitigations, is a different measurement. This book
@@ -195,7 +195,7 @@ python3 -m pytest tests/the_os_layers_cost/test_problem_1_instrument.py
 ```
 
 **19.2 — What can it not be cheaper than?**
-Turn [ch13](#traps-and-system-calls)'s instruction count into a floor, given an IPC and a clock. Divide once at the
+Turn [ch14](#traps-and-system-calls)'s instruction count into a floor, given an IPC and a clock. Divide once at the
 end: a bound that has been rounded twice is an estimate.
 
 ```bash
@@ -213,10 +213,10 @@ python3 -m pytest tests/the_os_layers_cost/test_problem_3_faults.py
 ## Where to go next
 
 The AArch64 exception model is specified in the ARM architecture reference manual, and reading
-its description of what `svc` does beside [ch13](#traps-and-system-calls)'s account of `ecall` is the fastest way to
+its description of what `svc` does beside [ch14](#traps-and-system-calls)'s account of `ecall` is the fastest way to
 see which parts of a trap are architecture and which are xv6. The system-call numbering the
 listing above uses is Linux's own, in `include/uapi/asm-generic/unistd.h` in the kernel tree.
 
-[ch27](#whole-machine-profiling) stops assuming you know which code to look at. Everything measured so far has been
+[ch28](#whole-machine-profiling) stops assuming you know which code to look at. Everything measured so far has been
 code this book wrote, in a loop chosen to isolate one mechanism; the next chapter is about finding
 the expensive part of a program nobody here has read.

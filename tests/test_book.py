@@ -507,13 +507,13 @@ def test_every_part_three_chapter_either_pairs_or_is_deliberately_standalone():
     added in front of it, at which point index 2 quietly became a different part and the test
     started reporting the toolchain chapters as unpaired. The last part is what this is about.
     """
-    standalone = {"ch21", "ch27", "ch28"}
+    standalone = {"measuring", "whole-machine-profiling", "vectors"}
     unpaired = {
         chapter.label
         for chapter in CHAPTERS
         if chapter.part == PARTS[-1].title
         and not chapter.answers
-        and chapter.label not in standalone
+        and chapter.anchor not in standalone
     }
     assert not unpaired, (
         f"these Part V chapters neither pair with an earlier chapter nor are listed as "
@@ -530,7 +530,7 @@ def test_the_preface_shows_the_pairing(chapter: Chapter):
     machines working. ch20 is exempt: it crosses the seam rather than costing one mechanism, and
     the preface discusses it in prose instead.
     """
-    if chapter.label == "ch20":
+    if chapter.anchor == "the-same-program-on-both-targets":
         pytest.skip("ch20 is the crossing itself, not a row in the table")
     preface = (ROOT / "index.md").read_text()
     section = preface[preface.index("### One argument, not two tutorials") :]

@@ -8,7 +8,7 @@ second is for things that are **not finished**, recorded so they are not mistake
 
 | Date | Chapter | What was wrong | Fixed in |
 |---|---|---|---|
-| 2026-09-14 | ch00, PLAN §5 | Part V was planned on RISC-V hardware. No purchasable RISC-V core both counts and samples, so ch27 (profiling) and ch28 (vectors) would have been unmeasurable, on boards that are hard to buy. | Part V moved to AArch64; the evidence and the cost are recorded in `hardware/README.md` and PLAN §5, and the five hardware-dependent chapters say what they assume in their own headers. |
+| 2026-09-14 | ch00, PLAN §5 | Part V was planned on RISC-V hardware. No purchasable RISC-V core both counts and samples, so ch28 (profiling) and ch29 (vectors) would have been unmeasurable, on boards that are hard to buy. | Part V moved to AArch64; the evidence and the cost are recorded in `hardware/README.md` and PLAN §5, and the five hardware-dependent chapters say what they assume in their own headers. |
 
 When a measurement is corrected, the result file is regenerated and the fragment re-rendered in
 the same commit, so the site and the PDF cannot disagree with this table.
@@ -24,7 +24,7 @@ These are stated in the chapters that have them as well; this is the index.
 | Specifications are cited without a revision | `references.bib` | The entries name the specification and its publisher but pin no revision, because none of the current content depends on a version-specific detail. Any chapter that comes to depend on one must pin the revision it consulted in the citation itself. |
 | Vendor documentation URLs | `references.bib` (`starfive-jh7110`, `sifive-u74`, `rpi-bcm2712`, `arm-a76-trm`) | Vendor documentation portals are reorganised. Check each against the copy actually consulted when the chapter citing it is written, and record the document title and date rather than relying on the link. |
 | Board setup steps are generic | ch00, "Setting up the board" | Flashing and boot-source selection depend on the image released at the time. The chapter gives the shape of the task and the generic commands and delegates the specifics to the vendor's quick-start, deliberately — a procedure the author cannot re-verify on every image is one that would rot silently. |
-| Chapters ch09–ch28 are stubs | `chapters/` | Each carries its target, its question, its prerequisites and the measurements it owes, from `bench/outline.py`, plus `[DRAFT]` in its title. PLAN.md §4 has the long version. |
+| Chapters ch10–ch29 are stubs | `chapters/` | Each carries its target, its question, its prerequisites and the measurements it owes, from `bench/outline.py`, plus `[DRAFT]` in its title. PLAN.md §4 has the long version. |
 
 ## Reporting
 

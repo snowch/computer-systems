@@ -1,10 +1,10 @@
 ---
 title: "Optimising Code"
-short_title: "ch23 Optimising Code"
+short_title: "ch24 Optimising Code"
 ---
 
 (optimising-code)=
-# ch23 · Optimising Code
+# ch24 · Optimising Code
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,8 +12,8 @@ short_title: "ch23 Optimising Code"
 | | |
 |---|---|
 | **Target** | `host` — the reference machine, natively |
-| **Answers the cost of** | [ch11](#machine-level-code-on-riscv) |
-| **Prerequisites** | [ch22](#the-memory-hierarchy) |
+| **Answers the cost of** | [ch12](#machine-level-code-on-riscv) |
+| **Prerequisites** | [ch23](#the-memory-hierarchy) |
 | **What it measures** | What the compiler makes of five hand-optimisations: `bench/results/loops-aarch64.json` |
 :::
 
@@ -21,7 +21,7 @@ short_title: "ch23 Optimising Code"
 
 What will the compiler do for me, and what will it never do?
 
-[ch22](#the-memory-hierarchy) ended by saying that a memory access costs what it costs because of what else the
+[ch23](#the-memory-hierarchy) ended by saying that a memory access costs what it costs because of what else the
 machine could do at the same time. This chapter asks the question that follows immediately: given
 that, what is worth changing in the source — and the first thing to establish is which changes the
 compiler is going to make anyway.
@@ -76,7 +76,7 @@ compiler's version was better.
 That is the general shape of the answer to this chapter's question. **The compiler will do the
 local, mechanical transformations better than you will. What it will not do is change your
 algorithm, your data layout, or your memory access pattern** — and those are the things
-[ch22](#the-memory-hierarchy) showed dominate.
+[ch23](#the-memory-hierarchy) showed dominate.
 
 ### The benchmark that measured nothing
 
@@ -107,7 +107,7 @@ a spectacular speedup, and nothing about it looks wrong.
 Instruction counts say whether a source change survived the compiler. They do not say what the
 surviving differences cost, and this chapter has been careful to claim only the first. The plain,
 hoisted and reduced variants are the same program and therefore cost the same; whether the longer
-unrolled version is also *slower* is a question about [ch24](#the-cpu)'s machinery, and the answer is
+unrolled version is also *slower* is a question about [ch25](#the-cpu)'s machinery, and the answer is
 not automatic — more instructions can run in less time.
 
 ## What we measured
@@ -121,7 +121,7 @@ The timings are pending. They need the board and they are a different question.
 
 ## What this cannot tell you
 
-**Whether fewer instructions is faster.** It very often is not, and [ch24](#the-cpu) is the chapter
+**Whether fewer instructions is faster.** It very often is not, and [ch25](#the-cpu) is the chapter
 with the equipment to say why. Instruction count is the wrong unit for the final answer and the
 right unit for *this* question, which is whether the source change survived at all.
 
@@ -172,6 +172,6 @@ which passes each level enables, and it is a shorter and more useful document th
 suggests. The two entries worth finding are the ones that name the transformations problems 16.1
 and 16.2 are about.
 
-[ch24](#the-cpu) is the chapter this one keeps deferring to. Instruction counts cannot say whether
+[ch25](#the-cpu) is the chapter this one keeps deferring to. Instruction counts cannot say whether
 the longer program is the slower one, because a modern core does not execute instructions one at a
 time, and the next chapter is about what it does instead.

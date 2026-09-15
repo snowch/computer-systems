@@ -1,10 +1,10 @@
 ---
 title: "Linking and Loading"
-short_title: "ch12 Linking and Loading"
+short_title: "ch13 Linking and Loading"
 ---
 
 (linking-and-loading)=
-# ch12 · Linking and Loading
+# ch13 · Linking and Loading
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "ch12 Linking and Loading"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch11](#machine-level-code-on-riscv) |
+| **Prerequisites** | [ch12](#machine-level-code-on-riscv) |
 | **What it measures** | Sections, segments and symbol counts for xv6's own binaries, read by this book's reader: `bench/results/elf-xv6.json` |
 :::
 
@@ -20,7 +20,7 @@ short_title: "ch12 Linking and Loading"
 
 How does a file on disk become an address space?
 
-[ch09](#what-a-computer-does-with-a-program) left the linker as the stage that "fills in the holes" and moved on. This chapter
+[ch10](#what-a-computer-does-with-a-program) left the linker as the stage that "fills in the holes" and moved on. This chapter
 opens the file it produced. By the end you should be able to say what is in an executable, which
 parts of it will exist at run time and which will not, and what `exec` has to do to turn one into
 a running program — and you should have written enough of a reader to believe it.
@@ -92,7 +92,7 @@ every binary, so the format does not. It records how much space to provide and t
 it, already zeroed. A global array of a million integers costs a number in a header.
 
 Two consequences worth carrying forward. A binary's size on disk tells you little about its size in
-memory — [ch09](#what-a-computer-does-with-a-program)'s comparison of glibc against xv6's library was about code, and this is the
+memory — [ch10](#what-a-computer-does-with-a-program)'s comparison of glibc against xv6's library was about code, and this is the
 other direction. And "zero-initialised" is not a favour the language does you at some cost; it is
 the *cheapest* initial state, because it is the one the loader was going to produce anyway.
 
@@ -109,8 +109,8 @@ consulted. **An ELF executable is a set of instructions to a loader, and the cod
 
 The permissions matter here in a way they do not in a file. The code segment is mapped
 executable-and-not-writable and the data segment writable-and-not-executable, and those two
-prohibitions are enforced by the page table rather than by convention. [ch14](#virtual-memory) is where that
-enforcement becomes a mechanism you can see and [ch15](#page-faults-as-a-feature) is where breaking it becomes a fault
+prohibitions are enforced by the page table rather than by convention. [ch15](#virtual-memory) is where that
+enforcement becomes a mechanism you can see and [ch16](#page-faults-as-a-feature) is where breaking it becomes a fault
 you can catch.
 
 ### What is left over
@@ -122,7 +122,7 @@ and no names.
 
 That is worth knowing in both directions: the names in a backtrace are a convenience the file
 happens to carry, and a production binary that has been stripped has thrown them away
-permanently — which is why [ch27](#whole-machine-profiling) spends time on keeping symbols around for the profiler.
+permanently — which is why [ch28](#whole-machine-profiling) spends time on keeping symbols around for the profiler.
 
 ## What we measured
 
@@ -140,7 +140,7 @@ of what the complicated version is doing.
 **How dynamic linking works.** Every binary here is statically linked to a fixed address. Shared
 libraries, relocation at load time, the procedure linkage table and the global offset table are
 all absent, and they are the majority of what happens when you run a program on Linux.
-[ch26](#the-os-layers-cost) touches the cost of the machinery; this chapter does not describe it.
+[ch27](#the-os-layers-cost) touches the cost of the machinery; this chapter does not describe it.
 
 **What a linker script decides.** xv6 has one, it fixes the addresses in the table above, and this
 chapter shows the *result* of it rather than the language it is written in. Linker scripts are a
@@ -148,7 +148,7 @@ small, strange, badly documented language, and the honest thing is to say that t
 from somewhere and point at the file.
 
 **Anything about time.** Loading a program costs something — pages have to be allocated and bytes
-copied — and this chapter has no way to measure it. [ch26](#the-os-layers-cost) measures what a process costs to
+copied — and this chapter has no way to measure it. [ch27](#the-os-layers-cost) measures what a process costs to
 start on a machine with a clock.
 
 **Whether the symbol table is "wasted space".** It is not loaded, so it costs no memory at run
@@ -212,5 +212,5 @@ to end. It is the shortest complete answer to "what happens when you run a progr
 anywhere, and having written a reader for the format it consumes, you will find it contains no
 surprises at all. That feeling is what Part III was for.
 
-[ch13](#traps-and-system-calls) begins Part IV by asking what happens when that program asks the kernel for
+[ch14](#traps-and-system-calls) begins Part IV by asking what happens when that program asks the kernel for
 something.

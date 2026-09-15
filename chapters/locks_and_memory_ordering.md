@@ -1,10 +1,10 @@
 ---
 title: "Locks and Memory Ordering"
-short_title: "ch17 Locks and Memory Ordering"
+short_title: "ch18 Locks and Memory Ordering"
 ---
 
 (locks-and-memory-ordering)=
-# ch17 · Locks and Memory Ordering
+# ch18 · Locks and Memory Ordering
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "ch17 Locks and Memory Ordering"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch16](#interrupts-and-drivers) |
+| **Prerequisites** | [ch17](#interrupts-and-drivers) |
 | **What it measures** | What a lock is made of, in instructions: `bench/results/locks-xv6.json`, `bench/results/ordering-riscv64.json` |
 :::
 
@@ -20,7 +20,7 @@ short_title: "ch17 Locks and Memory Ordering"
 
 What breaks when two harts touch the same memory, and what is the minimum fix?
 
-[ch16](#interrupts-and-drivers) ended owing an answer. Its census counters are incremented from interrupt handlers
+[ch17](#interrupts-and-drivers) ended owing an answer. Its census counters are incremented from interrupt handlers
 and from process context, on three harts, with no lock anywhere — and the patch says so in a
 comment that amounts to *this is fine*. Either that is defensible or the book has been printing
 numbers from a data structure that races, so this chapter has to settle it.
@@ -61,7 +61,7 @@ building for cannot use them directly; it emits a call to a routine that decides
 Whether the same C is one instruction or a function call is therefore not a property of the source
 or even of the architecture, but of what the compiler was told to assume.
 
-[ch23](#optimising-code) is where being told matters.
+[ch24](#optimising-code) is where being told matters.
 
 ### The ordering is not the atomicity
 
@@ -130,7 +130,7 @@ price of that safety rather than of the mutual exclusion.
 
 Back to the debt.
 
-[ch16](#interrupts-and-drivers)'s counters are incremented without a lock from several harts and from interrupt
+[ch17](#interrupts-and-drivers)'s counters are incremented without a lock from several harts and from interrupt
 context. On the evidence above, that increment is three instructions and updates can certainly be
 lost. **The patch is therefore wrong in the sense that its counts can be short, and right in the
 sense that this is the correct trade.**
@@ -142,7 +142,7 @@ being measured. The measurement would change what it measures, and it would chan
 amount of the same order as some of the things this book wants to count.
 
 So the census is deliberately approximate where approximation is cheap, and the results that
-matter — the ones in [ch15](#page-faults-as-a-feature) and [ch16](#interrupts-and-drivers) — are the ones fixed by the workload rather
+matter — the ones in [ch16](#page-faults-as-a-feature) and [ch17](#interrupts-and-drivers) — are the ones fixed by the workload rather
 than accumulated under a race. That is a decision rather than an oversight, and it is the kind of
 decision that should be written down where a reader can disagree with it.
 
@@ -155,7 +155,7 @@ executed and nothing was timed.
 The plan for this chapter promised contention counts per lock, and said the interleavings would be
 deterministic under QEMU. Neither survived contact. Contention is a statement about how long one
 hart made another wait, which is a duration this target cannot supply — and the interleavings are
-not deterministic either: [ch16](#interrupts-and-drivers) had already found the console's interrupt count varying
+not deterministic either: [ch17](#interrupts-and-drivers) had already found the console's interrupt count varying
 between identical runs, which is the same emulator being the same amount of non-deterministic.
 The chapter measures what is actually there instead, and this paragraph is here because a plan
 that turned out to be wrong is worth more to a reader than a plan quietly rewritten.
@@ -165,7 +165,7 @@ that turned out to be wrong is worth more to a reader than a plan quietly rewrit
 **What a lock costs.** The whole of it. An uncontended acquire is one atomic instruction, and what
 that instruction costs depends on whether the cache line is already held exclusively, which
 depends on what the other cores have been doing. A contended one costs however long you waited.
-Both are questions about hardware, and [ch25](#memory-ordering-on-real-hardware) asks them on a machine that can answer.
+Both are questions about hardware, and [ch26](#memory-ordering-on-real-hardware) asks them on a machine that can answer.
 
 **Whether the fence is doing anything here.** RVWMO permits the reorderings the fence forbids, and
 QEMU is entitled to but does not perform them: it executes each hart's instructions in order.
@@ -178,8 +178,8 @@ in, and a hart can be unlucky indefinitely. Real kernels care, use queues and ti
 them. None of that is visible in an instruction count.
 
 **Sleep locks, which the chapter has not mentioned.** xv6 has them, they are what
-[ch16](#interrupts-and-drivers)'s console driver used, and they are built on top of the spinlock plus the scheduler
-rather than beside it. [ch18](#scheduling-and-context-switches) has the scheduler and can say what sleeping actually means.
+[ch17](#interrupts-and-drivers)'s console driver used, and they are built on top of the spinlock plus the scheduler
+rather than beside it. [ch19](#scheduling-and-context-switches) has the scheduler and can say what sleeping actually means.
 
 ## Problems
 
@@ -231,6 +231,6 @@ xv6's `kernel/spinlock.c` @xv6-riscv-source is sixty lines and now contains noth
 seen the machine code for. The comments around the `__sync_synchronize()` calls say what the fences
 are for in the authors' own words, which is a useful second opinion on this chapter's.
 
-[ch18](#scheduling-and-context-switches) is the other half of what the console driver did. A process that cannot get on
+[ch19](#scheduling-and-context-switches) is the other half of what the console driver did. A process that cannot get on
 gives up the CPU, and something has to decide what runs instead — which needs a lock, taken across
 a context switch, in a way that ought to be impossible.

@@ -34,9 +34,11 @@ from bench.outline import CHAPTERS  # noqa: E402
 
 BY_ANCHOR = {chapter.anchor: chapter for chapter in CHAPTERS}
 
-#: Every page whose text may name a chapter.
+#: Every page whose text may name a chapter. The planning and provenance documents are in here
+#: too: they are not published, but they are read constantly while writing, and a plan that names
+#: the wrong chapter is worse than one that names none.
 PAGES = (
-    [ROOT / "index.md"]
+    [ROOT / "index.md", ROOT / "PLAN.md", ROOT / "ORIGINALITY.md", ROOT / "CHECKPOINTS.md"]
     + sorted((ROOT / "chapters").glob("*.md"))
     + sorted((ROOT / "appendices").glob("*.md"))
 )
@@ -55,8 +57,25 @@ def sync_links(text: str) -> str:
     return LINK.sub(fix, text)
 
 
+def sync_titles(text: str) -> str:
+    """Fix a label sitting immediately before its chapter's title.
+
+    ``## ch01 · Reading C``, ``| ch23 The Memory Hierarchy |``, ``ch08-descriptors`` in a
+    checkpoint list — wherever the title is right there, the title is the identity and the number
+    beside it is derived. A bare ``ch14`` with nothing to disambiguate it is left alone: there is
+    no way to tell this book's from another book's, and guessing is worse than leaving it.
+    """
+    for chapter in CHAPTERS:
+        text = re.sub(
+            rf"ch\d\d(\s*·\s*|\s+){re.escape(chapter.title)}",
+            lambda m, c=chapter: f"{c.label}{m.group(1)}{c.title}",
+            text,
+        )
+    return text
+
+
 def sync_page(path: Path, text: str) -> str:
-    text = sync_links(text)
+    text = sync_titles(sync_links(text))
     for chapter in CHAPTERS:
         if path.name != Path(chapter.path).name:
             continue

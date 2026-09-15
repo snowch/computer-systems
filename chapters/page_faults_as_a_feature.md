@@ -1,10 +1,10 @@
 ---
 title: "Page Faults as a Feature"
-short_title: "ch15 Page Faults as a Feature"
+short_title: "ch16 Page Faults as a Feature"
 ---
 
 (page-faults-as-a-feature)=
-# ch15 · Page Faults as a Feature
+# ch16 · Page Faults as a Feature
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "ch15 Page Faults as a Feature"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch14](#virtual-memory) |
+| **Prerequisites** | [ch15](#virtual-memory) |
 | **What it measures** | Pages allocated and faults taken for one workload, under each of the kernel's two allocation policies: `bench/results/faults-xv6.json` |
 :::
 
@@ -20,7 +20,7 @@ short_title: "ch15 Page Faults as a Feature"
 
 What can a kernel do with a fault it expected?
 
-[ch14](#virtual-memory) ended with a walk that stopped and a level to report it at. That was presented as a
+[ch15](#virtual-memory) ended with a walk that stopped and a level to report it at. That was presented as a
 diagnosis, which is how a fault is usually introduced: something went wrong, and here is where.
 But a walk stops whenever an entry is absent, and **the kernel decides which entries are absent**.
 So a kernel can arrange to be told, by hardware, at the exact moment a particular address is
@@ -43,7 +43,7 @@ when a particular byte is used, and everything in this chapter is built on that 
 
 ### The instruction runs again
 
-Here is the difference from [ch13](#traps-and-system-calls) that makes it work, and it is one line of the kernel.
+Here is the difference from [ch14](#traps-and-system-calls) that makes it work, and it is one line of the kernel.
 
 After a system call, `usertrap` advances the saved program counter past the `ecall` before
 returning, because the call has been made and the program should carry on with the next
@@ -110,7 +110,7 @@ barely touched; a lazy request touched in full; an eager request of the same siz
 ```
 
 Read the first four rows as one sentence. Most of what was asked for lazily was never allocated,
-and the pages that were allocated each cost one entry into the kernel — the whole of [ch13](#traps-and-system-calls)'s
+and the pages that were allocated each cost one entry into the kernel — the whole of [ch14](#traps-and-system-calls)'s
 trap path, plus a walk, plus an allocation, for every one of them.
 
 That is the exchange rate, and it is the thing usually left out. Laziness is nearly always
@@ -172,7 +172,7 @@ for, and that the numbers describe a bug rather than a policy.
 
 **What a fault costs.** Not a single duration appears above, and it could not honestly. A fault's
 cost is the trap path, the walk, the allocation and whatever the TLB and the caches make of the
-interruption — and this target models none of the last part. [ch26](#the-os-layers-cost) prices the whole shape
+interruption — and this target models none of the last part. [ch27](#the-os-layers-cost) prices the whole shape
 on hardware. Until then, "seventeen faults" is a count of kernel entries and not a claim about
 time.
 
@@ -241,7 +241,7 @@ xv6's `vmfault` in `kernel/vm.c` @xv6-riscv-source is the handler this chapter m
 shorter than this section. Read it beside `sys_sbrk` in `kernel/sysproc.c`, which is where the two
 policies are chosen between — the whole difference is one branch.
 
-[ch16](#interrupts-and-drivers) stays with the same mechanism and changes what raises it. A page fault is the CPU
+[ch17](#interrupts-and-drivers) stays with the same mechanism and changes what raises it. A page fault is the CPU
 interrupting itself about something it was doing; a device interrupt is somebody else entirely,
 with no relationship to the instruction that happens to be running, and that difference turns out
 to matter more than it sounds.

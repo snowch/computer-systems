@@ -1,10 +1,10 @@
 ---
 title: "Scheduling and Context Switches"
-short_title: "ch18 Scheduling and Context Switches"
+short_title: "ch19 Scheduling and Context Switches"
 ---
 
 (scheduling-and-context-switches)=
-# ch18 · Scheduling and Context Switches
+# ch19 · Scheduling and Context Switches
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "ch18 Scheduling and Context Switches"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch17](#locks-and-memory-ordering) |
+| **Prerequisites** | [ch18](#locks-and-memory-ordering) |
 | **What it measures** | What a context switch moves, and the one switch count a workload decides: `bench/results/switch-xv6.json` |
 :::
 
@@ -20,7 +20,7 @@ short_title: "ch18 Scheduling and Context Switches"
 
 What exactly is saved, and what does it mean to say a thread "runs"?
 
-[ch17](#locks-and-memory-ordering) ended on something that ought to be impossible: a lock held across a context switch.
+[ch18](#locks-and-memory-ordering) ended on something that ought to be impossible: a lock held across a context switch.
 A process gives up the CPU while holding its own lock, another hart picks it up later, and the
 release happens on a different core from the acquire. That is not a bug, it is the design, and
 understanding why needs a precise account of what a switch actually moves.
@@ -34,13 +34,13 @@ understanding why needs a precise account of what a switch actually moves.
 
 Read the first two rows against each other, because the ratio is the point.
 
-[ch13](#traps-and-system-calls)'s trap path saves thirty-one registers. `swtch` saves fourteen. Both are moving "the
+[ch14](#traps-and-system-calls)'s trap path saves thirty-one registers. `swtch` saves fourteen. Both are moving "the
 state of a thread" and one of them moves less than half as much, which looks like an optimisation
 and is not.
 
-**A trap is not a call and a switch is.** The interrupted program of [ch13](#traps-and-system-calls) agreed to
+**A trap is not a call and a switch is.** The interrupted program of [ch14](#traps-and-system-calls) agreed to
 nothing, so everything it might have been using has to be preserved. `swtch` is reached by an
-ordinary `jal` from `sched`, which means [ch11](#machine-level-code-on-riscv)'s calling convention has already been
+ordinary `jal` from `sched`, which means [ch12](#machine-level-code-on-riscv)'s calling convention has already been
 obeyed on the way in: anything the caller cared about and the convention does not protect is
 already spilled to the caller's stack. What is left for the switch to keep is exactly the
 callee-saved set, plus the return address and the stack pointer — fourteen registers, and the
@@ -57,12 +57,12 @@ it returns somewhere else. The `ret` at the end reads the `ra` that was just loa
 thread's identity, at the instruction level, is a saved stack pointer and a saved return address.
 Everything else about it is in memory that neither of those moves.
 
-This is also the answer to [ch17](#locks-and-memory-ordering)'s impossibility. The lock is held by a *process*, and the
+This is also the answer to [ch18](#locks-and-memory-ordering)'s impossibility. The lock is held by a *process*, and the
 process's state lives in memory that both harts can reach. `swtch` does not release anything and
 does not need to: the acquire and the release are operations on a shared word, and which core
 performs them is not part of the agreement. What would break is holding a lock across a switch
 *and* expecting interrupts to stay disabled on the hart you came from — which is why `push_off`
-and `pop_off` count nesting per CPU rather than per process, and why [ch17](#locks-and-memory-ordering) found them
+and `pop_off` count nesting per CPU rather than per process, and why [ch18](#locks-and-memory-ordering) found them
 costing more instructions than the lock.
 
 ### Why did it switch?
@@ -79,7 +79,7 @@ and the count is the children the workload created plus the workload itself.
 
 The other two are declined, and by now the reason should be familiar: a count of how often the
 timer intervened is a statement about elapsed time, and a count of how often something waited
-depends on whether the thing it waited for had already happened. [ch16](#interrupts-and-drivers) established this
+depends on whether the thing it waited for had already happened. [ch17](#interrupts-and-drivers) established this
 for devices and it is the same argument.
 
 One observation is worth having even though it is not in the table. In this workload the timer
@@ -91,7 +91,7 @@ intervene is a more instructive ten minutes than reading about it.
 
 ### Sleeping is not a state of the CPU
 
-[ch16](#interrupts-and-drivers)'s console driver slept, and this is where that gets settled.
+[ch17](#interrupts-and-drivers)'s console driver slept, and this is where that gets settled.
 
 Sleeping is not the hardware doing anything. It is a process marking itself not-runnable, noting
 what it is waiting for, and calling `sched` — after which some other thread's registers are in the
@@ -110,14 +110,14 @@ spot it in an ordering rather than recognising it in a diagram.
 What `swtch` moves, read out of the kernel as built, and the one switch count this workload fixes.
 Nothing was timed: what a switch *costs* is the registers, the cache lines they touch, and what
 the new thread finds missing when it starts running — and only the first of those is visible here.
-[ch26](#the-os-layers-cost) measures the rest.
+[ch27](#the-os-layers-cost) measures the rest.
 
 ## What this cannot tell you
 
 **What a switch costs.** Two hundred and twenty-four bytes move; whether that is expensive depends
 entirely on whether they are in cache, and this target has no cache. The expensive part of a real
 context switch is usually not the registers at all — it is that the new thread arrives to find the
-caches and the TLB full of somebody else's data. [ch26](#the-os-layers-cost) is where that gets a number, and
+caches and the TLB full of somebody else's data. [ch27](#the-os-layers-cost) is where that gets a number, and
 the number is not small.
 
 **Whether xv6's scheduler is any good.** It is a round-robin over a fixed array, chosen to be
@@ -140,7 +140,7 @@ tried to prove the locking correct.
 Three, in `tests/scheduling_and_context_switches/scheduling.c`.
 
 **11.1 — Must the switch save this register?**
-Given the register's role under [ch11](#machine-level-code-on-riscv)'s convention and whether the value is still needed,
+Given the register's role under [ch12](#machine-level-code-on-riscv)'s convention and whether the value is still needed,
 say whether `swtch` itself has to preserve it.
 
 The whole question is that a context switch is an ordinary call, so most of the answer was settled
@@ -178,9 +178,9 @@ the invariants it requires is the densest paragraph in the kernel; read it after
 it will say something it would not have said before.
 
 `kernel/swtch.S` is the fourteen stores and fourteen loads this chapter counted, and was the
-fourteen lines [ch11](#machine-level-code-on-riscv) sent you to look at without explaining. It has not changed; you have.
+fourteen lines [ch12](#machine-level-code-on-riscv) sent you to look at without explaining. It has not changed; you have.
 
-[ch19](#the-file-system) is the last of Part IV and the one with a disk in it. A file system has to survive
+[ch20](#the-file-system) is the last of Part IV and the one with a disk in it. A file system has to survive
 being interrupted at any instruction by a power cut, which is a stronger requirement than anything
 a lock provides, and it is met by writing things down in an order chosen so that every prefix of
 the sequence is survivable.

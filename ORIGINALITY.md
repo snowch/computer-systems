@@ -186,7 +186,7 @@ the "pointers are hard" genre generally. Also every "C for systems programmers" 
 
 ---
 
-## ch09 · What a Computer Does With a Program
+## ch10 · What a Computer Does With a Program
 
 **Closest in subject.** Every introduction to the C toolchain: the opening chapter of *Computer
 Systems: A Programmer's Perspective*, which also walks a program through preprocess, compile,
@@ -224,7 +224,7 @@ undergraduate systems course.
 
 ---
 
-## ch10 · Representing Information
+## ch11 · Representing Information
 
 **Closest in subject.** This is the most heavily covered topic in the field. *Computer Systems: A
 Programmer's Perspective* chapter 2 is the obvious neighbour — information storage, integer
@@ -269,7 +269,7 @@ every few years.
 
 ---
 
-## ch11 · Machine-Level Code on RISC-V
+## ch12 · Machine-Level Code on RISC-V
 
 **Closest in subject.** *Computer Systems: A Programmer's Perspective* chapter 3, which is the
 canonical treatment of machine-level code and procedure calls; *The RISC-V Reader*; the machine
@@ -309,7 +309,7 @@ code chapters of Patterson & Hennessy; and every "reading assembly" tutorial.
 
 ---
 
-## ch12 · Linking and Loading
+## ch13 · Linking and Loading
 
 **Closest in subject.** *Computer Systems: A Programmer's Perspective* chapter 7 is the canonical
 treatment of linking; *Linkers and Loaders* (Levine) is the book-length one; and there is a large
@@ -348,7 +348,7 @@ genre of "ELF explained" articles and annotated hexdumps.
 
 ---
 
-## ch13 · Traps and System Calls
+## ch14 · Traps and System Calls
 
 **Closest in subject.** The xv6 book's chapter on traps and system calls, which walks the same
 `trampoline.S` and `usertrap` on the same kernel; MIT 6.1810's system-call lab; *Operating Systems:
@@ -385,7 +385,7 @@ documentation for the very kernel being read, so the separation is deliberate an
   book is not cited here or anywhere except "Where to go next" in other chapters, and this chapter
   does not send the reader to it at all — it sends them to the assembly.
 
-## ch14 · Virtual Memory
+## ch15 · Virtual Memory
 
 **Closest in subject.** The xv6 book's chapter on page tables, which walks Sv39 and `vm.c` on the
 same kernel; *Operating Systems: Three Easy Pieces* on paging and multi-level page tables;
@@ -432,7 +432,7 @@ different problems.
   xv6 book is not cited, and the chapter sends the reader to `vm.c` rather than to any commentary
   on it.
 
-## ch15 · Page Faults as a Feature
+## ch16 · Page Faults as a Feature
 
 **Closest in subject.** The xv6 book's chapter on traps and page faults; MIT 6.1810's lazy-
 allocation and copy-on-write labs, which set exactly the two features this subject suggests;
@@ -470,7 +470,7 @@ famous assignments, so both are deliberately not set — and the reason is not o
   and exists because ch13 was got wrong first.
 - **Citations are primary only**: the RISC-V privileged specification and xv6's own source.
 
-## ch16 · Interrupts and Drivers
+## ch17 · Interrupts and Drivers
 
 **Closest in subject.** The xv6 book's chapter on device drivers and interrupts, which walks the
 same `uart.c` and PLIC; MIT 6.1810's networking lab; *Operating Systems: Three Easy Pieces* on I/O
@@ -506,7 +506,7 @@ top-half/bottom-half split.
   is close to a well-known lab, and which no test could grade without becoming one.
 - **Citations are primary only**: the RISC-V privileged specification and xv6's own source.
 
-## ch17 · Locks and Memory Ordering
+## ch18 · Locks and Memory Ordering
 
 **Closest in subject.** The xv6 book's chapter on locking, which walks the same `spinlock.c`; MIT
 6.1810's locks lab; *Operating Systems: Three Easy Pieces* on locks and concurrency; and the
@@ -551,7 +551,7 @@ and ARM architecture manuals.
   — the one thing this target cannot show.
 - **Citations are primary only**: the RISC-V unprivileged specification and xv6's own source.
 
-## ch18 · Scheduling and Context Switches
+## ch19 · Scheduling and Context Switches
 
 **Closest in subject.** The xv6 book's chapter on scheduling, which walks the same `swtch`,
 `sched` and `sleep`; MIT 6.1810's threads lab; *Operating Systems: Three Easy Pieces* on
@@ -582,7 +582,7 @@ scheduling policy and on the abstraction of a thread.
   itself — the one thing this chapter can simply show the reader, disassembled.
 - **Citations are primary only**: xv6's own source.
 
-## ch19 · The File System
+## ch20 · The File System
 
 **Closest in subject.** The xv6 book's chapters on the file system and on logging; MIT 6.1810's
 file-system and large-files labs; *Operating Systems: Three Easy Pieces* on file-system
@@ -618,7 +618,7 @@ implementation, journalling and crash consistency; and the journalling chapter o
   exercises rather than questions about what the disk is charged.
 - **Citations are primary only**: xv6's own source.
 
-## ch20 · The Same Program on Both Targets
+## ch21 · The Same Program on Both Targets
 
 **Closest in subject.** No single work is close, which is unusual for this book. The nearest
 material is the "measurement is hard" literature — Mytkowicz et al. on measurement bias, and the
@@ -649,7 +649,7 @@ Performance* — and the pointer-chase microbenchmark, which is folklore and app
 - **Citations**: the measurement-bias paper is cited as a primary source in "Where to go next";
   no textbook is used for content.
 
-## ch21 · Measuring
+## ch22 · Measuring
 
 **Closest in subject.** *Performance Analysis and Tuning on Modern CPUs* and *Systems Performance*
 both open with measurement methodology; Mytkowicz et al. on measurement bias; the benchmarking
@@ -685,7 +685,7 @@ without number.
 - **Citations are primary only**: the measurement-bias paper and the Linux manual pages. The
   benchmarking textbooks are not cited at all.
 
-## ch22 · The Memory Hierarchy
+## ch23 · The Memory Hierarchy
 
 **Closest in subject.** *What Every Programmer Should Know About Memory* (Drepper); *Computer
 Systems: A Programmer's Perspective* chapter 6, including its memory-mountain figure; *Performance
@@ -718,7 +718,7 @@ microbenchmark literature. The pointer-chase latency probe is long-standing folk
 - **Citations are primary only**: the SoC documentation and the core's technical reference manual.
   Drepper and CS:APP are not cited, here or anywhere.
 
-## ch23 · Optimising Code
+## ch24 · Optimising Code
 
 **Closest in subject.** *Computer Systems: A Programmer's Perspective* chapter 5, which is the
 canonical treatment of hand-optimising a loop and measuring each step; *Performance Analysis and
@@ -749,7 +749,7 @@ Tuning on Modern CPUs* on compiler transformations; and Agner Fog's optimisation
 - **Citations are primary only**: the compiler's own manual page. No optimisation textbook is
   cited.
 
-## ch24 · The CPU
+## ch25 · The CPU
 
 **Closest in subject.** *Performance Analysis and Tuning on Modern CPUs* on the out-of-order
 pipeline and top-down analysis; Agner Fog's microarchitecture manual; *Computer Architecture: A
@@ -779,7 +779,7 @@ is folklore and appears in CS:APP chapter 5 among many others.
   book's.
 - **Citations are primary only**: the core's technical reference manual and `perf list`.
 
-## ch25 · Memory Ordering on Real Hardware
+## ch26 · Memory Ordering on Real Hardware
 
 **Closest in subject.** *A Primer on Memory Consistency and Cache Coherence*; the false-sharing
 sections of *What Every Programmer Should Know About Memory* and *Performance Analysis and Tuning
@@ -810,7 +810,7 @@ Amdahl's law.
   happens on this chip may be allowed on the next one.
 - **Citations are primary only**: the two architectures' specifications.
 
-## ch26 · The OS Layer's Cost on Real Hardware
+## ch27 · The OS Layer's Cost on Real Hardware
 
 **Closest in subject.** The system-call and page-fault chapters of *Operating Systems: Three Easy
 Pieces* and of the xv6 book; *Systems Performance*'s treatment of system-call overhead and its
@@ -852,7 +852,7 @@ chapter; and the many published "how expensive is a system call" microbenchmarks
 - **Citations are primary only**: the ARM architecture reference manual for the exception model,
   and Linux's own generic system-call table for the number in the listing.
 
-## ch27 · Whole-Machine Profiling
+## ch28 · Whole-Machine Profiling
 
 **Closest in subject.** *Systems Performance*'s profiling and flame-graph chapters; *Performance
 Analysis and Tuning on Modern CPUs* on `perf` and on skid; the `perf` wiki and tutorial; the
@@ -895,7 +895,7 @@ writing on sampling profilers' pitfalls.
   expensive because of a decision made in a different phase that no amount of sampling points at.
 - **Citations are primary only**: `perf_event_open(2)` and the measurement-bias paper.
 
-## ch28 · Vectors
+## ch29 · Vectors
 
 **Closest in subject.** Every compiler's own auto-vectorisation documentation; the SIMD chapters
 of *Performance Analysis and Tuning on Modern CPUs*; Goldberg's paper and the many treatments of

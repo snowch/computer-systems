@@ -114,7 +114,7 @@ instruction set, different memory model — say so and draw the correspondence e
 correspondence *is* the content; a chapter that quietly pretends both halves are the same
 architecture is worse than one that makes the translation.
 
-Three Part V chapters have no counterpart by design (ch21, ch27, ch28). Any other unpaired one
+Three Part V chapters have no counterpart by design (ch22, ch28, ch29). Any other unpaired one
 fails a test, because it is far more likely to be an oversight than a decision.
 
 ### Never let a chapter depend on the reference hardware silently
@@ -169,7 +169,7 @@ it depends on. Record raw samples in the result where they are small enough to b
 distribution someone can re-examine is worth far more than a summary they have to trust.
 
 `CORE_SOURCES` in `bench/stamp.py` invalidates **every** result when it changes. Treat it as
-frozen. ch21 adds the timing library to it once, deliberately.
+frozen. ch22 adds the timing library to it once, deliberately.
 
 ## Problems
 
@@ -187,7 +187,7 @@ A problem is a stub the reader edits and a test that passes only when they are r
 
 ## Cross-references and citations
 
-Chapters carry a label matching their number, so refer to them as `[ch15](#page-faults-as-a-feature)` and to
+Chapters carry a label matching their number, so refer to them as `[ch16](#page-faults-as-a-feature)` and to
 appendices as `[Appendix B](#appendix-b)`. MyST resolves these at build time and the build fails on
 a broken reference, which is the point.
 

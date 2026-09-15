@@ -11,14 +11,14 @@ short_title: "Part II"
 
 | | |
 |---|---|
-| **Chapters** | [ch04](#a-trap-with-nothing-else)–[ch08](#fork-built-rather-than-read) |
+| **Chapters** | [ch04](#a-trap-with-nothing-else)–[ch09](#fork-built-rather-than-read) |
 | **Target** | `bare` — the same machine under QEMU with no operating system on it |
 | **Assumes** | [Part I](#part1) |
 :::
 
 ## What this part is for
 
-Five chapters, each building one primitive of the machine with nothing else in the way.
+Six chapters, each building one primitive of the machine with nothing else in the way.
 
 The difficulty this part answers is real and it is the usual reason people stall on kernels. A
 kernel presents its primitives already entangled. The first trap you meet in xv6 arrives with a
@@ -28,8 +28,9 @@ you already know.
 
 So: no kernel. No library, no loader, no operating system, nothing at the far end of a `printf`.
 The machine comes out of reset and runs your instructions. Each chapter then adds exactly one
-mechanism to a machine that has none — a trap, an interrupt, a page table, a system call, and
-finally a second process created from the first.
+mechanism to a machine that has none — a trap, an interrupt, a page table, a system call, a
+descriptor table with `read` and `write` over it, and finally a second process made from the
+first.
 
 It sits here, rather than inside [Part IV](#part4), because these primitives belong to the
 *hardware*. A trap vector, a saved program counter and the instruction that returns from a trap are
@@ -42,21 +43,15 @@ things you have built, rather than a wall of new ideas.
 Everything that makes a kernel a kernel. No scheduling policy, no file system, no device beyond the
 one serial port needed to see anything at all, no allocator beyond what a page table requires.
 
-File descriptors are the case worth explaining, because anyone who knows `fork` from the outside
-will expect them and they are not here. The reason is this part's own rule. A descriptor is not a
-primitive of the machine — nothing in the privileged specification has heard of one. It is a
-kernel's invention: an index into a table a kernel decided to keep. Building it alongside `fork`
-would put two ideas into one chapter, which is precisely the thing this part exists to stop doing.
-
-The insight descriptors are usually used to carry — that `fork` copies some of what a process has
-and shares the rest — is available here without them, and more plainly. [ch08](#fork-built-rather-than-read)'s child gets
-a copy of the address space and no copy whatsoever of the serial port, because the port is at a
-physical address and there is only one of it. Descriptors, and the several kinds of open file that
-make a table of them worth having at all, are [ch19](#the-file-system).
+What a descriptor *finds* — anything more than the two backends [ch08](#a-small-integer-that-means-a-device)
+needs to make the indirection visible. There is no disk here and nothing to open, so the table
+holds the serial port and a byte array with a cursor, which is enough to show that the calling
+code does not change and not enough to be a file system. The several kinds of open file that make
+a table of them worth keeping are [ch20](#the-file-system).
 
 And one thing it leaves out on purpose, which is worth saying plainly: **you will use a linker
 script and read assembly here, and neither is explained until [Part III](#part3).** Treat them as
-recipes. [ch11](#machine-level-code-on-riscv) covers the instructions and [ch12](#linking-and-loading) covers the script. This part needs
+recipes. [ch12](#machine-level-code-on-riscv) covers the instructions and [ch13](#linking-and-loading) covers the script. This part needs
 them working rather than understood, and the alternative ordering — linkers before traps — puts
 three chapters of file format between you and the first interesting thing the machine does.
 

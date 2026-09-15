@@ -1,10 +1,10 @@
 ---
 title: "Whole-Machine Profiling"
-short_title: "ch27 Whole-Machine Profiling"
+short_title: "ch28 Whole-Machine Profiling"
 ---
 
 (whole-machine-profiling)=
-# ch27 · Whole-Machine Profiling
+# ch28 · Whole-Machine Profiling
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "ch27 Whole-Machine Profiling"
 | | |
 |---|---|
 | **Target** | `host` — the reference machine, natively |
-| **Prerequisites** | [ch26](#the-os-layers-cost) |
+| **Prerequisites** | [ch27](#the-os-layers-cost) |
 | **Assumes** | that `perf` can sample. ARM PMUs support counter-overflow interrupts as standard, so this works on the reference machine — but most affordable RISC-V cores do not, and a reader following Part V on one will find this the chapter they cannot run. |
 | **What it measures** | What the program under the profiler does, counted before anyone times it: `bench/results/tally-census.json` |
 :::
@@ -43,12 +43,12 @@ Three of those rows are worth staring at.
 
 The keys do not reach every counter in the table, and yet they reach **every cache line in it**.
 A line holds a run of adjacent counters, so the untouched entries buy nothing at all: misses are
-counted in lines, and there are no unvisited lines. This is [ch25](#memory-ordering-on-real-hardware)'s observation about coherence reappearing as
+counted in lines, and there are no unvisited lines. This is [ch26](#memory-ordering-on-real-hardware)'s observation about coherence reappearing as
 an observation about capacity, and both are the same fact — the machine deals in lines, and your
 data structure does not know that.
 
 The conditional in the decode phase is taken almost every time. It is the most conspicuous thing
-in the source of that function, and [ch24](#the-cpu) already established what a branch this lopsided
+in the source of that function, and [ch25](#the-cpu) already established what a branch this lopsided
 costs a predictor.
 
 And the partitioned arrangement adds substantial extra traffic over the keys in order to shrink
@@ -71,7 +71,7 @@ the chapter pointing confidently at the wrong phase.
 
 Nothing watches your program. A counter in the PMU is set to a large negative number, the core
 counts cycles into it, it overflows, and the overflow raises an interrupt — which is
-[ch16](#interrupts-and-drivers)'s mechanism, in hardware you have already met, doing a job that has nothing to do
+[ch17](#interrupts-and-drivers)'s mechanism, in hardware you have already met, doing a job that has nothing to do
 with a device. The handler writes down where the program was and returns. Later, addresses are
 matched against symbols.
 
@@ -171,7 +171,7 @@ because of a decision made in the decode phase about how keys are distributed, a
 sampling inside the loop points at that.
 
 **How to profile something that is fast.** Every technique here needs the program to run long
-enough to collect samples. For anything shorter, the equipment is [ch21](#measuring)'s — repetition and
+enough to collect samples. For anything shorter, the equipment is [ch22](#measuring)'s — repetition and
 a distribution — and the two do not substitute for each other.
 
 **What it costs to measure.** The interrupt has to be taken, the handler has to run, and the
@@ -216,6 +216,6 @@ paper to read on measurement bias — it shows profilers disagreeing with each o
 program, for reasons that are nobody's bug, and it is the best available argument for the habit
 this chapter is built on of writing the prediction down first.
 
-[ch28](#vectors) is the last measurement in the book and the narrowest: one loop, one unit, and the
+[ch29](#vectors) is the last measurement in the book and the narrowest: one loop, one unit, and the
 question of what vectorising actually buys when it is measured against the arithmetic rather than
 against the version you started with.

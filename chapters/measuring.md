@@ -1,10 +1,10 @@
 ---
 title: "Measuring"
-short_title: "ch21 Measuring"
+short_title: "ch22 Measuring"
 ---
 
 (measuring)=
-# ch21 · Measuring
+# ch22 · Measuring
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "ch21 Measuring"
 | | |
 |---|---|
 | **Target** | `host` — the reference machine, natively |
-| **Prerequisites** | [ch20](#the-same-program-on-both-targets) |
+| **Prerequisites** | [ch21](#the-same-program-on-both-targets) |
 | **What it measures** | The instrument, before anything is measured with it: `bench/results/measuring-host.json` |
 :::
 
@@ -20,7 +20,7 @@ short_title: "ch21 Measuring"
 
 How do I get a number I would defend, and how would I know it was wrong?
 
-[ch20](#the-same-program-on-both-targets) established that the structural model does not predict cost, and pointed at a
+[ch21](#the-same-program-on-both-targets) established that the structural model does not predict cost, and pointed at a
 machine that can answer. Before asking it anything, this chapter asks what it costs to ask — and
 then arranges, deliberately, for the same program to give three different answers.
 
@@ -81,8 +81,8 @@ statistics, and the mistake is not picking the wrong one but not noticing there 
 ### Warming up is not a ritual
 
 The first few measurements are slower, always, and for reasons Parts III and IV have already
-explained: [ch15](#page-faults-as-a-feature)'s pages are not yet faulted in, [ch22](#the-memory-hierarchy)'s caches hold somebody
-else's data, and the branch predictor of [ch24](#the-cpu) has never seen this loop.
+explained: [ch16](#page-faults-as-a-feature)'s pages are not yet faulted in, [ch23](#the-memory-hierarchy)'s caches hold somebody
+else's data, and the branch predictor of [ch25](#the-cpu) has never seen this loop.
 
 Discarding them is standard practice and is usually done wrong. Warm-up is a property of
 *position*: the first samples are slow because they are first. A slow sample in the middle is
@@ -132,7 +132,7 @@ over a link that interrupts it, which brings up something the book has to admit.
 
 [ch00](#prerequisites-and-setup) recommends wiring the board rather than using its radio, and gives a mechanism: a
 wireless driver takes interrupts and runs deferred work on the cores being measured, which is
-[ch16](#interrupts-and-drivers)'s subject arriving where it is least wanted.
+[ch17](#interrupts-and-drivers)'s subject arriving where it is least wanted.
 
 The mechanism is real. The effect on these measurements has never been measured, and ch00 says so.
 That is an unmeasured claim about hardware behaviour in a book whose whole discipline is refusing
@@ -163,11 +163,11 @@ you do not know until you have sampled it.
 **What to do about a bimodal result.** Sometimes a benchmark genuinely has two answers — one where
 the data was resident and one where it was not — and every summary statistic in this chapter
 reports something that happened in neither case. When the histogram has two humps, the right
-answer is to find out what distinguishes them, which is [ch27](#whole-machine-profiling)'s equipment.
+answer is to find out what distinguishes them, which is [ch28](#whole-machine-profiling)'s equipment.
 
 **Anything about the compiler having deleted your benchmark.** The loop measured here is written
 so it cannot be optimised away, and the technique — a dependent chain feeding a value the program
-later uses — is stated rather than demonstrated. [ch23](#optimising-code) shows what happens when it is
+later uses — is stated rather than demonstrated. [ch24](#optimising-code) shows what happens when it is
 forgotten, which is a benchmark that measures an empty loop and reports an enormous speedup.
 
 ## Problems
@@ -219,10 +219,10 @@ useful thing to read after this chapter. The experiment is simple enough to repe
 is bad enough to change your habits.
 
 `man 2 clock_gettime` and `man 7 vdso` are worth twenty minutes: the reason reading the clock is
-as cheap as it is, on Linux, is that it usually is not a system call at all — [ch13](#traps-and-system-calls)'s trap
-path is avoided by mapping a page of kernel data into every process, which is [ch14](#virtual-memory)'s
-mechanism used for something [ch14](#virtual-memory) had no reason to mention.
+as cheap as it is, on Linux, is that it usually is not a system call at all — [ch14](#traps-and-system-calls)'s trap
+path is avoided by mapping a page of kernel data into every process, which is [ch15](#virtual-memory)'s
+mechanism used for something [ch15](#virtual-memory) had no reason to mention.
 
-[ch22](#the-memory-hierarchy) is the first chapter to ask the machine a question, and it is the one this book's
-running example has been waiting for: [ch20](#the-same-program-on-both-targets)'s two routes differ because of where the data
+[ch23](#the-memory-hierarchy) is the first chapter to ask the machine a question, and it is the one this book's
+running example has been waiting for: [ch21](#the-same-program-on-both-targets)'s two routes differ because of where the data
 is, and the next chapter measures that hierarchy rather than looking it up.

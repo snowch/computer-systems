@@ -58,6 +58,7 @@ project:
         - file: chapters/interrupts_and_privilege.md
         - file: chapters/one_page_table_two_harts.md
         - file: chapters/a_system_call_of_your_own.md
+        - file: chapters/a_small_integer_that_means_a_device.md
         - file: chapters/fork_built_rather_than_read.md
 
     - title: Part III — What a computer does with a program

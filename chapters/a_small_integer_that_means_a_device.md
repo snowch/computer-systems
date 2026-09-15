@@ -1,10 +1,10 @@
 ---
-title: "fork, Built Rather Than Read [DRAFT]"
-short_title: "ch09 fork, Built Rather Than Read"
+title: "A Small Integer That Means a Device [DRAFT]"
+short_title: "ch08 A Small Integer That Means a Device"
 ---
 
-(fork-built-rather-than-read)=
-# ch09 · fork, Built Rather Than Read [DRAFT]
+(a-small-integer-that-means-a-device)=
+# ch08 · A Small Integer That Means a Device [DRAFT]
 
 :::{note} Chapter header
 :class: dropdown
@@ -13,12 +13,12 @@ short_title: "ch09 fork, Built Rather Than Read"
 |---|---|
 | **Target** | `bare` — the same machine under QEMU with no operating system on it |
 | **Prerequisites** | [ch07](#a-system-call-of-your-own) |
-| **What it measures** | Two address spaces from one, a return value that differs between them, and the count of pages copied — beside what xv6 copies for the same call. |
+| **What it measures** | One `write` call reaching two unrelated destinations through one table, and the table itself printed before and after a descriptor is duplicated. |
 :::
 
 ## The question
 
-What is the least a machine needs before two programs can run on it?
+Why does a program name what it reads by number, and what does that number find?
 
 [To write: one paragraph. State the question this chapter answers and why the previous chapter
 leaves it open. No summary of what is to come — the reader can see the headings.]
@@ -41,7 +41,7 @@ you did instead. This chapter is not finished while this section is missing.]
 
 ## Problems
 
-[To write: each problem is a stub under `tests/fork_built_rather_than_read/` with a test that passes only when
+[To write: each problem is a stub under `tests/a_small_integer_that_means_a_device/` with a test that passes only when
 it is solved. There is no answer key — the test is the answer key, and it cannot be wrong about
 whether it passes.]
 

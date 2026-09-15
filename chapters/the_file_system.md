@@ -1,10 +1,10 @@
 ---
 title: "The File System"
-short_title: "ch19 The File System"
+short_title: "ch20 The File System"
 ---
 
 (the-file-system)=
-# ch19 · The File System
+# ch20 · The File System
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "ch19 The File System"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch18](#scheduling-and-context-switches) |
+| **Prerequisites** | [ch19](#scheduling-and-context-switches) |
 | **What it measures** | What one byte costs the disk, as a difference between two runs: `bench/results/blocks-xv6.json` |
 :::
 
@@ -119,7 +119,7 @@ Under `write` there are seven things, and each one is why one of the numbers abo
 the file descriptor that names an open file, the inode that describes a file, the directory that
 maps names to inodes, the block allocator that finds free space, the log that makes a group of
 updates atomic, the buffer cache that keeps blocks in memory and decides when they reach the disk,
-and the disk driver from [ch16](#interrupts-and-drivers).
+and the disk driver from [ch17](#interrupts-and-drivers).
 
 Four blocks were modified for one byte: the data block itself, the inode recording that the file
 is now one byte long and where that byte is, the bitmap recording that the data block is no longer
@@ -132,7 +132,7 @@ in which they become true together or not at all.
 One number is nearly zero and is worth a sentence. Creating and deleting a whole file read
 **nothing** from the disk, and writing a byte read three blocks.
 
-That is [ch16](#interrupts-and-drivers)'s buffer cache. A block already in memory is not fetched, and a short
+That is [ch17](#interrupts-and-drivers)'s buffer cache. A block already in memory is not fetched, and a short
 workload touches the same handful of blocks — the superblock, the log header, the inode block,
 the bitmap — over and over. Reads are the operation a cache can eliminate entirely; writes are the
 operation it can only delay, and a log is a design that deliberately declines to delay them very
@@ -165,7 +165,7 @@ here.
 order they were issued, and real drives have caches that reorder and acknowledge early. A file
 system that assumes otherwise is correct on paper and loses data in practice, and the machinery
 for saying "this one, really, now" is a write barrier — which is an instruction to a device rather
-than to a processor, and shares nothing with [ch17](#locks-and-memory-ordering)'s fences but a name.
+than to a processor, and shares nothing with [ch18](#locks-and-memory-ordering)'s fences but a name.
 
 **What happens when the log is too small.** xv6 panics on a transaction larger than the log, which
 is a reasonable thing for a teaching kernel to do and not a reasonable thing for a file system to
@@ -210,7 +210,7 @@ then `recover_from_log`, which is what makes those five lines mean anything.
 `kernel/fs.c` and `kernel/bio.c` are the layers underneath, and `bio.c` is now the third thing in
 this book to turn out to be a cache with a lock around it.
 
-[ch20](#the-same-program-on-both-targets) is the hinge. Everything Part IV has established is about what a program *does*, on a
+[ch21](#the-same-program-on-both-targets) is the hinge. Everything Part IV has established is about what a program *does*, on a
 target chosen because you can stop it and look. The next chapter puts the same program on a machine
 where you cannot, and asks what the first instrument failed to tell you — which is the question the
 whole of Part V exists to answer.

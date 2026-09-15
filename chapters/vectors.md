@@ -1,10 +1,10 @@
 ---
 title: "Vectors"
-short_title: "ch28 Vectors"
+short_title: "ch29 Vectors"
 ---
 
 (vectors)=
-# ch28 · Vectors
+# ch29 · Vectors
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "ch28 Vectors"
 | | |
 |---|---|
 | **Target** | `host` — the reference machine, natively |
-| **Prerequisites** | [ch27](#whole-machine-profiling) |
+| **Prerequisites** | [ch28](#whole-machine-profiling) |
 | **Assumes** | a vector unit — NEON on the reference core. This chapter became measurable when Part V moved to AArch64; on a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run. |
 | **What it measures** | Which of five loops the compiler widens, at three sets of flags: `bench/results/vectors-census.json` |
 :::
@@ -84,7 +84,7 @@ associative is not the same as watching the two answers come out different.
 
 Each element needs the one before it. Lanes run at the same time, and the second lane cannot start
 until the first has finished — so there is nothing for the width to do, and no flag changes that.
-This is [ch24](#the-cpu)'s dependence chain again, at a different granularity and with the same
+This is [ch25](#the-cpu)'s dependence chain again, at a different granularity and with the same
 conclusion.
 
 The other refusal is the gather: the elements are independent, but their addresses are not known
@@ -138,7 +138,7 @@ about what the compiler decides cannot be written in a notation that takes the d
 it. What that costs is that the book never shows you the ceiling — a hand-written version might
 beat every row of the last table, and this chapter would not know.
 
-**Whether any of this is where your time is going.** [ch27](#whole-machine-profiling) is the chapter for that, and
+**Whether any of this is where your time is going.** [ch28](#whole-machine-profiling) is the chapter for that, and
 the order matters. A loop vectorised to a quarter of its scalar cost, in code holding a hundredth
 of the running time, has bought you well under one per cent.
 
@@ -174,7 +174,7 @@ python3 -m pytest tests/vectors/test_problem_3_bound.py
 
 The ARM architecture reference manual's Advanced SIMD chapter is the specification for what those
 instructions do, and the RISC-V vector extension @riscv-isa-unprivileged is worth reading beside
-it for the same reason [ch25](#memory-ordering-on-real-hardware) put two memory models side by side: it solves the tail
+it for the same reason [ch26](#memory-ordering-on-real-hardware) put two memory models side by side: it solves the tail
 problem in problem 21.1 by not having a compile-time width at all, and seeing one design makes the
 other's choices visible as choices.
 

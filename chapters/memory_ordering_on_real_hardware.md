@@ -1,10 +1,10 @@
 ---
 title: "Memory Ordering on Real Hardware"
-short_title: "ch25 Memory Ordering on Real Hardware"
+short_title: "ch26 Memory Ordering on Real Hardware"
 ---
 
 (memory-ordering-on-real-hardware)=
-# ch25 · Memory Ordering on Real Hardware
+# ch26 · Memory Ordering on Real Hardware
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,8 +12,8 @@ short_title: "ch25 Memory Ordering on Real Hardware"
 | | |
 |---|---|
 | **Target** | `host` — the reference machine, natively |
-| **Answers the cost of** | [ch17](#locks-and-memory-ordering) |
-| **Prerequisites** | [ch24](#the-cpu) |
+| **Answers the cost of** | [ch18](#locks-and-memory-ordering) |
+| **Prerequisites** | [ch25](#the-cpu) |
 | **Assumes** | Four cores and this interconnect's coherence. The scaling curve moves elsewhere; the mechanism does not. |
 | **What it measures** | Which counters share a cache line: `bench/results/sharing-layout.json` |
 :::
@@ -22,7 +22,7 @@ short_title: "ch25 Memory Ordering on Real Hardware"
 
 What do four cores cost each other, and what does a fence actually buy?
 
-[ch17](#locks-and-memory-ordering) established what a lock is made of and said plainly that what it *costs* is
+[ch18](#locks-and-memory-ordering) established what a lock is made of and said plainly that what it *costs* is
 contention, which that target had no way to express. This is the chapter with four real cores, and
 it is also the chapter where the reader meets a second memory model — which is not a repetition of
 the first and is the reason this book has two architectures.
@@ -61,7 +61,7 @@ which costs nothing, because sharing a line is not the fault.
 
 Now the second memory model, put beside the first on purpose.
 
-[ch17](#locks-and-memory-ordering) printed what a release looks like on both architectures, and the two are not alike.
+[ch18](#locks-and-memory-ordering) printed what a release looks like on both architectures, and the two are not alike.
 RISC-V emits `fence rw,w` and then an ordinary store: an instruction *between* the two things
 being ordered. AArch64 emits `stlr` — a store that carries the ordering itself. One instruction,
 no fence, and a reader who learned that a barrier is something you put between two operations will
@@ -94,7 +94,7 @@ the instruction.
 
 ### Predict before you measure
 
-[ch21](#measuring) asked for a distribution instead of a number. This chapter asks for something else
+[ch22](#measuring) asked for a distribution instead of a number. This chapter asks for something else
 first: a **prediction**.
 
 Amdahl's law says what a scaling curve can look like at best. If a quarter of the work cannot be
@@ -125,12 +125,12 @@ fetch on read, in units of lines — is not.
 **Whether your program has false sharing.** The analysis here is over a layout you can see. Real
 programs share lines through allocators, through arrays of small structures handed one per thread,
 and through padding decisions made in libraries. Finding it in something you did not write is
-[ch27](#whole-machine-profiling)'s equipment.
+[ch28](#whole-machine-profiling)'s equipment.
 
 **What the memory model permits.** This chapter measures what the machine *does*, and a weak
 memory model is a statement about what it is *allowed* to do. Those are different, and the
 difference is dangerous: a reordering that never happens on this chip may be permitted, and code
-that relies on not seeing it is broken on a chip that does. [ch17](#locks-and-memory-ordering)'s problem 10.2 is about
+that relies on not seeing it is broken on a chip that does. [ch18](#locks-and-memory-ordering)'s problem 10.2 is about
 the permission, deliberately, and no measurement can replace it.
 
 **The cost of getting it wrong.** Every fence in this chapter is correct. What an incorrect one
@@ -172,6 +172,6 @@ specification's RVWMO chapter @riscv-isa-unprivileged are worth reading in the s
 either order. They describe the same kind of object with different vocabulary, and the
 correspondence is much easier to see when the two are half an hour apart than when they are years.
 
-[ch26](#the-os-layers-cost) returns to Part IV with the same equipment. Everything xv6 demonstrated structurally
+[ch27](#the-os-layers-cost) returns to Part IV with the same equipment. Everything xv6 demonstrated structurally
 — a system call, a page fault, a context switch — has a price on this machine, and the chapter
 puts the two accounts side by side.

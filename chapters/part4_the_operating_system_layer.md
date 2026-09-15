@@ -11,8 +11,8 @@ short_title: "Part IV"
 
 | | |
 |---|---|
-| **Chapters** | [ch13](#traps-and-system-calls)–[ch20](#the-same-program-on-both-targets) |
-| **Target** | `xv6` — the teaching kernel under QEMU, with [ch20](#the-same-program-on-both-targets) crossing to `host` |
+| **Chapters** | [ch14](#traps-and-system-calls)–[ch21](#the-same-program-on-both-targets) |
+| **Target** | `xv6` — the teaching kernel under QEMU, with [ch21](#the-same-program-on-both-targets) crossing to `host` |
 | **Assumes** | [Part II](#part2), [Part III](#part3) |
 :::
 
@@ -43,16 +43,16 @@ under emulation is a fact about the emulator, and a chapter that produced one wo
 teaching you to trust the wrong instrument.
 
 Linux, except by contrast. xv6 is a teaching kernel and some of its choices are simplifications
-rather than designs; the chapters say which, and [ch26](#the-os-layers-cost) puts the same operations to a
+rather than designs; the chapters say which, and [ch27](#the-os-layers-cost) puts the same operations to a
 production kernel. Left out entirely: networking, a scheduler with a policy worth arguing about,
 and the parts of a file system that exist because disks are large rather than because crashes
 happen.
 
 ## Where to start
 
-[ch13](#traps-and-system-calls), in order. Each chapter names the one before it as its prerequisite and means it.
+[ch14](#traps-and-system-calls), in order. Each chapter names the one before it as its prerequisite and means it.
 
-[ch20](#the-same-program-on-both-targets) is the exception and can be read early if you want to know where the book is going.
+[ch21](#the-same-program-on-both-targets) is the exception and can be read early if you want to know where the book is going.
 It runs one program on both targets and is the hinge into [Part V](#part5) — the chapter that
 stops being about how a thing works and starts being about how you would find out what it costs.
 

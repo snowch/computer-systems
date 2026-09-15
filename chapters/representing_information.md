@@ -1,10 +1,10 @@
 ---
 title: "Representing Information"
-short_title: "ch10 Representing Information"
+short_title: "ch11 Representing Information"
 ---
 
 (representing-information)=
-# ch10 · Representing Information
+# ch11 · Representing Information
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "ch10 Representing Information"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch09](#what-a-computer-does-with-a-program) |
+| **Prerequisites** | [ch10](#what-a-computer-does-with-a-program) |
 | **What it measures** | Type sizes, alignments and struct layouts, and what signed and unsigned arithmetic actually compile to: `bench/results/setup-xv6.json`, `bench/results/signedness-riscv64.json` |
 :::
 
@@ -56,7 +56,7 @@ make, and several of them chose differently.
 
 On a single struct this is an oddity. On an array of a few million — a particle system, a packet
 buffer, a page-table cache — it is the difference between fitting in a level of cache and not,
-which is [ch22](#the-memory-hierarchy)'s subject and the first place this dry rule becomes a duration.
+which is [ch23](#the-memory-hierarchy)'s subject and the first place this dry rule becomes a duration.
 
 ### A comparison that is not a comparison
 
@@ -143,7 +143,7 @@ fact appears in [ch00](#prerequisites-and-setup)'s output and not in a footnote 
 It matters in exactly three places, and outside them you can forget it: when bytes cross a
 machine boundary (a file, a network, a device register), when you alias a value through a pointer
 of a different width, and when you are reading a memory dump by eye and the digits appear to be
-backwards. [ch16](#interrupts-and-drivers) meets the third kind for real, reading a device that does not agree with
+backwards. [ch17](#interrupts-and-drivers) meets the third kind for real, reading a device that does not agree with
 the CPU about byte order.
 
 ### The operations worth writing once
@@ -171,7 +171,7 @@ One thing in that file is not about bits at all:
 
 The overflow check runs *before* the shift. Afterwards there is nothing left to notice by — the
 bit has gone, and the value is zero, and zero is indistinguishable from a legitimate answer. That
-ordering is the whole of the lesson in [ch21](#measuring) about checking for a condition while the
+ordering is the whole of the lesson in [ch22](#measuring) about checking for a condition while the
 evidence still exists, arriving several chapters early because arithmetic is where it bites first.
 
 ## What we measured
@@ -186,7 +186,7 @@ one compiler emitted for one source file at one optimisation level, regenerated 
 push so that a compiler which changes its mind breaks the build rather than the argument.
 
 Counting instructions is not measuring cost. A function with more instructions in it can be
-faster than one with fewer, and [ch24](#the-cpu) shows a case where that happens for reasons
+faster than one with fewer, and [ch25](#the-cpu) shows a case where that happens for reasons
 entirely outside the count. What the listings establish here is something weaker and more useful:
 that the two functions in each pair are *not the same program*, whatever the source looked like.
 
@@ -194,7 +194,7 @@ that the two functions in each pair are *not the same program*, whatever the sou
 
 **Whether any of it is slow.** Signed division emits a correction; whether that correction costs
 a measurable amount depends on the core, on what else is in flight, and on whether the result was
-needed immediately. [ch23](#optimising-code) is where that gets a number, on a machine that can produce one.
+needed immediately. [ch24](#optimising-code) is where that gets a number, on a machine that can produce one.
 
 **What another compiler does.** Every listing here is one version of `gcc`. A different compiler
 may fold differently, and the standard permits both. The claims about *what C says* are claims
@@ -209,7 +209,7 @@ hardware never sees the code that was deleted.
 **Floating point.** It is absent from this chapter and from the xv6 target generally, and that is
 a decision rather than an oversight: xv6 does not save floating-point registers across a context
 switch, so a user program that uses them is quietly wrong the moment it is descheduled. That is a
-perfectly reasonable thing for a teaching kernel to decide — it makes [ch18](#scheduling-and-context-switches)'s context
+perfectly reasonable thing for a teaching kernel to decide — it makes [ch19](#scheduling-and-context-switches)'s context
 switch small enough to read in one sitting — and it means floating point arrives in Part V,
 on a machine whose kernel does save them.
 
