@@ -10,7 +10,7 @@ short_title: Preface
 
 ## What this book is
 
-A self-study text on computer systems and performance, in four parts and twenty-four chapters,
+A self-study text on computer systems and performance, in five parts and twenty-nine chapters,
 built around one question and a rule about answering it.
 
 Three things make it the shape it is.
@@ -129,6 +129,7 @@ machine's, and every chapter says so. The transferable part is the method.
 | | |
 |---|---|
 | **[Part I](#ch01)** — C, and what the machine does with it | Three chapters, and which of them you need depends on where you are starting. Not a C tutorial |
+| **[Part II](#ch04)** — The machine with nothing on it | A trap, an interrupt, a page table, a system call and `fork()`, each built from nothing on bare hardware before any kernel is read |
 | **[Part III](#ch09)** — What a computer does with a program | One program from source text to result: the toolchain, representation, machine code, linking |
 | **[Part IV](#ch13)** — The operating system layer | A kernel small enough to read, taken apart: traps, virtual memory, faults, drivers, locks, scheduling, files |
 | **[Part V](#ch21)** — Where the cycles go | Part IV's chapters asked again as questions about time, on hardware that can answer them |
@@ -165,7 +166,7 @@ laptop, not extrapolated from a different machine.
 The split is not a compromise; it is the argument. QEMU will happily answer a question about
 nanoseconds and the answer will be meaningless, because it models no cache, no branch predictor
 and no pipeline. Watching a program in a debugger tells you what it *does*. Only real hardware
-tells you what it *costs*. [Chapter 15](#ch20) puts the same program through both and makes
+tells you what it *costs*. [Chapter 20](#ch20) puts the same program through both and makes
 the gap concrete.
 
 ### Why they do not share an instruction set
@@ -205,20 +206,20 @@ follow that a single-architecture book could not offer.
 has to *assert* that its ideas generalise. This one demonstrates it, by having them survive a
 change of architecture in front of you.
 
-**You get two memory models instead of one.** [Chapter 12](#ch17) teaches RISC-V's;
-[chapter 20](#ch25) measures ARM's, which is also weak and differently specified. A reader shown only one would reasonably
+**You get two memory models instead of one.** [Chapter 17](#ch17) teaches RISC-V's;
+[chapter 25](#ch25) measures ARM's, which is also weak and differently specified. A reader shown only one would reasonably
 conclude that model *is* memory ordering. Shown two, you learn it is a family, that a fence is an
 architecture-specific spelling of an architecture-independent need, and that store buffers and
 coherence are what actually transfer.
 
-**[Chapter 15](#ch20) gets harder in the way that matters.** Three things differ between watching a program
+**[Chapter 20](#ch20) gets harder in the way that matters.** Three things differ between watching a program
 under xv6 and profiling it on real hardware: emulation against hardware, one kernel against
 another, one instruction set against another. Attributing a difference to the wrong one is the
 commonest way to be confidently wrong about performance, and that chapter is where you practise
 separating them.
 
 Reading disassembly is a small part of the book, and this is the whole of what the split costs
-you. In Parts I and II it is RISC-V: [ch01](#ch01), [ch03](#ch03), [ch09](#ch09), [ch10](#ch10) and
+you. In Parts I and III it is RISC-V: [ch01](#ch01), [ch03](#ch03), [ch09](#ch09), [ch10](#ch10) and
 [ch11](#ch11). In Part V it is AArch64: [ch23](#ch23), [ch24](#ch24) and [ch28](#ch28).
 [Chapter 0](#ch00) shows one small function compiled both ways, so the difference is concrete
 rather than promised, and [Appendix F](#appendix-f) is a translation between the two for the
