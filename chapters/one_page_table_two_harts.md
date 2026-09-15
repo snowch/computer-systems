@@ -115,6 +115,14 @@ one instruction:
 Nothing is lost, and nothing about the schedule changed. What changed is that there is no longer a
 moment at which the counter has been read but not yet written.
 
+:::{warning} This proves atomicity, and atomicity is not ordering
+The instruction fixed one thing: the read and the write of *this* counter cannot be separated. It
+says nothing about whether the other hart sees this hart's earlier writes to anything else, or in
+what order, and a program built on the assumption that it does will be wrong on real hardware in
+ways this target cannot show you. [ch18](#locks-and-memory-ordering) is where the difference gets
+its own chapter, and [ch26](#memory-ordering-on-real-hardware) is where it costs something.
+:::
+
 ## What we measured
 
 Run them yourself before reading the table — the numbers below are what you should

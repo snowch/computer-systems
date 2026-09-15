@@ -29,6 +29,7 @@ from dataclasses import dataclass
 from bench import tables
 from bench.diagrams import (
     address_space_cost,
+    bare_trap,
     dispatch_table,
     fault_decision,
     interrupt_sources,
@@ -551,6 +552,11 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         result="filemap-xv6",
     ),
     # -- Part II: the machine with nothing on it ----------------------------------------
+    "a-trap-with-nothing-else-path": Diagram(
+        draw=bare_trap,
+        alt="What the hardware writes at a trap, and what it leaves untouched.",
+        result="trap-bare",
+    ),
     "a-trap-with-nothing-else-trap": Table(
         render=tables.bare_claims_table,
         result="trap-bare",

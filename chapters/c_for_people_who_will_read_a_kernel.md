@@ -12,7 +12,7 @@ short_title: "03 · C for People Who Will Read a Kernel"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch11](#representing-information) |
+| **Prerequisites** | [ch02](#c-without-a-runtime) |
 | **What it measures** | What the compiler emits for each construct: `bench/results/addresses-riscv64.json` |
 :::
 

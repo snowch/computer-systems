@@ -1287,3 +1287,88 @@ DIAGRAMS = {
     "interrupts-and-drivers-sources": interrupt_sources,
     "whole-machine-profiling-sampling": sampling_profile,
 }
+
+
+def bare_trap(result: str) -> str:
+    """What the hardware does at a trap, and what it leaves for the handler.
+
+    ch14 draws the same path with a kernel around it. This one is deliberately barer, because the
+    point of ch04 is that the mechanism is separable from the kernel: three registers change, the
+    program counter moves, and *nothing else happens*. Everything a reader associates with a trap
+    — a saved frame, a process, a dispatch — is software somebody wrote, and none of it is here.
+
+    The numbers come from the run rather than from the caption, so a figure claiming the handler
+    advances `mepc` by four is claiming what the machine actually did.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    run = load_result(result)["summary"]
+    cause = run["cause"]
+    advance = run["mepc_advance"]
+
+    body: list[str] = []
+    body += heading(
+        40,
+        46,
+        "One trap, and the three registers that change",
+        "`bare` target — nothing else is running",
+    )
+
+    stages, _ = chain(
+        40,
+        86,
+        [
+            ("running", "your instructions"),
+            ("ecall", "the trap is caused"),
+            ("hardware", "three writes"),
+            ("handler", "at mtvec"),
+            ("mret", "back again"),
+        ],
+        box_width=124,
+        box_height=50,
+        gap=26,
+    )
+    body += stages
+
+    # What the hardware itself does, which is the whole of the automatic part.
+    body += [_text(40, 186, "The hardware does exactly this, and stops:", size=13, weight="700")]
+    rows, height = column(
+        40,
+        200,
+        250,
+        [
+            ("mepc   = address of the ecall", "the instruction, not the one after"),
+            (f"mcause = {cause}", "environment call from machine mode"),
+            ("mstatus: MPIE = MIE, MIE = 0", "so a second trap cannot arrive yet"),
+            ("pc     = mtvec", "and that is all"),
+        ],
+        row_height=32,
+    )
+    body += rows
+
+    body += [
+        _text(40, 200 + height + 34, "And what it does not do:", size=13, weight="700"),
+    ]
+    missing, _ = column(
+        40,
+        200 + height + 48,
+        250,
+        [
+            ("registers", "untouched — the handler's problem"),
+            ("stack", "untouched — there is no frame"),
+        ],
+        row_height=32,
+    )
+    body += missing
+
+    tail = 200 + height + 48 + 64 + 46
+    body += footnote(
+        40,
+        tail,
+        700,
+        [
+            f"The handler must add {advance} to mepc before returning: mepc is the address of the",
+            "instruction that trapped, so mret without it re-executes the ecall, for ever.",
+        ],
+    )
+    return _svg(760, int(tail + 50), body, "What the hardware does at a trap, and what it does not")

@@ -93,6 +93,14 @@ a lot of work there, and it is the first thing about traps that surprises people
 :end-before: }
 ```
 
+```{figure} _figures/a-trap-with-nothing-else-path.svg
+:alt: What the hardware writes at a trap, and what it leaves untouched.
+:width: 100%
+
+Three registers and the program counter. Everything a reader associates with a trap — a saved
+frame, a process, a dispatch — is software somebody wrote, and none of it is here yet.
+```
+
 `mepc` points **at** the instruction that trapped, not past it. A handler that returns without
 moving it re-executes the same instruction, which traps again, into the same handler, for ever.
 The machine does not consider this an error. It is doing exactly what it was told, and the symptom

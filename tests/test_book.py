@@ -425,6 +425,37 @@ def test_prose_beside_a_listing_agrees_with_it_about_how_many_instructions():
     assert not wrong, "\n".join(wrong)
 
 
+PREREQUISITE_ROW = re.compile(r"\|\s*\*\*Prerequisites\*\*\s*\|([^|]*)\|")
+LINKED_ANCHOR = re.compile(r"\(#([a-z0-9-]+)\)")
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_a_prerequisite_comes_earlier_than_the_chapter_that_needs_it(chapter: Chapter):
+    """A chapter cannot require one the reader has not reached.
+
+    ch03, in Part I, declared ch11 — *Representing Information*, eight chapters later in Part III.
+    Nothing caught it. The link resolved, so `--strict` was satisfied; the label was derived from
+    the anchor, so it was not stale; and `answers` had a backwards check while the row a reader
+    actually acts on had none. It survived two renumbers and a rewrite of the whole labelling
+    scheme because every check was looking at whether the reference *worked*, not at whether it
+    pointed somewhere the reader had been.
+    """
+    text = (ROOT / chapter.path).read_text()
+    row = PREREQUISITE_ROW.search(text)
+    assert row, f"{chapter.path} has no Prerequisites row"
+
+    by_anchor = {c.anchor: c for c in CHAPTERS}
+    forward = []
+    for anchor in LINKED_ANCHOR.findall(row.group(1)):
+        needed = by_anchor.get(anchor)  # part pages and appendices are not chapters
+        if needed is not None and needed.number >= chapter.number:
+            forward.append(f"{needed.label} ({needed.title})")
+    assert not forward, (
+        f"{chapter.label} lists {', '.join(forward)} as a prerequisite, which the reader has "
+        f"not reached yet"
+    )
+
+
 def test_appendices_exist_and_are_listed():
     for appendix in APPENDICES:
         assert (ROOT / appendix.path).exists(), appendix.path
