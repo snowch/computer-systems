@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "e50b2fb70834918f",
+  "code_fingerprint": "8fcd672268c45c25",
   "code_sources": [
     "bench/run_interrupts.py",
     "bench/xv6.py",
@@ -13,7 +13,7 @@
     "note": "counts only; nothing here was timed, and two counts are deliberately absent",
     "omitted": "timer and UART interrupt counts, which measure elapsed time rather than work"
   },
-  "generated_at": "2026-09-15T15:10:02+00:00",
+  "generated_at": "2026-09-15T18:11:49+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",
@@ -41,7 +41,6 @@
       "block_operations": 64,
       "chars_received": 10,
       "chars_requested": 513,
-      "chars_the_writer_moved_itself": 577,
       "counts_not_recorded": [
         "timer",
         "uart"

@@ -6,7 +6,7 @@ its own. Produce a program in which that change is visible in the output.
 Then say, in one sentence, which real behaviour this would break.
 
 Put your program in `answer_cursor.c` beside this file. It must print the same fields ch08's does,
-including `descriptors shared_cursor <n>`.
+including `descriptors cursor_after_dup_write <n>`.
 """
 
 from __future__ import annotations

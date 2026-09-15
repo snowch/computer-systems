@@ -514,7 +514,6 @@ def interrupt_cost_table(name: str) -> str:
         ["Block operations the workload performed", run["block_operations"]],
         ["Interrupts the disk raised", run["disk_interrupts"]],
         ["Characters the workload asked to be written", run["chars_requested"]],
-        ["Characters the writing process handed over itself", run["chars_the_writer_moved_itself"]],
         ["Times it had to stop and wait for the device", run["times_the_writer_had_to_wait"]],
         ["Characters arriving from the keyboard", run["chars_received"]],
     ]
@@ -1174,7 +1173,7 @@ BARE_TABLES: dict[str, tuple[str, list[tuple[str, str, str]]]] = {
         ],
     ),
     "descriptors-bare": (
-        "One table, two destinations",
+        "One table, two destinations, one position",
         [
             ("descriptor_slots", "Descriptor slots", "int"),
             ("open_file_slots", "Open-file slots", "int"),
@@ -1184,14 +1183,19 @@ BARE_TABLES: dict[str, tuple[str, list[tuple[str, str, str]]]] = {
                 "One `write`, two destinations, one register different",
                 "bool",
             ),
-            (
-                "memory_kept_the_bytes",
-                "The bytes written to memory are the bytes read back",
-                "bool",
-            ),
+            ("cursor_after_writing", "Where the position is after writing six bytes", "int"),
+            ("read_without_rewinding", "Bytes a read returns from there", "int"),
+            ("read_after_rewinding", "…and after moving the position back to the start", "int"),
+            ("memory_kept_the_bytes", "The bytes read back are the bytes written", "bool"),
             ("closed_slot_refused", "An unopened descriptor is refused", "bool"),
             ("dup_shares_the_open_file", "A duplicate is a second name, not a copy", "bool"),
-            ("shared_cursor", "…so six bytes then one more leaves one cursor at", "int"),
+            ("cursor_after_dup_write", "Position after one byte through the duplicate", "int"),
+            (
+                "dup_appended_rather_than_overwrote",
+                "…which landed after the six, not on them",
+                "bool",
+            ),
+            ("read_everything", "Bytes in the array altogether", "int"),
         ],
     ),
     "fork-bare": (

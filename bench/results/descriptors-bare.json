@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "ab86e55c88535763",
+  "code_fingerprint": "3d8d864b5b27a773",
   "code_sources": [
     "sysfs/bare/start.S",
     "sysfs/bare/console.c",
@@ -12,7 +12,7 @@
     "harts": 1,
     "note": "counts and yes-or-no answers only; nothing on this target may be timed"
   },
-  "generated_at": "2026-09-15T16:57:12+00:00",
+  "generated_at": "2026-09-15T18:26:19+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",
@@ -38,17 +38,22 @@
   "summary": {
     "backends": 2,
     "closed_slot_refused": 1,
+    "cursor_after_dup_write": 7,
+    "cursor_after_writing": 6,
     "descriptor_slots": 4,
+    "dup_appended_rather_than_overwrote": 1,
     "dup_returned": 3,
     "dup_shares_the_open_file": 1,
     "harts": 1,
     "memory_kept_the_bytes": 1,
     "open_file_slots": 4,
     "program": "descriptors",
-    "read_back": 6,
+    "read_after_rewinding": 6,
+    "read_everything": 7,
+    "read_without_rewinding": 0,
     "same_call_reached_both": 1,
-    "shared_cursor": 7,
     "unexpected_trap": 0,
+    "wrote_through_dup": 1,
     "wrote_to_console": 6,
     "wrote_to_memory": 6
   },

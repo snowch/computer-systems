@@ -17,9 +17,15 @@ So one of them is a property of the workload and the other is a property of the 
 this runner records the first and declines the second — for the same reason ch13 declines to
 record timer interrupts, which is also why the timer is missing here.
 
-What it does record about the console is the fact that survives: how many characters the writing
-process handed to the device itself, and how many times it had to stop and wait. The second of
-those is zero, every time, and that zero is the chapter.
+What it records about the console is the one fact that survives: how many times the writing process
+had to stop and wait for the device. That is zero, every time, and the zero is the chapter.
+
+It used to record a second: how many characters the writer handed over itself. That one looked like
+a measurement and was not. `chars_written` is incremented in `uartwrite` for every character the
+*kernel* sends, so it counts the boot log, the shell's prompt and the echo of what was typed —
+577 characters against a workload that asked for 513 — and it came back one different often enough
+to fail `--check` at random. It is still read, as the guard below that the driver saw at least what
+the workload asked for, which is what it was always actually good for.
 """
 
 from __future__ import annotations
@@ -123,7 +129,12 @@ def believe(census: dict[str, Any]) -> dict[str, Any]:
         "disk_interrupts": source["virtio"],
         # Decided by the workload: every character it asked for reached the device.
         "chars_requested": declared["chars"],
-        "chars_the_writer_moved_itself": console["chars_written"],
+        # Deliberately absent: `chars_written`. It is a kernel-wide counter incremented in
+        # `uartwrite`, so it counts the boot log, the shell's prompt and the echo of whatever was
+        # typed, as well as the workload's own output — 577 characters against a workload that
+        # asked for 513. It is therefore not a measurement of the workload, it is occasionally
+        # one different between identical runs, and it fails this chapter's own test for a number
+        # worth printing: the console is not counting units of anything.
         "times_the_writer_had_to_wait": console["write_sleeps"],
         "chars_received": console["rx_chars"],
         # Deliberately absent: `timer` and `uart`. See the module docstring.

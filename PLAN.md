@@ -175,7 +175,7 @@ measurement rather than assertion. Bit manipulation and page-table-entry encodin
 ch15. The preprocessor is ch10. How a system call reaches the kernel is ch14. A part that repeated
 those would be the book disagreeing with itself, which is what ERRATA.md exists to stop.
 
-#### ch01 · Reading C — target `xv6`
+#### ch01 · Memory Is One Array — target `xv6`
 
 - **Objectives.** Read a declaration and know what each piece of it becomes. Memory as an array of
   bytes; `&` and `*`; what a pointer's *type* is for; pointer arithmetic scaled by the element;

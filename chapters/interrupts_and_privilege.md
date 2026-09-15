@@ -40,12 +40,6 @@ is nothing else to it:
 :end-before: #define MSTATUS_MIE
 ```
 
-Build it and boot it on a machine with nothing on it:
-
-```bash
-./run privilege
-```
-
 Arming it takes three writes — one to say *when*, one to enable this particular interrupt, and one
 to enable interrupts at all. The two-level enable is not redundancy: the per-source bit says which
 interrupts a program is interested in, and the global bit is what a critical section turns off.
@@ -124,6 +118,13 @@ which `bare_enter_supervisor()` exists to handle once rather than three times. [
 is where that stops being an inconvenience and becomes the subject.
 
 ## What we measured
+
+Run it yourself before reading the table — the numbers below are what you should
+see, and a figure you have reproduced is worth more than one you have been shown:
+
+```bash
+./run privilege
+```
 
 ```{include} _generated/interrupts-and-privilege-privilege.md
 ```

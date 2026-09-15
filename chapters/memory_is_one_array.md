@@ -1,10 +1,10 @@
 ---
-title: "Reading C"
-short_title: "01 · Reading C"
+title: "Memory Is One Array"
+short_title: "01 · Memory Is One Array"
 ---
 
-(reading-c)=
-# 01 · Reading C
+(memory-is-one-array)=
+# 01 · Memory Is One Array
 
 :::{note} Chapter header
 :class: dropdown
@@ -18,12 +18,15 @@ short_title: "01 · Reading C"
 
 ## The question
 
-How do I read a C declaration, and what does each piece of it become?
+If memory is one array of bytes, what is a C declaration saying about it?
 
-A C declaration is not read left to right, and every piece of one turns into something concrete:
-an amount of storage, a width to step by, an instruction the compiler emits. This chapter takes
-them a few at a time and checks each answer against what was actually compiled, rather than against
-a rule about how to read them.
+That is the claim this chapter is built on, and everything in it follows: a declaration is not read
+left to right, and every piece of one turns into something concrete — an amount of storage, a width
+to step by, an instruction the compiler emits. The chapter takes them a few at a time and checks
+each answer against what was actually compiled, rather than against a rule about how to read them.
+
+Change the program as you go. `./run firstc` builds and runs it, and the fastest way to find out
+whether you have the model is to predict what an edit will print before you make it.
 
 If you are not sure whether you want this chapter or [ch02](#c-without-a-runtime), [Part I](#part1) routes you.
 
@@ -58,7 +61,7 @@ what came out. `./run` knows how every program in this book is built — which c
 flags, which machine — so the only thing you have to think about is the source. `./run --list`
 shows the lot.
 
-```{include} _generated/reading-c-firstc.md
+```{include} _generated/memory-is-one-array-firstc.md
 ```
 
 Those four numbers are the rest of the chapter, and the rest of the chapter is why they are what
@@ -116,18 +119,22 @@ source of each is the same three characters, `p + 1`.
 :end-before: int64_t sysfs_reach_through
 ```
 
+If `4(a0)` and the address column are unfamiliar, [ch00](#prerequisites-and-setup) has a short key
+for reading these; the whole of what is needed here is that parentheses mean memory.
+
 The narrow one:
 
-```{include} _generated/reading-c-step-narrow.md
+```{include} _generated/memory-is-one-array-step-narrow.md
 ```
 
 The wide one:
 
-```{include} _generated/reading-c-step-wide.md
+```{include} _generated/memory-is-one-array-step-wide.md
 ```
 
-One instruction each, and they are not the same instruction. The narrow one loads a word from four
-bytes along; the wide one loads a doubleword from eight. **`+ 1` never means "one byte".** It means
+One load each, and they are not the same load. The narrow one loads a word from four bytes along;
+the wide one loads a doubleword from eight. (The `ret` after it is the function returning, which is
+why each listing is two instructions rather than one.) **`+ 1` never means "one byte".** It means
 one *element*, and the element size comes from the type, and the type is not in the expression you
 are reading.
 
@@ -186,7 +193,7 @@ index in `record`, add the offset of `third`, and read what is there.
 :start-at: int64_t sysfs_reach_through
 ```
 
-```{include} _generated/reading-c-reach.md
+```{include} _generated/memory-is-one-array-reach.md
 ```
 
 Two loads and an add. **There is no member lookup.** The names `second` and `third` do not exist by
@@ -267,7 +274,7 @@ does not say how the offsets were chosen, and the answer is not "add up the size
 
 ## Problems
 
-Three, in `tests/reading_c/declarations.c`.
+Three, in `tests/memory_is_one_array/declarations.c`.
 
 **1.1 — Say what each declaration names.**
 The test generates declarations and asks you to classify them. The two that differ only by
@@ -275,7 +282,7 @@ parentheses are the point of the exercise, and they are the two you will meet ag
 [ch17](#interrupts-and-drivers).
 
 ```bash
-python3 -m pytest tests/reading_c/test_problem_1_declarations.py
+python3 -m pytest tests/memory_is_one_array/test_problem_1_declarations.py
 ```
 
 **1.2 — Walk a buffer without an index.**
@@ -284,7 +291,7 @@ than a subscript. The versions in `kernel/string.c` are written this way, and th
 read them.
 
 ```bash
-python3 -m pytest tests/reading_c/test_problem_2_walking.py
+python3 -m pytest tests/memory_is_one_array/test_problem_2_walking.py
 ```
 
 **1.3 — Round an address both ways.**
@@ -292,7 +299,7 @@ Given an address and a power-of-two alignment, round up and round down. Address 
 pointer arithmetic, and the kernel does this on every page it touches.
 
 ```bash
-python3 -m pytest tests/reading_c/test_problem_3_rounding.py
+python3 -m pytest tests/memory_is_one_array/test_problem_3_rounding.py
 ```
 
 ## Where to go next

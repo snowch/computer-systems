@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pytest
 
-from tests.reading_c.harness import ask, checksum
+from tests.memory_is_one_array.harness import ask, checksum
 
 STRINGS = ["", "a", "hello", "kernel/string.c", "x" * 60]
 

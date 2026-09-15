@@ -13,7 +13,7 @@ a tag in the repository yet are planned, not published.
 | Chapter | Tag | What the code does at that point |
 |---|---|---|
 | ch00 | `prerequisites-and-setup` | Both targets working; the stamping, staging and figure machinery; `sysprobe` on both targets |
-| ch01 | `reading-c` | `sysfs/lib/declarations.c` — what `p + 1` and `->` become |
+| ch01 | `memory-is-one-array` | `sysfs/lib/declarations.c` — what `p + 1` and `->` become |
 | ch02 | `c-without-a-runtime` | `bench/run_kernelc.py` — what the kernel does without a library |
 | ch03 | `c-for-people-who-will-read-a-kernel` | `sysfs/lib/addresses.c` — the pairs ch03 compiles against each other |
 | ch04 | `a-trap-with-nothing-else` | `bare/trap.c` — a trap with no operating system under it |

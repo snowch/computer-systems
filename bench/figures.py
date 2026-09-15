@@ -525,19 +525,19 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         result="kernelc-xv6",
     ),
     # -- ch01 ---------------------------------------------------------------------------
-    "reading-c-firstc": Table(
+    "memory-is-one-array-firstc": Table(
         render=tables.first_program_table,
         result="firstc",
     ),
-    "reading-c-step-narrow": Listing(
+    "memory-is-one-array-step-narrow": Listing(
         symbol="sysfs_step_narrow",
         results=("declarations-riscv64",),
     ),
-    "reading-c-step-wide": Listing(
+    "memory-is-one-array-step-wide": Listing(
         symbol="sysfs_step_wide",
         results=("declarations-riscv64",),
     ),
-    "reading-c-reach": Listing(
+    "memory-is-one-array-reach": Listing(
         symbol="sysfs_reach_through",
         results=("declarations-riscv64",),
     ),

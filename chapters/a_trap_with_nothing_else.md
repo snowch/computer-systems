@@ -98,8 +98,12 @@ moving it re-executes the same instruction, which traps again, into the same han
 The machine does not consider this an error. It is doing exactly what it was told, and the symptom
 is a program that prints nothing and never finishes.
 
-Whether four is the right number to add is not obvious either, and it is the subject of the first
-problem below.
+Whether four is the right number to add is not obvious either. [ch00](#prerequisites-and-setup)'s
+reading key pointed out that instructions on this architecture are not all the same length, which
+ought to make adding a fixed four look reckless — and it would be, except that the programs in this
+part are built for `rv64g`, without the compressed extension, so every instruction in them really
+is four bytes. That is a property of the build, not of the processor, and the first problem below
+is about what happens when it stops holding.
 
 ### What a trap does not do
 

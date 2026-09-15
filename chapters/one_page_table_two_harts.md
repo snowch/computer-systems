@@ -44,12 +44,6 @@ can be a *leaf* — covering a whole gigabyte at once:
 :end-before: static void build_the_table
 ```
 
-Build it and boot it on a machine with nothing on it:
-
-```bash
-./run paging
-```
-
 Three entries is the entire table:
 
 ```{literalinclude} ../sysfs/bare/paging.c
@@ -106,12 +100,6 @@ apart and letting the other hart finish entirely in the gap:
 :end-before:     /* The same shape, with an instruction that has no gap in it.
 ```
 
-Build it and boot it on a machine with nothing on it:
-
-```bash
-./run harts
-```
-
 The other hart's whole increment happens inside one statement of this one. Both processors
 incremented; the counter went up once.
 
@@ -128,6 +116,14 @@ Nothing is lost, and nothing about the schedule changed. What changed is that th
 moment at which the counter has been read but not yet written.
 
 ## What we measured
+
+Run them yourself before reading the table — the numbers below are what you should
+see, and a figure you have reproduced is worth more than one you have been shown:
+
+```bash
+./run paging
+./run harts
+```
 
 ```{include} _generated/one-page-table-two-harts-paging.md
 ```
