@@ -61,19 +61,35 @@ def timed_run(
     args: list[str] | None = None,
     *,
     includes: list[str] | None = None,
+    extra_flags: list[str] | None = None,
 ) -> str:
     """Build a workload against the book's clock and run it, returning what it printed.
 
     Every workload links `sysfs/lib/timing.c`, because every duration in Part IV is read through
     the one clock ch16 built and argued about. A runner that timed with its own `clock_gettime`
     would be a second, unexamined instrument.
+
+    `extra_flags` is appended, not substituted, so ch23 can build one source twice — once as the
+    reader's own `-O2` would and once with the level that lets this compiler widen a loop — with
+    everything else about the two builds identical.
     """
     build_dir = ROOT / "sysfs" / "build"
     build_dir.mkdir(parents=True, exist_ok=True)
+    target = (
+        NATIVE
+        if not extra_flags
+        else HostTarget(
+            name=f"{NATIVE.name}{''.join(extra_flags)}",
+            cc=NATIVE.cc,
+            flags=(*NATIVE.flags, *extra_flags),
+            trustworthy_for_timing=True,
+            why=NATIVE.why,
+        )
+    )
     built = compile_program(
         [*sources, "sysfs/lib/timing.c"],
         build_dir / name,
-        NATIVE,
+        target,
         includes=includes or ["sysfs/include"],
     )
     return built.run(args or []).stdout
