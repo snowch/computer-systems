@@ -597,7 +597,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.bare_claims_table,
         result="fork-bare",
     ),
-    "prerequisites-and-setup-board": Table(
+    "appendix-h-board": Table(
         render=tables.board_identity_table,
         result="setup-host",
         pending=f"The board has not reported yet: {BOARD} (`bench/results/setup-host.json`).",

@@ -43,6 +43,13 @@ PAGES = (
     + sorted((ROOT / "appendices").glob("*.md"))
 )
 
+#: Source files whose *prose* names a chapter. Only :func:`sync_links` is applied to these: the
+#: rest of the passes are about a chapter page's own headings and problems, and would be nonsense
+#: against Python. ``bench/outline.py`` is here because its ``holds`` and ``source`` fields render
+#: onto the appendix pages, so a stale label in a docstring reaches a reader exactly as one in
+#: markdown does — three of them had, off by one and by two.
+LINK_ONLY = (ROOT / "bench" / "outline.py",)
+
 #: `[ch17](#locks-and-memory-ordering)` — the label is display, the anchor is identity.
 LINK = re.compile(r"\[ch\d\d\]\(#([a-z0-9-]+)\)")
 
@@ -163,9 +170,9 @@ def main() -> int:
     args = parser.parse_args()
 
     stale: list[str] = []
-    for path in PAGES:
+    for path in [*PAGES, *LINK_ONLY]:
         original = path.read_text()
-        updated = sync_page(path, original)
+        updated = sync_links(original) if path in LINK_ONLY else sync_page(path, original)
         if updated == original:
             continue
         stale.append(str(path.relative_to(ROOT)))

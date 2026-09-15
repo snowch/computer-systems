@@ -985,7 +985,7 @@ Recorded so they are not relitigated.
 ## 14. Immediate next steps
 
 1. Run `make bench-board` on the reference machine, commit `bench/results/setup-host.json`, and
-   remove the `pending=` marker on `prerequisites-and-setup-board` in `bench/figures.py` (M1).
+   remove the `pending=` marker on `appendix-h-board` in `bench/figures.py` (M1).
 2. Generate Appendix C from the board — the `perf` events it actually has.
 3. Write ch10 with the per-chapter prompt, following
    [§12.1](#121-chapter-template) and [§12.3](#123-definition-of-done-per-chapter).

@@ -102,6 +102,7 @@ project:
         - file: appendices/appendix_e_glossary.md
         - file: appendices/appendix_f_aarch64_for_riscv_readers.md
         - file: appendices/appendix_g_reading_xv6.md
+        - file: appendices/appendix_h_choosing_the_machine.md
 
 site:
   template: book-theme

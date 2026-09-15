@@ -30,9 +30,9 @@ tell you* is mandatory, and it is where the target, the tooling or the hardware 
 usually the most useful part of the chapter.
 
 :::{note} Where this book is
-All thirty chapters are written, and six of the seven appendices.
+All thirty chapters are written, and seven of the eight appendices.
 
-Thirteen figures are marked *pending*: they are `host` measurements that have to be taken on the
+Nineteen figures are marked *pending*: they are `host` measurements that have to be taken on the
 reference machine, and until they are you will see a box saying so rather than a number. Appendix C
 waits for the same machine — which events a board exposes is a property of its silicon, kernel and
 firmware together, and cannot be drafted from a desk.
@@ -291,9 +291,9 @@ in.
 A laptop for [Part I](#part1), [Part II](#part2) and [Part IV](#part4), and for all of
 [Part III](#part3) except the numbers it takes on real hardware — everything there runs under
 emulation, free. For [Part V](#part5), a small Linux machine whose `perf` can count and sample; a
-Raspberry Pi 5 is the reference, and one you
-already own may well do. [ch00](#prerequisites-and-setup) is the setup, and a script that tells you which
-targets your machine can currently run and whether its counters are real.
+Raspberry Pi 5 is the reference, and one you already own may well do —
+[Appendix H](#appendix-h) is how to tell. [ch00](#prerequisites-and-setup) is the setup, and a
+script that says which targets your machine can currently run and whether its counters are real.
 
 The book does not tell you which kernel to run. Whether a machine's performance counters work is
 a property of its whole configuration — silicon, device tree, kernel, firmware — rather than of

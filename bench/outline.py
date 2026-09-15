@@ -566,7 +566,7 @@ APPENDICES: tuple[Appendix, ...] = (
         "xv6_file_map",
         "An xv6 File Map",
         holds="What lives in which file of the kernel, and which chapter reads it. The companion "
-        "to Part IV, and the page to keep open while reading [ch13](#traps-and-system-calls) onwards.",
+        "to Part IV, and the page to keep open while reading [ch14](#traps-and-system-calls) onwards.",
         source="The submodule at its pinned commit, so the map describes the tree a reader "
         "actually has rather than a version of xv6 from a paper.",
     ),
@@ -584,8 +584,8 @@ APPENDICES: tuple[Appendix, ...] = (
         "AArch64 for RISC-V Readers",
         holds="Registers and calling convention, the load/store and branch forms, atomics and "
         "fences — each beside its RISC-V equivalent from Part III.",
-        source="A translation, not a reference. Written for someone who has read [ch11](#machine-level-code-on-riscv) "
-        "and is about to read [ch23](#optimising-code), and organised as *you know this already, here it "
+        source="A translation, not a reference. Written for someone who has read [ch12](#machine-level-code-on-riscv) "
+        "and is about to read [ch24](#optimising-code), and organised as *you know this already, here it "
         "is again*. It takes its shape from ch23, so it is drafted after it.",
     ),
     Appendix(
@@ -597,6 +597,17 @@ APPENDICES: tuple[Appendix, ...] = (
         source="The submodule at its pinned commit, read rather than recalled, so the trace "
         "describes the code the reader has checked out. The commentary is named as a companion "
         "and is never a source.",
+    ),
+    Appendix(
+        "H",
+        "choosing_the_machine",
+        "Choosing the Machine",
+        holds="What the `host` target has to be able to do, how to check a machine you already "
+        "own, and what changes if yours differs from the reference.",
+        source="The requirements are capabilities rather than part numbers, verified by "
+        "`scripts/verify-setup.py`; the board's own report is a stamped result. It is an "
+        "appendix and not a chapter because nothing in it is measured by the reader — it is "
+        "read once, before buying, and then only to settle an argument with a spec sheet.",
     ),
 )
 
