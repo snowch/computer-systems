@@ -37,7 +37,7 @@ reference machine, and until they are you will see a box saying so rather than a
 waits for the same machine — which events a board exposes is a property of its silicon, kernel and
 firmware together, and cannot be drafted from a desk.
 
-**[Download the whole book as a PDF](systems-from-scratch.pdf)** — every chapter and appendix in
+**[Download the whole book as a PDF](/systems-from-scratch.pdf)** — every chapter and appendix in
 one file, built from the same source as this site, so the two cannot disagree about what a
 chapter says.
 :::
