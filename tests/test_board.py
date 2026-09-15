@@ -24,6 +24,8 @@ BOARD_RUNNERS = {
     "setup-host": "bench.run_setup",
     "measuring-host": "bench.run_measuring",
     "hierarchy-host": "bench.run_hierarchy",
+    "bridge-host": "bench.run_bridgecost",
+    "loops-host": "bench.run_loopcost",
 }
 
 #: Figures still waiting for a runner to be written, not just for the board to exist.
@@ -33,9 +35,7 @@ BOARD_RUNNERS = {
 #: Delete a name when its runner lands; the test below fails if one is deleted too early, and
 #: `test_the_debt_list_is_not_padded` fails if one is left here after its runner exists.
 RUNNER_NOT_WRITTEN = {
-    "bridge-host",
     "faultcost-host",
-    "loops-host",
     "oscost-host",
     "pipeline-host",
     "profile-host",
