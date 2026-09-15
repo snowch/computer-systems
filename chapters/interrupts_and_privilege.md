@@ -86,6 +86,14 @@ processor refuses, and the refusal is itself a trap — cause 2, illegal instruc
 error code, no signal and no return value. The instruction simply does not happen and control
 leaves for the handler.
 
+```{figure} _figures/interrupts-and-privilege-path.svg
+:alt: Machine mode drops to supervisor with mret, and a refused instruction traps it back.
+:width: 100%
+
+Down a level on purpose, and back only by trapping. There is no instruction for *gaining*
+privilege, which is why the way back has to be arranged before leaving.
+```
+
 Getting into supervisor mode is the same instruction that returns from a trap. `mret` goes to
 `mepc` at the privilege level named in `mstatus.MPP`, so setting that field to *supervisor* and
 executing `mret` is a deliberate demotion:

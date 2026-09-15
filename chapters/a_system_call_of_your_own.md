@@ -37,6 +37,18 @@ That arrangement is gone. The caller runs in supervisor mode, was compiled separ
 the boundary is concerned, and might be using any register for anything. So the handler saves all
 of them:
 
+:::{note} This is not the user-to-kernel boundary yet
+A system call on a real machine goes from *user* mode to *supervisor* mode. This one goes from
+supervisor to machine, which is one level up from where you are expecting it.
+
+That is deliberate, and it is not a simplification of the mechanism — the mechanism is identical,
+because `ecall` traps to the level above wherever it was executed and the level above decides what
+to do about it. What it avoids is having to build a user mode, a process and an address space
+before the boundary itself can be shown, which would put this chapter after
+[ch09](#fork-built-rather-than-read) rather than before it.
+[ch14](#traps-and-system-calls) is the same four ingredients at the level a reader expects.
+:::
+
 ```{literalinclude} ../sysfs/bare/syscall.c
 :language: c
 :start-at: /* The trap entry. Naked because every instruction in it matters

@@ -74,9 +74,24 @@ r->next = free_list;
 free_list = r;
 ```
 
-That is [ch01](#memory-is-one-array)'s self-referential struct doing real work, and it is three lines of pointer
-arithmetic that would be undefined behaviour in an application and is the allocator here.
-[ch16](#page-faults-as-a-feature) is the chapter that measures what it costs.
+That is [ch01](#memory-is-one-array)'s self-referential struct doing real work, and it is three
+lines of pointer arithmetic that would be undefined behaviour in an application and is the
+allocator here. [ch16](#page-faults-as-a-feature) is the chapter that measures what it costs.
+
+That phrase is worth being precise about, because it is not a figure of speech. C is defined in
+terms of an abstract machine in which a pointer points at an *object* — something created by a
+declaration, or by an allocator, with a lifetime the standard describes. `pa` is none of those. It
+is an integer the linker script and the hardware agree is the address of usable memory, cast to a
+pointer, and the abstract machine has no concept that would make the cast meaningful. Writing
+through it is undefined not because it is dangerous but because the standard has nothing to say
+about it.
+
+What makes it work anyway is that the compiler is not the last word on this program. The
+declaration, the object model and the lifetime rules exist to let a compiler optimise without
+asking the hardware; here the hardware is the authority, and the kernel is asserting a fact about
+the machine that C has no way to express. That is the real reason kernel C cannot be read as
+portable ISO C with some extra library calls missing — it is the same language making a different
+bargain about who decides what an address means.
 
 ### Memory that is not memory
 

@@ -58,6 +58,14 @@ would make the program vanish. The third is the interesting one — a different 
 pointing at the same physical memory, so that afterwards two addresses a gigabyte apart name one
 byte.
 
+```{figure} _figures/one-page-table-two-harts-alias.svg
+:alt: Three gigapage entries: two identity mappings and one alias into RAM.
+:width: 100%
+
+Two entries send a gigabyte to itself, so the running program does not vanish the moment
+translation comes on. The third is the whole demonstration.
+```
+
 Switching it on is one register and one instruction:
 
 ```{literalinclude} ../sysfs/bare/paging.c
@@ -114,6 +122,14 @@ one instruction:
 
 Nothing is lost, and nothing about the schedule changed. What changed is that there is no longer a
 moment at which the counter has been read but not yet written.
+
+:::{warning} This proves atomicity, and atomicity is not ordering
+The instruction fixed one thing: the read and the write of *this* counter cannot be separated. It
+says nothing about whether the other hart sees this hart's earlier writes to anything else, or in
+what order, and a program built on the assumption that it does will be wrong on real hardware in
+ways this target cannot show you. [ch18](#locks-and-memory-ordering) is where the difference gets
+its own chapter, and [ch26](#memory-ordering-on-real-hardware) is where it costs something.
+:::
 
 ## What we measured
 

@@ -29,9 +29,12 @@ from dataclasses import dataclass
 from bench import tables
 from bench.diagrams import (
     address_space_cost,
+    bare_trap,
     dispatch_table,
     fault_decision,
+    gigapage_alias,
     interrupt_sources,
+    privilege_path,
     sampling_profile,
     sections_to_segments,
     stack_frame,
@@ -551,13 +554,28 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         result="filemap-xv6",
     ),
     # -- Part II: the machine with nothing on it ----------------------------------------
+    "a-trap-with-nothing-else-path": Diagram(
+        draw=bare_trap,
+        alt="What the hardware writes at a trap, and what it leaves untouched.",
+        result="trap-bare",
+    ),
     "a-trap-with-nothing-else-trap": Table(
         render=tables.bare_claims_table,
         result="trap-bare",
     ),
+    "interrupts-and-privilege-path": Diagram(
+        draw=privilege_path,
+        alt="Machine mode drops to supervisor with mret, and a refused instruction traps it back.",
+        result="privilege-bare",
+    ),
     "interrupts-and-privilege-privilege": Table(
         render=tables.bare_claims_table,
         result="privilege-bare",
+    ),
+    "one-page-table-two-harts-alias": Diagram(
+        draw=gigapage_alias,
+        alt="Three gigapage entries: two identity mappings and one alias into RAM.",
+        result="paging-bare",
     ),
     "one-page-table-two-harts-paging": Table(
         render=tables.bare_claims_table,
