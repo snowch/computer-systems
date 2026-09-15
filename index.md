@@ -7,6 +7,28 @@ short_title: Preface
 
 *From bits to cycles, measured on real hardware.*
 
+
+## What this book is
+
+A self-study text on computer systems and performance, in four parts and twenty-four chapters,
+built around one question and a rule about answering it.
+
+Three things make it the shape it is.
+
+**Every number in it was measured, and says where.** No figure is typed into the prose. Each one
+comes from a stamped result recording the machine, the kernel, the compiler and a hash of the code
+that produced it, and a check fails if a quoted figure stops matching the code in the repository.
+Where a measurement has not been taken, you get a box saying so rather than a plausible-looking
+placeholder.
+
+**Every problem is a test, and there is no answer key.** Each chapter ends with problems that are
+stubs under `tests/`, with a test that passes only when you have solved it. Nothing in the
+repository contains the answers — which also means there is no answer key to be wrong.
+
+**Every chapter ends by saying what it could not show you.** A section called *What this cannot
+tell you* is mandatory, and it is where the target, the tooling or the hardware ran out. It is
+usually the most useful part of the chapter.
+
 :::{note} Where this book is
 All twenty-four chapters and five of the six appendices are written. Thirteen figures are still
 marked *pending*: they are `host` measurements that have to be taken on the reference machine, and
@@ -30,6 +52,51 @@ time actually went, and to know when the answer you got is wrong.
 
 So every layer here gets the same treatment: how it works, then what it costs, then how that cost
 was measured and what the measurement could not see.
+
+## Who it is for
+
+Someone who has seen digital logic and a pipeline diagram, has spent years around computers, is
+fluent in a scripting language, and has never had a reason to read a kernel. You do not need OS
+internals; that is Part III.
+
+**You do not need to know C**, and Part I is three chapters about exactly that. It is not a C
+tutorial: control flow, functions and operators are assumed from whatever language you already
+use. What it covers is the part your other language was built to hide — that memory is one array
+of bytes and everything in it has an index — and then the habits that stop working when there is
+no library underneath you.
+
+Two readers arrive here and they need different chapters, so the part says which.
+[Chapter 1](#ch01) is the on-ramp for someone who has never written C. [Chapter 2](#ch02) is for
+someone who writes it for applications and is about to lose the heap, the library and the
+assumption that only one thread is looking. [Chapter 3](#ch03) is for both, and sorts C's
+constructs by a single question: has the machine heard of this?
+
+## What you will be able to do
+
+Concretely, and these are the things the problems make you do rather than read about:
+
+- Take a duration on a real machine and say whether it means anything — what the clock cost, how
+  many repetitions, which statistic, and what the measurement could not see.
+- Read the disassembly of a function you wrote and account for what the compiler did with it.
+- Stop a kernel in the middle of a trap and say what state is where, and why it had to be saved.
+- Find the expensive part of a program you did not write, and know when the profiler is lying to
+  you about which line it is.
+- Predict a cost from a model before measuring, then say what the gap between the two means.
+
+What you will not get is a list of numbers to remember. The reference machine's figures are this
+machine's, and every chapter says so. The transferable part is the method.
+
+## How the book is arranged
+
+| | |
+|---|---|
+| **[Part I](#ch01)** — C, and what the machine does with it | Three chapters, and which of them you need depends on where you are starting. Not a C tutorial |
+| **[Part II](#ch04)** — What a computer does with a program | One program from source text to result: the toolchain, representation, machine code, linking |
+| **[Part III](#ch08)** — The operating system layer | A kernel small enough to read, taken apart: traps, virtual memory, faults, drivers, locks, scheduling, files |
+| **[Part IV](#ch16)** — Where the cycles go | Part III's chapters asked again as questions about time, on hardware that can answer them |
+
+[Chapter 0](#ch00) sits before all of it and is setup: two targets working, and a script that
+tells you what your machine can currently run.
 
 ## Two machines, on purpose
 
@@ -55,7 +122,7 @@ laptop, not extrapolated from a different machine.
 The split is not a compromise; it is the argument. QEMU will happily answer a question about
 nanoseconds and the answer will be meaningless, because it models no cache, no branch predictor
 and no pipeline. Watching a program in a debugger tells you what it *does*. Only real hardware
-tells you what it *costs*. [Chapter 13](#ch15) puts the same program through both and makes
+tells you what it *costs*. [Chapter 15](#ch15) puts the same program through both and makes
 the gap concrete.
 
 ### Why they do not share an instruction set
@@ -95,24 +162,25 @@ follow that a single-architecture book could not offer.
 has to *assert* that its ideas generalise. This one demonstrates it, by having them survive a
 change of architecture in front of you.
 
-**You get two memory models instead of one.** [Chapter 10](#ch12) teaches RISC-V's;
-[chapter 18](#ch20) measures ARM's, which is also weak and differently specified. A reader shown only one would reasonably
+**You get two memory models instead of one.** [Chapter 12](#ch12) teaches RISC-V's;
+[chapter 20](#ch20) measures ARM's, which is also weak and differently specified. A reader shown only one would reasonably
 conclude that model *is* memory ordering. Shown two, you learn it is a family, that a fence is an
 architecture-specific spelling of an architecture-independent need, and that store buffers and
 coherence are what actually transfer.
 
-**[Chapter 13](#ch15) gets harder in the way that matters.** Three things differ between watching a program
+**[Chapter 15](#ch15) gets harder in the way that matters.** Three things differ between watching a program
 under xv6 and profiling it on real hardware: emulation against hardware, one kernel against
 another, one instruction set against another. Attributing a difference to the wrong one is the
 commonest way to be confidently wrong about performance, and that chapter is where you practise
 separating them.
 
 Reading disassembly is a small part of the book, and this is the whole of what the split costs
-you. In Parts II and III it is RISC-V: [ch04](#ch04) through [ch06](#ch06). In Part IV it is AArch64:
-[ch18](#ch18), [ch19](#ch19) and [ch23](#ch23). Chapter 0 shows one small function compiled both ways, so the difference is concrete rather
-than promised, and [Appendix F](#appendix-f) is a translation between the two for the reader who
-meets the second having learned the first. Everything else is method, and method does not have an
-architecture.
+you. In Parts I and II it is RISC-V: [ch01](#ch01), [ch03](#ch03), [ch04](#ch04), [ch05](#ch05) and
+[ch06](#ch06). In Part IV it is AArch64: [ch18](#ch18), [ch19](#ch19) and [ch23](#ch23).
+[Chapter 0](#ch00) shows one small function compiled both ways, so the difference is concrete
+rather than promised, and [Appendix F](#appendix-f) is a translation between the two for the
+reader who meets the second having learned the first. Everything else is method, and method
+does not have an architecture.
 
 ### One argument, not two tutorials
 
@@ -137,39 +205,19 @@ itself, [ch22](#ch22) is about the whole machine rather than any one mechanism, 
 
 ## How the numbers work
 
-Every figure in this book comes from a JSON file under `bench/results/` that records the target,
-the board or QEMU version, the kernel, the compiler, its flags, and a hash of the code that
-produced the number. Nothing is typed into the prose by hand, and CI fails if a quoted figure's
-hash stops matching the code in the repository.
+The stamped result behind each figure is a JSON file under `bench/results/`, and it records the
+target, the board or QEMU version, the kernel, the compiler, its flags, and a hash of the code
+that produced the number.
 
-Two consequences worth stating plainly. Where a measurement has not been taken yet, you will see
-a box saying so rather than a plausible-looking placeholder. And where a machine cannot answer a
-question at all, the chapter says that, shows the reasoning it used instead, and does not quietly
-substitute a number from somewhere else. Five chapters depend on something specific about the
-reference machine, and each says so in its own header rather than letting you discover it two
-hundred pages in.
-
-## Who it is for
-
-Someone who has seen digital logic and a pipeline diagram, has spent years around computers, is
-fluent in a scripting language, and has never had a reason to read a kernel. You do not need OS
-internals; that is Part III.
-
-**You do not need to know C**, and Part I is three chapters about exactly that. It is not a C
-tutorial: control flow, functions and operators are assumed from whatever language you already
-use. What it covers is the part your other language was built to hide — that memory is one array
-of bytes and everything in it has an index — and then the habits that stop working when there is
-no library underneath you.
-
-Two readers arrive here and they need different chapters, so the part says which.
-[Chapter 1](#ch01) is the on-ramp for someone who has never written C. [Chapter 2](#ch02) is for
-someone who writes it for applications and is about to lose the heap, the library and the
-assumption that only one thread is looking. [Chapter 3](#ch03) is for both, and sorts C's
-constructs by a single question: has the machine heard of this?
+The consequence worth stating plainly is what happens when a machine cannot answer a question at
+all. The chapter says so, shows the reasoning it used instead, and does not quietly substitute a
+number from somewhere else. Five chapters depend on something specific about the reference
+machine, and each says so in its own header rather than letting you discover it two hundred pages
+in.
 
 ## What you will need
 
-A laptop for Parts II and III — everything there runs under emulation, free. For Part IV, a small
+A laptop for Parts I, II and III — everything there runs under emulation, free. For Part IV, a small
 Linux machine whose `perf` can count and sample; a Raspberry Pi 5 is the reference, and one you
 already own may well do. [Chapter 0](#ch00) is the setup, and a script that tells you which
 targets your machine can currently run and whether its counters are real.

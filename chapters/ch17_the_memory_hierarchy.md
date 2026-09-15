@@ -98,7 +98,7 @@ cache entirely and still be limited by memory, because every access first costs 
 that missed. [ch09](#ch09)'s three levels are three more memory accesses, and this is where that
 stops being a structural fact and becomes a cost.
 
-### Back to chapter 13
+### Back to chapter 15
 
 Now the prediction can be judged.
 

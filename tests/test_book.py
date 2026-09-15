@@ -396,7 +396,10 @@ def test_pages_agree_on_which_chapters_read_disassembly(page: str):
         label for label in reading_disassembly(kind) if label != "ch00"
     }
     text = (ROOT / page).read_text()
-    found = _labels_near(text, "disassembly")
+    # ch00 comes off both sides, not just the outline's. It reads disassembly on both
+    # architectures and is excluded from the *cost* being claimed, so a page naming it in this
+    # paragraph — the preface points at it for exactly that reason — is telling the truth.
+    found = _labels_near(text, "disassembly") - {"ch00"}
     assert found, f"{page} no longer says anything about reading disassembly"
 
     missing = without_ch00("aarch64") - found

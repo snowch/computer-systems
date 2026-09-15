@@ -126,7 +126,7 @@ them, more instructions than `acquire` and `release` together. They exist becaus
 across an interrupt on the same hart would deadlock against its own handler, and they are the
 price of that safety rather than of the mutual exclusion.
 
-### So was chapter 9 right?
+### So was chapter 11 right?
 
 Back to the debt.
 
