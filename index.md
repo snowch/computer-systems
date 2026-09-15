@@ -132,6 +132,11 @@ machine's, and every chapter says so. The transferable part is the method.
 [Chapter 0](#ch00) sits before all of it and is setup: two targets working, and a script that
 tells you what your machine can currently run.
 
+The kernel Part III reads has its own commentary @xv6-book, free from MIT and written by its
+authors. It explains what that code does; this book asks what it costs. They go well together and
+[Appendix G](#appendix-g) is the map — which of these chapters covers the ground of which of its
+topics, and one system call traced through every layer it touches.
+
 ## Two machines, on purpose
 
 Almost every book on this subject picks one target and lives with its limitations. This one uses

@@ -462,6 +462,16 @@ APPENDICES: tuple[Appendix, ...] = (
         "and is about to read [ch18](#ch18), and organised as *you know this already, here it "
         "is again*. It takes its shape from ch18, so it is drafted after it.",
     ),
+    Appendix(
+        "G",
+        "reading_xv6",
+        "Reading xv6 Alongside This Book",
+        holds="Which of this book's chapters covers the ground of which part of the xv6 "
+        "commentary, and one system call traced through every layer it touches.",
+        source="The submodule at its pinned commit, read rather than recalled, so the trace "
+        "describes the code the reader has checked out. The commentary is named as a companion "
+        "and is never a source.",
+    ),
 )
 
 PARTS: tuple[str, ...] = (PART_START, PART_C, PART_MACHINE, PART_OS, PART_COST)

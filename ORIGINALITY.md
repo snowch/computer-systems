@@ -920,6 +920,37 @@ Nx" write-ups.
   hand-written version might reach, which is named in the limitations rather than left out.
 - **Citations are primary only**: the two architectures' vector specifications.
 
+## Appendix G · Reading xv6 Alongside This Book
+
+**Closest in subject.** The xv6 commentary itself, whose chapter 1 walks `fork`; OSTEP's process
+API chapter; MIT 6.1810's lab handouts; and the many "annotated xv6 source" write-ups.
+
+**How this differs, and the care taken.**
+
+- **It is a map of *this* book, not a retelling of theirs.** The appendix deliberately restates
+  nothing from the commentary and says so. Every row sends the reader to a chapter of this book
+  and, where one exists, to the measurement that prices that layer — which is the axis the
+  commentary does not have.
+- **The mapping is by topic rather than by chapter number**, because the commentary's numbering
+  shifts between revisions. That is also why no table of contents of theirs is reproduced: §5
+  forbids mirroring a structure, and a topic list assembled from this book's own chapters is not
+  one.
+- **The `fork` trace was read out of the pinned submodule, not recalled.** Doing so found that the
+  function is `kfork` in this revision, that `sys_fork` is a one-line wrapper, and that
+  `uvmcopy` copies eagerly with a `kalloc` and a `memmove` per page. A trace written from memory
+  would have said `fork` and would have been wrong about the tree the reader has.
+- **The choice of `fork` is argued from this book's structure**, not from its place in anyone's
+  chapter 1: it is the one call that touches almost every mechanism Part III separates, so it is
+  the shortest demonstration that those chapters describe one system rather than six.
+- **"Why it returns twice" is answered in one line and attributed to a register**, rather than
+  narrated. Nothing returns twice; the child is a copy of the parent's saved register set with the
+  calling convention's return register overwritten, and ch08 is where that set is counted.
+- **Three rows of the map carry no price, and the appendix says why** rather than leaving a gap —
+  the cost of a driver, an interrupt and a file system on this board is the cost of this board's
+  devices.
+- **The commentary is cited as a companion and never as a source**, and its bib entry records
+  that. No chapter takes structure or content from it.
+
 ---
 
 **Code attribution.** xv6 itself is MIT-licensed and is used as a git submodule, unmodified; the

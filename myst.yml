@@ -87,6 +87,7 @@ project:
         - file: appendices/appendix_d_xv6_file_map.md
         - file: appendices/appendix_e_glossary.md
         - file: appendices/appendix_f_aarch64_for_riscv_readers.md
+        - file: appendices/appendix_g_reading_xv6.md
 
 site:
   template: book-theme

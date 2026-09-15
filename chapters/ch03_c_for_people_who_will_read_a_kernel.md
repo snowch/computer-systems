@@ -265,7 +265,9 @@ rather than about a compiler — in particular §6.7.6.3 on the adjustment of ar
 §6.7.3 on what `volatile` requires.
 
 xv6's own source @xv6-riscv-source is now worth opening, and this is the chapter that makes it
-possible. Start with `kernel/uart.c`, which is about a hundred lines and contains a `volatile`
+possible. Its own commentary @xv6-book, written by the people who wrote the kernel and given away
+by MIT, is the best explanation of what that code does; [Appendix G](#appendix-g) maps its topics
+onto this book's chapters, and traces one system call through every layer both of them describe. Start with `kernel/uart.c`, which is about a hundred lines and contains a `volatile`
 device register, a static buffer with exactly the sharing problem this chapter's second problem
 describes, and a lock. You will not understand the lock yet. Read it anyway and come back after
 [ch12](#ch12).
