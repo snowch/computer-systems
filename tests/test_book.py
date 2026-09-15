@@ -568,6 +568,35 @@ def test_every_prose_mention_of_a_part_is_a_link(path):
     )
 
 
+BIB_ENTRY = re.compile(r"@(\w+)\{([^,]+),(.*?)\n\}", re.S)
+
+
+def test_every_reference_can_be_followed():
+    """A citation the reader cannot follow is half a citation.
+
+    §5 requires every factual claim about hardware to cite a measurement or a primary source, and
+    the whole point of naming the source is that the reader can go and read it. The preface's
+    "Cox et al. (n.d.)" and "Gregg (2020)" rendered as blue, underlined, and inert: the theme
+    styles a citation as a link whether or not it has anywhere to go, which on a phone — where
+    there is no hover card — is indistinguishable from a broken link.
+
+    Sixteen of the twenty entries had the address all along, in ``howpublished``, which is the
+    BibTeX-correct field for a web resource and the one myst's renderer does not read. It reads
+    ``url`` and ``doi``. So this asks for one of those, and ``howpublished`` stays for the sake of
+    any other tool that opens this file.
+    """
+    text = (ROOT / "references.bib").read_text()
+    entries = BIB_ENTRY.findall(text)
+    assert len(entries) > 15, f"only {len(entries)} entries parsed — has the format changed?"
+    unfollowable = [
+        key.strip() for _, key, body in entries if not re.search(r"^\s*(url|doi)\s*=", body, re.M)
+    ]
+    assert not unfollowable, (
+        "these references give the reader nowhere to go — add a `url` or a `doi`, because the "
+        "citation renders as a link either way:\n  " + "\n  ".join(unfollowable)
+    )
+
+
 def test_appendices_exist_and_are_listed():
     for appendix in APPENDICES:
         assert (ROOT / appendix.path).exists(), appendix.path

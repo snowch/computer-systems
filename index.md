@@ -71,10 +71,10 @@ no runtime underneath you. [ch01](#memory-is-one-array) is the on-ramp; [ch02](#
 enough to read rather than one that has to be described.
 
 **You do not need any hardware background.** No digital logic, and no pipeline diagram.
-[Part II](#part2) starts at a machine with nothing on it and builds up, so the hardware arrives as
-something you switch on rather than something assumed; [ch25](#the-cpu) later builds the pipeline
-from nothing, on the grounds that a reader who has seen a five-stage diagram in a lecture still
-has no idea what a real core does with a branch.
+[Part II](#part2) starts at a bare machine and adds one mechanism at a time, so nothing about the
+hardware is assumed before it is built. [ch25](#the-cpu) does the same for the pipeline, on the
+grounds that a reader who has seen a five-stage diagram in a lecture still has no idea what a real
+core does with a branch.
 
 ### If you come from a managed language
 
@@ -86,15 +86,20 @@ because the word did not change.
 | You already know | What it is here | Where |
 |---|---|---|
 | A reference | An index into one array of bytes, with a type saying how wide a step is | [ch01](#memory-is-one-array) |
-| `new`, and a collector | A fixed array decided at compile time, or a free list built out of the free memory | [ch02](#c-without-a-runtime) |
+| Allocating whenever you like, and a collector | A fixed array decided at compile time, or a free list built out of the free memory | [ch02](#c-without-a-runtime) |
 | An exception | A returned value the caller is expected to look at, and sometimes no way to report at all | [ch02](#c-without-a-runtime) |
-| `volatile`, meaning *ordered between threads* | `volatile`, meaning *do not remove this access* — and **not** a threading primitive | [ch03](#c-for-people-who-will-read-a-kernel), [ch18](#locks-and-memory-ordering) |
+| `volatile` in Java or C#, meaning *ordered between threads* | `volatile`, meaning *do not remove this access* — and **not** a threading primitive | [ch03](#c-for-people-who-will-read-a-kernel), [ch18](#locks-and-memory-ordering) |
 | A JIT that optimises what runs hot | A compiler that optimised once, and a listing you can read | [ch10](#what-a-computer-does-with-a-program), [ch24](#optimising-code) |
 | A language memory model | Two hardware memory models, neither of which is your language's | [ch18](#locks-and-memory-ordering), [ch26](#memory-ordering-on-real-hardware) |
 
-The `volatile` row is the one that costs people afternoons. The keyword is spelled the same and
-does a different job, and [ch03](#c-for-people-who-will-read-a-kernel) shows the compiler obeying the C one, instruction by
-instruction.
+Two of those rows will not surprise a Go programmer: errors are values there too, and Go compiles
+ahead of time rather than optimising what runs hot. You start closer to C on those, and no closer
+on the rest — which is worth knowing, because it tells you where to slow down.
+
+The `volatile` row is the one that costs people afternoons, and only if you write Java or C#; Go
+and Python have no such keyword to be misled by. It is spelled the same as C's and does a
+different job, and [ch03](#c-for-people-who-will-read-a-kernel) shows the compiler obeying the C
+one, instruction by instruction.
 
 ### Where this is meant to deliver you
 
