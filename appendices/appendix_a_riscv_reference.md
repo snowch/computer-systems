@@ -13,6 +13,42 @@ Everything on this page is from the RISC-V unprivileged @riscv-isa-unprivileged 
 @riscv-isa-privileged specifications and the psABI @riscv-psabi, restated for the subset this book
 uses. It is not a substitute for reading them; it is what to have open while you do.
 
+(reading-a-listing)=
+## How to read a listing
+
+Listings appear throughout the book and always have this shape, so it is worth spending a minute
+on it once. [Appendix F](#appendix-f) is the same page for AArch64, which differs in three ways
+that matter.
+
+**The left-hand column is an address**, in hexadecimal, counted from the start of the function.
+`0:` is the first instruction, and the number on the next line tells you how many bytes it took —
+so a second instruction at `4:` means the first was four bytes long. You will also find
+instructions two bytes apart, because this architecture has short forms of its commonest
+instructions @riscv-isa-unprivileged and the compiler uses them unasked. Instructions here are
+*not* all the same length, and [ch04](#a-trap-with-nothing-else) turns on that fact.
+
+**Then the mnemonic**: `blt` is branch-if-less-than, `mv` is move, `ret` is return. You are not
+expected to know these, and this book never asks you to write assembly — only to read enough of it
+to say what the compiler did.
+
+**Then the operands, destination first.** `mv a1,a0` copies `a0` into `a1`, not the other way
+round. That order is the assembler's convention @riscv-isa-unprivileged and it is the one thing
+most likely to mislead you if you skim.
+
+**`a0`, `a1`, `a2` are registers** — the processor's own named slots, the fastest storage a program
+has. The `a` ones carry arguments and return values @riscv-psabi, which is why a function's first
+argument arrives in `a0` and its answer leaves in `a0`. The next section lists them all.
+
+**Parentheses mean memory, and the number in front is a byte offset.** `4(a0)` is *the memory at
+the address in `a0`, plus four bytes* — not `a0` times anything. Nearly every listing in
+[Part I](#part1) turns on that one piece of notation, and the offset is usually the width of
+whatever the pointer points at, which is how the same C source becomes `4(a0)` in one function and
+`8(a0)` in another.
+
+**Everything under a listing is provenance**: which compiler, which flags, which result file it was
+captured from. It is there so that a listing you find surprising can be regenerated rather than
+argued about.
+
 ## The integer registers
 
 Thirty-two, each sixty-four bits wide on RV64. `x0` is hardwired to zero — writes to it are

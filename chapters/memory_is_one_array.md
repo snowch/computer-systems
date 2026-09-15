@@ -120,8 +120,10 @@ source of each is the same three characters, `p + 1`.
 :end-before: int64_t sysfs_reach_through
 ```
 
-If `4(a0)` and the address column are unfamiliar, [ch00](#prerequisites-and-setup) has a short key
-for reading these; the whole of what is needed here is that parentheses mean memory.
+If `4(a0)` and the address column are unfamiliar, [Appendix A](#reading-a-listing) is the key for
+reading these. What is needed here is one line of it: parentheses mean memory, and the number in
+front is a byte offset, so `4(a0)` is the memory four bytes past the address in `a0`. Watch that
+number.
 
 The narrow one:
 
