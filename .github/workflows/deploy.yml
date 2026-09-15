@@ -87,6 +87,14 @@ jobs:
         # page, and publishing it would put a second unstyled copy of the whole book on the site.
         run: rm -f _build/html/systems-from-scratch.html
 
+      # After the PDF is in place, so a link to it is checked against a file that exists. This
+      # runs here rather than in ci-check.sh because it needs the themed build, and the themed
+      # build needs the template registry.
+      - name: Check every file the pages link to was built
+        env:
+          BASE_URL: ${{ steps.pages.outputs.base_path == '/' && '' || steps.pages.outputs.base_path }}
+        run: python3 scripts/check-built-links.py _build/html "$BASE_URL"
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
