@@ -141,6 +141,14 @@ carries to your machine is the method. That is what the list above is.
 | **[Part IV](#part4)** — The operating system layer | A kernel small enough to read, taken apart: traps, virtual memory, faults, drivers, locks, scheduling, files |
 | **[Part V](#part5)** — Where the cycles go | [Part IV](#part4)'s chapters asked again as questions about time, on hardware that can answer them |
 
+**The sequence is an argument, not a filing order.** [Part II](#part2) takes the machine's
+primitives one at a time because a kernel presents them entangled — the first trap you meet in a
+real one arrives with a process table, a scheduler and a lock already attached. [Part III](#part3)
+is next because a kernel is a program, and you cannot usefully read one until you know what a
+program is and who finishes what the compiler left undone; [ch13](#linking-and-loading) ends at
+`exec`, which is where [Part IV](#part4) begins. [Part IV](#part4) puts the entanglement back, and
+it turns out to be most of what an operating system is.
+
 [ch00](#prerequisites-and-setup) sits before all of it and is setup: all three targets working, and a script that
 tells you what your machine can currently run.
 
@@ -179,8 +187,8 @@ laptop, not extrapolated from a different machine.
 
 That is three targets on **two machines**: the first two are both QEMU on the computer you are
 reading this on, and need one cross-compiler between them. Only the third has to be real.
-[Part III](#part3) is the one part that spans the split, taking a single program from source text
-to result on each side of it.
+[Part III](#part3) is the one part that works on both sides of the split, and
+[ch10](#what-a-computer-does-with-a-program) is where it crosses.
 
 The split is not a compromise; it is the argument. QEMU will happily answer a question about
 nanoseconds and the answer will be meaningless, because it models no cache, no branch predictor
