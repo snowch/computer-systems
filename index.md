@@ -55,21 +55,55 @@ was measured and what the measurement could not see.
 
 ## Who it is for
 
-Someone who has seen digital logic and a pipeline diagram, has spent years around computers, is
-fluent in a scripting language, and has never had a reason to read a kernel. You do not need OS
-internals; that is Part III.
+Someone who has spent years around computers and programs fluently — a scripting language, or
+Java, or anything else with a runtime underneath it — and who has never had a reason to write C or
+read a kernel.
 
-**You do not need to know C**, and Part I is three chapters about exactly that. It is not a C
+**You do not need to know C.** Part I is three chapters about exactly that, and it is not a C
 tutorial: control flow, functions and operators are assumed from whatever language you already
-use. What it covers is the part your other language was built to hide — that memory is one array
-of bytes and everything in it has an index — and then the habits that stop working when there is
-no library underneath you.
+use. What it teaches is the part your language was built to hide — that memory is one array of
+bytes and everything in it has an index — and then the assumptions that stop holding when there is
+no runtime underneath you. [Chapter 1](#ch01) is the on-ramp; [chapter 2](#ch02) is the unlearning;
+[chapter 3](#ch03) sorts C's constructs by a single question, *has the machine heard of this?*
 
-Two readers arrive here and they need different chapters, so the part says which.
-[Chapter 1](#ch01) is the on-ramp for someone who has never written C. [Chapter 2](#ch02) is for
-someone who writes it for applications and is about to lose the heap, the library and the
-assumption that only one thread is looking. [Chapter 3](#ch03) is for both, and sorts C's
-constructs by a single question: has the machine heard of this?
+**You do not need OS internals.** That is Part III, and it is the point of using a kernel small
+enough to read rather than one that has to be described.
+
+**You do not need any hardware background.** Earlier drafts of this page asked for digital logic
+and a pipeline diagram. Nothing in the book actually relies on either — [ch19](#ch19) builds the
+pipeline from nothing, because a reader who has seen a five-stage diagram in a lecture still has
+no idea what a real core does with a branch — so the requirement has come out.
+
+### If you come from a managed language
+
+Java, C#, Go, Python — the traps are the same, and they are traps rather than gaps. You are not
+missing a concept; you have a correct one that means something else here.
+
+| You already know | Here it is | Where |
+|---|---|---|
+| A reference | An index into one array of bytes, with a type saying how wide a step is | [ch01](#ch01) |
+| `new`, and a collector | A fixed array decided at compile time, or a free list built out of the free memory | [ch02](#ch02) |
+| An exception | A returned value the caller is expected to look at, and sometimes no way to report at all | [ch02](#ch02) |
+| `volatile`, meaning *ordered between threads* | `volatile`, meaning *do not remove this access* — and **not** a threading primitive | [ch03](#ch03), [ch12](#ch12) |
+| A JIT that optimises what runs hot | A compiler that optimised once, and a listing you can read | [ch04](#ch04), [ch18](#ch18) |
+| A language memory model | Two hardware memory models, neither of which is your language's | [ch12](#ch12), [ch20](#ch20) |
+
+The `volatile` row is the one that costs people afternoons. The keyword is spelled the same and
+does a different job, and [ch03](#ch03) shows the compiler obeying the C one, instruction by
+instruction.
+
+### Where this is meant to deliver you
+
+This book is an on-ramp. The destination it was written against is *Systems Performance*
+@gregg-sysperf — a book that assumes you already know what a system call costs, what a cache miss
+is, why a profiler can blame the wrong line, and what a context switch moves. This one establishes
+exactly that substrate, by measuring it on a machine you own.
+
+What it deliberately does **not** cover, and what you should read that book for: tracing and BPF,
+flame graphs, the network and storage stacks, containers and cloud, and observability across many
+machines. There is no overlap to speak of. The relationship is one-way — this is the layer
+underneath, and the reason to read it first is that those tools all report quantities whose
+meaning is what this book establishes.
 
 ## What you will be able to do
 

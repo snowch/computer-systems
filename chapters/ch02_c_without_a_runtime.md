@@ -18,10 +18,14 @@ short_title: "ch02 C Without a Runtime"
 
 ## The question
 
-I already write C — which of my habits stop working in a kernel?
+I already write applications — which of my habits stop working in a kernel?
 
-This is the chapter for the reader who did not need [ch01](#ch01). Your syntax is fine. What is
-about to go wrong is everything you are entitled to assume, and none of it is about the language.
+Note the question. It is not about C, and you do not have to have written C to have the habits
+this chapter is about: a Java or Python programmer holds more of them than a C one, not fewer,
+because more has been done for them. Every assumption below is one an application programmer is
+entitled to make in any language, and none of them holds here.
+
+What goes wrong is not syntax. [ch01](#ch01) is the syntax.
 
 ## The material
 

@@ -62,7 +62,14 @@ The `volatile` one:
 Four loads, in order, none of them removed.
 
 `volatile` does not mean *shared*, it does not mean *atomic*, and it is not a threading
-primitive — [ch12](#ch12) is emphatic about that. It means one thing: **every access in the source
+primitive — [ch12](#ch12) is emphatic about that.
+
+**If you arrived from Java, this is the trap.** Java's `volatile` *is* a threading primitive: it
+orders accesses between threads and the language's memory model defines what that guarantees.
+C's does none of that. It constrains the compiler and says nothing whatever to the hardware, so
+two harts can still see these writes in an order neither of them wrote. The keyword is spelled
+the same and does a different job, and the instructions that do the other job are
+[ch12](#ch12)'s. It means one thing: **every access in the source
 must appear in the output, and in this order.** That matters when reading the address is not
 merely reading memory. A device register that returns the next byte of a serial port gives a
 different answer each time it is read, and a compiler that reads it once and reuses the value has
