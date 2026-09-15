@@ -19,7 +19,7 @@ upstream fails CI rather than quietly making this page wrong.
 ```
 
 That first figure is the reason this book uses xv6 at all. A production kernel is several million
-lines and nobody reads it; this one is small enough that the files Part IV opens are most of it,
+lines and nobody reads it; this one is small enough that the files [Part IV](#part4) opens are most of it,
 and the rest is not hidden from you — it is just not what any chapter needed.
 
 ## Which chapter reads which file

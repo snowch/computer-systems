@@ -10,10 +10,15 @@ one question at every layer: **where do the cycles go, and how would I know?**
 Read **PLAN.md** first: outline, settled decisions, conventions. Read **AUTHORING_GUIDE.md**
 before writing or editing a chapter. `.claude/commands/chapter.md` is the per-chapter workflow.
 
-## The two targets
+## The three targets
 
-Everything here follows from this, so do not work around it.
+Everything here follows from this, so do not work around it. `bench.outline.TARGET_MEANING` is
+the source of truth; this is the prose version.
 
+- **`bare`** — a RISC-V machine under `qemu-system-riscv64` with no kernel, no library and no
+  loader. What the hardware itself does: reset, traps, privilege, page tables, harts. Part II
+  builds each primitive on it before any kernel is read. **Never time anything here**, for
+  exactly the reason `xv6` may not be timed.
 - **`xv6`** — the MIT teaching kernel under `qemu-system-riscv64`. Structure and semantics.
   **Never time anything here.** QEMU models no cache, no branch predictor, no store buffer, no
   pipeline and no memory latency; a duration measured inside it describes the host machine and
@@ -21,14 +26,24 @@ Everything here follows from this, so do not work around it.
 - **`host`** — Linux on real hardware, natively, over SSH. Every number about cost. The reference
   machine is a Raspberry Pi 5; `hardware/README.md` says what any machine has to be able to do.
 
-`bench.stamp.provenance_problems` enforces both directions and CI runs it. If you find yourself
+Three targets, but **two machines**: `bare` and `xv6` are both QEMU on whatever you are working
+on, and share one cross compiler, so `scripts/verify-setup.py` checks their tooling once. Only
+`host` has to be real hardware.
+
+`bench.stamp.provenance_problems` enforces every direction and CI runs it. If you find yourself
 wanting to relax it, the answer is no: an emulated timing is indistinguishable from a real one
 once it is a number in a table, which is exactly why the check exists.
 
-**The two targets do not share an instruction set, and that is deliberate.** Part V needs `perf`
-to count *and* sample, and no purchasable RISC-V core does both — staying on RISC-V would have
-made ch27 and ch28 unmeasurable. PLAN.md §5 and `hardware/README.md` carry the evidence. Do not
-"fix" the inconsistency; it was bought with two chapters.
+**The emulated targets and the real one do not share an instruction set, and that is
+deliberate.** Part V needs `perf` to count *and* sample, and no purchasable RISC-V core does
+both — staying on RISC-V would have made the whole-machine profiling chapter and the vectors
+chapter unmeasurable. PLAN.md §5 and `hardware/README.md` carry the evidence. Do not "fix" the
+inconsistency; it was bought with two chapters.
+
+(Those two are named rather than numbered on purpose. This section said "ch27 and ch28" for a
+while, off by one in both, because `scripts/sync-labels.py` does not scan this file — and could
+not have fixed it anyway, since a bare `chNN` has no anchor to derive a number from. The rule in
+*Chapter status* below applies to this file too: prefer the name.)
 
 ## Build
 

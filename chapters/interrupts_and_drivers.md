@@ -177,7 +177,7 @@ is trying not to make.
 
 **Why the driver is split in two.** The structure is here and the pressure that produced it is
 not, because the emulated transmitter is never busy. A reader who wants to see the asynchronous
-path do something has to run this on hardware, which is Part V.
+path do something has to run this on hardware, which is [Part V](#part5).
 
 **Anything about interrupt latency, priority or affinity.** The PLIC can be told which core should
 take which interrupt and at what priority; xv6 uses almost none of that, and none of it shows up in

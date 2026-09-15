@@ -19,6 +19,7 @@ from bench.outline import (
     CHAPTERS,
     PART_PAGES,
     PARTS,
+    TARGET_MACHINE,
     Appendix,
     Chapter,
     Part,
@@ -33,6 +34,17 @@ TOC = MYST["project"]["toc"]
 TOC_FILES = [child["file"] for entry in TOC if "children" in entry for child in entry["children"]]
 
 CHAPTER_IDS = [chapter.label for chapter in CHAPTERS]
+
+ROMAN_TO_NUMBER = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5}
+
+#: Every page a reader reads, in reading order. Generated files are excluded: their prose comes
+#: from `bench/figures.py`, so a rule about how to write a sentence cannot be applied to them.
+PROSE_FILES = (
+    [Path("index.md")]
+    + [Path(part.path) for part in PART_PAGES]
+    + [Path(chapter.path) for chapter in CHAPTERS]
+    + [Path(appendix.path) for appendix in APPENDICES]
+)
 
 
 @pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
@@ -340,6 +352,14 @@ TOTAL_CLAIMS = (
     (re.compile(r"All (\S+) chapters are written"), ("chapters",)),
     (re.compile(r"(\S+) of the (\S+) chapters are written"), ("written", "chapters")),
     (re.compile(r"(\S+) of the (\S+) appendices"), ("written_appendices", "appendices")),
+    # Added when Part II's `bare` target went unmentioned on the page whose job is to say what
+    # the book runs on. The preface said "two" for as long as there had been three.
+    (re.compile(r"## (\S+) targets on (\S+) machines"), ("targets", "machines")),
+    (
+        re.compile(r"picks one target and lives with its limitations\. This one uses\s+(\S+?),"),
+        ("targets",),
+    ),
+    (re.compile(r"is setup: all (\S+) targets working"), ("targets",)),
 )
 
 
@@ -364,12 +384,16 @@ def test_the_prefaces_counts_agree_with_the_outline():
         "written_appendices": len(
             [a for a in APPENDICES if "[DRAFT]" not in (ROOT / a.path).read_text()]
         ),
+        # "both" is a way of saying two of the others, not a target of its own.
+        "targets": len(TARGET_MACHINE),
+        "machines": len(set(TARGET_MACHINE.values())),
     }
 
-    wrong, matched = [], 0
+    wrong, matched, seen = [], 0, set()
     for pattern, names in TOTAL_CLAIMS:
         for found in pattern.finditer(text):
             matched += 1
+            seen.update(names)
             for word, name in zip(found.groups(), names, strict=True):
                 value = NUMBER_WORDS.get(word.lower())
                 if value is None:
@@ -381,6 +405,15 @@ def test_the_prefaces_counts_agree_with_the_outline():
     assert matched, (
         "the preface no longer states how many chapters, parts or appendices the book has in any "
         "form this check recognises — reword it back, or teach TOTAL_CLAIMS the new shape"
+    )
+    # `matched` alone is too weak for these two. A claim whose wording drifts stops matching its
+    # pattern and is then checked by nothing, silently — which is how "two targets" survived the
+    # arrival of a third. Naming them here means rewording the heading fails loudly instead.
+    missing = {"targets", "machines"} - seen
+    assert not missing, (
+        f"the preface no longer states how many {' or '.join(sorted(missing))} the book has in a "
+        f"form this check recognises — the count that went stale once already, so reword it back "
+        f"or teach TOTAL_CLAIMS the new shape"
     )
     assert not wrong, "\n".join(wrong)
 
@@ -453,6 +486,85 @@ def test_a_prerequisite_comes_earlier_than_the_chapter_that_needs_it(chapter: Ch
     assert not forward, (
         f"{chapter.label} lists {', '.join(forward)} as a prerequisite, which the reader has "
         f"not reached yet"
+    )
+
+
+SPELLED_OUT_CHAPTER_LINK = re.compile(r"\[[Cc]hapter \d+\]\(#")
+
+
+def test_every_chapter_link_uses_the_books_own_form():
+    """`[ch21](#anchor)`, never `[Chapter 20](#anchor)`.
+
+    Not a style rule. `scripts/sync-labels.py` derives the number in a link from the anchor it
+    points at, and it recognises one spelling; a link written the other way is outside the check
+    and drifts silently. Four of the ten that existed had gone off by one when a chapter was
+    inserted into Part II, all of them in the preface, all of them still resolving perfectly.
+    """
+    offenders = []
+    for path in [
+        ROOT / "index.md",
+        *sorted((ROOT / "chapters").glob("*.md")),
+        *sorted((ROOT / "appendices").glob("*.md")),
+    ]:
+        for found in SPELLED_OUT_CHAPTER_LINK.findall(path.read_text()):
+            offenders.append(f"{path.name}: {found!r}")
+    assert not offenders, "these are outside sync-labels.py's reach and will drift: " + "; ".join(
+        offenders
+    )
+
+
+PART_SELF = {part.path: part.number for part in PART_PAGES}
+
+#: Regions a part mention is allowed to be plain text in: frontmatter, code, a heading, a MyST
+#: label or directive, a comment, and the inside of a link that is already there.
+NOT_PROSE = (
+    (re.compile(r"\A---\n.*?\n---\n", re.S), 0),
+    (re.compile(r"```.*?```", re.S), 0),
+    (re.compile(r"`[^`\n]+`"), 0),
+    (re.compile(r"^#{1,6} .*$", re.M), 0),
+    (re.compile(r"^\(\w+\)=.*$", re.M), 0),
+    (re.compile(r"^:::.*$", re.M), 0),
+    (re.compile(r"^%.*$", re.M), 0),
+    (re.compile(r"\[[^\]\n]*\]\([^)\n]*\)"), 0),
+)
+
+
+def _prose_mentions_of_a_part(text: str) -> list[tuple[int, str]]:
+    """Every ``Part IV`` in running prose, as (line number, roman numeral).
+
+    Plural enumerations — "Parts I, II and III" — are not references to one part and are left
+    alone; ``\bPart `` does not match them, which is the whole reason the word is singular here.
+    """
+    skip = [m.span() for pattern, _ in NOT_PROSE for m in pattern.finditer(text)]
+    return [
+        (text[: m.start()].count("\n") + 1, m.group(1))
+        for m in re.finditer(r"\bPart (I{1,3}|IV|V)\b", text)
+        if not any(a <= m.start() < b for a, b in skip)
+    ]
+
+
+@pytest.mark.parametrize("path", PROSE_FILES, ids=[str(p) for p in PROSE_FILES])
+def test_every_prose_mention_of_a_part_is_a_link(path):
+    """A part reference is a link, every time, exactly as a chapter reference is.
+
+    The book links a chapter on every mention — the same ``chNN`` target appears as a link seven
+    times in one paragraph of ch00 — so a part that is a link once at the top of a page and plain
+    text for the next two hundred lines reads as an oversight rather than as restraint. It was
+    one: the preface said "The kernel Part IV reads has its own commentary" six lines below a
+    table that linked Part IV, and the bare one is the one a reader meets in a sentence.
+
+    A page does not link to itself, so a part page's own number is exempt.
+    """
+    text = (ROOT / path).read_text()
+    mine = PART_SELF.get(str(path))
+    bare = [
+        f"line {line}: Part {roman}"
+        for line, roman in _prose_mentions_of_a_part(text)
+        if ROMAN_TO_NUMBER[roman] != mine
+    ]
+    assert not bare, (
+        f"{path} names a part in prose without linking it, and every chapter reference on the "
+        f"same page is a link:\n  " + "\n  ".join(bare)
     )
 
 

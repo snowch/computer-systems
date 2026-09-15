@@ -36,7 +36,7 @@ about nine thousand lines, which you can stop mid-trap and inspect. Parts III an
 so does everything the book says about *what a program does*.
 
 **`host`** is a small Linux machine on the desk, reached over SSH — a Raspberry Pi 5 in this book.
-Everything about *what a program costs* is measured there, natively. Part V lives there.
+Everything about *what a program costs* is measured there, natively. [Part V](#part5) lives there.
 
 The one thing worth repeating from the preface, because every later chapter depends on it: QEMU is
 a functional emulator. It computes what the instructions compute and models nothing else — no
@@ -93,7 +93,7 @@ run you ever take.
 ### Why a separate board, and not the laptop you are reading this on
 
 A laptop can almost certainly count and sample — `perf` on x86-64 is mature, and on Linux you
-could start Part V this afternoon. The reason not to is that the machine is too complicated to
+could start [Part V](#part5) this afternoon. The reason not to is that the machine is too complicated to
 learn on. A current laptop has cores of two different kinds, a clock that moves constantly, two
 threads sharing one core's execution units, and a scheduler migrating your benchmark across all of
 it. Each of those makes a measurement harder to attribute. The Pi 5 is four identical cores with
@@ -101,7 +101,7 @@ one cache hierarchy and no hyper-threading: when a number moves, something you d
 
 That is the book's own argument applied to its own tooling — use the instrument that can answer
 the question. A laptop is a *faster* machine and a *worse* instrument. If a Pi is genuinely not
-possible, Part V still runs on a Linux laptop, and every chapter whose reading depends on the
+possible, [Part V](#part5) still runs on a Linux laptop, and every chapter whose reading depends on the
 core's shape says so in its own header.
 
 The Pi is not the *most* legible instrument, and it is worth knowing what it is not. An **in-order**
@@ -120,7 +120,7 @@ and running ch24's experiments on both is an instructive afternoon.
 ### It is an ARM machine, and Parts III and IV are RISC-V
 
 That is deliberate: `perf` has to both count *and* sample, no affordable RISC-V core does both,
-and choosing one would have cost two chapters of Part V. The preface has the evidence; this
+and choosing one would have cost two chapters of [Part V](#part5). The preface has the evidence; this
 chapter is about getting the machine working.
 
 % number-ok: SoC specification from @rpi-bcm2712; every figure in this book comes from the machine itself
@@ -128,20 +128,20 @@ Its SoC is a BCM2712: four Arm Cortex-A76 cores at 2.4 GHz, 64 kB of L1 instruct
 cache each, 512 kB of L2 per core, and 2 MB of L3 shared between them @rpi-bcm2712. Those are the
 vendor's numbers, and the book does not repeat them anywhere else — [ch23](#the-memory-hierarchy) measures that
 hierarchy rather than quoting it, and comparing what it finds against this paragraph is one of the
-more satisfying results in Part V.
+more satisfying results in [Part V](#part5).
 
 Three levels with a private L2 and a shared L3 is a genuinely good shape to learn on. The private
 level shows you locality; the shared one is where [ch26](#memory-ordering-on-real-hardware)'s cores collide.
 
 ### If you already own something else
 
-The book recommends one machine because one machine is enough, not because the rest of Part V
+The book recommends one machine because one machine is enough, not because the rest of [Part V](#part5)
 is about Raspberry Pis. What a machine actually has to do is short:
 
 | | Requirement | Why |
 |---|---|---|
 | **Must** | 64-bit Linux, reachable over SSH | |
-| **Must** | `perf stat -e cycles,instructions -- true` returns real counts | **The one requirement with no workaround.** Part V does not exist without it |
+| **Must** | `perf stat -e cycles,instructions -- true` returns real counts | **The one requirement with no workaround.** [Part V](#part5) does not exist without it |
 | **Must** | `perf record` can sample | [ch28](#whole-machine-profiling) is entirely sampling. A different capability from counting |
 | **Must** | 4 GB RAM, 4 cores | [ch26](#memory-ordering-on-real-hardware) measures what cores cost each other |
 | **Nice** | NVMe or a fast SSD | Builds and [ch20](#the-file-system) are far less tedious |
@@ -160,7 +160,7 @@ that a given machine will work for you.
 The practical version: **the requirement you cannot check before it arrives is the one that
 matters most.** No product listing can honestly promise you working performance counters, because
 they depend on the image as much as on the board. Buy somewhere with a return policy, and run
-`scripts/verify-setup.py` on day one rather than the week you reach Part V.
+`scripts/verify-setup.py` on day one rather than the week you reach [Part V](#part5).
 :::
 
 ### The requirement to be suspicious about
@@ -206,7 +206,7 @@ question about that machine and not about a version string.
 
 ### The reference machine, and why your numbers will differ
 
-Every figure in Part V of this repository was measured on the machine that its result names —
+Every figure in [Part V](#part5) of this repository was measured on the machine that its result names —
 each one stamps the model, the core and the kernel that produced it, so no figure is ambiguous
 about where it came from.
 
@@ -263,7 +263,7 @@ kernel with mainline device trees on the same board may have no hardware PMU exp
 whatever — not because the chip lacks one, but because nothing told the kernel it was there. One
 command settles it either way, and it is the next section.
 
-**2. Boot it, wired if you can.** Not because the link speed matters — nothing in Part V touches
+**2. Boot it, wired if you can.** Not because the link speed matters — nothing in [Part V](#part5) touches
 the network, so bandwidth, latency and the grade of cable are all irrelevant to every number in
 this book. What a radio does is make the machine do work you did not ask for: its driver takes
 interrupts and runs softirqs on the same cores your benchmark is running on, and a lossy link adds
@@ -328,7 +328,7 @@ broken tool. If nothing packaged matches, build it from the kernel source tree w
 
 ### Proving the counters are real
 
-This is the one capability Part V cannot work around, and it is worth being suspicious about,
+This is the one capability [Part V](#part5) cannot work around, and it is worth being suspicious about,
 because `perf` reports a failure to reach hardware in a way that is easy to skim past.
 
 Ask:
@@ -371,7 +371,7 @@ machine the failure is usually further down — the counters are machine-mode CS
 the firmware's SBI PMU extension @riscv-sbi, so check for `CONFIG_RISCV_PMU_SBI` and a firmware
 that provides it.
 
-Until `perf stat` prints real counts, Part V cannot start, and no amount of care in the chapters
+Until `perf stat` prints real counts, [Part V](#part5) cannot start, and no amount of care in the chapters
 substitutes for it.
 
 ### Counting is not sampling
@@ -446,9 +446,9 @@ sudo apt install -y gcc-riscv64-linux-gnu qemu-system-misc qemu-user-static gdb-
 
 `qemu-user-static` is worth installing even though no chapter requires it. It runs a cross-built
 RV64 binary directly on an x86-64 or Apple-silicon machine, which means every `host`-target
-example in Part V can be compiled and **checked for correctness** away from the board. It
+example in [Part V](#part5) can be compiled and **checked for correctness** away from the board. It
 cannot tell you anything about time, and the repository does not let it try — but it is the
-difference between being able to work on Part V from a train and not.
+difference between being able to work on [Part V](#part5) from a train and not.
 
 ### The repository
 
@@ -661,7 +661,7 @@ object file, and wrote a stamped result. The block above is rendered from those 
 regenerates both on every push and fails if one instruction differs.
 
 It can do that because a listing depends on the compiler and not on the machine — so unlike every
-number in Part V, this one is checked automatically, every time. Both halves of that sentence
+number in [Part V](#part5), this one is checked automatically, every time. Both halves of that sentence
 matter, and [ch22](#measuring) is about the half that cannot be.
 :::
 
@@ -795,7 +795,7 @@ do, rather than what its documentation says it has.
 The xv6 source @xv6-riscv-source is worth browsing before [ch10](#what-a-computer-does-with-a-program), without trying to
 understand it. Its authors also wrote a commentary on it, which is excellent and which this book
 deliberately does not follow the structure of; if you want a second account of the same kernel
-after Part IV, that is the one to read.
+after [Part IV](#part4), that is the one to read.
 
 [ch10](#what-a-computer-does-with-a-program) takes a single program and follows it from source text to a result on both targets,
 and asks — for the first of many times — which parts of that journey cost anything.

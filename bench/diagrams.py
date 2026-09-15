@@ -254,72 +254,96 @@ def _panel(
     return parts, total
 
 
-def two_target_map() -> str:
-    """The division of labour between the two targets, which is the shape of the whole book.
+def three_target_map() -> str:
+    """The division of labour between the three targets, which is the shape of the whole book.
 
     Drawn rather than tabulated because the asymmetry is the content: each target has a list of
     things it is authoritative about and a list of things it will happily produce a plausible
-    number for and be wrong. Putting those two lists next to each other is the figure.
+    number for and be wrong. Putting those lists next to each other is the figure.
+
+    ``bare`` and ``xv6`` carry the same list of fictions, and that repetition is deliberate: both
+    run under QEMU, so the real division is not three ways but emulated against real. Softening
+    one of the two lists to avoid the duplication would hide exactly that.
     """
-    width, margin, gap = 780, 24, 22
-    panel_w = (width - 2 * margin - gap) / 2
+    width, margin, gap = 1080, 24, 20
+    panel_w = (width - 2 * margin - 2 * gap) / 3
     top = 68
     body: list[str] = []
 
-    body.append(_text(margin, 30, "One book, two targets", size=17, weight="700"))
+    #: Anything QEMU will answer with a straight face and get wrong. Shared, because the reason is
+    #: shared: it is a functional emulator, and neither target changes that.
+    emulated_fictions = [
+        "how many cycles anything took",
+        "whether a load hit in cache",
+        "whether a branch was predicted",
+        "what memory latency is",
+    ]
+
+    body.append(_text(margin, 30, "One book, three targets, two machines", size=17, weight="700"))
     body.append(
         _text(
             margin,
             50,
-            "Different machines, and different instruction sets. The mechanisms transfer; the numbers do not.",
+            "Two run under emulation and say what a program does; one is real and says what it "
+            "costs. The mechanisms transfer; the numbers do not.",
             size=12.5,
             fill=MUTED,
         )
     )
 
-    left, left_h = _panel(
-        margin,
-        top,
-        panel_w,
-        "xv6 under QEMU",
-        "target: xv6 — what the program does",
-        [
-            "which instructions run, in order",
-            "what a system call does to a process",
-            "how a page table is walked",
-            "what exec does to an address space",
-            "why a scheduler picked this thread",
-        ],
-        [
-            "how many cycles anything took",
-            "whether a load hit in cache",
-            "whether a branch was predicted",
-            "what memory latency is",
-        ],
-    )
-    right, right_h = _panel(
-        margin + panel_w + gap,
-        top,
-        panel_w,
-        "Linux on real hardware",
-        "target: host — what the program costs",
-        [
-            "cycles and instructions retired",
-            "cache and TLB miss rates",
-            "branch mispredictions",
-            "where the time went, by sampling",
-            "what four cores do to each other",
-        ],
-        [
-            "the kernel source under a breakpoint",
-            "a page table you can print",
-            "a scheduler you can instrument freely",
-            "an experiment you can repeat exactly",
-        ],
-    )
-    body += left + right
+    panels: list[tuple[str, str, list[str], list[str]]] = [
+        (
+            "No operating system, under QEMU",
+            "target: bare — what the hardware does",
+            [
+                "what the machine does at reset",
+                "what a trap leaves in mtvec and mcause",
+                "what changes when you leave M-mode",
+                "how the hardware reads a page table",
+                "what a second hart is",
+            ],
+            emulated_fictions,
+        ),
+        (
+            "xv6 under QEMU",
+            "target: xv6 — what a kernel does",
+            [
+                "which instructions run, in order",
+                "what a system call does to a process",
+                "how a page table is walked",
+                "what exec does to an address space",
+                "why a scheduler picked this thread",
+            ],
+            emulated_fictions,
+        ),
+        (
+            "Linux on real hardware",
+            "target: host — what the program costs",
+            [
+                "cycles and instructions retired",
+                "cache and TLB miss rates",
+                "branch mispredictions",
+                "where the time went, by sampling",
+                "what four cores do to each other",
+            ],
+            [
+                "the kernel source under a breakpoint",
+                "a page table you can print",
+                "a scheduler you can instrument freely",
+                "an experiment you can repeat exactly",
+            ],
+        ),
+    ]
 
-    footer_y = top + max(left_h, right_h) + 34
+    heights: list[float] = []
+    for index, (heading, subtitle, answers, silent) in enumerate(panels):
+        parts, height = _panel(
+            margin + index * (panel_w + gap), top, panel_w, heading, subtitle, answers, silent
+        )
+        body += parts
+        heights.append(height)
+
+    footer_y = top + max(heights) + 34
     body.append(
         f'<line x1="{margin}" y1="{footer_y - 22}" x2="{width - margin}" y2="{footer_y - 22}" '
         f'stroke="{RULE}"/>'
@@ -328,7 +352,8 @@ def two_target_map() -> str:
         _text(
             margin,
             footer_y,
-            "QEMU is a functional emulator. It has no cache model, no branch predictor and no",
+            "The first two columns are one machine: your laptop, running QEMU, which has no cache "
+            "model, no branch",
             size=12,
             fill=MUTED,
         )
@@ -337,14 +362,15 @@ def two_target_map() -> str:
         _text(
             margin,
             footer_y + 18,
-            "performance counters — so it will answer a timing question, and the answer will be fiction.",
+            "predictor and no performance counters — so it will answer a timing question, and "
+            "the answer will be fiction.",
             size=12,
             fill=MUTED,
         )
     )
 
     return _svg(
-        width, int(footer_y + 40), body, "The two execution targets and what each can answer"
+        width, int(footer_y + 40), body, "The three execution targets and what each can answer"
     )
 
 
@@ -1274,7 +1300,7 @@ def sampling_profile(result: str) -> str:
 
 
 DIAGRAMS = {
-    "prerequisites-and-setup-targets": two_target_map,
+    "prerequisites-and-setup-targets": three_target_map,
     "what-a-computer-does-with-a-program-stages": toolchain_stages,
     "representing-information-padding": struct_padding,
     "c-for-people-who-will-read-a-kernel-dispatch": dispatch_table,

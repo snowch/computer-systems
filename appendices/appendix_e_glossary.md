@@ -25,7 +25,7 @@ These four are used throughout and mean something specific here.
 | **pending figure** | A measurement the book owes but has not taken. It renders as a warning containing no numbers — never a placeholder and never an estimate. [ch00](#prerequisites-and-setup) |
 | **listing** | Disassembly captured from a compiler and stamped, so a chapter can show machine code without pasting it. Re-captured by CI on every push. [ch00](#prerequisites-and-setup) |
 
-## Part III — the machine underneath a program
+## [Part III](#part3) — the machine underneath a program
 
 | Term | Definition | Where |
 |---|---|---|
@@ -48,7 +48,7 @@ These four are used throughout and mean something specific here.
 | **segment** | A named region of a program image — what the *loader* deals in. Sections are mapped into segments. | [ch13](#linking-and-loading) |
 | **symbol table** | The list of names an object file defines and requires. | [ch13](#linking-and-loading) |
 
-## Part IV — the kernel, as structure
+## [Part IV](#part4) — the kernel, as structure
 
 | Term | Definition | Where |
 |---|---|---|
@@ -82,7 +82,7 @@ These four are used throughout and mean something specific here.
 | **write amplification** | How many blocks actually move for each block a program asked to write. | [ch20](#the-file-system) |
 | **inode** | The on-disk record of a file, distinct from any name it has. | [ch20](#the-file-system) |
 
-## Part V — where the cycles go
+## [Part V](#part5) — where the cycles go
 
 | Term | Definition | Where |
 |---|---|---|

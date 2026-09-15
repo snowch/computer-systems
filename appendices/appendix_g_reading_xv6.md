@@ -28,7 +28,7 @@ same source:
 
 That difference decides almost everything about how the two are organised. The commentary follows
 the kernel's own structure, because it is explaining a program. This book follows a question, which
-is why its Part IV takes the kernel apart mechanism by mechanism and its Part V then asks the
+is why its [Part IV](#part4) takes the kernel apart mechanism by mechanism and its [Part V](#part5) then asks the
 price of each — and why a mechanism that is one section there may be a chapter here, or the
 reverse.
 

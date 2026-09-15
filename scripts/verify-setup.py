@@ -5,14 +5,18 @@
     python3 scripts/verify-setup.py --json     # the same findings, for a script
 
 The point is to fail here, with a message that says what to install, rather than four chapters
-in with a linker error. Nothing is fatal except a missing Python: this book has two targets and
-most machines can run one of them, so an absent toolchain is reported as a target you cannot
+in with a linker error. Nothing is fatal except a missing Python: this book has three targets and
+most machines can run two of them, so an absent toolchain is reported as a target you cannot
 reach yet rather than as a broken setup.
+
+``bare`` needs nothing ``xv6`` does not — the same RISC-V cross compiler and the same
+``qemu-system-riscv64`` — so it has no checks of its own and is reported alongside ``xv6``.
+Anything that can run the kernel can run the bare-metal programs underneath it.
 
 Run it on the Mac and on the board. They will report different things, and that is the answer:
 
-    Mac / laptop / CI    xv6 target only    — structure, semantics, gdb
-    A Pi or similar      both targets       — and the only place a timing may be measured
+    Mac / laptop / CI    bare and xv6       — structure, semantics, gdb
+    A Pi or similar      all three          — and the only place a timing may be measured
 """
 
 from __future__ import annotations
@@ -29,7 +33,25 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+from bench.outline import PARTS, in_part  # noqa: E402
 from bench.stamp import classify_machine, compiler_version, cpuinfo_fields  # noqa: E402
+
+
+def emulated_parts() -> str:
+    """``"Parts I, II and IV"`` — the parts a machine with no board can finish.
+
+    Derived rather than typed. The line it feeds used to read "Parts III and IV", which was wrong
+    in both directions once Part II existed: it claimed a part that needs the board for half its
+    figures and omitted two that need nothing but QEMU.
+    """
+    names = [
+        part.name
+        for part in PARTS
+        if part.page and part.target in ("bare", "xv6") and in_part(part)
+    ]
+    numerals = [name.removeprefix("Part ") for name in names]
+    return "Parts " + ", ".join(numerals[:-1]) + f" and {numerals[-1]}"
+
 
 OK, WARN, FAIL = "  ok  ", " warn ", " FAIL "
 
@@ -103,6 +125,11 @@ def check_xv6_target(report: Report) -> bool:
         )
         ready = False
 
+    # `bare` needs exactly what has been checked so far and nothing below it: no kernel source,
+    # no debugger. Recording it here is what lets the bare target be reported without repeating
+    # a single check.
+    report.facts["riscv_toolchain"] = ready
+
     submodule = ROOT / "xv6" / "xv6-riscv" / "Makefile"
     if submodule.exists():
         head = subprocess.run(
@@ -150,6 +177,27 @@ def check_xv6_target(report: Report) -> bool:
         OK if ready else WARN,
         "target `xv6`: ready" if ready else "target `xv6`: not yet — see the lines above",
     )
+    return ready
+
+
+def check_bare_target(report: Report) -> bool:
+    """Can this machine build and boot a program with no operating system under it?
+
+    There is nothing to check that :func:`check_xv6_target` has not already checked: `bare` is the
+    same cross compiler and the same ``qemu-system-riscv64``, with no kernel source and no
+    debugger. It gets a section of its own anyway, because a reader asking whether they can start
+    Part II should not have to infer the answer from a section about a kernel they are not using
+    yet — and because it is genuinely *less* demanding than `xv6`, so an empty submodule stops one
+    and not the other.
+    """
+    print("\nTarget `bare` — a RISC-V machine with no OS on it (what the hardware does)")
+    ready = bool(report.facts.get("riscv_toolchain"))
+    report.facts["bare_ready"] = ready
+    if ready:
+        report.say(OK, "shares the xv6 target's cross compiler and QEMU — nothing more to install")
+        report.say(OK, "target `bare`: ready")
+    else:
+        report.say(WARN, "target `bare`: not yet — it needs the compiler and QEMU listed above")
     return ready
 
 
@@ -328,6 +376,11 @@ def main() -> int:
         report.render()
         report.lines.clear()
 
+    bare_ready = check_bare_target(report)
+    if not args.json:
+        report.render()
+        report.lines.clear()
+
     host_ready = check_host_target(report)
     if not args.json:
         report.render()
@@ -347,20 +400,24 @@ def main() -> int:
             print(f"  - {blocker}")
         return 1
 
-    if xv6_ready and host_ready:
-        print("Both targets are available here. Start at chapter 0.")
-    elif xv6_ready:
+    emulated = emulated_parts()
+    host_part = next(part for part in PARTS if part.target == "host")
+    first_host_chapter = in_part(host_part)[0].label
+    if bare_ready and xv6_ready and host_ready:
+        print("All three targets are available here. Start at chapter 0.")
+    elif bare_ready or xv6_ready:
         print(
-            "The xv6 target is ready: Parts III and IV run here in full.\n"
-            "Part V is measured on real hardware; set one up before you reach ch20 (hardware/)."
+            f"The emulated targets are ready: {emulated} run here in full.\n"
+            f"Part V is measured on real hardware; set one up before you reach "
+            f"{first_host_chapter} (hardware/)."
         )
     elif host_ready:
         print(
             "This is the board: Part V runs here.\n"
-            "Install a cross compiler and QEMU to work through Parts III and IV as well."
+            f"Install a cross compiler and QEMU to work through {emulated} as well."
         )
     else:
-        print("Neither target is ready yet. Chapter 0 walks through both.")
+        print("No target is ready yet. Chapter 0 walks through all three.")
     return 0
 
 

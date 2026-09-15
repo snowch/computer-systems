@@ -70,12 +70,12 @@ Read the loop bodies. The sequential route loads a value, advances a pointer by 
 and branches. The chased route does the same and then loads again to find out where to go next,
 and has to compute an address from an index rather than stepping.
 
-So: one more load, and a shift and an add. Everything Part III and Part IV have to say about these
+So: one more load, and a shift and an add. Everything [Part III](#part3) and [Part IV](#part4) have to say about these
 two functions is in that sentence, and it predicts that the chased route costs somewhat under
 twice what the sequential one does.
 
 **Hold on to that prediction.** It is the most that a complete structural understanding can offer,
-it was arrived at correctly, and Part V exists because of how wrong it is.
+it was arrived at correctly, and [Part V](#part5) exists because of how wrong it is.
 
 ### The number that is not here
 
@@ -95,7 +95,7 @@ this book does not have one.
 ### Three things differ at once
 
 When the board does report, there is a trap waiting, and avoiding it is the skill the rest of
-Part V is built on.
+[Part V](#part5) is built on.
 
 The two runs differ in **three** ways simultaneously. One is emulated and one is not. One is xv6
 and one is Linux. One is RISC-V and one is AArch64. A difference in the measurement could be
@@ -122,13 +122,13 @@ architecture.
 
 **The memory layout is structural and does transfer**, but not automatically: it transfers because
 both targets are LP64 with the same alignment rules, which [ch11](#representing-information) measured rather than
-assumed. A book that had chosen a 32-bit target for Part III would have had to say something quite
+assumed. A book that had chosen a 32-bit target for [Part III](#part3) would have had to say something quite
 different here.
 
 And one thing transfers that is neither: **the mechanisms themselves**. A page fault is a page
 fault, a context switch saves the callee-saved registers, a log makes a group of writes atomic.
-What changes across the crossing is every number attached to them, which is exactly why Part V
-is arranged as Part IV's chapters asked again.
+What changes across the crossing is every number attached to them, which is exactly why [Part V](#part5)
+is arranged as [Part IV](#part4)'s chapters asked again.
 
 ## What we measured
 
@@ -189,7 +189,7 @@ python3 -m pytest tests/the_same_program_on_both_targets/test_problem_3_transfer
 
 ## Where to go next
 
-Part V. Every chapter of it names the earlier chapter whose cost it measures, and the first of
+[Part V](#part5). Every chapter of it names the earlier chapter whose cost it measures, and the first of
 them is about the instrument rather than the machine: before measuring anything, [ch22](#measuring)
 asks how you would know a measurement was wrong, which on a board that throttles under sustained
 load is not a rhetorical question.

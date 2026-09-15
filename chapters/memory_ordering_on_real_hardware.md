@@ -172,6 +172,6 @@ specification's RVWMO chapter @riscv-isa-unprivileged are worth reading in the s
 either order. They describe the same kind of object with different vocabulary, and the
 correspondence is much easier to see when the two are half an hour apart than when they are years.
 
-[ch27](#the-os-layers-cost) returns to Part IV with the same equipment. Everything xv6 demonstrated structurally
+[ch27](#the-os-layers-cost) returns to [Part IV](#part4) with the same equipment. Everything xv6 demonstrated structurally
 — a system call, a page fault, a context switch — has a price on this machine, and the chapter
 puts the two accounts side by side.

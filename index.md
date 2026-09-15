@@ -60,27 +60,30 @@ Someone who has spent years around computers and programs fluently — a scripti
 Java, or anything else with a runtime underneath it — and who has never had a reason to write C or
 read a kernel.
 
-**You do not need to know C.** Part I is three chapters about exactly that, and it is not a C
+**You do not need to know C.** [Part I](#part1) is three chapters about exactly that, and it is not a C
 tutorial: control flow, functions and operators are assumed from whatever language you already
 use. What it teaches is the part your language was built to hide — that memory is one array of
 bytes and everything in it has an index — and then the assumptions that stop holding when there is
-no runtime underneath you. [Chapter 1](#memory-is-one-array) is the on-ramp; [chapter 2](#c-without-a-runtime) is the unlearning;
-[chapter 3](#c-for-people-who-will-read-a-kernel) sorts C's constructs by a single question, *has the machine heard of this?*
+no runtime underneath you. [ch01](#memory-is-one-array) is the on-ramp; [ch02](#c-without-a-runtime) is the unlearning;
+[ch03](#c-for-people-who-will-read-a-kernel) sorts C's constructs by a single question, *has the machine heard of this?*
 
-**You do not need OS internals.** That is Part IV, and it is the point of using a kernel small
+**You do not need OS internals.** That is [Part IV](#part4), and it is the point of using a kernel small
 enough to read rather than one that has to be described.
 
-**You do not need any hardware background.** Earlier drafts of this page asked for digital logic
-and a pipeline diagram. Nothing in the book actually relies on either — [ch25](#the-cpu) builds the
-pipeline from nothing, because a reader who has seen a five-stage diagram in a lecture still has
-no idea what a real core does with a branch — so the requirement has come out.
+**You do not need any hardware background.** No digital logic, and no pipeline diagram.
+[Part II](#part2) starts at a machine with nothing on it and builds up, so the hardware arrives as
+something you switch on rather than something assumed; [ch25](#the-cpu) later builds the pipeline
+from nothing, on the grounds that a reader who has seen a five-stage diagram in a lecture still
+has no idea what a real core does with a branch.
 
 ### If you come from a managed language
 
-Java, C#, Go, Python — the traps are the same, and they are traps rather than gaps. You are not
-missing a concept; you have a correct one that means something else here.
+Java, C#, Go and Python all leave you in the same position, and it is not one of ignorance. The
+difficulty is not what you are missing — it is what you already have. A handful of ideas are
+correct in your language, keep their names here, and mean something else. Nothing warns you,
+because the word did not change.
 
-| You already know | Here it is | Where |
+| You already know | What it is here | Where |
 |---|---|---|
 | A reference | An index into one array of bytes, with a type saying how wide a step is | [ch01](#memory-is-one-array) |
 | `new`, and a collector | A fixed array decided at compile time, or a free list built out of the free memory | [ch02](#c-without-a-runtime) |
@@ -118,8 +121,10 @@ Concretely, and these are the things the problems make you do rather than read a
   you about which line it is.
 - Predict a cost from a model before measuring, then say what the gap between the two means.
 
-What you will not get is a list of numbers to remember. The reference machine's figures are this
-machine's, and every chapter says so. The transferable part is the method.
+What you will not get is a table of costs to memorise. Every cost in this book belongs to the one
+board that produced it — not to every board of that model, and not to Arm or to computers in
+general — and the line under each figure says which machine, which compiler and what day. What
+carries to your machine is the method. That is what the list above is.
 
 ## How the book is arranged
 
@@ -129,41 +134,53 @@ machine's, and every chapter says so. The transferable part is the method.
 | **[Part II](#part2)** — The machine with nothing on it | A trap, an interrupt, a page table, a system call, file descriptors and `fork()`, each built from nothing on bare hardware before any kernel is read |
 | **[Part III](#part3)** — What a computer does with a program | One program from source text to result: the toolchain, representation, machine code, linking |
 | **[Part IV](#part4)** — The operating system layer | A kernel small enough to read, taken apart: traps, virtual memory, faults, drivers, locks, scheduling, files |
-| **[Part V](#part5)** — Where the cycles go | Part IV's chapters asked again as questions about time, on hardware that can answer them |
+| **[Part V](#part5)** — Where the cycles go | [Part IV](#part4)'s chapters asked again as questions about time, on hardware that can answer them |
 
-[Chapter 0](#prerequisites-and-setup) sits before all of it and is setup: two targets working, and a script that
+[ch00](#prerequisites-and-setup) sits before all of it and is setup: all three targets working, and a script that
 tells you what your machine can currently run.
 
-The kernel Part IV reads has its own commentary @xv6-book, free from MIT and written by its
-authors. It explains what that code does; this book asks what it costs. They go well together and
-[Appendix G](#appendix-g) is the map — which of these chapters covers the ground of which of its
-topics, and one system call traced through every layer it touches.
+[Part IV](#part4) reads a real kernel, and that kernel has a book of its own: *xv6: a simple,
+Unix-like teaching operating system* @xv6-book, written by its authors and free from MIT. The two
+do different jobs — it explains what the code does, this book asks what that costs — and they go
+well together. [Appendix G](#appendix-g) lines them up by topic rather than by chapter number,
+because its numbering moves between revisions. The same appendix traces one system call through
+every layer it touches.
 
-## Two machines, on purpose
+## Three targets on two machines, on purpose
 
 Almost every book on this subject picks one target and lives with its limitations. This one uses
-two, because the two halves of the question need different things.
+three, because the question has halves that need different instruments.
 
 ```{figure} chapters/_figures/prerequisites-and-setup-targets.svg
-:alt: The xv6 and host targets side by side, with what each can and cannot answer.
+:alt: The bare, xv6 and host targets side by side, with what each can and cannot answer.
 :width: 100%
 
 The division of labour. Every chapter declares which target it uses, and every figure records
 which one produced it.
 ```
 
-The first is **xv6**, the MIT teaching kernel, running under QEMU. It is a complete operating
-system small enough to read in an afternoon, and you can stop the whole machine mid-trap and look
-at anything. Parts III and IV live there.
+The first is **bare**: a RISC-V machine under QEMU with no operating system on it at all — no
+kernel, no library, no loader, nothing but the instructions you wrote. [Part II](#part2) lives
+there, and builds a trap, a page table, a system call and `fork()` one at a time, so that each is
+a thing you have made rather than a thing a kernel is doing somewhere.
 
-The second is a small Linux machine on a desk, reached over SSH — a **Raspberry Pi 5** by
-default. Every number in Part V is measured on it, natively. Not in an emulator, not on the
+The second is **xv6**, the MIT teaching kernel, running under the same QEMU. It is a complete
+operating system small enough to read in an afternoon, and you can stop the whole machine mid-trap
+and look at anything. [Part I](#part1) and [Part IV](#part4) live there.
+
+The third is a small Linux machine on a desk, reached over SSH — a **Raspberry Pi 5** by default.
+Every number in [Part V](#part5) is measured on it, natively. Not in an emulator, not on the
 laptop, not extrapolated from a different machine.
+
+That is three targets on **two machines**: the first two are both QEMU on the computer you are
+reading this on, and need one cross-compiler between them. Only the third has to be real.
+[Part III](#part3) is the one part that spans the split, taking a single program from source text
+to result on each side of it.
 
 The split is not a compromise; it is the argument. QEMU will happily answer a question about
 nanoseconds and the answer will be meaningless, because it models no cache, no branch predictor
 and no pipeline. Watching a program in a debugger tells you what it *does*. Only real hardware
-tells you what it *costs*. [Chapter 20](#the-same-program-on-both-targets) puts the same program through both and makes
+tells you what it *costs*. [ch21](#the-same-program-on-both-targets) puts the same program through both and makes
 the gap concrete.
 
 ### Why they do not share an instruction set
@@ -172,7 +189,7 @@ The kernel small enough to read in an afternoon is a RISC-V kernel. The hardware
 actually work is an ARM one. Those are different machines, and pretending otherwise would mean
 lying about one of them.
 
-Part V needs `perf` to do two separate things: **count** events over a run, and **sample** —
+[Part V](#part5) needs `perf` to do two separate things: **count** events over a run, and **sample** —
 interrupt the program thousands of times a second to ask where it is. Sampling needs the counters
 to raise an interrupt when they overflow. On ARM that is a standard part of the performance
 monitoring unit. On RISC-V it is an optional extension, and a 2025 study of the three RISC-V cores
@@ -185,7 +202,7 @@ you can actually buy @riscv-pmu-profiling found that none of them wins:
 | **Counter-overflow interrupt** | **No** | Yes | Limited |
 | Upstream Linux support | Yes | Partial | **No** |
 
-Read down the columns. Choosing RISC-V for Part V would have made two of its eight chapters
+Read down the columns. Choosing RISC-V for [Part V](#part5) would have made two of its eight chapters
 unmeasurable — one needs sampling, one needs a vector unit — on boards that are hard to buy, with
 firmware that has broken `perf` between distribution releases. A Raspberry Pi costs none of that.
 
@@ -203,13 +220,13 @@ follow that a single-architecture book could not offer.
 has to *assert* that its ideas generalise. This one demonstrates it, by having them survive a
 change of architecture in front of you.
 
-**You get two memory models instead of one.** [Chapter 17](#locks-and-memory-ordering) teaches RISC-V's;
-[chapter 25](#memory-ordering-on-real-hardware) measures ARM's, which is also weak and differently specified. A reader shown only one would reasonably
+**You get two memory models instead of one.** [ch18](#locks-and-memory-ordering) teaches RISC-V's;
+[ch26](#memory-ordering-on-real-hardware) measures ARM's, which is also weak and differently specified. A reader shown only one would reasonably
 conclude that model *is* memory ordering. Shown two, you learn it is a family, that a fence is an
 architecture-specific spelling of an architecture-independent need, and that store buffers and
 coherence are what actually transfer.
 
-**[Chapter 20](#the-same-program-on-both-targets) gets harder in the way that matters.** Three things differ between watching a program
+**[ch21](#the-same-program-on-both-targets) gets harder in the way that matters.** Three things differ between watching a program
 under xv6 and profiling it on real hardware: emulation against hardware, one kernel against
 another, one instruction set against another. Attributing a difference to the wrong one is the
 commonest way to be confidently wrong about performance, and that chapter is where you practise
@@ -217,18 +234,18 @@ separating them.
 
 Reading disassembly is a small part of the book, and this is the whole of what the split costs
 you. In Parts I and III it is RISC-V: [ch01](#memory-is-one-array), [ch03](#c-for-people-who-will-read-a-kernel), [ch10](#what-a-computer-does-with-a-program), [ch11](#representing-information) and
-[ch12](#machine-level-code-on-riscv). In Part V it is AArch64: [ch24](#optimising-code), [ch25](#the-cpu) and [ch29](#vectors).
-[Chapter 0](#prerequisites-and-setup) shows one small function compiled both ways, so the difference is concrete
+[ch12](#machine-level-code-on-riscv). In [Part V](#part5) it is AArch64: [ch24](#optimising-code), [ch25](#the-cpu) and [ch29](#vectors).
+[ch00](#prerequisites-and-setup) shows one small function compiled both ways, so the difference is concrete
 rather than promised, and [Appendix F](#appendix-f) is a translation between the two for the
 reader who meets the second having learned the first. Everything else is method, and method
 does not have an architecture.
 
 ### One argument, not two tutorials
 
-**Part V is not a second book. It is Part IV's chapters asked again as questions about time.**
+**[Part V](#part5) is not a second book. It is [Part IV](#part4)'s chapters asked again as questions about time.**
 Every chapter in it names the earlier chapter whose cost it measures, in its own header:
 
-| When Part V asks | You already learned the mechanism in |
+| When [Part V](#part5) asks | You already learned the mechanism in |
 |---|---|
 | [ch23](#the-memory-hierarchy) — where is the data, and what does each step out cost? | [ch11](#representing-information) layout and alignment, [ch15](#virtual-memory) address translation |
 | [ch24](#optimising-code) — what did that cost? | [ch12](#machine-level-code-on-riscv) what the compiler emitted |
@@ -236,13 +253,13 @@ Every chapter in it names the earlier chapter whose cost it measures, in its own
 | [ch26](#memory-ordering-on-real-hardware) — what do four cores cost each other? | [ch18](#locks-and-memory-ordering) locks, fences and ordering |
 | [ch27](#the-os-layers-cost) — what does Linux charge for this? | [ch14](#traps-and-system-calls) traps, [ch16](#page-faults-as-a-feature) faults, [ch19](#scheduling-and-context-switches) switches |
 
-So you never arrive at a Part V chapter cold. You arrive knowing the mechanism completely and
+So you never arrive at a [Part V](#part5) chapter cold. You arrive knowing the mechanism completely and
 needing only the price — a better position than either half could put you in alone, and the reason
 the book is arranged this way rather than as theory followed by benchmarks.
 
-Three Part V chapters have no counterpart, deliberately: [ch22](#measuring) teaches measurement
+Three [Part V](#part5) chapters have no counterpart, deliberately: [ch22](#measuring) teaches measurement
 itself, [ch28](#whole-machine-profiling) is about the whole machine rather than any one mechanism, and
-[ch29](#vectors) concerns hardware Part IV never had reason to describe.
+[ch29](#vectors) concerns hardware [Part IV](#part4) never had reason to describe.
 
 ## How the numbers work
 
@@ -258,9 +275,11 @@ in.
 
 ## What you will need
 
-A laptop for Parts I, II and III — everything there runs under emulation, free. For Part V, a small
-Linux machine whose `perf` can count and sample; a Raspberry Pi 5 is the reference, and one you
-already own may well do. [Chapter 0](#prerequisites-and-setup) is the setup, and a script that tells you which
+A laptop for [Part I](#part1), [Part II](#part2) and [Part IV](#part4), and for all of
+[Part III](#part3) except the numbers it takes on real hardware — everything there runs under
+emulation, free. For [Part V](#part5), a small Linux machine whose `perf` can count and sample; a
+Raspberry Pi 5 is the reference, and one you
+already own may well do. [ch00](#prerequisites-and-setup) is the setup, and a script that tells you which
 targets your machine can currently run and whether its counters are real.
 
 The book does not tell you which kernel to run. Whether a machine's performance counters work is

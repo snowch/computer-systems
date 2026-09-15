@@ -113,7 +113,7 @@ The structural model saw one extra load and predicted a factor under two. What s
 not the load count. It is that one program can overlap its memory accesses and the other cannot,
 which is not visible in the instruction stream at all.
 
-That is the lesson Part V exists for, and it is worth stating in the form that transfers: **the
+That is the lesson [Part V](#part5) exists for, and it is worth stating in the form that transfers: **the
 cost of a memory access is not a property of the access. It is a property of what else the machine
 was able to do at the same time.**
 

@@ -210,7 +210,7 @@ hardware never sees the code that was deleted.
 a decision rather than an oversight: xv6 does not save floating-point registers across a context
 switch, so a user program that uses them is quietly wrong the moment it is descheduled. That is a
 perfectly reasonable thing for a teaching kernel to decide — it makes [ch19](#scheduling-and-context-switches)'s context
-switch small enough to read in one sitting — and it means floating point arrives in Part V,
+switch small enough to read in one sitting — and it means floating point arrives in [Part V](#part5),
 on a machine whose kernel does save them.
 
 ## Problems

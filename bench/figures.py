@@ -40,9 +40,9 @@ from bench.diagrams import (
     stack_frame,
     struct_padding,
     sv39_walk,
+    three_target_map,
     toolchain_stages,
     trap_path,
-    two_target_map,
 )
 
 
@@ -118,8 +118,8 @@ BOARD = "run `make bench-board` on the reference machine and commit the result"
 FIGURES: dict[str, Table | Diagram | Listing] = {
     # -- ch00 ---------------------------------------------------------------------------
     "prerequisites-and-setup-targets": Diagram(
-        draw=two_target_map,
-        alt="The xv6 and host targets side by side, with what each can and cannot answer.",
+        draw=three_target_map,
+        alt="The bare, xv6 and host targets side by side, with what each can and cannot answer.",
     ),
     "prerequisites-and-setup-xv6-environment": Table(
         render=tables.xv6_environment_table,

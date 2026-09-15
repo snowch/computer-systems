@@ -13,7 +13,7 @@ short_title: "28 · Whole-Machine Profiling"
 |---|---|
 | **Target** | `host` — the reference machine, natively |
 | **Prerequisites** | [ch27](#the-os-layers-cost) |
-| **Assumes** | that `perf` can sample. ARM PMUs support counter-overflow interrupts as standard, so this works on the reference machine — but most affordable RISC-V cores do not, and a reader following Part V on one will find this the chapter they cannot run. |
+| **Assumes** | that `perf` can sample. ARM PMUs support counter-overflow interrupts as standard, so this works on the reference machine — but most affordable RISC-V cores do not, and a reader following [Part V](#part5) on one will find this the chapter they cannot run. |
 | **What it measures** | What the program under the profiler does, counted before anyone times it: `bench/results/tally-census.json` |
 :::
 

@@ -16,8 +16,8 @@ document; this page will not substitute for it and does not try.
 
 ## Why there are two
 
-Part III and Part IV are RISC-V because the kernel small enough to read in an afternoon is a RISC-V
-kernel. Part V is AArch64 because that is where the performance counters work: sampling needs a
+[Part III](#part3) and [Part IV](#part4) are RISC-V because the kernel small enough to read in an afternoon is a RISC-V
+kernel. [Part V](#part5) is AArch64 because that is where the performance counters work: sampling needs a
 PMU that can raise an interrupt on counter overflow, and no affordable RISC-V core does both.
 [ch00](#prerequisites-and-setup) has the evidence and [ch26](#memory-ordering-on-real-hardware) has the return — a reader shown one weak memory
 model concludes that model *is* memory ordering.
@@ -145,8 +145,8 @@ register is not evidence of vectorisation. This compiler builds a floating-point
 ## What this cannot tell you
 
 **How the two architectures differ where this book does not go.** Exceptions, privilege levels,
-the MMU, system registers — all different, none of it here, because Part V does not read the
-kernel and Part IV does not run on AArch64.
+the MMU, system registers — all different, none of it here, because [Part V](#part5) does not read the
+kernel and [Part IV](#part4) does not run on AArch64.
 
 **Which is better.** They make different choices and the book uses both for what each is good for.
 Nothing on this page is an argument.
