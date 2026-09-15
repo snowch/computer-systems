@@ -551,19 +551,24 @@ result.
 
 `sysfs/include/sysfs/probe.h` asks the machine a handful of questions it can answer without a
 library: how big is each scalar type, where may it start, what does the compiler do to a struct,
-which end of a word is the low byte. The header is compiled twice, from the same bytes: once
-against glibc on Linux, and once against xv6's freestanding user library, which has no
-`<stdint.h>`, no `size_t`, and no `<stddef.h>`.
+which end of a word is the low byte. It is compiled twice from the same bytes, for two targets
+that disagree about what a C library is, and it says so itself — the first design decision in this
+book that exists entirely because of where the code has to run:
+
+```{literalinclude} ../sysfs/include/sysfs/probe.h
+:language: c
+:start-at: /* Facts the machine will tell you
+:end-before: #ifndef SYSFS_PROBE_H
+```
+
+Everything else about the header follows from that. Asking the machine which end of a word it puts
+the low byte at, rather than assuming, costs three instructions:
 
 ```{literalinclude} ../sysfs/include/sysfs/probe.h
 :language: c
 :start-at: /* Byte order, asked of the machine
 :end-before: /* Byte offset of a member
 ```
-
-That constraint is why the header looks the way it does, and the comment at the top of it is
-worth reading: it is the first example in the book of a design decision that exists entirely
-because of where the code has to run.
 
 Run it in both worlds:
 

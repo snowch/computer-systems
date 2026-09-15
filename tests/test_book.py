@@ -601,6 +601,48 @@ def test_a_part_that_counts_its_chapters_counts_them_right(part: Part):
     assert not wrong, "\n".join(wrong)
 
 
+#: A ``{literalinclude}`` directive with its options, as one block.
+LITERALINCLUDE = re.compile(r"```\{literalinclude\}\s+(\S+)\n((?::[^\n]*\n)*)```")
+
+
+def _c_includes(path: str) -> list[tuple[str, str]]:
+    """Every literalinclude of C or a C header on a page, as (file, options)."""
+    return [
+        (target, options)
+        for target, options in LITERALINCLUDE.findall((ROOT / path).read_text())
+        if target.endswith((".c", ".h"))
+    ]
+
+
+def test_the_first_whole_program_is_the_first_whole_program():
+    """ch01 opens "Every piece of C you have seen in this book so far has been a fragment".
+
+    That is the hook of its first section and the reason the next listing lands: the reader has
+    seen functions and never a program, so a `#include` and a `main` are worth naming. Only ch00
+    shows C before it, and the claim holds exactly as long as every listing there stays anchored.
+    An unanchored include added to ch00 would show a whole file and make ch01 open on something
+    untrue, with nothing in the build to notice — the anchors would all still resolve.
+    """
+    unanchored = [
+        target
+        for target, options in _c_includes("chapters/prerequisites_and_setup.md")
+        if ":start-at:" not in options
+    ]
+    assert not unanchored, (
+        "ch00 now shows a whole C file, so ch01's \"every piece of C so far has been a "
+        f'fragment" is no longer true: {", ".join(unanchored)}'
+    )
+
+    whole = [
+        target
+        for target, options in _c_includes("chapters/memory_is_one_array.md")
+        if ":start-at:" not in options
+    ]
+    assert whole, (
+        'ch01 says "here is a complete one" and no longer includes a whole C file to back it'
+    )
+
+
 BIB_ENTRY = re.compile(r"@(\w+)\{([^,]+),(.*?)\n\}", re.S)
 
 
