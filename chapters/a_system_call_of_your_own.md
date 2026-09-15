@@ -43,12 +43,6 @@ of them:
 :end-before:         "addi sp, sp, -"
 ```
 
-Build it and boot it on a machine with nothing on it:
-
-```bash
-./run syscall
-```
-
 Thirty-one, not thirty-two, because `x0` is hard-wired to zero and has nothing to lose. It is
 written out rather than generated because writing it out is the point: this is the cost of not
 knowing your caller, and it is paid on every single call.
@@ -104,6 +98,13 @@ and an output, which is exactly the claim the convention makes. Get that wrong a
 will cheerfully assume the register still holds what it put there.
 
 ## What we measured
+
+Run it yourself before reading the table — the numbers below are what you should
+see, and a figure you have reproduced is worth more than one you have been shown:
+
+```bash
+./run syscall
+```
 
 ```{include} _generated/a-system-call-of-your-own-syscall.md
 ```

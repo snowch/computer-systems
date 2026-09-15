@@ -19,13 +19,13 @@ def test_the_sharing_really_stops(tmp_path):
         pytest.skip("; ".join(bare.problems()))
     assert ANSWER.exists(), f"Problem 8.3: put your program in {ANSWER.name} beside this test"
 
-    correct = load_result("descriptors-bare")["summary"]["shared_cursor"]
+    correct = load_result("descriptors-bare")["summary"]["cursor_after_dup_write"]
     image = bare.build_from([ANSWER], "problem_cursor", build_dir=tmp_path)
     fields = bare.run("descriptors", image=image, timeout=30).fields()
 
-    assert "shared_cursor" in fields, "the program did not report a cursor"
-    assert fields["shared_cursor"] != correct, (
-        "the cursor still ends where ch08's does, so the two descriptors are still sharing one"
+    assert "cursor_after_dup_write" in fields, "the program did not report a position"
+    assert fields["cursor_after_dup_write"] != correct, (
+        "the position still ends where ch08's does, so the two descriptors are still sharing one"
     )
     assert fields.get("dup_shares_the_open_file") == 0, (
         "the program still claims the duplicate shares an open file"

@@ -41,12 +41,6 @@ separate table.
 :end-before: static struct open_file *file_for(int fd)
 ```
 
-Build it and boot it on a machine with nothing on it:
-
-```bash
-./run descriptors
-```
-
 Collapsing those two into one would be simpler and is the obvious first design. It is also wrong,
 in a way that only shows up later — and the later is this chapter's last section.
 
@@ -70,14 +64,57 @@ of the table: the caller never learns which it got.
 
 ```{literalinclude} ../sysfs/bare/descriptors.c
 :language: c
-:start-at:     /* The same call, twice, differing in one register.
-:end-before:     read_back = bare_call(SYS_READ
+:start-at:     /* 1. The same call, twice, differing in one register
+:end-before:     cursor_after_writing = bare_call(SYS_TELL
 ```
 
 Two calls, identical but for one number, and they end up in completely unrelated places — one in a
 device register on a board, one in an array in memory. Neither the calling code nor the compiler
 knows the difference. That is the entire value of the abstraction, and it is why a shell can point
 a program's output at a file without the program being told.
+
+Run it and watch:
+
+```bash
+./run descriptors
+```
+
+The `hello` on the first line of output is the console write arriving. Everything after it is the
+program reporting on the other one.
+
+### The position is not a record of what you last did
+
+Write six bytes into the array and the position is at six. So read them straight back:
+
+```{literalinclude} ../sysfs/bare/descriptors.c
+:language: c
+:start-at:     /* 2. Read it straight back, without moving the cursor.
+:end-before:     /* 3. Move the position, then read.
+```
+
+It returns nothing. Not an error, not a short read — zero bytes, from a call that is plainly
+correct and an array that plainly has six bytes in it.
+
+The reason is the one thing about descriptors that catches everybody. A descriptor's position is
+**where you are in the open file**, not a note about whether you were last reading or writing. The
+write left it at the end, and the end is where the read started, and after the end there is
+nothing. There is no separate read position to fall back on, because there is no separate read
+position at all.
+
+```{literalinclude} ../sysfs/bare/descriptors.c
+:language: c
+:start-at:     /* 3. Move the position, then read.
+:end-before:     /* 4. A descriptor nobody opened.
+```
+
+Same descriptor, same array, same call — and six bytes this time, because the position moved
+first. `read` and `write` here are the same two lines apart from which direction the bytes go:
+
+```{literalinclude} ../sysfs/bare/descriptors.c
+:language: c
+:start-at: /* Reads move the cursor exactly as writes do
+:end-before: /* Where a descriptor currently is
+```
 
 ### What `dup` shares
 
@@ -90,13 +127,24 @@ Now the reason the two tables had to be two:
 ```
 
 One number is copied. The open file it refers to is not — so afterwards two descriptors are two
-names for one thing, and crucially they share one cursor. Six bytes written through the first and
-one through the second leaves that single cursor at seven, which is a fact the program reports and
-the runner refuses to accept a run without.
+names for one thing, and they share its position.
 
-Had the cursor lived in the descriptor, `dup` would have produced two independent positions, both
-programs would still run, and the difference would surface as a file mysteriously overwriting
-itself.
+Which is now something you can watch rather than take on trust. Six bytes have been written
+through descriptor 2; the program duplicates it onto 3 and writes one byte through the copy:
+
+```{literalinclude} ../sysfs/bare/descriptors.c
+:language: c
+:start-at:     /* 5. Duplicate, then write through the copy.
+:end-before:     /* 6. And read the whole thing back
+```
+
+The byte lands at offset six, the position ends at seven, and reading the array back gives seven
+bytes. Had the position lived in the descriptor instead, the duplicate would have started from
+zero and written its byte over the `h` — both programs would still run, and the difference would
+surface much later as a file mysteriously overwriting itself from the beginning.
+
+**That is the whole reason a shell can append.** `>>` is two descriptors on one open file, and the
+append is not a mode the write asks for; it is a consequence of where the position already was.
 
 ## What we measured
 

@@ -119,13 +119,21 @@ PROGRAMS: dict[str, tuple[int, dict[str, int | None]]] = {
         1,
         {
             "same_call_reached_both": None,
+            "cursor_after_writing": 6,
+            # The chapter's central surprise. If a read after a write ever returned bytes without
+            # the cursor being moved first, the cursor would have stopped being a position and
+            # the chapter would be describing something else.
+            "read_without_rewinding": 0,
+            "read_after_rewinding": 6,
             "memory_kept_the_bytes": None,
             "closed_slot_refused": None,
             "dup_returned": 3,
-            # Two descriptors, one open file, one cursor. Six bytes then one more is seven, and
-            # seven is only reachable if the duplicate did not get a cursor of its own.
             "dup_shares_the_open_file": None,
-            "shared_cursor": 7,
+            # Two descriptors, one open file, one position: the byte written through the
+            # duplicate lands after what was already there rather than on top of it.
+            "cursor_after_dup_write": 7,
+            "dup_appended_rather_than_overwrote": None,
+            "read_everything": 7,
             "unexpected_trap": 0,
         },
     ),

@@ -39,12 +39,6 @@ those two things kept together, and `fork` is a copy.
 :end-before: static struct proc procs
 ```
 
-Build it and boot it on a machine with nothing on it:
-
-```bash
-./run fork
-```
-
 A saved register set, a place it was, and an address space. That is the whole of it — and the first
 field is [ch07](#a-system-call-of-your-own)'s trap frame, unchanged. The frame was built to survive
 a system call; keep it a little longer and it is a saved process.
@@ -132,6 +126,13 @@ A real kernel walks the caller's page table to translate by hand. That function 
 and this is why it exists.
 
 ## What we measured
+
+Run it yourself before reading the table — the numbers below are what you should
+see, and a figure you have reproduced is worth more than one you have been shown:
+
+```bash
+./run fork
+```
 
 ```{include} _generated/fork-built-rather-than-read-fork.md
 ```

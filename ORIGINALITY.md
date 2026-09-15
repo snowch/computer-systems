@@ -1081,8 +1081,18 @@ chapters, and every Unix programming text.
 **How this differs, and the care taken.**
 
 - **The two-table structure is the chapter**, rather than a detail introduced when `dup` comes up.
-  The descriptor table and the open-file table are built separately, and the shared cursor is a
+  The descriptor table and the open-file table are built separately, and the shared position is a
   number the program prints and the runner refuses a run without.
+- **The position is taught by a read that returns nothing.** Writing six bytes and then reading
+  them straight back returns zero, because the write left the position at the end — and the
+  chapter leads with that failure rather than with a definition of a file offset. Every treatment
+  consulted introduces the offset as a property and mentions rewinding afterwards; here the
+  reader meets a plainly correct call giving a plainly wrong answer, and the property is what
+  explains it. The first draft of this chapter had a read that ignored the position entirely and
+  therefore worked by accident, which is what made the ordering worth getting right.
+- **`dup` appending is demonstrated rather than asserted.** The byte written through the duplicate
+  lands at offset six and the chapter shows it there, which is also the whole explanation of why
+  a shell's `>>` appends — an append nobody asked for, falling out of where the position was.
 - **It uses two backends chosen to be as unalike as possible** — a memory-mapped device and an
   array with a cursor — so that the indirection is visible. Neither is a file, and the chapter
   says so.
