@@ -32,7 +32,8 @@ currently run, and with two measurements that record what those targets actually
 The preface makes the case for the arrangement; this is the operational version of it.
 
 **`xv6`** is the MIT teaching kernel under `qemu-system-riscv64`: a complete operating system in
-about nine thousand lines, which you can stop mid-trap and inspect. Parts III and IV live there, and
+about nine thousand lines, which you can stop mid-trap and inspect. Parts I, III and IV live there,
+and
 so does everything the book says about *what a program does*.
 
 **`host`** is a small Linux machine on the desk, reached over SSH — a Raspberry Pi 5 in this book.
@@ -61,9 +62,9 @@ contains a duration at all.
 ```
 
 :::{note} You can start with one target
-The xv6 target runs on any laptop and covers Parts III and IV — fourteen chapters. If the Pi has
+The emulated targets run on any laptop and cover Parts I to IV. If the Pi has
 not arrived yet, set up the xv6 half now and come back to the rest before [ch21](#the-same-program-on-both-targets). Nothing
-in Parts III and IV depends on hardware you do not have.
+in Parts I to IV depends on hardware you do not have.
 :::
 
 ## What to buy
@@ -81,7 +82,7 @@ because [ch26](#memory-ordering-on-real-hardware) wants four cores with room to 
 | **Storage** | A microSD card that is not the cheapest on the shelf | An NVMe drive on a PCIe HAT is nicer and not required |
 | **Network** | An Ethernet cable — any working one | WiFi works. Wired keeps the radio's driver from doing interrupt work on the cores you are measuring |
 
-You also need a development machine for Parts III and IV — anything that runs Homebrew or apt and
+You also need a development machine for Parts I to IV — anything that runs Homebrew or apt and
 holds an SSH key. It never measures anything.
 
 **The cooler earns its line in the table.** A Pi 5 that throttles is running a benchmark at one

@@ -54,7 +54,7 @@ outcomes when one of them is "call a function that might do anything". `count_ov
 that loop, it keeps its branch, and the runner refuses to stamp a result in which these two stop
 differing.
 
-Problem 17.1 asks you to predict which of the two keeps its branch, before compiling. The stub
+Problem 25.1 asks you to predict which of the two keeps its branch, before compiling. The stub
 says plainly that this book got it wrong.
 
 ### The same additions, four different amounts of parallelism
@@ -74,7 +74,7 @@ can overlap them. The work is identical; what differs is how much of it can happ
 ```{include} _generated/the-cpu-ilp.md
 ```
 
-Problem 17.2 is the arithmetic: the critical path is each accumulator's share of the elements plus
+Problem 25.2 is the arithmetic: the critical path is each accumulator's share of the elements plus
 the tree that combines them. It is worth doing, and it is worth noticing what the model then
 predicts — that more accumulators are always better, right down to one element each. They are not,
 and what stops it is nowhere in the formula: accumulators live in registers, there is a fixed

@@ -53,7 +53,7 @@ out how many full vectors there are, and handling the elements left over at the 
 
 **That tail is the part worth carrying away.** A loop shorter than one vector gains nothing at all
 and pays for all of that code, and a loop one element past a vector pays a whole scalar iteration
-for it. Problem 21.1 is the arithmetic, and the shape it produces is a sawtooth rather than a
+for it. Problem 29.1 is the arithmetic, and the shape it produces is a sawtooth rather than a
 slope.
 
 ### The one that is refused, and why it is right
@@ -73,7 +73,7 @@ output to make it faster.
 The third column is that permission granted. `-ffast-math` says the answer may change, and the
 loop widens immediately, which is the proof that the refusal was never a limitation.
 
-Problem 21.2 is the disagreement itself. You write both orders, the test supplies an input where
+Problem 29.2 is the disagreement itself. You write both orders, the test supplies an input where
 they differ, and you compare the bit patterns. Being told that floating-point addition is not
 associative is not the same as watching the two answers come out different.
 

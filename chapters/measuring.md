@@ -49,7 +49,7 @@ takes. What it can *resolve* is the smallest change it will ever report — a cl
 nanoseconds and still only ever move in steps of a hundred of them, in which case a measurement of
 anything shorter is a coin toss between zero and one step.
 
-Problem 14.2 turns this into the arithmetic you actually need: given what the work costs and what
+Problem 22.2 turns this into the arithmetic you actually need: given what the work costs and what
 the clock costs, how many repetitions must go inside one timed region before the instrument is
 small enough to ignore.
 
@@ -80,14 +80,14 @@ statistics, and the mistake is not picking the wrong one but not noticing there 
 
 ### Warming up is not a ritual
 
-The first few measurements are slower, always, and for reasons Parts III and IV have already
-explained: [ch16](#page-faults-as-a-feature)'s pages are not yet faulted in, [ch23](#the-memory-hierarchy)'s caches hold somebody
+The first few measurements are slower, always, and for three reasons this book takes apart
+either side of this chapter: [ch16](#page-faults-as-a-feature)'s pages are not yet faulted in, [ch23](#the-memory-hierarchy)'s caches hold somebody
 else's data, and the branch predictor of [ch25](#the-cpu) has never seen this loop.
 
 Discarding them is standard practice and is usually done wrong. Warm-up is a property of
 *position*: the first samples are slow because they are first. A slow sample in the middle is
 interference, it is not warm-up, and discarding everything before it throws away good
-measurements in order to hide a bad one. Problem 14.3 is exactly that distinction, and the
+measurements in order to hide a bad one. Problem 22.3 is exactly that distinction, and the
 definition it asks you to implement has a second clause for no other reason.
 
 ### The same program, three answers
@@ -155,7 +155,7 @@ them: landing them is one command.
 particular board, a particular kernel and a particular thermal design. The *method* is what
 transfers, which is the reason this chapter comes before any result.
 
-**How much repetition is enough.** Problem 14.2 gives the arithmetic for making the clock
+**How much repetition is enough.** Problem 22.2 gives the arithmetic for making the clock
 negligible, and that is a necessary condition rather than a sufficient one. How many samples you
 need before the distribution is trustworthy is a question about the distribution's shape, which
 you do not know until you have sampled it.

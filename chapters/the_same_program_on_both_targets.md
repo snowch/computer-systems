@@ -33,7 +33,7 @@ subject.
 
 ### One program, two routes
 
-Here is a program small enough that Parts III and IV explain it completely.
+Here is a program small enough that the parts before this one explain it completely.
 
 An array of cells, each holding a number and the index of another cell. The chain visits every
 cell exactly once. Two routes add up every number: one walks the array in order, and the other
@@ -137,7 +137,7 @@ architectures — all of it reproducible, none of it a duration. The one figure 
 actually about is declared pending and renders as a warning, because the reference machine has not
 reported yet.
 
-The chapter is written so that it reads correctly either way. What Parts III and IV predict about
+The chapter is written so that it reads correctly either way. What the earlier parts predict about
 these two functions does not depend on the measurement, and neither does the argument about
 confounds; the measurement supplies the size of the error and not its existence.
 

@@ -73,7 +73,7 @@ There is a second test beside it that is easier to leave out. If the page is *al
 fault cannot be a first touch — the entry is there and valid, so the walk did not stop for lack of
 one. It stopped because a permission was refused. Allocating a fresh page for that case would map
 a blank page over one the program was in the middle of using, and the program would not crash; it
-would get the wrong answer. Problem 8.2 is about exactly these edges.
+would get the wrong answer. Problem 16.2 is about exactly these edges.
 
 ### Both policies are already here
 

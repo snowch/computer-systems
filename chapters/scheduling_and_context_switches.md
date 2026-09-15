@@ -85,7 +85,7 @@ for devices and it is the same argument.
 One observation is worth having even though it is not in the table. In this workload the timer
 **never** took the CPU away from anything: every switch was voluntary, because every process
 blocked or exited before its slice ran out. Preemption is what a scheduler is for, and a
-short-lived workload of blocking processes never needs it. Problem 11.3 is about what a policy
+short-lived workload of blocking processes never needs it. Problem 19.3 is about what a policy
 decides when preemption does happen; running the census yourself and trying to make the timer
 intervene is a more instructive ten minutes than reading about it.
 

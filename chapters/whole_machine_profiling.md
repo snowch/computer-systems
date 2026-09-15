@@ -83,7 +83,7 @@ often more than the profile you are looking at contains.
 
 It is attributed to an address, so what you get is *exclusive* time: the samples that landed in
 each function itself. The symbol at the top of that list is very often a leaf you did not write
-and cannot change. Problem 20.1 is putting the callers back together, and the reason it matters is
+and cannot change. Problem 28.1 is putting the callers back together, and the reason it matters is
 that the thing you can change is never the leaf.
 
 And the address written down is the one the core reached when the interrupt was taken, which is

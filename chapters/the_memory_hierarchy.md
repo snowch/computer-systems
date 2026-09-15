@@ -59,7 +59,7 @@ fit in something — and the size at which it steps is the size of the thing it 
 That is the whole measurement. The hierarchy is not inferred from a specification; it is read off
 a curve that the machine produced when asked a question it could not avoid answering honestly.
 
-Problem 15.1 is that reading, on synthetic curves whose answers are known by construction.
+Problem 23.1 is that reading, on synthetic curves whose answers are known by construction.
 
 ### The line is the unit
 
@@ -76,7 +76,7 @@ also, quietly, the answer to a question [ch11](#representing-information) raised
 padding matter because memory moves in lines, and a structure straddling two lines costs two
 fetches for one field.
 
-Problem 15.3 turns that into arithmetic, and the shape worth noticing is the ceiling: a loop gets
+Problem 23.3 turns that into arithmetic, and the shape worth noticing is the ceiling: a loop gets
 steadily worse as its stride grows and then **stops** getting worse, because one line each is as
 bad as it gets.
 

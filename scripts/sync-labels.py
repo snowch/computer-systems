@@ -94,7 +94,8 @@ def sync_problems(path: Path, text: str) -> str:
 #: `problem 11.2`, and `[ch18](#locks-and-memory-ordering)'s problem 10.2` — prose *pointing at* a
 #: problem, as opposed to the heading that defines one.
 PROBLEM_REFERENCE = re.compile(
-    r"(?:\[ch(\d+)\]\(#[\w-]+\)(?P<possessive>['\u2019]s) )?problem (\d+)\.(\d+)"
+    r"(?:\[ch(?P<owner>\d+)\]\(#[\w-]+\)(?P<possessive>['\u2019]s) )?"
+    r"(?P<word>[Pp]roblem) (?P<chapter>\d+)\.(?P<index>\d+)"
 )
 
 
@@ -103,7 +104,7 @@ def sync_problem_references(path: Path, text: str) -> str:
     heading that defines one.
 
     Only the headings were derived, so for a long time every chapter's problems were numbered
-    correctly and every sentence pointing at one was not. Seventeen references across eleven
+    correctly and every sentence pointing at one was not. Thirty-six references across seventeen
     chapters were stale by exactly eight — the width of the two parts inserted ahead of them —
     and being stale by a whole number of chapters is the worst version of this: ch19 said "problem
     11.2", ch11 exists, and ch11 has a second problem. The reader is not sent nowhere. They are
@@ -118,13 +119,16 @@ def sync_problem_references(path: Path, text: str) -> str:
         return text
 
     def renumber(m: re.Match[str]) -> str:
-        owner, possessive, _, index = m.group(1), m.group("possessive"), m.group(3), m.group(4)
+        owner, index, word = m.group("owner"), m.group("index"), m.group("word")
         if owner is None:
-            return f"problem {here.number}.{index}"
+            return f"{word} {here.number}.{index}"
         target = next((c for c in CHAPTERS if c.number == int(owner)), None)
         if target is None:
             return m.group(0)
-        return f"[{target.label}](#{target.anchor}){possessive} problem {target.number}.{index}"
+        return (
+            f"[{target.label}](#{target.anchor}){m.group('possessive')} "
+            f"{word} {target.number}.{index}"
+        )
 
     return PROBLEM_REFERENCE.sub(renumber, text)
 

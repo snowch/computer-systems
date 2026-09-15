@@ -50,8 +50,8 @@ python3 -m pip install -r requirements.txt -r requirements-dev.txt
 python3 scripts/verify-setup.py     # says which targets this machine can run
 ```
 
-On a laptop with a RISC-V cross compiler and QEMU, that is everything Parts III and IV need —
-fourteen chapters. Part V needs a small Linux machine that can count and sample:
+On a laptop with a RISC-V cross compiler and QEMU, that is everything Parts I to IV need.
+Part V needs a small Linux machine that can count and sample:
 **[`hardware/`](hardware/)** says what it has to do, why that turned out to mean an ARM machine
 rather than a RISC-V one, and how to check the one you have. `verify-setup.py` is what decides,
 not a spec sheet.

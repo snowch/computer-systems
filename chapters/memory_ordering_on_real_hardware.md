@@ -53,7 +53,7 @@ to share anything.
 ```{include} _generated/memory-ordering-on-real-hardware-sharing.md
 ```
 
-Problem 18.1 is the analysis: given where the fields are and who writes them, which pairs will
+Problem 26.1 is the analysis: given where the fields are and who writes them, which pairs will
 contend. The case worth getting right is two fields on one line written by the *same* thread,
 which costs nothing, because sharing a line is not the fault.
 
@@ -76,7 +76,7 @@ architecture-independent need; and that what actually transfers is the mechanism
 store buffers, coherence, and the fact that another core can observe your writes in an order you
 did not write them in.
 
-Problem 18.3 is that correspondence as a table, and the table is not the point. The asymmetry is.
+Problem 26.3 is that correspondence as a table, and the table is not the point. The asymmetry is.
 
 ### What ordering costs
 
@@ -103,7 +103,7 @@ That is a ceiling computed from the program, before the machine is involved at a
 
 A measured curve on its own tells you very little. A measured curve that falls short of a
 predicted one tells you there is something to find — and false sharing, atomic contention and
-coherence traffic are exactly the things that live in the gap. Problem 18.2 is the prediction; the
+coherence traffic are exactly the things that live in the gap. Problem 26.2 is the prediction; the
 board supplies the curve; the difference is the chapter's real subject.
 
 ## What we measured

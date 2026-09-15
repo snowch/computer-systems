@@ -88,7 +88,7 @@ what becomes of the result: dropped, returned, stored through a `volatile`, stor
 variable nothing reads, or used in a condition that is never true.
 
 Two of those loops are removed entirely and three survive, and which is which is not the division
-most people expect. Problem 16.3 is that prediction, graded by compiling the file and counting —
+most people expect. Problem 24.3 is that prediction, graded by compiling the file and counting —
 so the answer comes from a compiler rather than from this chapter's opinion.
 
 The rule underneath is simple to state and easy to get wrong in practice: a compiler may remove

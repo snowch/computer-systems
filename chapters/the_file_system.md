@@ -62,7 +62,7 @@ Around those it writes the log's header twice: once to say what the transaction 
 afterwards to say that it no longer contains anything.
 
 So the writes a transaction costs are twice its blocks plus two, and the check in
-`bench/run_blocks.py` refuses to stamp a result where that no longer holds. Problem 12.1 is that
+`bench/run_blocks.py` refuses to stamp a result where that no longer holds. Problem 20.1 is that
 formula, and it is worth deriving before reading on.
 
 Doubling the traffic looks like a strange thing to do on purpose. It is the only thing that works.
@@ -93,7 +93,7 @@ block to the same place twice is the same as copying it once.
 
 **There is no moment at which half a transaction is visible.** That is the entire purpose of the
 exercise, and it is bought with exactly one thing: writing the header after the log and before the
-homes. Problem 12.3 asks you to check the other five orderings, and the ones that fail are the
+homes. Problem 20.3 asks you to check the other five orderings, and the ones that fail are the
 ones that look reasonable.
 
 ### Idempotence is doing the real work

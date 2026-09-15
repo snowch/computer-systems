@@ -84,7 +84,7 @@ that reads the clock on both sides of every call is charging the instrument to e
 number of iterations divides it away — it is added, not amortised. Read the clock once before the
 loop and once after, and the same overhead is divided by however many iterations there were.
 
-Problem 19.1 is that arithmetic, and it is arithmetic rather than a rule for a reason: at a single
+Problem 27.1 is that arithmetic, and it is arithmetic rather than a rule for a reason: at a single
 iteration the two arrangements give the same answer. Putting the clock outside the loop does not
 remove the overhead. It divides it, and dividing by one is not a saving.
 
