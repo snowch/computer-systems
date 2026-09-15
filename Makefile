@@ -53,6 +53,10 @@ xv6-clean:  ## Delete the staging tree; the submodule is never touched
 bench-xv6:  ## Re-run every xv6-target measurement (runs anywhere QEMU does)
 	$(PYTHON) -m bench.run_setup --target xv6
 
+.PHONY: run
+run:  ## List every program a reader can run (./run <name> runs one)
+	@./run --list
+
 .PHONY: bench-bare
 bench-bare:  ## Re-run every bare-metal program (runs anywhere QEMU and the cross compiler do)
 	$(PYTHON) -m bench.run_bare

@@ -43,6 +43,12 @@ of them:
 :end-before:         "addi sp, sp, -"
 ```
 
+Build it and boot it on a machine with nothing on it:
+
+```bash
+./run syscall
+```
+
 Thirty-one, not thirty-two, because `x0` is hard-wired to zero and has nothing to lose. It is
 written out rather than generated because writing it out is the point: this is the cost of not
 knowing your caller, and it is paid on every single call.

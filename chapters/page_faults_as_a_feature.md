@@ -103,6 +103,12 @@ The workload asks for memory both ways and touches a known amount of it:
 :end-before: printf("faultload
 ```
 
+Build it into the kernel, boot, and run it:
+
+```bash
+./run faultload
+```
+
 Three phases, chosen to bracket the trade rather than to demonstrate a win. A large lazy request
 barely touched; a lazy request touched in full; an eager request of the same size as the first.
 

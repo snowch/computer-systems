@@ -40,6 +40,12 @@ is nothing else to it:
 :end-before: #define MSTATUS_MIE
 ```
 
+Build it and boot it on a machine with nothing on it:
+
+```bash
+./run privilege
+```
+
 Arming it takes three writes — one to say *when*, one to enable this particular interrupt, and one
 to enable interrupts at all. The two-level enable is not redundancy: the per-source bit says which
 interrupts a program is interested in, and the global bit is what a critical section turns off.

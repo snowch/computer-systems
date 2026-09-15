@@ -44,6 +44,12 @@ can be a *leaf* — covering a whole gigabyte at once:
 :end-before: static void build_the_table
 ```
 
+Build it and boot it on a machine with nothing on it:
+
+```bash
+./run paging
+```
+
 Three entries is the entire table:
 
 ```{literalinclude} ../sysfs/bare/paging.c
@@ -98,6 +104,12 @@ apart and letting the other hart finish entirely in the gap:
 :language: c
 :start-at:     /* The three instructions of `counter = counter + 1`
 :end-before:     /* The same shape, with an instruction that has no gap in it.
+```
+
+Build it and boot it on a machine with nothing on it:
+
+```bash
+./run harts
 ```
 
 The other hart's whole increment happens inside one statement of this one. Both processors
