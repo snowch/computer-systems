@@ -120,6 +120,9 @@ python3 -m bench.run_sharing --check
 echo "== ch27's program still has the shape the chapter profiles =="
 python3 -m bench.run_profile --check
 
+echo "== ch01's first program still says what the chapter quotes =="
+python3 -m bench.run_firstc --check
+
 echo "== the kernel still lacks what ch02 says it lacks =="
 python3 -m bench.run_kernelc --check
 
