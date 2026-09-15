@@ -20,34 +20,12 @@ short_title: "ch01 Reading C"
 
 How do I read a C declaration, and what does each piece of it become?
 
-### What Part I is for
+A C declaration is not read left to right, and every piece of one turns into something concrete:
+an amount of storage, a width to step by, an instruction the compiler emits. This chapter takes
+them a few at a time and checks each answer against what was actually compiled, rather than against
+a rule about how to read them.
 
-Three chapters and one job: enough C to read a kernel, and no more.
-
-That "no more" is a real limit rather than modesty. C is a large language and most of it never
-appears in the code this book reads, so a part that covered it would spend most of its length on
-things you are never going to meet here. What is covered instead is the part your own language was
-built to hide — that memory is one array of bytes, and everything in it has an index.
-
-**ch01** is that model: addresses, declarations, arrays, structs, and what each becomes when
-compiled. **[ch02](#ch02)** is what stops being true when there is no library underneath you, which
-is the part an application programmer of any language gets wrong first. **[ch03](#ch03)** sorts C's
-constructs by a single question — has the machine heard of this? — and answers it with disassembly
-rather than with assertion.
-
-At the end of the three you will not be a C programmer. You will be able to read one, which is the
-thing the rest of the book actually requires, and [Part II](#ch04) starts requiring it immediately.
-
-:::{note} Which of these three chapters you need
-
-**If you already write C**, skip to [ch02](#ch02). This chapter is the on-ramp; ch02 is the one
-about the habits that stop working in a kernel, and it is written for you.
-
-**If you program fluently in something else and have never written C**, start here. You are not
-being taught to program — loops, conditionals, functions and operators are assumed, and C spells
-them much as your language does. You are being taught C's *model*, which is the part that is
-genuinely different and the part a kernel is made of.
-:::
+If you are not sure whether you want this chapter or [ch02](#ch02), [Part I](#part1) routes you.
 
 ## The material
 

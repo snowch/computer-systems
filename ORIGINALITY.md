@@ -972,3 +972,30 @@ patch). See `xv6/README.md` and `LICENSE-CODE`.
 ---
 
 *Every chapter is written, and every one has an entry above. An appendix that acquires content of its own — rather than collecting what the chapters established — needs one too.*
+
+---
+
+## Part pages · the five part introductions
+
+**Closest in subject.** Part introductions are a common form in textbooks, and several of the works
+named at the top of this file use them — typically a page that names the chapters ahead and
+summarises each in a sentence.
+
+**How this differs, and the care taken.**
+
+- **They are explicitly forbidden from doing the usual job.** The standard part introduction is a
+  prose table of contents. These state a claim and a boundary and are barred from walking their
+  chapters; `tests/test_book.py` fails a part page that links every chapter in its part, on the
+  grounds that the sidebar is already that list.
+- **The five sections are this book's own** and follow from its rules rather than from any
+  model: *what this part is for*, *what it leaves out*, *where to start*, *which machine and what
+  it cannot tell you*, *where this leaves you*. The fourth exists because this book has two
+  targets and a rule about which may be timed, which is a constraint no other text has.
+- **They carry routing that belongs to nobody's chapter.** The note telling a C programmer to skip
+  ch01 used to live in ch01, where a reader taking its advice never saw it. That class of content
+  — who should skip what, which hardware a whole part assumes — is why the pages exist, rather
+  than a wish to introduce things.
+- **The boundary sections argue rather than list.** Part II's says why file descriptors are not a
+  primitive of the machine and where they go instead; Part V's says what it cedes to
+  *Systems Performance* and why the relationship is one-way. Neither is a summary of absent
+  content.

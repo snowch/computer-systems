@@ -46,12 +46,14 @@ project:
 
     - title: Part I — C, and what the machine does with it
       children:
+        - file: chapters/part1_c_and_the_machine.md
         - file: chapters/ch01_reading_c.md
         - file: chapters/ch02_c_without_a_runtime.md
         - file: chapters/ch03_c_for_people_who_will_read_a_kernel.md
 
     - title: Part II — The machine with nothing on it
       children:
+        - file: chapters/part2_the_bare_machine.md
         - file: chapters/ch04_a_trap_with_nothing_else.md
         - file: chapters/ch05_interrupts_and_privilege.md
         - file: chapters/ch06_one_page_table_two_harts.md
@@ -60,6 +62,7 @@ project:
 
     - title: Part III — What a computer does with a program
       children:
+        - file: chapters/part3_a_program_end_to_end.md
         - file: chapters/ch09_what_a_computer_does_with_a_program.md
         - file: chapters/ch10_representing_information.md
         - file: chapters/ch11_machine_level_code_on_riscv.md
@@ -67,6 +70,7 @@ project:
 
     - title: Part IV — The operating system layer
       children:
+        - file: chapters/part4_the_operating_system_layer.md
         - file: chapters/ch13_traps_and_system_calls.md
         - file: chapters/ch14_virtual_memory.md
         - file: chapters/ch15_page_faults_as_a_feature.md
@@ -78,6 +82,7 @@ project:
 
     - title: Part V — Where the cycles go
       children:
+        - file: chapters/part5_where_the_cycles_go.md
         - file: chapters/ch21_measuring.md
         - file: chapters/ch22_the_memory_hierarchy.md
         - file: chapters/ch23_optimising_code.md

@@ -13,7 +13,17 @@ from pathlib import Path
 import pytest
 import yaml
 
-from bench.outline import APPENDICES, CHAPTERS, PARTS, Appendix, Chapter, reading_disassembly
+from bench.outline import (
+    APPENDICES,
+    CHAPTERS,
+    PART_PAGES,
+    PARTS,
+    Appendix,
+    Chapter,
+    Part,
+    in_part,
+    reading_disassembly,
+)
 from bench.stamp import ROOT
 
 MYST = yaml.safe_load((ROOT / "myst.yml").read_text())
@@ -74,7 +84,103 @@ def test_every_toc_entry_is_a_real_file():
 
 def test_toc_parts_match_the_outline():
     titles = [entry["title"] for entry in TOC if "title" in entry]
-    assert titles[: len(PARTS)] == list(PARTS)
+    assert titles[: len(PARTS)] == [part.title for part in PARTS]
+
+
+PART_IDS = [part.label for part in PART_PAGES]
+
+#: Every part page carries these, in this order. The repetition is the point: a reader who has
+#: read one knows where to look on the next, and a part page that is missing one of them has
+#: almost certainly drifted into being a summary of its chapters, which is the failure mode the
+#: whole idea has to be defended against.
+PART_SECTIONS = (
+    "## What this part is for",
+    "## What it leaves out",
+    "## Where to start",
+    "## Which machine, and what it cannot tell you",
+    "## Where this leaves you",
+)
+
+
+@pytest.mark.parametrize("part", PART_PAGES, ids=PART_IDS)
+def test_part_page_exists(part: Part):
+    assert (ROOT / part.path).exists(), f"{part.path} is in the outline but not on disk"
+
+
+@pytest.mark.parametrize("part", PART_PAGES, ids=PART_IDS)
+def test_part_page_has_a_label_matching_its_number(part: Part):
+    text = (ROOT / part.path).read_text()
+    assert f"({part.label})=" in text, f"{part.path} needs a `({part.label})=` label"
+
+
+@pytest.mark.parametrize("part", PART_PAGES, ids=PART_IDS)
+def test_part_page_leads_its_part_in_the_table_of_contents(part: Part):
+    """A part introduction that is not the first thing in the part introduces nothing."""
+    entry = next((e for e in TOC if e.get("title") == part.title), None)
+    assert entry is not None, f"myst.yml has no part titled {part.title!r}"
+    children = [child["file"] for child in entry["children"]]
+    assert children[0] == part.path, (
+        f"{part.title!r} starts with {children[0]}, not its own part page {part.path}"
+    )
+    assert children[1:] == [chapter.path for chapter in in_part(part)], (
+        f"{part.title!r}'s chapters in myst.yml do not match the outline"
+    )
+
+
+@pytest.mark.parametrize("part", PART_PAGES, ids=PART_IDS)
+def test_part_page_has_the_standard_sections(part: Part):
+    text = (ROOT / part.path).read_text()
+    found = [section for section in PART_SECTIONS if section in text]
+    assert found == list(PART_SECTIONS), (
+        f"{part.path} is missing or reorders: {[s for s in PART_SECTIONS if s not in found]}"
+    )
+
+
+@pytest.mark.parametrize("part", PART_PAGES, ids=PART_IDS)
+def test_part_page_does_not_summarise_its_chapters(part: Part):
+    """The rule the whole idea depends on (CLAUDE.md §7, and the `Part` docstring).
+
+    A part page states a claim and a boundary. The chapter list is already in the sidebar and in
+    the preface, and a page that walks its chapters in order is the "in this part we will" filler
+    that made bundling the introduction into ch01 look reasonable in the first place.
+
+    Naming chapters is fine and necessary — routing a reader to one is the job. Naming *most of
+    them, in order* is the thing being caught.
+    """
+    text = (ROOT / part.path).read_text()
+    # Only the body. The header block's "Chapters" row links the first and last by design, and
+    # in a three-chapter part that is already two thirds of a "summary".
+    body = text[text.index("## What this part is for") :]
+    labels = [chapter.label for chapter in in_part(part)]
+    mentioned = [label for label in labels if f"(#{label})" in body]
+    assert len(mentioned) < len(labels), (
+        f"{part.path} links every one of its chapters ({', '.join(labels)}) — that is a "
+        f"table of contents, which the sidebar already is"
+    )
+
+
+@pytest.mark.parametrize("part", PART_PAGES, ids=PART_IDS)
+def test_part_page_states_the_target_rule_it_inherits(part: Part):
+    """Three of the five parts may never carry a timing, and each says so on its own page."""
+    if part.target in ("host",):
+        return
+    text = (ROOT / part.path).read_text().lower()
+    assert "timed" in text, (
+        f"{part.path} is a {part.target!r} part and does not say that nothing in it is timed"
+    )
+
+
+def test_getting_started_has_no_part_page():
+    """Deliberate, and worth a test so it is not 'fixed' later.
+
+    *Getting started* holds one chapter and the preface already says what it is for. A page whose
+    whole content would be "ch00 is next" is the filler every other rule here exists to prevent.
+    """
+    start = PARTS[0]
+    assert not start.page
+    assert not any(part.page is False for part in PARTS[1:]), (
+        "a second page-less part has appeared — decide whether it is really a part"
+    )
 
 
 def test_appendices_exist_and_are_listed():
@@ -339,7 +445,9 @@ def test_every_part_three_chapter_either_pairs_or_is_deliberately_standalone():
     unpaired = {
         chapter.label
         for chapter in CHAPTERS
-        if chapter.part == PARTS[-1] and not chapter.answers and chapter.label not in standalone
+        if chapter.part == PARTS[-1].title
+        and not chapter.answers
+        and chapter.label not in standalone
     }
     assert not unpaired, (
         f"these Part V chapters neither pair with an earlier chapter nor are listed as "

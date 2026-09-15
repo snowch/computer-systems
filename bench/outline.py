@@ -182,8 +182,8 @@ CHAPTERS: tuple[Chapter, ...] = (
         "bare",
         "What is the least a machine needs before two programs can run on it?",
         "ch08-bare-fork",
-        owes="Two address spaces from one, a return value that differs between them, and the "
-        "count of pages copied — beside what xv6 copies for the same call.",
+        owes="Two address spaces from one, a return value that differs between them, and the count "
+        "of pages copied — beside what xv6 copies for the same call.",
     ),
     Chapter(
         9,
@@ -532,14 +532,111 @@ APPENDICES: tuple[Appendix, ...] = (
     ),
 )
 
-PARTS: tuple[str, ...] = (
-    PART_START,
-    PART_C,
-    PART_BARE,
-    PART_MACHINE,
-    PART_OS,
-    PART_COST,
+
+@dataclass(frozen=True)
+class Part:
+    """A part of the book, and the page that says what it is for.
+
+    Parts were unclickable sidebar labels for a long time: ``myst.yml`` gave each one a ``title``
+    and a list of children and no page of its own, so the only statement of what a part was for
+    lived in one hand-maintained row of the preface table — which is exactly where Part II went
+    missing for a while without any check noticing, because ``myst build --strict`` verifies that
+    an anchor resolves and not that the words around it are true.
+
+    What that arrangement could not hold is anything part-shaped. Part I's routing note — *if you
+    already write C, skip to ch02* — sat inside ch01, so a reader who took its advice only ever
+    saw it by accident. Part V's dependence on the reference machine was stated five times, once
+    per chapter header, with nowhere to say it properly. A part page is where those go.
+
+    The content rule is narrow on purpose: **a part page states a claim and a boundary, and never
+    summarises its chapters.** The chapter list is already in the sidebar and in the preface, and
+    a page that repeats it is the "in this part we will" filler CLAUDE.md §7 bans.
+    """
+
+    #: 1-5, matching the Roman numeral in :attr:`title`. ``0`` is *Getting started*, which is a
+    #: part in the table of contents but has no page: it holds one chapter, and the preface
+    #: already does the job a part page would.
+    number: int
+    slug: str
+    title: str
+    #: The target its chapters run on, in the vocabulary of :data:`TARGET_MEANING`. A part-level
+    #: fact rather than a per-chapter one — Part II is ``bare`` throughout, and the rule that
+    #: nothing in it may be timed is the part's rule, not five separate chapters' rules.
+    target: str
+    #: What the part asserts, in one line. Mirrors :attr:`Chapter.question`: prose kept in the
+    #: data so a stub can state it and a test can find it, rather than being invented afresh on
+    #: the page and drifting from the preface's description of the same part.
+    claim: str
+    #: False only for *Getting started*.
+    page: bool = True
+
+    @property
+    def label(self) -> str:
+        return f"part{self.number}"
+
+    @property
+    def path(self) -> str:
+        return f"chapters/{self.label}_{self.slug}.md"
+
+    @property
+    def name(self) -> str:
+        """``"Part III"`` — the title without its subtitle."""
+        return self.title.split(" \u2014 ")[0]
+
+    @property
+    def subtitle(self) -> str:
+        """``"What a computer does with a program"`` — the title without its number."""
+        return self.title.split(" \u2014 ", 1)[-1]
+
+
+PARTS: tuple[Part, ...] = (
+    Part(
+        0,
+        "getting_started",
+        PART_START,
+        "both",
+        "Two targets working, and a script that says what this machine can currently run.",
+        page=False,
+    ),
+    Part(
+        1,
+        "c_and_the_machine",
+        PART_C,
+        "xv6",
+        "Enough C to read a kernel, and no more.",
+    ),
+    Part(
+        2,
+        "the_bare_machine",
+        PART_BARE,
+        "bare",
+        "Each primitive of the machine built on its own, before a kernel presents them entangled.",
+    ),
+    Part(
+        3,
+        "a_program_end_to_end",
+        PART_MACHINE,
+        "both",
+        "One program from source text to result, with nothing in between left as magic.",
+    ),
+    Part(
+        4,
+        "the_operating_system_layer",
+        PART_OS,
+        "xv6",
+        "A kernel small enough to read, taken apart one mechanism at a time.",
+    ),
+    Part(
+        5,
+        "where_the_cycles_go",
+        PART_COST,
+        "host",
+        "Part IV's chapters asked again as questions about time.",
+    ),
 )
+
+#: The five parts that have a page. *Getting started* is the exception and always will be.
+PART_PAGES: tuple[Part, ...] = tuple(part for part in PARTS if part.page)
 
 
 def reading_disassembly(instruction_set: str) -> tuple[str, ...]:
@@ -563,5 +660,6 @@ def by_number(number: int) -> Chapter:
     raise KeyError(f"no chapter {number}")
 
 
-def in_part(part: str) -> list[Chapter]:
-    return [chapter for chapter in CHAPTERS if chapter.part == part]
+def in_part(part: str | Part) -> list[Chapter]:
+    title = part.title if isinstance(part, Part) else part
+    return [chapter for chapter in CHAPTERS if chapter.part == title]

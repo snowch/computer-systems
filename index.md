@@ -31,7 +31,7 @@ usually the most useful part of the chapter.
 
 :::{note} Where this book is
 Twenty-four of the twenty-nine chapters are written, and six of the seven appendices. The five
-still being drafted are all of [Part II](#ch04), which teaches each primitive of the machine on
+still being drafted are all of [Part II](#part2), which teaches each primitive of the machine on
 its own before Part IV meets them entangled inside a kernel; each carries its target, its question
 and the measurements it owes you, so the table of contents is already a map of where it is going.
 
@@ -128,11 +128,11 @@ machine's, and every chapter says so. The transferable part is the method.
 
 | | |
 |---|---|
-| **[Part I](#ch01)** — C, and what the machine does with it | Three chapters, and which of them you need depends on where you are starting. Not a C tutorial |
-| **[Part II](#ch04)** — The machine with nothing on it | A trap, an interrupt, a page table, a system call and `fork()`, each built from nothing on bare hardware before any kernel is read |
-| **[Part III](#ch09)** — What a computer does with a program | One program from source text to result: the toolchain, representation, machine code, linking |
-| **[Part IV](#ch13)** — The operating system layer | A kernel small enough to read, taken apart: traps, virtual memory, faults, drivers, locks, scheduling, files |
-| **[Part V](#ch21)** — Where the cycles go | Part IV's chapters asked again as questions about time, on hardware that can answer them |
+| **[Part I](#part1)** — C, and what the machine does with it | Three chapters, and which of them you need depends on where you are starting. Not a C tutorial |
+| **[Part II](#part2)** — The machine with nothing on it | A trap, an interrupt, a page table, a system call and `fork()`, each built from nothing on bare hardware before any kernel is read |
+| **[Part III](#part3)** — What a computer does with a program | One program from source text to result: the toolchain, representation, machine code, linking |
+| **[Part IV](#part4)** — The operating system layer | A kernel small enough to read, taken apart: traps, virtual memory, faults, drivers, locks, scheduling, files |
+| **[Part V](#part5)** — Where the cycles go | Part IV's chapters asked again as questions about time, on hardware that can answer them |
 
 [Chapter 0](#ch00) sits before all of it and is setup: two targets working, and a script that
 tells you what your machine can currently run.

@@ -21,7 +21,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from bench.outline import APPENDICES, CHAPTERS, Appendix, Chapter  # noqa: E402
+from bench.outline import (  # noqa: E402
+    APPENDICES,
+    CHAPTERS,
+    PART_PAGES,
+    Appendix,
+    Chapter,
+    Part,
+    in_part,
+)
 
 #: How a chapter's header names its target. Deliberately neither a product name nor an
 #: architecture for `host`: ch00 states the requirement as a capability, and a header naming one
@@ -137,6 +145,74 @@ in it either cites a primary source or comes from a stamped result under `bench/
 """
 
 
+def part_stub(part: Part, previous: Part | None) -> str:
+    """A stub for a part introduction, in the five sections every one of them has.
+
+    Parts had no page at all for a long time — ``myst.yml`` gave each a title and a list of
+    children, which the theme renders as an unclickable heading — and what that could not hold was
+    anything part-shaped. Part I's routing note lived inside ch01, so a reader who took its advice
+    to skip ch01 only ever saw it by accident.
+
+    The sections are fixed, and ``tests/test_book.py`` checks all five are present and in order.
+    What they must not become is a walk through the part's chapters: that is the sidebar's job and
+    the preface's, and a test checks for it.
+    """
+    chapters = in_part(part)
+    first, last = chapters[0], chapters[-1]
+    assumes = (
+        f"[{previous.name}](#{previous.label})"
+        if previous
+        else "[ch00](#ch00), and fluency in some other language"
+    )
+    return f"""---
+title: "{part.title}"
+short_title: "{part.name}"
+---
+
+({part.label})=
+# {part.name} · {part.subtitle}
+
+:::{{note}} Part header
+:class: dropdown
+
+| | |
+|---|---|
+| **Chapters** | [{first.label}](#{first.label})–[{last.label}](#{last.label}) |
+| **Target** | {TARGET_LABEL[part.target]} |
+| **Assumes** | {assumes} |
+:::
+
+## What this part is for
+
+{part.claim}
+
+[To write: what this part asserts, and why it sits here rather than earlier or later. The order of
+the parts is an argument; this is where it gets made. No walk through the chapters — the sidebar
+already lists them.]
+
+## What it leaves out
+
+[To write: the boundary, and the reason for it. The section a chapter cannot carry, and the one a
+reader gets most from: knowing what is out lets them stop worrying about it.]
+
+## Where to start
+
+[To write: routing, not a prerequisite checklist. Who should skip what, and where a reader who is
+missing something should go instead.]
+
+## Which machine, and what it cannot tell you
+
+[To write: the target this part runs on, what that buys, and what it forbids. For every part but
+Part V that includes stating plainly that nothing here is timed, and why a number from this target
+would be worse than no number.]
+
+## Where this leaves you
+
+[To write: a capability, not a summary. What the reader can do at the end that they could not do
+at the start.]
+"""
+
+
 class WrittenChapterError(RuntimeError):
     """Refusing to overwrite a chapter that is no longer a stub."""
 
@@ -193,6 +269,17 @@ def main() -> int:
             protected.append(chapter.path)
 
     if args.all:
+        for index, part in enumerate(PART_PAGES):
+            previous = PART_PAGES[index - 1] if index else None
+            try:
+                if write(ROOT / part.path, part_stub(part, previous), args.force):
+                    print(f"  wrote {part.path}")
+                    written += 1
+                else:
+                    skipped += 1
+            except WrittenChapterError:
+                protected.append(part.path)
+
         for appendix in APPENDICES:
             try:
                 if write(ROOT / appendix.path, appendix_stub(appendix), args.force):
