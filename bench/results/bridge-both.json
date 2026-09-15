@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "19dd5a2539d658df",
+  "code_fingerprint": "77caff590496f97c",
   "code_sources": [
     "bench/run_bridge.py",
     "sysfs/lib/bridge.c",
@@ -11,7 +11,7 @@
     "note": "answers and instruction counts only; no duration appears here by design",
     "why": "a host-target timing is only taken on the board, by make bench-board"
   },
-  "generated_at": "2026-09-15T15:09:47+00:00",
+  "generated_at": "2026-09-15T16:18:57+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "riscv64",

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Create a chapter or appendix stub with the book's standard shape.
 
-    python3 scripts/new-chapter.py 7          # chapters/ch14_virtual_memory.md
+    python3 scripts/new-chapter.py 7          # chapters/virtual_memory.md
     python3 scripts/new-chapter.py --all      # every chapter and appendix that is missing
 
 The seven-part shape comes from PLAN.md §12.1 and is not negotiable: the repetition is what makes
@@ -31,6 +31,11 @@ from bench.outline import (  # noqa: E402
     in_part,
 )
 
+
+def by_anchor(anchor: str) -> Chapter:
+    return next(c for c in CHAPTERS if c.anchor == anchor)
+
+
 #: How a chapter's header names its target. Deliberately neither a product name nor an
 #: architecture for `host`: ch00 states the requirement as a capability, and a header naming one
 #: board would be wrong for every reader who bought a different one — which was the state of all
@@ -38,7 +43,7 @@ from bench.outline import (  # noqa: E402
 TARGET_LABEL = {
     "xv6": "`xv6` — the teaching kernel under QEMU",
     "bare": "`bare` — the same machine under QEMU with no operating system on it",
-    "host": "`host` — Linux on real hardware, natively ([hardware](#ch00))",
+    "host": "`host` — Linux on real hardware, natively ([hardware](#prerequisites-and-setup))",
     "both": "`xv6` and `host` — every example says which",
 }
 
@@ -50,14 +55,14 @@ STUB_MARKER = "[To write:"
 
 
 def chapter_stub(chapter: Chapter, previous: Chapter | None) -> str:
-    prerequisites = f"[{previous.label}](#{previous.label})" if previous else "none"
+    prerequisites = f"[{previous.label}](#{previous.anchor})" if previous else "none"
     # The preface tells the reader every stub names the measurements it owes them. A placeholder
     # here made that two-thirds true across twenty-one pages.
     owes = chapter.owes or "[To write: the measurements this chapter must produce.]"
     assumes = f"\n| **Assumes** | {chapter.assumes} |" if chapter.assumes else ""
     answers = (
         "\n| **Answers the cost of** | "
-        + ", ".join(f"[{label}](#{label})" for label in chapter.answers)
+        + ", ".join(f"[{by_anchor(a).label}](#{a})" for a in chapter.answers)
         + " |"
         if chapter.answers
         else ""
@@ -67,7 +72,7 @@ title: "{chapter.title} [DRAFT]"
 short_title: "{chapter.label} {chapter.title}"
 ---
 
-({chapter.label})=
+({chapter.anchor})=
 # {chapter.label} · {chapter.title} [DRAFT]
 
 :::{{note}} Chapter header
@@ -105,7 +110,7 @@ you did instead. This chapter is not finished while this section is missing.]
 
 ## Problems
 
-[To write: each problem is a stub under `tests/{chapter.label}/` with a test that passes only when
+[To write: each problem is a stub under `{chapter.tests_dir}/` with a test that passes only when
 it is solved. There is no answer key — the test is the answer key, and it cannot be wrong about
 whether it passes.]
 
@@ -162,7 +167,7 @@ def part_stub(part: Part, previous: Part | None) -> str:
     assumes = (
         f"[{previous.name}](#{previous.label})"
         if previous
-        else "[ch00](#ch00), and fluency in some other language"
+        else "[ch00](#prerequisites-and-setup), and fluency in some other language"
     )
     return f"""---
 title: "{part.title}"
@@ -177,7 +182,7 @@ short_title: "{part.name}"
 
 | | |
 |---|---|
-| **Chapters** | [{first.label}](#{first.label})–[{last.label}](#{last.label}) |
+| **Chapters** | [{first.label}](#{first.anchor})–[{last.label}](#{last.anchor}) |
 | **Target** | {TARGET_LABEL[part.target]} |
 | **Assumes** | {assumes} |
 :::

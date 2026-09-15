@@ -41,7 +41,7 @@ Four things, and each has a mechanism in the repository behind it rather than a 
   recording target, machine, kernel, compiler, flags and a content hash of the code that produced
   it; CI fails when a quoted number's hash stops matching
   ([§6.3](#63-how-numbers-get-into-the-book)).
-- **Every problem is checked by code.** Each chapter's problems are stubs under `tests/chNN/`
+- **Every problem is checked by code.** Each chapter's problems are stubs under `tests/<chapter-slug>/`
   with tests that pass only when solved. There is no answer key, so there is no answer key to be
   wrong.
 - **What could not be measured is stated.** The U74 has no vector unit. Some questions cannot be
@@ -86,7 +86,7 @@ technique — which counter, which experiment, which control.
 The `xv6`/`host` split ([§5](#5-hardware-and-execution-strategy)) is not an implementation
 detail, it is the spine. Parts III and IV build a complete and *exact* model of what a program does,
 on a machine where everything is inspectable and nothing about time is real. Part V takes that
-model to hardware and asks what each part of it costs. [ch20](#ch20) is the hinge: the same
+model to hardware and asks what each part of it costs. [ch20](#the-same-program-on-both-targets) is the hinge: the same
 program, watched in a debugger and then profiled on the board, with the gap between the two made
 explicit.
 
@@ -118,14 +118,14 @@ II never described. Anything else unpaired is an oversight.
 
 The reader therefore arrives at each Part V chapter already understanding the mechanism and
 needing only the price — and the crossing itself is rehearsed once, deliberately, in
-[ch20](#ch20).
+[ch20](#the-same-program-on-both-targets).
 
 ### 3.4 Measurement as a skill, not a step
 
-A running thread, deliberately spread out rather than confined to [ch21](#ch21): every chapter
+A running thread, deliberately spread out rather than confined to [ch21](#measuring): every chapter
 that produces a number also says how it could be wrong. Variance, warm-up, the observer effect,
 measurement bias @mytkowicz2009wrong, the difference between a correct result and a fast one. By
-[ch27](#ch27) the reader should be more suspicious of a benchmark than of a bug report.
+[ch27](#whole-machine-profiling) the reader should be more suspicious of a benchmark than of a bug report.
 
 ---
 
@@ -170,7 +170,7 @@ runtime underneath. Control flow, operators and the standard library's interface
 the reader's other language.
 
 **What this part deliberately does not cover, because a later chapter measures it instead.** Type
-sizes, alignment, byte order and struct padding are [ch10](#ch10) and are established there by
+sizes, alignment, byte order and struct padding are [ch10](#representing-information) and are established there by
 measurement rather than assertion. Bit manipulation and page-table-entry encoding are ch10 and
 ch14. The preprocessor is ch09. How a system call reaches the kernel is ch13. A part that repeated
 those would be the book disagreeing with itself, which is what ERRATA.md exists to stop.
@@ -232,7 +232,7 @@ having *written* a `fork`, and can therefore see what xv6 adds to one and why.
 
 **What it costs, and what that buys.** These programs need a linker script, `-nostdlib` and inline
 assembly before Part III has explained any of them. That is deliberate: the reader writes one on
-faith here and finds out why it is shaped that way in [ch12](#ch12), which is a better order than
+faith here and finds out why it is shaped that way in [ch12](#linking-and-loading), which is a better order than
 being told first. Each chapter names the later one that settles what it borrowed.
 
 **Originality.** Building a small kernel is a well-populated genre and §5 applies with full force.
@@ -506,7 +506,7 @@ on the board and stamped; nothing here may come from an emulator.
 
 - **Objectives.** What four cores cost each other: false sharing, cache-line ping-pong, the price
   of atomics and fences — and **a second memory model**, seen next to the first.
-- **Why this is not simply "ch17 with numbers".** [ch17](#ch17) teaches RISC-V: `amoswap`, `fence`,
+- **Why this is not simply "ch17 with numbers".** [ch17](#locks-and-memory-ordering) teaches RISC-V: `amoswap`, `fence`,
   and RVWMO. This chapter is ARM: load-exclusive/store-exclusive or LSE atomics, `dmb` and its
   domains, and a differently specified model. That is a feature. A reader shown only one weak
   memory model will conclude that model *is* memory ordering; shown two, they learn that "weak
@@ -599,7 +599,7 @@ the discipline is that neither is ever asked the other's question.
   for *correctness*. Timing tests are marked `board` and skip themselves everywhere else.
 - No chapter above `xv6` is a prerequisite for a later `xv6` chapter, so a reader without the
   board can complete Parts III and IV in full — fourteen chapters — and set the board up before
-  [ch20](#ch20).
+  [ch20](#the-same-program-on-both-targets).
 
 **Why the targets do not share an instruction set.** Part V needs `perf` to count *and* to
 sample. Sampling requires counter-overflow interrupts — standard on ARM PMUs, and on RISC-V the
@@ -686,7 +686,7 @@ computer-systems/
 │   ├── apps/               # the book's xv6 user programs
 │   ├── patches/            # the book's kernel instrumentation, as diffs
 │   └── stage/              # generated, not in git
-├── tests/                  # the book's own tests, plus tests/chNN/ — the reader's problems
+├── tests/                  # the book's own tests, plus tests/<slug>/ — the reader's problems
 ├── chapters/               # ch00.md … ch28.md, plus _generated/ and _figures/
 ├── appendices/
 └── scripts/                # verify-setup, render-figures, verify-numbers, build-pdf, ci-check
@@ -890,7 +890,7 @@ one book.
 5. **What this cannot tell you** — **mandatory**. What the target, the tooling or the hardware
    could not show, and what was done instead. A chapter is not finished while this is missing; it
    is the section that makes the rest believable.
-6. **Problems** — each a stub under `tests/chNN/` with a test that passes only when solved.
+6. **Problems** — each a stub under `tests/<chapter-slug>/` with a test that passes only when solved.
 7. **Where to go next** — primary sources via `@citekey`. Textbooks may appear here and nowhere
    else.
 
@@ -928,7 +928,7 @@ distribution's patch level moves a benchmark by a few per cent, and an unrecorde
 unexplainable a year later.
 
 `CORE_SOURCES` in `bench/stamp.py` should be treated as frozen once chapters cite results.
-[ch21](#ch21) adds the timing library to it, once, deliberately, invalidating every earlier
+[ch21](#measuring) adds the timing library to it, once, deliberately, invalidating every earlier
 `host` result. Any later change to it means regenerating everything, on the board.
 
 ---
@@ -967,7 +967,7 @@ Recorded so they are not relitigated.
 ## 14. Immediate next steps
 
 1. Run `make bench-board` on the reference machine, commit `bench/results/setup-host.json`, and
-   remove the `pending=` marker on `ch00-board` in `bench/figures.py` (M1).
+   remove the `pending=` marker on `prerequisites-and-setup-board` in `bench/figures.py` (M1).
 2. Generate Appendix C from the board — the `perf` events it actually has.
 3. Write ch09 with the per-chapter prompt, following
    [§12.1](#121-chapter-template) and [§12.3](#123-definition-of-done-per-chapter).

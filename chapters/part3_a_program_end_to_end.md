@@ -11,8 +11,8 @@ short_title: "Part III"
 
 | | |
 |---|---|
-| **Chapters** | [ch09](#ch09)–[ch12](#ch12) |
-| **Target** | `xv6`, with [ch09](#ch09) crossing to `host` and saying which figure came from where |
+| **Chapters** | [ch09](#what-a-computer-does-with-a-program)–[ch12](#linking-and-loading) |
+| **Target** | `xv6`, with [ch09](#what-a-computer-does-with-a-program) crossing to `host` and saying which figure came from where |
 | **Assumes** | [Part I](#part1) |
 :::
 
@@ -30,14 +30,14 @@ other than what its name suggests.
 
 It sits before [Part IV](#part4) for a reason that is nearly a pun: a kernel is a program. You
 cannot usefully read one until you know what a program is, what a compiler leaves unfinished, and
-who finishes it. [ch12](#ch12) ends at `exec`, which is precisely where Part IV begins.
+who finishes it. [ch12](#linking-and-loading) ends at `exec`, which is precisely where Part IV begins.
 
 ## What it leaves out
 
 How a compiler works. Parsing, intermediate representations, register allocation as a subject in
 its own right — none of it is here. This part asks only what the compiler *produced* and whether
 you can account for it. Why it chose one thing over another, and whether a better choice existed,
-is [ch23](#ch23), and it is in [Part V](#part5) because the answer is about cost.
+is [ch23](#optimising-code), and it is in [Part V](#part5) because the answer is about cost.
 
 Also left out: every object format and loader other than the one in front of you. What generalises
 is that a linker joins fragments, that some of a program's bytes are not stored because they are
@@ -46,18 +46,18 @@ spelling is local; the structure is not.
 
 ## Where to start
 
-[ch09](#ch09), in order. This part is a single argument in four steps and each chapter finishes a
+[ch09](#what-a-computer-does-with-a-program), in order. This part is a single argument in four steps and each chapter finishes a
 question the one before it left open — a compiler that emits an unfinished object file, an object
 file whose unfinished parts a linker fills, a linked file that is still only a file.
 
-If you already know ELF and want the rest, [ch10](#ch10) stands alone reasonably well; it is about
+If you already know ELF and want the rest, [ch10](#representing-information) stands alone reasonably well; it is about
 representation rather than tooling, and it is the chapter most likely to change what you think you
 know.
 
 ## Which machine, and what it cannot tell you
 
 Mostly `xv6`: compiled with the RISC-V cross-compiler, run under QEMU, disassembled and read.
-[ch09](#ch09) compiles the same source on both targets, because the claim it makes — that the
+[ch09](#what-a-computer-does-with-a-program) compiles the same source on both targets, because the claim it makes — that the
 stages are a property of the toolchain and not of the machine — is only demonstrated by showing it
 twice.
 

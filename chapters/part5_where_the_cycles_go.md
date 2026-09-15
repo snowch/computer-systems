@@ -11,9 +11,9 @@ short_title: "Part V"
 
 | | |
 |---|---|
-| **Chapters** | [ch21](#ch21)–[ch28](#ch28) |
-| **Target** | `host` — Linux on real hardware, natively ([hardware](#ch00)) |
-| **Assumes** | [Part IV](#part4), and a machine of your own that meets [ch00](#ch00)'s requirements |
+| **Chapters** | [ch21](#measuring)–[ch28](#vectors) |
+| **Target** | `host` — Linux on real hardware, natively ([hardware](#prerequisites-and-setup)) |
+| **Assumes** | [Part IV](#part4), and a machine of your own that meets [ch00](#prerequisites-and-setup)'s requirements |
 :::
 
 ## What this part is for
@@ -27,7 +27,7 @@ establish is the price. That is a much better position to measure from than the 
 the commonest way to be wrong about performance is not arithmetic — it is attributing a cost to a
 mechanism you had only a rough idea about.
 
-[ch21](#ch21) comes first and is the method: how to get a number you would defend, and how you
+[ch21](#measuring) comes first and is the method: how to get a number you would defend, and how you
 would know it was wrong. Everything after it is that method applied to one layer at a time, ending
 with the two chapters that are about finding a cost in something you did not write.
 
@@ -48,7 +48,7 @@ method, the shape of the answer, and knowing which questions the instrument cann
 
 ## Where to start
 
-[ch21](#ch21), and this is the one instruction in the book worth being rigid about. Every chapter
+[ch21](#measuring), and this is the one instruction in the book worth being rigid about. Every chapter
 after it produces numbers using its method, and reading them without it is how people end up
 confident and wrong — a measurement is not self-describing, and the difference between a defensible
 figure and a plausible one is entirely in how it was taken.

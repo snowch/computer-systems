@@ -25,7 +25,7 @@ from bench.stamp import ROOT, load_result, measurement_differences, write_result
 WORKLOAD = "sysfs/bench/loopcost.c"
 LIBRARY = "sysfs/lib/loops.c"
 HEADER = "sysfs/include/sysfs/loops.h"
-FIGURE = "ch23-cost"
+FIGURE = "optimising-code-cost"
 
 #: How many digits of a per-element figure are worth printing. Two: the difference between the
 #: variants is in the second one, and a third would be claiming a precision the clock's own

@@ -19,7 +19,7 @@ These are stated in the chapters that have them as well; this is the index.
 
 | What | Where | Why, and what would close it |
 |---|---|---|
-| The board has not reported | `ch00-board` figure, `bench/figures.py` | `bench/results/setup-host.json` does not exist yet. Run `make bench-board` on the reference machine, commit the result, and remove the `pending=` marker. |
+| The board has not reported | `prerequisites-and-setup-board` figure, `bench/figures.py` | `bench/results/setup-host.json` does not exist yet. Run `make bench-board` on the reference machine, commit the result, and remove the `pending=` marker. |
 | The appendices are stubs | `appendices/` | Each says what it will hold and where that content comes from. Appendix C is the one that cannot be drafted early: the `perf` events a machine has are a property of its silicon, kernel and firmware together, so it is generated once M1 lands (PLAN.md §11). |
 | Specifications are cited without a revision | `references.bib` | The entries name the specification and its publisher but pin no revision, because none of the current content depends on a version-specific detail. Any chapter that comes to depend on one must pin the revision it consulted in the citation itself. |
 | Vendor documentation URLs | `references.bib` (`starfive-jh7110`, `sifive-u74`, `rpi-bcm2712`, `arm-a76-trm`) | Vendor documentation portals are reorganised. Check each against the copy actually consulted when the chapter citing it is written, and record the document title and date rather than relying on the link. |

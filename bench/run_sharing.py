@@ -6,7 +6,7 @@
 
 The question that decides whether two cores will fight — do these two fields land on the same
 line — is answered by the compiler and the layout, so it can be answered here. What the fight
-costs needs four cores and is `ch25-sharing`, pending on the board.
+costs needs four cores and is `memory-ordering-on-real-hardware-sharing`, pending on the board.
 
 Built for the reference architecture and run under user-mode QEMU for its *answers*, which is the
 same arrangement [ch20] uses: a layout is a fact about a data model and an ABI, and both are

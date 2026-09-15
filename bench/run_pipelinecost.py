@@ -38,7 +38,7 @@ from bench.stamp import ROOT, load_result, measurement_differences, write_result
 WORKLOAD = "sysfs/bench/pipelinecost.c"
 LIBRARY = "sysfs/lib/pipeline.c"
 HEADER = "sysfs/include/sysfs/pipeline.h"
-FIGURE = "ch24-ilp and ch24-branches"
+FIGURE = "the-cpu-ilp and the-cpu-branches"
 
 CHAINS = (1, 2, 4, 8)
 PREDICTABILITY = (100, 90, 75, 50, 25, 0)

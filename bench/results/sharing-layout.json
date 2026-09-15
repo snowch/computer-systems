@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "8760c8ed8d7ca7b2",
+  "code_fingerprint": "d9b3c8fbe1bdd68f",
   "code_sources": [
     "bench/run_sharing.py",
     "sysfs/tools/layout.c",
@@ -9,7 +9,7 @@
   "conditions": {
     "note": "offsets and sizes only; what sharing a line costs needs four real cores"
   },
-  "generated_at": "2026-09-15T15:09:49+00:00",
+  "generated_at": "2026-09-15T16:18:58+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "aarch64",

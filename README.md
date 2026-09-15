@@ -92,7 +92,7 @@ passes only when you have solved it. There is no answer key in the back, which m
 answer key to be wrong.
 
 ```bash
-python3 -m pytest tests/ch00 -q
+python3 -m pytest tests/prerequisites_and_setup -q
 ```
 
 ## Licence

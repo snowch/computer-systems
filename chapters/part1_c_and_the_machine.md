@@ -11,9 +11,9 @@ short_title: "Part I"
 
 | | |
 |---|---|
-| **Chapters** | [ch01](#ch01)–[ch03](#ch03) |
+| **Chapters** | [ch01](#reading-c)–[ch03](#c-for-people-who-will-read-a-kernel) |
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Assumes** | [ch00](#ch00), and fluency in some other language |
+| **Assumes** | [ch00](#prerequisites-and-setup), and fluency in some other language |
 :::
 
 ## What this part is for
@@ -39,7 +39,7 @@ are illegible without the model.
 Control flow, operators and functions. You already have these, and C spells them much as your
 language does. Where it differs the chapters say so and move on.
 
-The standard library, which is [ch02](#ch02)'s subject from the opposite direction: a kernel has
+The standard library, which is [ch02](#c-without-a-runtime)'s subject from the opposite direction: a kernel has
 almost none of it, and the interesting question is what it does instead. Floating point, for the
 same reason — the kernel does not use it, and why it does not is a better question than how it
 works.
@@ -51,12 +51,12 @@ needs, and it is reachable in three chapters, which writing is not.
 
 ## Where to start
 
-**If you already write C**, start at [ch02](#ch02). ch01 is the on-ramp and you do not need it.
+**If you already write C**, start at [ch02](#c-without-a-runtime). ch01 is the on-ramp and you do not need it.
 ch02 is about the habits that stop working when there is no library underneath you, and it is
 written for you.
 
 **If you program fluently in something else and have never written C**, start at
-[ch01](#ch01). You are not being taught to program.
+[ch01](#reading-c). You are not being taught to program.
 
 **If you have tried C before and bounced off pointers**, also start at ch01, and notice that it
 does not open with them. It opens with one complete program that prints four numbers, and the

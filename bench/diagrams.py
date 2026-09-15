@@ -1274,16 +1274,16 @@ def sampling_profile(result: str) -> str:
 
 
 DIAGRAMS = {
-    "ch00-targets": two_target_map,
-    "ch09-stages": toolchain_stages,
-    "ch10-padding": struct_padding,
-    "ch03-dispatch": dispatch_table,
-    "ch11-frame": stack_frame,
-    "ch12-segments": sections_to_segments,
-    "ch13-trap-path": trap_path,
-    "ch14-walk": sv39_walk,
-    "ch14-address-spaces": address_space_cost,
-    "ch15-decision": fault_decision,
-    "ch16-sources": interrupt_sources,
-    "ch27-sampling": sampling_profile,
+    "prerequisites-and-setup-targets": two_target_map,
+    "what-a-computer-does-with-a-program-stages": toolchain_stages,
+    "representing-information-padding": struct_padding,
+    "c-for-people-who-will-read-a-kernel-dispatch": dispatch_table,
+    "machine-level-code-on-riscv-frame": stack_frame,
+    "linking-and-loading-segments": sections_to_segments,
+    "traps-and-system-calls-trap-path": trap_path,
+    "virtual-memory-walk": sv39_walk,
+    "virtual-memory-address-spaces": address_space_cost,
+    "page-faults-as-a-feature-decision": fault_decision,
+    "interrupts-and-drivers-sources": interrupt_sources,
+    "whole-machine-profiling-sampling": sampling_profile,
 }

@@ -28,6 +28,12 @@ echo "== pytest =="
 # scaffolding tests beside them compile the C, stage it into the kernel and boot it.
 python3 -m pytest tests/ -q -m "not problem"
 
+echo "== every displayed chapter number still matches the outline =="
+# A chapter number is a number, so it is derived rather than typed. The anchors are slugs
+# and never move; what this catches is a link whose *text* still says ch17 after the
+# chapter became ch18 — which --strict cannot see, because the anchor still resolves.
+python3 scripts/sync-labels.py --check
+
 echo "== benchmark result stamps =="
 python3 scripts/verify-numbers.py
 

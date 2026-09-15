@@ -33,7 +33,7 @@ from bench.stamp import ROOT, load_result, measurement_differences, write_result
 WORKLOAD = "sysfs/bench/sharingcost.c"
 LIBRARIES = ["sysfs/lib/sharing.c", "sysfs/lib/ordering.c"]
 HEADERS = ["sysfs/include/sysfs/sharing.h", "sysfs/include/sysfs/ordering.h"]
-FIGURE = "ch25-sharing and ch25-atomics"
+FIGURE = "memory-ordering-on-real-hardware-sharing and memory-ordering-on-real-hardware-atomics"
 
 THREADS = (2, 4)
 LAYOUTS = ("packed", "padded")

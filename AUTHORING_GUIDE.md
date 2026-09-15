@@ -92,7 +92,7 @@ python3 scripts/render-figures.py --check     # fail if a committed one is stale
 ```
 
 ````markdown
-```{include} _generated/ch22-cache-latency.md
+```{include} _generated/the-memory-hierarchy-cache-latency.md
 ```
 ````
 
@@ -144,7 +144,7 @@ takes under QEMU: that number describes the laptop QEMU is running on.
 For a `host` figure that needs the board, declare it `pending=` with the command that produces it:
 
 ```python
-"ch22-cache-latency": Table(
+"the-memory-hierarchy-cache-latency": Table(
     render=tables.latency_table,
     result="cache-latency",
     pending=f"Cache latencies are not measured yet: {BOARD} (`bench/results/cache-latency.json`).",
@@ -175,7 +175,7 @@ frozen. ch21 adds the timing library to it once, deliberately.
 
 A problem is a stub the reader edits and a test that passes only when they are right.
 
-- Put the stub and its test in `tests/chNN/`. The stub's docstring is the problem statement; the
+- Put the stub and its test in `tests/<chapter-slug>/`. The stub's docstring is the problem statement; the
   chapter's Problems section is the invitation.
 - Make failure messages teach. `assert measured == expected` tells a reader nothing; "the padding
   between two members is whatever it takes to satisfy the alignment of the one that comes second"
@@ -187,7 +187,7 @@ A problem is a stub the reader edits and a test that passes only when they are r
 
 ## Cross-references and citations
 
-Chapters carry a label matching their number, so refer to them as `[ch15](#ch15)` and to
+Chapters carry a label matching their number, so refer to them as `[ch15](#page-faults-as-a-feature)` and to
 appendices as `[Appendix B](#appendix-b)`. MyST resolves these at build time and the build fails on
 a broken reference, which is the point.
 

@@ -21,7 +21,7 @@ without spending encodings on them.
 
 The names on the left are the only ones you will see in this book's listings. The hardware has no
 opinion about them: the roles below are a *convention* @riscv-psabi, agreed between compilers, and
-the point [ch11](#ch11) makes is that a convention is a contract and an interrupt is not a party
+the point [ch11](#machine-level-code-on-riscv) makes is that a convention is a contract and an interrupt is not a party
 to it.
 
 | Register | `x` number | Role | Preserved across a call? |
@@ -42,11 +42,11 @@ to it.
 Two things worth carrying:
 
 **Eight argument registers.** A call passing eight or fewer word-sized arguments touches no memory
-to do it, which is most of why [ch11](#ch11)'s `-O2` listings have no stack frame at all.
+to do it, which is most of why [ch11](#machine-level-code-on-riscv)'s `-O2` listings have no stack frame at all.
 
 **"Preserved" means the callee promised.** A caller-saved register is not saved by anybody unless
 the caller needs it afterwards; a callee-saved one is saved by whoever wants to use it. Neither
-promise binds the hardware, which is why [ch13](#ch13)'s trap path saves all thirty-one.
+promise binds the hardware, which is why [ch13](#traps-and-system-calls)'s trap path saves all thirty-one.
 
 ## The control and status registers this book touches
 
@@ -58,28 +58,28 @@ kernel in this book reads or writes, each with the chapter that meets it.
 
 | CSR | What it is | Where |
 |---|---|---|
-| `stvec` | The address the hardware jumps to on a supervisor trap | [ch13](#ch13) |
-| `sepc` | The PC at the moment of the trap; `sret` returns here | [ch13](#ch13) |
-| `scause` | Why the trap happened, as a code with the interrupt bit at the top | [ch13](#ch13), [ch16](#ch16) |
-| `sstatus` | Supervisor status: previous privilege, previous interrupt-enable | [ch13](#ch13), [ch16](#ch16) |
-| `sscratch` | One word the trap path may use before it has a usable register | [ch13](#ch13) |
-| `stval` | The faulting address, for a fault that has one | [ch15](#ch15) |
-| `satp` | The root page table and the translation mode | [ch14](#ch14) |
-| `sie` / `sip` | Which interrupts are enabled, and which are pending | [ch16](#ch16) |
-| `time` | The real-time counter, readable from user mode | [ch16](#ch16) |
+| `stvec` | The address the hardware jumps to on a supervisor trap | [ch13](#traps-and-system-calls) |
+| `sepc` | The PC at the moment of the trap; `sret` returns here | [ch13](#traps-and-system-calls) |
+| `scause` | Why the trap happened, as a code with the interrupt bit at the top | [ch13](#traps-and-system-calls), [ch16](#interrupts-and-drivers) |
+| `sstatus` | Supervisor status: previous privilege, previous interrupt-enable | [ch13](#traps-and-system-calls), [ch16](#interrupts-and-drivers) |
+| `sscratch` | One word the trap path may use before it has a usable register | [ch13](#traps-and-system-calls) |
+| `stval` | The faulting address, for a fault that has one | [ch15](#page-faults-as-a-feature) |
+| `satp` | The root page table and the translation mode | [ch14](#virtual-memory) |
+| `sie` / `sip` | Which interrupts are enabled, and which are pending | [ch16](#interrupts-and-drivers) |
+| `time` | The real-time counter, readable from user mode | [ch16](#interrupts-and-drivers) |
 
 **`scause`'s top bit is the one to read first.** It separates an interrupt — something outside the
 program asking for attention — from an exception, which is this instruction refusing to complete.
-The rest of the field means different things in the two cases, and [ch16](#ch16) is about why the
+The rest of the field means different things in the two cases, and [ch16](#interrupts-and-drivers) is about why the
 distinction is structural rather than a numbering convenience.
 
 **`sscratch` exists because of a bootstrapping problem.** A trap handler needs a register to work
 with and every register currently belongs to the interrupted program. `sscratch` is the one place
-to put something that survives the swap, and [ch13](#ch13) traces exactly what xv6 keeps there.
+to put something that survives the swap, and [ch13](#traps-and-system-calls) traces exactly what xv6 keeps there.
 
 ## Sv39, in one place
 
-The paging scheme this book uses. [ch14](#ch14) derives it and measures the walk; this is the
+The paging scheme this book uses. [ch14](#virtual-memory) derives it and measures the walk; this is the
 field layout to keep beside that chapter.
 
 A virtual address is thirty-nine bits of meaning: three nine-bit indices and a twelve-bit offset.
@@ -104,5 +104,5 @@ how a leaf can appear at a level above the last to map a larger page.
 The unprivileged specification @riscv-isa-unprivileged for the instruction encodings and the
 memory model, the privileged specification @riscv-isa-privileged for everything on this page below
 the register table, and the psABI @riscv-psabi for the convention. The SBI specification
-@riscv-sbi describes the layer beneath the kernel that [ch13](#ch13) mentions and this book does
+@riscv-sbi describes the layer beneath the kernel that [ch13](#traps-and-system-calls) mentions and this book does
 not otherwise use.

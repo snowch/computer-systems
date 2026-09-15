@@ -25,7 +25,7 @@ from bench.stamp import ROOT, load_result, measurement_differences, write_result
 
 WORKLOAD = "sysfs/bench/bridgecost.c"
 HEADER = "sysfs/include/sysfs/bridge.h"
-FIGURE = "ch20-cost"
+FIGURE = "the-same-program-on-both-targets-cost"
 
 
 class BridgeCostError(RuntimeError):

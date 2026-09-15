@@ -36,37 +36,68 @@ KERNEL = "kernel"
 
 #: Which chapter of this book reads which file of the kernel, and what it goes there for.
 #:
+#: Chapters are named by anchor, never by number: this table outlived two renumbers already,
+#: and a positional label here is a stamped result that quietly starts pointing at the wrong
+#: chapter the next time one is inserted.
+#:
 #: Only files a chapter genuinely reads. A map of everything would be a directory listing, which
 #: the reader already has; the useful thing is knowing which of forty files matters for the
 #: chapter open in front of them.
 READS: dict[str, tuple[str, str]] = {
-    "entry.S": ("ch13", "the first instructions the kernel runs, before there is a stack"),
-    "start.c": ("ch13", "the machine-mode setup that hands over to supervisor mode"),
-    "trampoline.S": ("ch13", "uservec and userret — the register moves ch13 counts"),
-    "trap.c": ("ch13", "where a trap is decided, and where a page fault would be handled"),
-    "syscall.c": ("ch13", "the dispatch table, and how arguments cross the boundary"),
-    "syscall.h": ("ch13", "the call numbers"),
-    "sysproc.c": ("ch13", "the process calls, including the one ch13's workload uses"),
-    "vm.c": ("ch14", "the page-table walk, mapping, and the kernel's own address space"),
-    "riscv.h": ("ch14", "the Sv39 field definitions, as macros over a 64-bit word"),
-    "memlayout.h": ("ch14", "what is mapped where, and why the trampoline is at the top"),
-    "kalloc.c": ("ch15", "the physical page allocator a fault ends up calling"),
-    "exec.c": ("ch15", "what a fresh address space is built out of"),
-    "kernelvec.S": ("ch16", "the trap path taken when the kernel itself is interrupted"),
-    "plic.c": ("ch16", "which device is allowed to interrupt which hart"),
-    "console.c": ("ch16", "a device driver small enough to read in full"),
-    "uart.c": ("ch16", "the registers underneath it"),
-    "spinlock.c": ("ch17", "the lock, and the memory barriers around it"),
-    "spinlock.h": ("ch17", "what a lock is made of"),
-    "sleeplock.c": ("ch17", "the other kind, and when each is correct"),
-    "proc.c": ("ch18", "the scheduler, and both halves of a context switch"),
-    "proc.h": ("ch18", "the context ch18 counts the registers of"),
-    "swtch.S": ("ch18", "the switch itself — fourteen registers and nothing else"),
-    "bio.c": ("ch19", "the buffer cache, and why a read can cost nothing"),
-    "log.c": ("ch19", "the write-ahead log ch19 counts the amplification of"),
-    "fs.c": ("ch19", "inodes, blocks, and the path from a name to a byte"),
-    "file.c": ("ch19", "what a file descriptor actually is"),
-    "virtio_disk.c": ("ch19", "the only device in the system that makes you wait"),
+    "entry.S": (
+        "traps-and-system-calls",
+        "the first instructions the kernel runs, before there is a stack",
+    ),
+    "start.c": (
+        "traps-and-system-calls",
+        "the machine-mode setup that hands over to supervisor mode",
+    ),
+    "trampoline.S": (
+        "traps-and-system-calls",
+        "uservec and userret — the register moves ch13 counts",
+    ),
+    "trap.c": (
+        "traps-and-system-calls",
+        "where a trap is decided, and where a page fault would be handled",
+    ),
+    "syscall.c": (
+        "traps-and-system-calls",
+        "the dispatch table, and how arguments cross the boundary",
+    ),
+    "syscall.h": ("traps-and-system-calls", "the call numbers"),
+    "sysproc.c": (
+        "traps-and-system-calls",
+        "the process calls, including the one ch13's workload uses",
+    ),
+    "vm.c": ("virtual-memory", "the page-table walk, mapping, and the kernel's own address space"),
+    "riscv.h": ("virtual-memory", "the Sv39 field definitions, as macros over a 64-bit word"),
+    "memlayout.h": ("virtual-memory", "what is mapped where, and why the trampoline is at the top"),
+    "kalloc.c": ("page-faults-as-a-feature", "the physical page allocator a fault ends up calling"),
+    "exec.c": ("page-faults-as-a-feature", "what a fresh address space is built out of"),
+    "kernelvec.S": (
+        "interrupts-and-drivers",
+        "the trap path taken when the kernel itself is interrupted",
+    ),
+    "plic.c": ("interrupts-and-drivers", "which device is allowed to interrupt which hart"),
+    "console.c": ("interrupts-and-drivers", "a device driver small enough to read in full"),
+    "uart.c": ("interrupts-and-drivers", "the registers underneath it"),
+    "spinlock.c": ("locks-and-memory-ordering", "the lock, and the memory barriers around it"),
+    "spinlock.h": ("locks-and-memory-ordering", "what a lock is made of"),
+    "sleeplock.c": ("locks-and-memory-ordering", "the other kind, and when each is correct"),
+    "proc.c": (
+        "scheduling-and-context-switches",
+        "the scheduler, and both halves of a context switch",
+    ),
+    "proc.h": ("scheduling-and-context-switches", "the context ch18 counts the registers of"),
+    "swtch.S": (
+        "scheduling-and-context-switches",
+        "the switch itself — fourteen registers and nothing else",
+    ),
+    "bio.c": ("the-file-system", "the buffer cache, and why a read can cost nothing"),
+    "log.c": ("the-file-system", "the write-ahead log ch19 counts the amplification of"),
+    "fs.c": ("the-file-system", "inodes, blocks, and the path from a name to a byte"),
+    "file.c": ("the-file-system", "what a file descriptor actually is"),
+    "virtio_disk.c": ("the-file-system", "the only device in the system that makes you wait"),
 }
 
 

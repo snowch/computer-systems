@@ -11,7 +11,7 @@ short_title: "Part II"
 
 | | |
 |---|---|
-| **Chapters** | [ch04](#ch04)–[ch08](#ch08) |
+| **Chapters** | [ch04](#a-trap-with-nothing-else)–[ch08](#fork-built-rather-than-read) |
 | **Target** | `bare` — the same machine under QEMU with no operating system on it |
 | **Assumes** | [Part I](#part1) |
 :::
@@ -49,20 +49,20 @@ kernel's invention: an index into a table a kernel decided to keep. Building it 
 would put two ideas into one chapter, which is precisely the thing this part exists to stop doing.
 
 The insight descriptors are usually used to carry — that `fork` copies some of what a process has
-and shares the rest — is available here without them, and more plainly. [ch08](#ch08)'s child gets
+and shares the rest — is available here without them, and more plainly. [ch08](#fork-built-rather-than-read)'s child gets
 a copy of the address space and no copy whatsoever of the serial port, because the port is at a
 physical address and there is only one of it. Descriptors, and the several kinds of open file that
-make a table of them worth having at all, are [ch19](#ch19).
+make a table of them worth having at all, are [ch19](#the-file-system).
 
 And one thing it leaves out on purpose, which is worth saying plainly: **you will use a linker
 script and read assembly here, and neither is explained until [Part III](#part3).** Treat them as
-recipes. [ch11](#ch11) covers the instructions and [ch12](#ch12) covers the script. This part needs
+recipes. [ch11](#machine-level-code-on-riscv) covers the instructions and [ch12](#linking-and-loading) covers the script. This part needs
 them working rather than understood, and the alternative ordering — linkers before traps — puts
 three chapters of file format between you and the first interesting thing the machine does.
 
 ## Where to start
 
-[ch04](#ch04), in order, and this is the one part of the book with no routing in it. Each chapter's
+[ch04](#a-trap-with-nothing-else), in order, and this is the one part of the book with no routing in it. Each chapter's
 machine is the previous chapter's machine plus one mechanism, and each program is the previous
 program extended. Skipping ahead means reading code that assumes work you have not done.
 

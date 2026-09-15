@@ -28,7 +28,7 @@ from bench.board import governor, require_board, stamp_timing, timed_run
 from bench.stamp import ROOT, load_result, measurement_differences, write_result
 
 WORKLOAD = "sysfs/bench/measuring.c"
-FIGURE = "ch21-clock, ch21-spread and ch21-bias"
+FIGURE = "measuring-clock, measuring-spread and measuring-bias"
 
 #: The paddings `measuring bias` uses, as the workload names them.
 PADDINGS = ("0", "64", "512")

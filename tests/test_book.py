@@ -8,6 +8,7 @@ place and not the other, a chapter whose header claims a target the plan does no
 from __future__ import annotations
 
 import re
+import sys
 from pathlib import Path
 
 import pytest
@@ -21,6 +22,7 @@ from bench.outline import (
     Appendix,
     Chapter,
     Part,
+    by_number,
     in_part,
     reading_disassembly,
 )
@@ -67,7 +69,10 @@ def test_chapter_declares_the_target_the_plan_gives_it(chapter: Chapter):
 @pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
 def test_chapter_has_a_label_matching_its_number(chapter: Chapter):
     text = (ROOT / chapter.path).read_text()
-    assert f"({chapter.label})=" in text, f"{chapter.path} needs a `({chapter.label})=` label"
+    assert f"({chapter.anchor})=" in text, (
+        f"{chapter.path} needs a `({chapter.anchor})=` label — the anchor is the slug, "
+        f"never the number (bench/outline.py Chapter.anchor)"
+    )
 
 
 @pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
@@ -181,6 +186,64 @@ def test_getting_started_has_no_part_page():
     assert not any(part.page is False for part in PARTS[1:]), (
         "a second page-less part has appeared — decide whether it is really a part"
     )
+
+
+NUMBERED = re.compile(r"(?<![A-Za-z0-9])ch\d\d(?![0-9])")
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_no_identifier_carries_the_chapter_number(chapter: Chapter):
+    """The rule the whole scheme rests on (``Chapter.anchor``).
+
+    A chapter's number says where it currently sits. This book has moved that three times, and
+    each move renamed every identifier downstream of it: anchors, filenames, test directories,
+    checkpoint tags, figure ids, and every permalink anyone had bookmarked. So none of those may
+    contain it. What may, and must, is the text a reader sees — and that is derived by
+    ``scripts/sync-labels.py`` and checked in CI.
+    """
+    identifiers = {
+        "anchor": chapter.anchor,
+        "path": chapter.path,
+        "tests_dir": chapter.tests_dir,
+        "tag": chapter.tag or "",
+        "figure id": chapter.figure("example"),
+    }
+    offenders = {k: v for k, v in identifiers.items() if NUMBERED.search(v)}
+    assert not offenders, (
+        f"{chapter.label}'s {', '.join(offenders)} still carries its number: {offenders} — "
+        f"identifiers are slugs, so that inserting a chapter renames nothing"
+    )
+
+
+def test_every_figure_id_belongs_to_a_chapter_or_appendix_by_name():
+    """A figure id is an identifier too, and drifted the same way before this existed."""
+    from bench.figures import FIGURES
+
+    known = tuple(c.anchor for c in CHAPTERS) + tuple(a.label for a in APPENDICES)
+    stragglers = [
+        name
+        for name in FIGURES
+        if NUMBERED.search(name) or not any(name.startswith(prefix) for prefix in known)
+    ]
+    assert not stragglers, f"figure ids not named after a chapter or appendix: {stragglers}"
+
+
+def test_displayed_chapter_numbers_match_the_outline():
+    """What ``scripts/sync-labels.py --check`` enforces, as a test as well.
+
+    ``myst build --strict`` cannot catch this: a link reading ``[ch17](#virtual-memory)`` resolves
+    perfectly and is simply wrong about which chapter it is sending the reader to. That is the
+    exact bug the old numeric anchors produced four times in the preface alone.
+    """
+    import subprocess
+
+    result = subprocess.run(
+        [sys.executable, "scripts/sync-labels.py", "--check"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 def test_appendices_exist_and_are_listed():
@@ -308,7 +371,7 @@ def test_the_board_prompt_is_linked_rather_than_copied():
     assert "find-a-board.txt" in notes, "hardware/README.md no longer points at the prompt"
     assert signature not in notes, "hardware/README.md has pasted the prompt instead of linking it"
 
-    chapter = (ROOT / "chapters" / "ch00_prerequisites_and_setup.md").read_text()
+    chapter = (ROOT / by_number(0).path).read_text()
     assert "hardware/README.md" in chapter, "ch00 no longer points anywhere for the alternative"
     assert signature not in chapter, "ch00 has pasted the prompt"
 
@@ -340,9 +403,9 @@ def test_hardware_assumption_is_in_the_chapter_header(chapter: Chapter):
 @pytest.mark.parametrize("chapter", HARDWARE_SENSITIVE, ids=[c.label for c in HARDWARE_SENSITIVE])
 def test_chapter_zero_names_every_hardware_sensitive_chapter(chapter: Chapter):
     """ch00 promises a complete list. A chapter added later must not quietly escape it."""
-    ch00 = (ROOT / "chapters" / "ch00_prerequisites_and_setup.md").read_text()
+    ch00 = (ROOT / by_number(0).path).read_text()
     section = ch00[ch00.index("### Which chapters actually depend on the hardware") :]
-    assert f"[{chapter.label}](#{chapter.label})" in section, (
+    assert f"[{chapter.label}](#{chapter.anchor})" in section, (
         f"{chapter.label} assumes something about the hardware but ch00's list omits it"
     )
 
@@ -389,7 +452,7 @@ def test_the_hardware_advice_carries_its_caveat():
     """The book points readers at third-party tools and then at shops. Both pages say whose
     decision that is, and the note is the kind of thing that gets tidied away in an edit."""
     notes = (ROOT / "hardware" / "README.md").read_text()
-    chapter = (ROOT / "chapters" / "ch00_prerequisites_and_setup.md").read_text()
+    chapter = (ROOT / by_number(0).path).read_text()
     for text, where in ((notes, "hardware/README.md"), (chapter, "ch00")):
         lowered = text.lower()
         assert "return policy" in lowered, f"{where} does not mention checking the return policy"
@@ -410,12 +473,12 @@ def test_some_chapters_name_the_chapter_whose_cost_they_measure():
 @pytest.mark.parametrize("chapter", PAIRED, ids=[c.label for c in PAIRED])
 def test_pairings_point_backwards_at_real_chapters(chapter: Chapter):
     """A chapter can only cost something the reader has already been shown."""
-    labels = {c.label: c.number for c in CHAPTERS}
-    for label in chapter.answers:
-        assert label in labels, f"{chapter.label} names {label}, which is not a chapter"
-        assert labels[label] < chapter.number, (
-            f"{chapter.label} claims to cost {label}, which comes later — the reader would meet "
-            "the price before the mechanism"
+    numbers = {c.anchor: c.number for c in CHAPTERS}
+    for anchor in chapter.answers:
+        assert anchor in numbers, f"{chapter.label} names {anchor}, which is not a chapter"
+        assert numbers[anchor] < chapter.number, (
+            f"{chapter.label} claims to cost {anchor}, which comes later — the reader would "
+            "meet the price before the mechanism"
         )
 
 
@@ -426,8 +489,11 @@ def test_pairing_is_in_the_chapter_header(chapter: Chapter):
         f"{chapter.path} names a counterpart in the outline but its header does not say so — "
         "regenerate the stub, or add the row by hand if the chapter is written"
     )
-    for label in chapter.answers:
-        assert f"[{label}](#{label})" in header, f"{chapter.path} omits {label} from its header"
+    for anchor in chapter.answers:
+        counterpart = next(c for c in CHAPTERS if c.anchor == anchor)
+        assert f"[{counterpart.label}](#{anchor})" in header, (
+            f"{chapter.path} omits {anchor} from its header"
+        )
 
 
 def test_every_part_three_chapter_either_pairs_or_is_deliberately_standalone():

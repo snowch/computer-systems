@@ -9,7 +9,7 @@ change survived the compiler at all* — and that is answered by the instruction
 compiler output rather than machine behaviour, so CI regenerates them on every push exactly as it
 does the listings.
 
-What the surviving differences cost is a separate question, needs the board, and is `ch23-cost`.
+What the surviving differences cost is a separate question, needs the board, and is `optimising-code-cost`.
 """
 
 from __future__ import annotations
