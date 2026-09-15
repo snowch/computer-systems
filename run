@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+"""Build and run any program in this book, on whichever machine it belongs to.
+
+    ./run --list            every program, and which target each needs
+    ./run trap              a bare-metal program: cross-compiled, booted under QEMU
+    ./run firstc            a host program: compiled and executed here
+    ./run sameanswer --target xv6
+    ./run trap --keep       leave the built image behind to disassemble or debug
+
+Edit the source, run it again. That loop is the reason this exists: every listing in the book is
+already a real file, and until now nothing said how to build one. The flags are not guessable --
+a bare-metal program needs `-fno-pic`, `-mcmodel=medany`, a linker script and `-bios none`, none
+of which a reader has any reason to know.
+
+This runs programs. It does not stamp results: a figure in the book comes from
+`bench/run_*.py`, which refuses a run that has stopped demonstrating its chapter's claim. Changing
+a program and running it here is meant to be free, and does not touch anything committed.
+"""
+
+from __future__ import annotations
+
+import argparse
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
+
+from bench import bare  # noqa: E402
+from bench.programs import PROGRAMS, find, libraries_for  # noqa: E402
+
+BUILD = ROOT / "sysfs" / "build" / "run"
+
+
+def show_list() -> int:
+    print("Programs in this book. `./run <name>` builds and runs one.\n")
+    for target in ("host", "bare", "xv6"):
+        matching = [p for p in PROGRAMS if p.target == target]
+        print(f"  {target}  ({len(matching)})")
+        for program in matching:
+            print(f"    {program.name:<14} {program.what[:66]}")
+        print()
+    print("host needs a C compiler; bare and xv6 need qemu-system-riscv64 and a RISC-V")
+    print("cross compiler. `make verify` says which of them this machine can currently run.")
+    return 0
+
+
+def run_bare(program, keep: bool) -> int:
+    if found := bare.problems():
+        print(f"cannot run a bare-metal program here: {'; '.join(found)}", file=sys.stderr)
+        return 2
+    print(f"# {program.relative} -> qemu-system-riscv64 -bios none -smp {program.harts}\n")
+    result = bare.run(program.name, harts=program.harts)
+    print(result.output)
+    if keep:
+        print(f"\n# image kept at {bare.BUILD_DIR / (program.name + '.elf')}")
+    return 0
+
+
+def run_host(program, keep: bool, args: list[str]) -> int:
+    BUILD.mkdir(parents=True, exist_ok=True)
+    binary = BUILD / program.name
+    sources = [program.source, *libraries_for(program)]
+    command = [
+        "cc",
+        "-O2",
+        "-g",
+        "-Wall",
+        f"-I{ROOT / 'sysfs' / 'include'}",
+        *[str(s) for s in sources],
+        "-o",
+        str(binary),
+        "-lm",
+    ]
+    print("# " + " ".join(str(c) for c in command) + "\n")
+    built = subprocess.run(command, capture_output=True, text=True)
+    if built.returncode != 0:
+        print(built.stderr, file=sys.stderr)
+        return 1
+    finished = subprocess.run([str(binary), *args])
+    if keep:
+        print(f"\n# binary kept at {binary}")
+    return finished.returncode
+
+
+def run_xv6(program, args: list[str]) -> int:
+    from bench import xv6
+
+    if found := xv6.missing_requirements():
+        print(f"cannot boot xv6 here: {'; '.join(found)}", file=sys.stderr)
+        return 2
+    typed = " ".join([program.name, *args])
+    print(f"# booting xv6, then typing: {typed}\n")
+    booted = xv6.boot([typed])
+    # The program's own output, not the whole boot transcript: a reader who wanted to watch the
+    # kernel start would run `make xv6-qemu`.
+    print(booted.output_of(typed) or booted.transcript)
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument("program", nargs="?", help="which one; omit with --list")
+    parser.add_argument("--list", action="store_true", help="every program, by target")
+    parser.add_argument("--target", help="when one name exists for two targets")
+    parser.add_argument("--keep", action="store_true", help="leave the built image behind")
+    # parse_known_args rather than a REMAINDER positional: REMAINDER swallows everything after
+    # the program name, including this script's own --target, which then silently does nothing.
+    parsed, extra = parser.parse_known_args()
+
+    if parsed.list or not parsed.program:
+        return show_list()
+
+    try:
+        program = find(parsed.program, parsed.target)
+    except KeyError as problem:
+        print(problem.args[0], file=sys.stderr)
+        return 2
+
+    extra = [a for a in extra if a != "--"]
+    if program.target == "bare":
+        return run_bare(program, parsed.keep)
+    if program.target == "xv6":
+        return run_xv6(program, extra)
+    return run_host(program, parsed.keep, extra)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

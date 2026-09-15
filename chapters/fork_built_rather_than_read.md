@@ -39,6 +39,12 @@ those two things kept together, and `fork` is a copy.
 :end-before: static struct proc procs
 ```
 
+Build it and boot it on a machine with nothing on it:
+
+```bash
+./run fork
+```
+
 A saved register set, a place it was, and an address space. That is the whole of it — and the first
 field is [ch07](#a-system-call-of-your-own)'s trap frame, unchanged. The frame was built to survive
 a system call; keep it a little longer and it is a saved process.

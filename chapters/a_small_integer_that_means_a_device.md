@@ -41,6 +41,12 @@ separate table.
 :end-before: static struct open_file *file_for(int fd)
 ```
 
+Build it and boot it on a machine with nothing on it:
+
+```bash
+./run descriptors
+```
+
 Collapsing those two into one would be simpler and is the obvious first design. It is also wrong,
 in a way that only shows up later — and the later is this chapter's last section.
 

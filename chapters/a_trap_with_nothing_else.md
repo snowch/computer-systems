@@ -71,6 +71,12 @@ is one register: `mtvec`, the machine trap vector, which holds the address to go
 :end-before:     /* s2 is set before the trap
 ```
 
+Build it and boot it on a machine with nothing on it:
+
+```bash
+./run trap
+```
+
 That is the installation, complete. There is no table of handlers, no registration, and nothing to
 tell the processor which kinds of trap this handler wants — it gets all of them, and sorting out
 which is which is the handler's problem, which is `mcause`'s job and [ch05](#interrupts-and-privilege)'s

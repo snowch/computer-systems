@@ -503,6 +503,29 @@ The same thing non-interactively, which is how the tests do it:
 python3 scripts/xv6-run.py -c ls -c sysprobe
 ```
 
+## Running the book's programs
+
+Every listing in this book is a real file that really compiles, and `./run` builds and runs any of
+them on whichever machine it belongs to.
+
+```bash
+./run --list
+```
+
+```bash
+./run firstc          # a host program: compiled and run here
+./run trap            # bare metal: cross-compiled and booted with no operating system
+./run sysprobe --target xv6
+```
+
+Use it constantly. Change a line in the source, run it again, see what moved — that loop is what
+this book is asking you to do, and it is the difference between reading that a handler must
+advance `mepc` and watching what happens when it does not.
+
+`./run` never touches anything committed. The figures in the chapters come from `bench/run_*.py`,
+which stamp a result and refuse one that has stopped demonstrating its chapter's claim; `./run`
+just builds and runs, so experimenting is free and cannot corrupt a number.
+
 ## Checking the whole thing
 
 ```bash

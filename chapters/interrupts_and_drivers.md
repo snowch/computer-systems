@@ -58,6 +58,12 @@ chapter.
 :end-before: printf("intrload
 ```
 
+Build it into the kernel, boot, and run it:
+
+```bash
+./run intrload
+```
+
 Two devices, deliberately. The console takes characters one at a time; the disk takes blocks. Both
 amounts are constants this program chose, so anything that varies between runs is varying for a
 reason that is not the workload.

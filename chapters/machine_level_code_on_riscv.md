@@ -76,6 +76,12 @@ walking it is a loop:
 :end-before: printf("frame %d bytes
 ```
 
+Build it and run it here:
+
+```bash
+./run framewalk
+```
+
 Run it and you get the chain:
 
 ```bash

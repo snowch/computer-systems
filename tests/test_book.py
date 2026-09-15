@@ -246,6 +246,42 @@ def test_displayed_chapter_numbers_match_the_outline():
     assert result.returncode == 0, result.stdout + result.stderr
 
 
+LITERALINCLUDE_SOURCE = re.compile(r"\{literalinclude\}\s+\.\./(\S+\.c)")
+
+
+def _programs_quoted_by(text: str) -> set[str]:
+    """The runnable programs a chapter shows, by name.
+
+    Library sources and the bare-metal runtime are quoted too and are not programs — a reader
+    cannot run `console.c`. The registry is what decides, so a file moving between the two
+    categories does not need remembering here as well.
+    """
+    from bench.programs import PROGRAMS
+
+    by_path = {program.relative: program for program in PROGRAMS}
+    return {
+        by_path[match].name for match in LITERALINCLUDE_SOURCE.findall(text) if match in by_path
+    }
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_a_chapter_that_shows_a_program_says_how_to_run_it(chapter: Chapter):
+    """The gap this closes was real and was worst exactly where it mattered most.
+
+    Part II quoted seven bare-metal programs across six chapters and never once said how to build
+    one. The flags are not guessable — `-fno-pic`, `-mcmodel=medany`, a linker script, `-bios
+    none` — and they were only ever written down in a Python module a reader has no reason to
+    open. A book whose whole question is *how would I know?* has to let the reader try it.
+    """
+    text = (ROOT / chapter.path).read_text()
+    quoted = _programs_quoted_by(text)
+    missing = sorted(name for name in quoted if f"./run {name}" not in text)
+    assert not missing, (
+        f"{chapter.path} shows {', '.join(missing)} and never says how to run "
+        f"{'them' if len(missing) > 1 else 'it'} — add `./run {missing[0]}`"
+    )
+
+
 def test_appendices_exist_and_are_listed():
     for appendix in APPENDICES:
         assert (ROOT / appendix.path).exists(), appendix.path

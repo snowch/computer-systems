@@ -50,11 +50,13 @@ the end of `main` is the program's exit status, and zero means nothing went wron
 Build it and run it:
 
 ```bash
-cc -o firstc sysfs/tools/firstc.c && ./firstc
+./run firstc
 ```
 
-That is the whole loop this part asks you to get into: change the source, build it, look at what
-came out. Nothing later in the chapter needs anything more elaborate.
+That is the whole loop this part asks you to get into: change the source, run it again, look at
+what came out. `./run` knows how every program in this book is built — which compiler, which
+flags, which machine — so the only thing you have to think about is the source. `./run --list`
+shows the lot.
 
 ```{include} _generated/reading-c-firstc.md
 ```

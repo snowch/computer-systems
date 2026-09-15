@@ -38,6 +38,12 @@ fastest cure is to write a tool.
 :end-before: #define PH_TYPE
 ```
 
+Build it and run it here:
+
+```bash
+./run elfdump
+```
+
 That is most of what an ELF file is: a header with a magic number, a handful of sizes, and the
 offsets of two arrays. Everything else is found by following one of those offsets. There is no
 `#include <elf.h>` anywhere in `sysfs/tools/elfdump.c`, deliberately — the structures are declared

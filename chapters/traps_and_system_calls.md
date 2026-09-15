@@ -126,6 +126,12 @@ instructions. So the workload is a program that removes the question:
 :start-at: int main(void)
 ```
 
+Build it into the kernel, boot, and run it:
+
+```bash
+./run trapload
+```
+
 Nothing else in the system calls `getpid`, so that row of the census is a number this program
 decided and the shell's noise lands elsewhere. It asks a thousand times and the kernel counts a
 thousand — which is a much smaller claim than the one that was almost printed, and unlike it, true
