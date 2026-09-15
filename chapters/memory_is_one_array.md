@@ -34,8 +34,8 @@ If you are not sure whether you want this chapter or [ch02](#c-without-a-runtime
 
 ### One whole program
 
-Every piece of C you have seen in this book so far has been a fragment — a function lifted out of
-a file, with no beginning and no end. Here is a complete one, and it is the shortest complete one
+Every piece of C you have seen in this book so far has been a fragment — lifted out of a file,
+with no beginning and no end. Here is a complete one, and it is the shortest complete one
 this book has.
 
 ```{literalinclude} ../sysfs/tools/firstc.c
@@ -69,10 +69,10 @@ they are.
 
 ### Memory is one array, and everything has an index
 
-Your other language has objects that hold values, and a runtime that knows where they are. C has
-one array of bytes, numbered from zero, and every object is some run of it. That is not a
-simplification for teaching. It is the whole model, and every difficulty later is a difficulty
-about it.
+The language you already use has named things that hold values, and a runtime that knows where
+they are. C has one array of bytes, numbered from zero, and everything you declare is a stretch of
+it. That is not a simplification for teaching. It is the whole model, and every difficulty later in
+the book is a difficulty about it.
 
 Three questions follow, and they are the ones worth asking of any C you read:
 
@@ -80,10 +80,11 @@ Three questions follow, and they are the ones worth asking of any C you read:
   memory somebody asked for.
 - **How long does it stay there?** Until the function returns, for ever, or until somebody says
   otherwise.
-- **How big is it?** Which is a question about its *type*, and the reason types exist at all.
+- **How big is it?** A question about its *type*, and the reason types exist at all.
 
-`&x` gives you the index of `x`'s first byte. `*p` goes to the index in `p` and reads what is
-there. Those two are inverses and there is nothing else to them.
+"Where" has a coarse answer and a precise one. The coarse one is the region. The precise one is
+an index — the position of the thing's first byte in that one array — and an address is that
+index, and nothing else.
 
 ### `&` and `*`, watched rather than described
 
