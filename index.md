@@ -76,10 +76,12 @@ five-stage diagram in a lecture still has no idea what a real core does with a b
 
 ### If you come from a managed language
 
-Java, C#, Go, Python — the traps are the same, and they are traps rather than gaps. You are not
-missing a concept; you have a correct one that means something else here.
+Java, C#, Go and Python all leave you in the same position, and it is not one of ignorance. The
+difficulty is not what you are missing — it is what you already have. A handful of ideas are
+correct in your language, keep their names here, and mean something else. Nothing warns you,
+because the word did not change.
 
-| You already know | Here it is | Where |
+| You already know | What it is here | Where |
 |---|---|---|
 | A reference | An index into one array of bytes, with a type saying how wide a step is | [ch01](#memory-is-one-array) |
 | `new`, and a collector | A fixed array decided at compile time, or a free list built out of the free memory | [ch02](#c-without-a-runtime) |
