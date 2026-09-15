@@ -1,0 +1,78 @@
+{
+  "code_fingerprint": "07c7f415ef6c60ba",
+  "code_sources": [
+    "bench/run_pipeline.py",
+    "sysfs/lib/pipeline.c",
+    "bench/results/pipeline-aarch64.json"
+  ],
+  "conditions": {
+    "note": "what the core is given; what it does with it needs the board"
+  },
+  "generated_at": "2026-09-15T15:09:49+00:00",
+  "kind": "artefact",
+  "machine": {
+    "arch": "aarch64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "aarch64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "pipeline-shapes",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "shapes": {
+      "sysfs_count_over": {
+        "calls": 0,
+        "conditional_branches": 2,
+        "if_converted": 1,
+        "instructions": 14
+      },
+      "sysfs_count_over_calling": {
+        "calls": 1,
+        "conditional_branches": 6,
+        "if_converted": 0,
+        "instructions": 29
+      },
+      "sysfs_sum_chain1": {
+        "calls": 0,
+        "conditional_branches": 2,
+        "if_converted": 0,
+        "instructions": 13
+      },
+      "sysfs_sum_chain2": {
+        "calls": 0,
+        "conditional_branches": 4,
+        "if_converted": 0,
+        "instructions": 31
+      },
+      "sysfs_sum_chain4": {
+        "calls": 0,
+        "conditional_branches": 4,
+        "if_converted": 0,
+        "instructions": 42
+      },
+      "sysfs_sum_chain8": {
+        "calls": 0,
+        "conditional_branches": 4,
+        "if_converted": 0,
+        "instructions": 58
+      }
+    }
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 a classification of instructions already captured",
+    "flags": "as recorded in pipeline-aarch64.json"
+  }
+}

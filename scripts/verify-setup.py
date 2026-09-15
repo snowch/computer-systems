@@ -117,13 +117,33 @@ def check_xv6_target(report: Report) -> bool:
         report.say(FAIL, "xv6 submodule is empty — run `make submodule`")
         ready = False
 
+    # Ask each candidate whether it knows the architecture rather than trusting its name. A
+    # distribution's plain `gdb` is on every PATH and is usually built for the host only; it
+    # connects to QEMU quite happily and then fails with `Truncated register 37 in remote 'g'
+    # packet`, which is a long way from the word "gdb" being present. Appendix B sends people
+    # here, so this check has to be about capability.
+    found = None
     for debugger in ("gdb-multiarch", "riscv64-unknown-elf-gdb", "riscv64-elf-gdb", "gdb"):
-        if shutil.which(debugger):
-            report.say(OK, f"debugger for the kernel: {debugger} (Appendix B)")
-            report.facts["gdb"] = debugger
+        if not shutil.which(debugger):
+            continue
+        speaks_riscv = subprocess.run(
+            [debugger, "-q", "-nx", "--batch", "-ex", "set architecture riscv:rv64"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if speaks_riscv.returncode == 0:
+            found = debugger
             break
+    if found:
+        report.say(OK, f"debugger for the kernel: {found} (Appendix B)")
+        report.facts["gdb"] = found
     else:
-        report.say(WARN, "no RISC-V-capable gdb — chapters 4 and 7 want one, nothing else does")
+        report.say(
+            WARN,
+            "no gdb here understands riscv:rv64 — install gdb-multiarch. Appendix B needs it; "
+            "nothing else does",
+        )
 
     report.facts["xv6_ready"] = ready
     report.say(
@@ -175,14 +195,14 @@ def check_host_target(report: Report) -> bool:
     report.say(WARN, f"not the board: {explanation}")
     report.say(
         WARN,
-        "target `host`: read-only here. Every figure in Part III is measured natively on the "
+        "target `host`: read-only here. Every figure in Part V is measured natively on the "
         "machine itself over SSH; `make bench-board` refuses to run anywhere else.",
     )
     report.say(WARN, "  what a board has to be able to do, and how to find one: hardware/README.md")
 
     # An x86-64 laptop or CI runner can still *check* RV64 code, which is most of what a
     # chapter's tests assert. Worth saying, because it is the difference between "I can work on
-    # Part III from the train" and "I cannot".
+    # Part V from the train" and "I cannot".
     if find_cross_compiler() and (
         shutil.which("qemu-riscv64-static") or shutil.which("qemu-riscv64")
     ):
@@ -207,7 +227,7 @@ def check_host_target(report: Report) -> bool:
 def check_perf(report: Report) -> None:
     """Does perf reach hardware counters on this machine?
 
-    The one capability Part III cannot work around, which is why ch00 checks it rather than
+    The one capability Part V cannot work around, which is why ch00 checks it rather than
     assuming it. On ARM the usual failure is a kernel that was never told the PMU exists; on
     RISC-V the counters arrive through the firmware's SBI PMU extension, so the answer depends on
     the firmware as much as on the core.
@@ -216,7 +236,7 @@ def check_perf(report: Report) -> None:
         report.say(
             FAIL, "perf not installed — apt install linux-tools-common linux-tools-$(uname -r)"
         )
-        report.block("Part III needs perf on the board")
+        report.block("Part V needs perf on the board")
         return
 
     probe = subprocess.run(
@@ -250,7 +270,7 @@ def check_sampling(report: Report) -> None:
 
     ``perf record`` needs the counters to raise an overflow interrupt, which on RISC-V means the
     Sscofpmf extension. Without it the kernel says so at boot and refuses to sample. This is not
-    a failure — most of Part III counts rather than samples — but ch20 is about sampling, so the
+    a failure — most of Part V counts rather than samples — but ch27 is about sampling, so the
     reader is better told here than three hundred pages in.
     """
     probe = subprocess.run(
@@ -263,13 +283,13 @@ def check_sampling(report: Report) -> None:
     can_sample = probe.returncode == 0 and "not supported" not in text
     report.facts["perf_can_sample"] = can_sample
     if can_sample:
-        report.say(OK, "perf can sample (`perf record`) — ch20 works fully on this board")
+        report.say(OK, "perf can sample (`perf record`) — ch27 works fully on this board")
     else:
         report.say(
             WARN,
             "perf counts but cannot sample (`perf record`). This needs the Sscofpmf extension, "
-            "which the SiFive U74 does not have. Everything in Part III that counts is fine; "
-            "ch20 says what it cannot show you.",
+            "which the SiFive U74 does not have. Everything in Part V that counts is fine; "
+            "ch27 says what it cannot show you.",
         )
 
 
@@ -331,13 +351,13 @@ def main() -> int:
         print("Both targets are available here. Start at chapter 0.")
     elif xv6_ready:
         print(
-            "The xv6 target is ready: Parts I and II run here in full.\n"
-            "Part III is measured on real hardware; set one up before you reach ch13 (hardware/)."
+            "The xv6 target is ready: Parts III and IV run here in full.\n"
+            "Part V is measured on real hardware; set one up before you reach ch20 (hardware/)."
         )
     elif host_ready:
         print(
-            "This is the board: Part III runs here.\n"
-            "Install a cross compiler and QEMU to work through Parts I and II as well."
+            "This is the board: Part V runs here.\n"
+            "Install a cross compiler and QEMU to work through Parts III and IV as well."
         )
     else:
         print("Neither target is ready yet. Chapter 0 walks through both.")

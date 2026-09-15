@@ -3,9 +3,9 @@
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
  * Every one of these has a builtin or an instruction that does it in one go, and later chapters
- * will use those. They are written the long way here because ch02 is about what a machine word
+ * will use those. They are written the long way here because ch10 is about what a machine word
  * *is*, and a function you wrote is a better place to learn that than an intrinsic you called.
- * ch04 disassembles both and the difference is not small.
+ * ch11 disassembles both and the difference is not small.
  */
 
 #include "sysfs/bits.h"

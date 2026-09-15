@@ -9,7 +9,14 @@ import pytest
 from bench import stamp
 from bench.figures import FIGURES, KINDS, Diagram, Listing, Table
 from bench.stamp import build_result, load_result, write_result
-from bench.tables import board_identity_table, conditions, listing, listing_label, render_table
+from bench.tables import (
+    board_identity_table,
+    conditions,
+    listing,
+    listing_label,
+    optimisation_level,
+    render_table,
+)
 
 TABLE_FIGURES = [(name, fig) for name, fig in FIGURES.items() if isinstance(fig, Table)]
 DIAGRAM_FIGURES = [(name, fig) for name, fig in FIGURES.items() if isinstance(fig, Diagram)]
@@ -109,8 +116,19 @@ def test_listing_results_are_listings(name: str, figure: Listing):
 
 @pytest.mark.parametrize(("name", "figure"), LISTING_FIGURES, ids=[n for n, _ in LISTING_FIGURES])
 def test_listing_shows_each_architecture_once(name: str, figure: Listing):
-    arches = [load_result(result)["machine"]["arch"] for result in figure.results]
-    assert len(arches) == len(set(arches)), f"{name} shows {arches} — one of them twice"
+    """No two blocks in one figure may be indistinguishable from their labels.
+
+    Originally this compared architectures alone, because comparing architectures was the only
+    reason a figure had more than one block. ch28 gave it a second: the same function compiled at
+    two optimisation levels, which is one architecture twice and entirely deliberate. What must
+    still never happen is two blocks a reader cannot tell apart, so the key is what the label
+    says — architecture and level — rather than architecture on its own.
+    """
+    shown = [
+        (load_result(result)["machine"]["arch"], optimisation_level(load_result(result)))
+        for result in figure.results
+    ]
+    assert len(shown) == len(set(shown)), f"{name} shows {shown} — one of them twice"
 
 
 @pytest.mark.parametrize(("name", "figure"), LISTING_FIGURES, ids=[n for n, _ in LISTING_FIGURES])
@@ -204,7 +222,7 @@ def board_result(tmp_path, monkeypatch):
 
 @pytest.mark.parametrize("arch", sorted(CPUINFO))
 def test_board_table_describes_either_architecture(arch: str, board_result):
-    """The reference machine is ARM; a reader may follow Part III on a RISC-V board.
+    """The reference machine is ARM; a reader may follow Part V on a RISC-V board.
 
     A table hard-coded to one of them prints a column of dashes on the other, which reads as a
     broken measurement rather than a different machine. This is the check that the author, who

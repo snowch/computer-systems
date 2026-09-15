@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch06's census counts system calls by number. Counting the *shell* is no use as a measurement:
+ * ch13's census counts system calls by number. Counting the *shell* is no use as a measurement:
  * how many times it calls read depends on how the console delivered the characters, which
  * depends on timing, which inside QEMU is a property of the laptop. This program removes the
  * question. It calls getpid in a loop and nothing else calls getpid, so the census entry for it

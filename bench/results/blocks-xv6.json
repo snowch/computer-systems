@@ -1,0 +1,68 @@
+{
+  "code_fingerprint": "f43f9081afa7d41c",
+  "code_sources": [
+    "bench/run_blocks.py",
+    "bench/xv6.py",
+    "xv6/apps/blockload.c",
+    "xv6/patches/19-block-census.patch"
+  ],
+  "conditions": {
+    "cpus": 3,
+    "filesystem_image": "d57c939855d788a7",
+    "method": "a difference between two runs of the same program, one of which writes a byte",
+    "note": "block counts only; nothing here was timed"
+  },
+  "generated_at": "2026-09-15T15:10:04+00:00",
+  "kind": "measurement",
+  "machine": {
+    "arch": "riscv64",
+    "emulator": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "kernel": "xv6-riscv @ 9e3161a",
+    "kind": "qemu",
+    "measured_under": "emulation",
+    "model": "qemu virt (-machine virt -bios none)"
+  },
+  "name": "blocks-xv6",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "blockload": {
+      "and_writing_one_byte": {
+        "commits": 6,
+        "logged": 10,
+        "reads": 3,
+        "writes": 26
+      },
+      "bytes_written_for_no_bytes": 8192,
+      "bytes_written_for_one_byte": 5120,
+      "creating_an_empty_file": {
+        "commits": 5,
+        "logged": 6,
+        "reads": 0,
+        "writes": 16
+      },
+      "the_byte_alone": {
+        "commits": 1,
+        "logged": 4,
+        "reads": 3,
+        "writes": 10
+      }
+    }
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "qemu-system-riscv64 -machine virt",
+    "flags": "xv6's own CFLAGS"
+  }
+}

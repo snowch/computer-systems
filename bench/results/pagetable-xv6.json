@@ -1,0 +1,118 @@
+{
+  "code_fingerprint": "d5270bba53bb9c1e",
+  "code_sources": [
+    "bench/run_pagetable.py",
+    "bench/xv6.py",
+    "sysfs/tools/sv39.c",
+    "sysfs/lib/sv39.c",
+    "xv6/patches/14-pagetable-census.patch"
+  ],
+  "conditions": {
+    "cpus": 3,
+    "cross_check": "every table count is also derived from the addresses by sysfs/tools/sv39.c",
+    "note": "structure only: page-table pages, leaf entries and where the mappings are",
+    "subjects": "the kernel's own map, and init's \u2014 both fixed by the build, not the run"
+  },
+  "generated_at": "2026-09-15T15:09:59+00:00",
+  "kind": "measurement",
+  "machine": {
+    "arch": "riscv64",
+    "emulator": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "kernel": "xv6-riscv @ 9e3161a",
+    "kind": "qemu",
+    "measured_under": "emulation",
+    "model": "qemu virt (-machine virt -bios none)"
+  },
+  "name": "pagetable-xv6",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "sv39": {
+      "entries_per_table": 512,
+      "entry_bytes": 8,
+      "index_bits": 9,
+      "levels": 3,
+      "page_bytes": 4096,
+      "spans": {
+        "0": 4096,
+        "1": 2097152,
+        "2": 1073741824
+      }
+    },
+    "tables": {
+      "init": {
+        "bytes_mapped": 24576,
+        "leaf_entries": [
+          6,
+          0,
+          0
+        ],
+        "regions": 2,
+        "runs": [
+          {
+            "pages": 4,
+            "start": 0
+          },
+          {
+            "pages": 2,
+            "start": 274877898752
+          }
+        ],
+        "table_pages": [
+          2,
+          2,
+          1
+        ],
+        "table_pages_predicted": [
+          2,
+          2,
+          1
+        ]
+      },
+      "kernel": {
+        "bytes_mapped": 201601024,
+        "leaf_entries": [
+          49219,
+          0,
+          0
+        ],
+        "regions": 67,
+        "runs": {
+          "count": 67,
+          "first": {
+            "pages": 16386,
+            "start": 201326592
+          },
+          "largest_pages": 32768,
+          "single_page": 65
+        },
+        "table_pages": [
+          98,
+          3,
+          1
+        ],
+        "table_pages_predicted": [
+          98,
+          3,
+          1
+        ]
+      }
+    }
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "qemu-system-riscv64 -machine virt",
+    "flags": "xv6's own CFLAGS"
+  }
+}

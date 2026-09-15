@@ -52,7 +52,7 @@ Patches are ordinary `git diff` output against the pinned submodule commit. Name
 make xv6-clean && make xv6-build        # a clean staging tree
 cd xv6/stage && git init -q && git add -A && git commit -qm base
 # ... edit the kernel ...
-git diff > ../patches/06-trace-syscalls.patch
+git diff > ../patches/13-trace-syscalls.patch
 ```
 
 Each patch gets a comment block at the top saying which chapter introduced it and what it

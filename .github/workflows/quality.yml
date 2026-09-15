@@ -33,7 +33,7 @@ jobs:
         #   gcc-riscv64-linux-gnu   builds the xv6 kernel (the `xv6` target is RISC-V)
         #   qemu-system-misc        provides qemu-system-riscv64, which boots xv6
         #   gcc-aarch64-linux-gnu   cross-builds host-target examples for the reference
-        #                           architecture of Part III
+        #                           architecture of Part V
         #   qemu-user-static        runs those cross-built binaries on this x86-64 runner, which
         #                           is how every host-target example gets its *correctness*
         #                           checked here. Timings are never taken in CI — the runner is

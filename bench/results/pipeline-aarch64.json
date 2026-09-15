@@ -1,0 +1,76 @@
+{
+  "code_fingerprint": "85e68736437db7ac",
+  "code_sources": [
+    "bench/run_disasm.py",
+    "bench/disasm.py",
+    "sysfs/lib/pipeline.c",
+    "sysfs/include/sysfs/pipeline.h"
+  ],
+  "conditions": {
+    "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "note": "no timing: this records what the compiler chose, not what it cost"
+  },
+  "generated_at": "2026-09-15T15:09:41+00:00",
+  "kind": "listing",
+  "machine": {
+    "arch": "aarch64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "aarch64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "pipeline-aarch64",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "listings": {
+      "sysfs_count_over": {
+        "instructions": 14,
+        "symbol": "sysfs_count_over",
+        "text": "0000000000000260 <sysfs_count_over>:\n 260:\tcmp\tx1, #0x0\n 264:\tb.le\t290 <sysfs_count_over+0x30>\n 268:\tmov\tx3, x0\n 26c:\tmov\tx0, #0x0                   \t// #0\n 270:\tadd\tx4, x3, x1, lsl #3\n 274:\tnop\n 278:\tldr\tx1, [x3], #8\n 27c:\tcmp\tx2, x1\n 280:\tcinc\tx0, x0, lt\t// lt = tstop\n 284:\tcmp\tx4, x3\n 288:\tb.ne\t278 <sysfs_count_over+0x18>  // b.any\n 28c:\tret\n 290:\tmov\tx0, #0x0                   \t// #0\n 294:\tret"
+      },
+      "sysfs_count_over_calling": {
+        "instructions": 29,
+        "symbol": "sysfs_count_over_calling",
+        "text": "00000000000002a0 <sysfs_count_over_calling>:\n 2a0:\tcmp\tx1, #0x0\n 2a4:\tb.le\t30c <sysfs_count_over_calling+0x6c>\n 2a8:\tmov\tx3, x0\n 2ac:\tmov\tx0, #0x0                   \t// #0\n 2b0:\tadd\tx1, x3, x1, lsl #3\n 2b4:\tnop\n 2b8:\tldr\tx4, [x3]\n 2bc:\tcmp\tx4, x2\n 2c0:\tb.le\t2fc <sysfs_count_over_calling+0x5c>\n 2c4:\tstp\tx29, x30, [sp, #-16]!\n 2c8:\tmov\tx29, sp\n 2cc:\tadd\tx3, x3, #0x8\n 2d0:\tbl\t0 <tick>\n 2d4:\tcmp\tx3, x1\n 2d8:\tb.eq\t2f4 <sysfs_count_over_calling+0x54>  // b.none\n 2dc:\tldr\tx4, [x3]\n 2e0:\tcmp\tx4, x2\n 2e4:\tb.gt\t2cc <sysfs_count_over_calling+0x2c>\n 2e8:\tadd\tx3, x3, #0x8\n 2ec:\tcmp\tx3, x1\n 2f0:\tb.ne\t2dc <sysfs_count_over_calling+0x3c>  // b.any\n 2f4:\tldp\tx29, x30, [sp], #16\n 2f8:\tret\n 2fc:\tadd\tx3, x3, #0x8\n 300:\tcmp\tx3, x1\n 304:\tb.ne\t2b8 <sysfs_count_over_calling+0x18>  // b.any\n 308:\tret\n 30c:\tmov\tx0, #0x0                   \t// #0\n 310:\tret"
+      },
+      "sysfs_sum_chain1": {
+        "instructions": 13,
+        "symbol": "sysfs_sum_chain1",
+        "text": "0000000000000010 <sysfs_sum_chain1>:\n  10:\tcmp\tx1, #0x0\n  14:\tb.le\t3c <sysfs_sum_chain1+0x2c>\n  18:\tmov\tx2, x0\n  1c:\tmov\tx0, #0x0                   \t// #0\n  20:\tadd\tx3, x2, x1, lsl #3\n  24:\tnop\n  28:\tldr\tx1, [x2], #8\n  2c:\tadd\tx0, x0, x1\n  30:\tcmp\tx2, x3\n  34:\tb.ne\t28 <sysfs_sum_chain1+0x18>  // b.any\n  38:\tret\n  3c:\tmov\tx0, #0x0                   \t// #0\n  40:\tret"
+      },
+      "sysfs_sum_chain2": {
+        "instructions": 31,
+        "symbol": "sysfs_sum_chain2",
+        "text": "0000000000000044 <sysfs_sum_chain2>:\n  44:\tcmp\tx1, #0x1\n  48:\tb.le\tb0 <sysfs_sum_chain2+0x6c>\n  4c:\tsub\tx3, x1, #0x2\n  50:\tadd\tx8, x0, #0x10\n  54:\tmov\tx2, x0\n  58:\tmov\tx5, #0x0                   \t// #0\n  5c:\tlsr\tx3, x3, #1\n  60:\tmov\tx4, #0x0                   \t// #0\n  64:\tadd\tx8, x8, x3, lsl #4\n  68:\tldp\tx7, x6, [x2]\n  6c:\tadd\tx2, x2, #0x10\n  70:\tadd\tx4, x4, x7\n  74:\tadd\tx5, x5, x6\n  78:\tcmp\tx2, x8\n  7c:\tb.ne\t68 <sysfs_sum_chain2+0x24>  // b.any\n  80:\tadd\tx2, x3, #0x1\n  84:\tlsl\tx2, x2, #1\n  88:\tcmp\tx1, x2\n  8c:\tb.le\ta8 <sysfs_sum_chain2+0x64>\n  90:\tadd\tx2, x0, x2, lsl #3\n  94:\tadd\tx1, x0, x1, lsl #3\n  98:\tldr\tx0, [x2], #8\n  9c:\tadd\tx4, x4, x0\n  a0:\tcmp\tx1, x2\n  a4:\tb.ne\t98 <sysfs_sum_chain2+0x54>  // b.any\n  a8:\tadd\tx0, x4, x5\n  ac:\tret\n  b0:\tmov\tx2, #0x0                   \t// #0\n  b4:\tmov\tx5, #0x0                   \t// #0\n  b8:\tmov\tx4, #0x0                   \t// #0\n  bc:\tb\t88 <sysfs_sum_chain2+0x44>"
+      },
+      "sysfs_sum_chain4": {
+        "instructions": 42,
+        "symbol": "sysfs_sum_chain4",
+        "text": "00000000000000c0 <sysfs_sum_chain4>:\n  c0:\tcmp\tx1, #0x3\n  c4:\tb.le\t150 <sysfs_sum_chain4+0x90>\n  c8:\tsub\tx4, x1, #0x4\n  cc:\tadd\tx10, x0, #0x20\n  d0:\tmov\tx2, x0\n  d4:\tmov\tx5, #0x0                   \t// #0\n  d8:\tlsr\tx4, x4, #2\n  dc:\tmov\tx6, #0x0                   \t// #0\n  e0:\tmov\tx7, #0x0                   \t// #0\n  e4:\tmov\tx3, #0x0                   \t// #0\n  e8:\tadd\tx10, x10, x4, lsl #5\n  ec:\tnop\n  f0:\tldp\tx9, x8, [x2]\n  f4:\tadd\tx3, x3, x9\n  f8:\tadd\tx7, x7, x8\n  fc:\tldp\tx9, x8, [x2, #16]\n 100:\tadd\tx2, x2, #0x20\n 104:\tadd\tx6, x6, x9\n 108:\tadd\tx5, x5, x8\n 10c:\tcmp\tx10, x2\n 110:\tb.ne\tf0 <sysfs_sum_chain4+0x30>  // b.any\n 114:\tadd\tx2, x4, #0x1\n 118:\tlsl\tx2, x2, #2\n 11c:\tcmp\tx1, x2\n 120:\tb.le\t140 <sysfs_sum_chain4+0x80>\n 124:\tadd\tx2, x0, x2, lsl #3\n 128:\tadd\tx1, x0, x1, lsl #3\n 12c:\tnop\n 130:\tldr\tx0, [x2], #8\n 134:\tadd\tx3, x3, x0\n 138:\tcmp\tx1, x2\n 13c:\tb.ne\t130 <sysfs_sum_chain4+0x70>  // b.any\n 140:\tadd\tx3, x3, x7\n 144:\tadd\tx3, x3, x6\n 148:\tadd\tx0, x3, x5\n 14c:\tret\n 150:\tmov\tx2, #0x0                   \t// #0\n 154:\tmov\tx5, #0x0                   \t// #0\n 158:\tmov\tx6, #0x0                   \t// #0\n 15c:\tmov\tx7, #0x0                   \t// #0\n 160:\tmov\tx3, #0x0                   \t// #0\n 164:\tb\t11c <sysfs_sum_chain4+0x5c>"
+      },
+      "sysfs_sum_chain8": {
+        "instructions": 58,
+        "symbol": "sysfs_sum_chain8",
+        "text": "0000000000000170 <sysfs_sum_chain8>:\n 170:\tcmp\tx1, #0x7\n 174:\tb.le\t230 <sysfs_sum_chain8+0xc0>\n 178:\tmovi\tv0.4s, #0x0\n 17c:\tsub\tx3, x1, #0x8\n 180:\tmov\tx2, x0\n 184:\tmov\tx4, #0x0                   \t// #0\n 188:\tlsr\tx3, x3, #3\n 18c:\tadd\tx3, x3, #0x1\n 190:\tmov\tv1.16b, v0.16b\n 194:\tmov\tv2.16b, v0.16b\n 198:\tmov\tv3.16b, v0.16b\n 19c:\tnop\n 1a0:\tldp\tq7, q6, [x2]\n 1a4:\tadd\tx4, x4, #0x1\n 1a8:\tldp\tq5, q4, [x2, #32]\n 1ac:\tadd\tx2, x2, #0x40\n 1b0:\tadd\tv3.2d, v3.2d, v7.2d\n 1b4:\tadd\tv2.2d, v2.2d, v6.2d\n 1b8:\tadd\tv1.2d, v1.2d, v5.2d\n 1bc:\tadd\tv0.2d, v0.2d, v4.2d\n 1c0:\tcmp\tx4, x3\n 1c4:\tb.cc\t1a0 <sysfs_sum_chain8+0x30>  // b.lo, b.ul, b.last\n 1c8:\tmov\tx7, v3.d[1]\n 1cc:\tmov\tx6, v2.d[1]\n 1d0:\tmov\tx5, v1.d[1]\n 1d4:\tmov\tx4, v0.d[1]\n 1d8:\tlsl\tx2, x3, #3\n 1dc:\tfmov\tx10, d2\n 1e0:\tfmov\tx3, d3\n 1e4:\tfmov\tx9, d1\n 1e8:\tfmov\tx8, d0\n 1ec:\tcmp\tx1, x2\n 1f0:\tb.le\t210 <sysfs_sum_chain8+0xa0>\n 1f4:\tadd\tx2, x0, x2, lsl #3\n 1f8:\tadd\tx1, x0, x1, lsl #3\n 1fc:\tnop\n 200:\tldr\tx0, [x2], #8\n 204:\tadd\tx3, x3, x0\n 208:\tcmp\tx1, x2\n 20c:\tb.ne\t200 <sysfs_sum_chain8+0x90>  // b.any\n 210:\tadd\tx0, x3, x7\n 214:\tadd\tx0, x0, x10\n 218:\tadd\tx0, x0, x6\n 21c:\tadd\tx0, x0, x9\n 220:\tadd\tx0, x0, x5\n 224:\tadd\tx0, x0, x8\n 228:\tadd\tx0, x0, x4\n 22c:\tret\n 230:\tmov\tx2, #0x0                   \t// #0\n 234:\tmov\tx4, #0x0                   \t// #0\n 238:\tmov\tx8, #0x0                   \t// #0\n 23c:\tmov\tx5, #0x0                   \t// #0\n 240:\tmov\tx9, #0x0                   \t// #0\n 244:\tmov\tx6, #0x0                   \t// #0\n 248:\tmov\tx10, #0x0                   \t// #0\n 24c:\tmov\tx7, #0x0                   \t// #0\n 250:\tmov\tx3, #0x0                   \t// #0\n 254:\tb\t1ec <sysfs_sum_chain8+0x7c>"
+      }
+    },
+    "source": "sysfs/lib/pipeline.c"
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 compiled to an object file and disassembled",
+    "flags": "-O2 -Wall -Wextra -c",
+    "objdump": "aarch64-linux-gnu-objdump -d --no-show-raw-insn --disassemble=<fn>"
+  }
+}

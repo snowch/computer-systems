@@ -37,9 +37,17 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 RESULTS_DIR = ROOT / "bench" / "results"
 
-#: The two execution targets. Every result declares one, and the distinction is the spine of the
-#: whole book: ``xv6`` tells you what a program *does*, ``host`` tells you what it *costs*.
-TARGETS = ("host", "xv6")
+#: The execution targets. Every result declares one, and the distinction is the spine of the whole
+#: book: ``xv6`` tells you what a program *does*, ``host`` tells you what it *costs*.
+#:
+#: ``bare`` is that same machine with nothing on it — a program loaded at the reset address under
+#: ``qemu-system-riscv64``, with no kernel, no library and no loader. Part II exists because a
+#: primitive met inside a kernel arrives entangled: a trap in xv6 comes with a privilege change, a
+#: page table swapped mid-flight, thirty-one registers saved into a per-process frame and a
+#: dispatch on cause, and a reader trying to learn what a trap *is* cannot tell which of those is
+#: the trap. It is held to exactly ``xv6``'s rules for exactly ``xv6``'s reason: the emulator
+#: models no cache and no pipeline, so a duration taken there describes the laptop.
+TARGETS = ("host", "xv6", "bare")
 
 #: What a result *is*. Nearly all of them are measurements — a machine was asked a question and
 #: this is what it answered. A ``listing`` is different in kind: it is what a compiler emitted,
@@ -102,6 +110,19 @@ REQUIRED_STAMPS = (
 #: intended behaviour and the reason it happens once, in the chapter that introduces the clock.
 CORE_SOURCES: tuple[str, ...] = ("bench/measure.py",)
 
+#: Sources that are core to *one target only*, keyed by target.
+#:
+#: ch21 adds the book's clock, through which every duration in Part V is read — so a change to
+#: it changes what every `host` figure means, and belongs in those figures' fingerprints. It does
+#: not belong in an xv6 result's: a page-table census does not depend on how the book tells the
+#: time, and putting it in CORE_SOURCES made every structural result in Parts III and IV churn the
+#: moment the clock was touched. The plan said that would happen once. It would in fact have
+#: happened on every edit to the clock for the rest of the book, which is the kind of noise that
+#: teaches people to re-stamp without reading what moved.
+TARGET_SOURCES: dict[str, tuple[str, ...]] = {
+    "host": ("sysfs/lib/timing.c", "sysfs/include/sysfs/timing.h"),
+}
+
 
 class StaleFingerprintError(RuntimeError):
     """A result was produced by code that is no longer what is checked in."""
@@ -110,8 +131,13 @@ class StaleFingerprintError(RuntimeError):
 # -- the code hash -----------------------------------------------------------------------
 
 
-def code_fingerprint(sources: str | list[str] | tuple[str, ...] | None = None) -> str:
-    """Hash the sources a result depends on: :data:`CORE_SOURCES` plus the runner's own.
+def code_fingerprint(
+    sources: str | list[str] | tuple[str, ...] | None = None, target: str | None = None
+) -> str:
+    """Hash the sources a result depends on.
+
+    :data:`CORE_SOURCES`, plus whatever :data:`TARGET_SOURCES` says is core to this target, plus
+    the runner's own.
 
     Paths are repo-relative, so a result generated in one checkout matches the same code checked
     out anywhere else — an absolute path would make every fingerprint differ between a laptop, the
@@ -124,7 +150,7 @@ def code_fingerprint(sources: str | list[str] | tuple[str, ...] | None = None) -
     if isinstance(sources, str):
         sources = [sources]
     digest = hashlib.sha256()
-    for name in [*CORE_SOURCES, *(sources or ())]:
+    for name in [*CORE_SOURCES, *TARGET_SOURCES.get(target or "", ()), *(sources or ())]:
         path = ROOT / name
         if not path.exists():
             raise FileNotFoundError(f"cannot fingerprint missing source: {name}")
@@ -286,6 +312,28 @@ def describe_toolchain(arch: str) -> dict[str, Any]:
     }
 
 
+def describe_counted_run(arch: str) -> dict[str, Any]:
+    """The machine of an artefact whose program was *run* — for its counts, never for a duration.
+
+    Some artefacts are read off a compiler's output and some have to be executed to be read at
+    all: a census of what a program touches is not deducible from its object file. Running it is
+    allowed here because a count is not a cost — the same program on the same inputs reaches the
+    same cache lines on every machine, emulated or not — and ``_compiled_problems`` still refuses
+    any summary that looks like a timing.
+
+    ``measured_under`` therefore stays ``"compilation"``. It names the provenance class, which is
+    "this figure does not belong to a machine", and that is exactly what is being claimed. The
+    model string is where the honesty about execution goes, because that is what a reader sees
+    under the table.
+    """
+    return {
+        "kind": "toolchain",
+        "arch": arch,
+        "measured_under": "compilation",
+        "model": f"{arch} cross build, any machine — run under user-mode QEMU for counts only",
+    }
+
+
 def describe_qemu(xv6_dir: Path | None = None) -> dict[str, Any]:
     """The system an ``xv6`` result describes: xv6 at a known commit, under a known QEMU.
 
@@ -362,7 +410,7 @@ def build_result(
         "machine": machine,
         "recorded_on": describe_recorder(),
         "toolchain": toolchain,
-        "code_fingerprint": code_fingerprint(list(code_sources)),
+        "code_fingerprint": code_fingerprint(list(code_sources), target),
         "code_sources": list(code_sources),
         "conditions": conditions or {},
         "summary": summary,
@@ -516,16 +564,16 @@ def provenance_problems(name: str, payload: dict[str, Any]) -> list[str]:
                 f"measured_under={machine.get('measured_under')!r}, not 'native'."
             )
 
-    if target == "xv6":
+    if target in ("xv6", "bare"):
         if machine.get("kind") != "qemu":
             problems.append(
-                f"{name} declares target 'xv6' but machine.kind is "
+                f"{name} declares target {target!r} but machine.kind is "
                 f"{machine.get('kind')!r}, not 'qemu'."
             )
         timing = timing_keys(payload.get("summary", {}))
         if timing:
             problems.append(
-                f"{name} is an xv6 result carrying what looks like a timing: "
+                f"{name} is a {target!r} result carrying what looks like a timing: "
                 f"{', '.join(timing)}. QEMU models no cache, no predictor and no pipeline, so a "
                 "duration measured inside it means nothing — move the measurement to the board."
             )

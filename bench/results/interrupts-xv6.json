@@ -1,0 +1,62 @@
+{
+  "code_fingerprint": "e50b2fb70834918f",
+  "code_sources": [
+    "bench/run_interrupts.py",
+    "bench/xv6.py",
+    "xv6/apps/intrload.c",
+    "xv6/patches/16-interrupt-census.patch"
+  ],
+  "conditions": {
+    "cpus": 3,
+    "disk": "the image is opened with snapshot=on, so every run starts from the same filesystem",
+    "filesystem_image": "d57c939855d788a7",
+    "note": "counts only; nothing here was timed, and two counts are deliberately absent",
+    "omitted": "timer and UART interrupt counts, which measure elapsed time rather than work"
+  },
+  "generated_at": "2026-09-15T15:10:02+00:00",
+  "kind": "measurement",
+  "machine": {
+    "arch": "riscv64",
+    "emulator": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "kernel": "xv6-riscv @ 9e3161a",
+    "kind": "qemu",
+    "measured_under": "emulation",
+    "model": "qemu virt (-machine virt -bios none)"
+  },
+  "name": "interrupts-xv6",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "intrload": {
+      "block_operations": 64,
+      "chars_received": 10,
+      "chars_requested": 513,
+      "chars_the_writer_moved_itself": 577,
+      "counts_not_recorded": [
+        "timer",
+        "uart"
+      ],
+      "disk_interrupts": 319,
+      "times_the_writer_had_to_wait": 0
+    },
+    "workload": [
+      "intrload"
+    ]
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "qemu-system-riscv64 -machine virt",
+    "flags": "xv6's own CFLAGS"
+  }
+}

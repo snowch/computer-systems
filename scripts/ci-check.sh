@@ -38,7 +38,7 @@ echo "== a fresh xv6 boot still gives the answers the book publishes =="
 # submodule or adding a kernel patch can change what the kernel reports while every fingerprint
 # still matches, and the book goes on publishing a number nothing produces any more.
 #
-# ch06 did exactly that: its census patch grew the kernel and its workload added a user program,
+# ch13 did exactly that: its census patch grew the kernel and its workload added a user program,
 # and the committed setup result described the kernel of five chapters earlier. This check lived
 # only in .github/workflows/quality.yml at the time, so six commits passed `make check` locally
 # while CI was red. That is the whole argument for this script being the single source of truth:
@@ -55,21 +55,79 @@ echo "== disassembly listings still match the compiler =="
 # simply wrong. Both are fixed by `make bench-listings && make figures`.
 python3 -m bench.run_disasm --check
 
-echo "== the toolchain still produces the files ch01 counts =="
+echo "== the toolchain still produces the files ch09 counts =="
 # Same argument as the listings above: sizes and symbol counts are compiler output, not machine
 # measurements, so CI can re-derive them rather than trust the committed copy. This one also
 # builds xv6, because one of the numbers is the size of the same program linked by xv6's own
-# user library — the comparison ch01 closes on.
+# user library — the comparison ch09 closes on.
 python3 -m bench.run_stages --check
 python3 -m bench.run_frames --check
 python3 -m bench.run_elf --check
 
 echo "== the trap census still says what the book prints =="
-# Boots the patched kernel and re-runs ch06's workload. Only the deterministic half of the census
+# Boots the patched kernel and re-runs ch13's workload. Only the deterministic half of the census
 # is recorded, so this is a real check rather than a coin toss: a patch that changed how many
 # system calls the shell makes would move the number, and moving it silently is the failure the
 # whole stamping scheme exists to prevent.
 python3 -m bench.run_traps --check
+
+echo "== the page tables still have the shape the book prints =="
+# Boots the kernel and dumps its own map and init's. Both are decided by the build rather than by
+# the run, so this is a real check: a kernel patch that changed the layout, or a submodule bump
+# that moved a mapping, would show up here as a shape the chapter no longer describes.
+#
+# It also re-runs ch14's cross-check — the Sv39 model derives the table count from the addresses,
+# the kernel counts by walking — and refuses to stamp or pass if the two stop agreeing.
+python3 -m bench.run_pagetable --check
+
+echo "== the fault census still costs what the book prints =="
+# ch15's exchange rate: pages allocated and faults taken, under each of the kernel's two
+# allocation policies. The workload fixes every quantity and prints them, and the runner refuses
+# a census that disagrees with the program, one latched from a different process, or one in which
+# the handler declined a fault.
+python3 -m bench.run_faults --check
+
+echo "== the interrupt census still says what the book prints =="
+# ch16's disk figure depends on the filesystem image as well as on the code, and nothing else in
+# the stamping scheme covers fs.img — so this check is the only thing that would notice a later
+# chapter adding an xv6 program and moving the number. The console counts this deliberately does
+# not record are the ones that vary; see the runner's docstring.
+python3 -m bench.run_interrupts --check
+
+echo "== the lock is still made of the instructions the book prints =="
+# Read out of the kernel as built, so this catches a compiler that stopped emitting the atomic or
+# the fence — either of which would be a broken lock, and neither of which any test would notice.
+python3 -m bench.run_locks --check
+
+echo "== a context switch still moves what the book says =="
+python3 -m bench.run_switch --check
+
+echo "== one byte still costs the disk what the book prints =="
+python3 -m bench.run_blocks --check
+
+echo "== both targets still agree about ch20's program =="
+python3 -m bench.run_bridge --check
+
+echo "== the compiler still makes the same of ch23's five loops =="
+python3 -m bench.run_loops --check
+
+echo "== the compiler still leaves ch24 a branch to measure =="
+python3 -m bench.run_pipeline --check
+
+echo "== ch25's counters still land where the book says =="
+python3 -m bench.run_sharing --check
+
+echo "== ch27's program still has the shape the chapter profiles =="
+python3 -m bench.run_profile --check
+
+echo "== the kernel still lacks what ch02 says it lacks =="
+python3 -m bench.run_kernelc --check
+
+echo "== appendix D still describes the kernel tree that is checked out =="
+python3 -m bench.run_filemap --check
+
+echo "== the compiler still refuses ch28's three loops =="
+python3 -m bench.run_vectors --check
 
 echo "== figures and tables up to date =="
 python3 scripts/render-figures.py --check

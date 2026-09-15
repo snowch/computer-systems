@@ -1,6 +1,6 @@
-"""Claims Part I makes about emitted code, asserted so a compiler changing its mind fails CI.
+"""Claims Part III makes about emitted code, asserted so a compiler changing its mind fails CI.
 
-ch01's program says the same thing on both targets and the compiler folds one route away; ch03's
+ch09's program says the same thing on both targets and the compiler folds one route away; ch03's
 array parameter is a pointer parameter, and its volatile reads all survive.
 
 Two claims the chapter makes, checked rather than asserted. The first is the point of having two
@@ -43,7 +43,7 @@ def test_the_host_build_agrees_with_itself(host_target, build_dir):
 
 @pytest.mark.xv6
 def test_both_targets_print_the_same_facts():
-    """The claim ch01 closes on. Only the first line, naming the world, may differ."""
+    """The claim ch09 closes on. Only the first line, naming the world, may differ."""
     result = xv6.boot(["sameanswer"])
     assert not result.timed_out, result.transcript[-1500:]
     assert _facts(result.output_of("sameanswer")) == EXPECTED
@@ -51,7 +51,7 @@ def test_both_targets_print_the_same_facts():
 
 @pytest.mark.hostcode
 def test_only_one_of_the_two_routes_survives_to_run_time():
-    """ch01's central contrast, asserted so that a compiler changing its mind fails the build.
+    """ch09's central contrast, asserted so that a compiler changing its mind fails the build.
 
     The chapter prints both listings and spends a section on why they differ. If a future compiler
     folds the counted loop too — or stops folding the other — the prose around those listings is
@@ -65,10 +65,10 @@ def test_only_one_of_the_two_routes_survives_to_run_time():
         ["sysfs/lib/stages.c"], "sysfs_sum_counted", target, includes=["sysfs/include"]
     )
     assert folded.instructions < counted.instructions, (
-        "ch01 says the folded route is the shorter one:\n" + folded.text
+        "ch09 says the folded route is the shorter one:\n" + folded.text
     )
     assert "2016" in folded.text or "0x7e0" in folded.text, (
-        "ch01 says the compiler wrote the answer into the instruction stream:\n" + folded.text
+        "ch09 says the compiler wrote the answer into the instruction stream:\n" + folded.text
     )
 
 
@@ -139,7 +139,7 @@ def test_the_walk_refuses_a_file_that_names_this_checkout():
 
 @pytest.mark.skipif(shutil.which(CC) is None, reason=f"needs {CC}")
 def test_the_walk_measures_the_toolchain_and_not_the_checkout(tmp_path):
-    """ch01's stage sizes must be the same in two clones of the same commit. They were not.
+    """ch09's stage sizes must be the same in two clones of the same commit. They were not.
 
     An absolute `-I` put this checkout's path into the preprocessor's line markers and therefore
     into stage 1's byte count, so the same tree measured 38273 bytes on a laptop and 38345 on a CI
@@ -167,13 +167,13 @@ def test_the_walk_measures_the_toolchain_and_not_the_checkout(tmp_path):
     shorter, longer = (len(str(tmp_path / name)) for name in roots)
     assert longer - shorter > 100, "the two checkouts must differ enough for a path to show up"
     assert walks[0] == walks[1], (
-        "the same commit measured differently from two directories, so ch01's stage sizes are "
+        "the same commit measured differently from two directories, so ch09's stage sizes are "
         f"partly a statement about where the tree lives:\n{walks[0]}\n{walks[1]}"
     )
 
 
 def test_the_trap_probe_matches_the_program_it_counts():
-    """ch06's census is only reproducible while the runner and the workload agree.
+    """ch13's census is only reproducible while the runner and the workload agree.
 
     `trapload.c` decides how many times it calls `getpid` and `bench/run_traps.py` asserts that
     the kernel counted exactly that many. Two constants in two languages, and nothing but this

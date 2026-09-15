@@ -35,7 +35,7 @@
   title        = {{RISC-V} {ELF} {psABI} Specification},
   author       = {{RISC-V International}},
   howpublished = {\url{https://github.com/riscv-non-isa/riscv-elf-psabi-doc}},
-  note         = {The calling convention, register roles and LP64D data model that ch04 reads
+  note         = {The calling convention, register roles and LP64D data model that ch11 reads
                   out of real disassembly.}
 }
 
@@ -105,7 +105,7 @@
   howpublished = {\url{https://docs.riscv.org/reference/isa/priv/sscofpmf.html}},
   note         = {The counter-overflow interrupt a sampling profiler needs. Without it `perf
                   stat` counts and `perf record` cannot sample — which is the difference
-                  between ch19 and ch20 being possible on a given board.}
+                  between ch26 and ch27 being possible on a given board.}
 }
 
 @misc{rpi-bcm2712,
@@ -122,7 +122,7 @@
   author       = {{Arm Ltd}},
   howpublished = {\url{https://developer.arm.com/documentation/}},
   note         = {Pipeline structure, branch prediction and the PMU event set the reference core
-                  exposes. Cited by ch17, which measures what it can and says which numbers are
+                  exposes. Cited by ch24, which measures what it can and says which numbers are
                   derived rather than counted.}
 }
 
@@ -162,4 +162,30 @@
                   implementation-defined, because those are claims about this document rather
                   than about any compiler. The final committee draft N2176 is freely available
                   and is what most readers will actually consult.}
+}
+
+@book{gregg-sysperf,
+  title     = {Systems Performance: Enterprise and the Cloud},
+  author    = {Gregg, Brendan},
+  edition   = {2},
+  publisher = {Addison-Wesley},
+  year      = {2020},
+  isbn      = {978-0136820154},
+  note      = {Named in the preface as where this book is meant to deliver a reader, and in
+               chapters' "Where to go next" sections. It is never a source: nothing in this book
+               is taken from it, and every mechanism here is established from a measurement or a
+               primary specification (CLAUDE.md §5). The relationship is one-way — that book
+               assumes the substrate this one builds.}
+}
+
+@book{xv6-book,
+  title     = {xv6: a simple, Unix-like teaching operating system},
+  author    = {Cox, Russ and Kaashoek, M. Frans and Morris, Robert},
+  publisher = {MIT},
+  note      = {The commentary on the kernel this book uses, distributed free from MIT's
+               6.1810 course site. Cited as further reading and as a companion the reader may
+               well be holding, never as a source: it explains what the code does and this book
+               asks what it costs, and no chapter here takes its structure or its content from
+               it (CLAUDE.md §5). Its chapter numbering shifts between revisions, so appendix G
+               maps it by topic rather than by number.}
 }

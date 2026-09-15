@@ -1,0 +1,75 @@
+{
+  "code_fingerprint": "7114b6b23c153c39",
+  "code_sources": [
+    "bench/run_kernelc.py"
+  ],
+  "conditions": {
+    "note": "counts and names only; nothing here was executed",
+    "why": "ch02's claims about what the kernel lacks should fail when it gains them"
+  },
+  "generated_at": "2026-09-15T15:09:44+00:00",
+  "kind": "artefact",
+  "machine": {
+    "arch": "riscv64",
+    "kernel": "xv6-riscv @ 9e3161a",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "the staged kernel, read rather than booted"
+  },
+  "name": "kernelc-xv6",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "heap_functions": [],
+    "kernel": {
+      "floating_point": 0,
+      "instructions": 9346
+    },
+    "pool_bounds": {
+      "MAXARG": 32,
+      "NBUF": 30,
+      "NCPU": 8,
+      "NDEV": 10,
+      "NFILE": 100,
+      "NINODE": 50,
+      "NOFILE": 16,
+      "NPROC": 64
+    },
+    "reimplemented": {
+      "printk.c": [
+        "panic",
+        "printint",
+        "printk",
+        "printkinit",
+        "printptr"
+      ],
+      "string.c": [
+        "memcmp",
+        "memcpy",
+        "memmove",
+        "memset",
+        "safestrcpy",
+        "strlen",
+        "strncmp",
+        "strncpy"
+      ]
+    },
+    "reimplemented_count": 13
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "xv6's own CFLAGS",
+    "execution": "none \u2014 the built kernel is read, not run",
+    "flags": "riscv64-linux-gnu-objdump -d; riscv64-linux-gnu-nm --defined-only"
+  }
+}

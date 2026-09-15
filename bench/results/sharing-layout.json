@@ -1,0 +1,61 @@
+{
+  "code_fingerprint": "8760c8ed8d7ca7b2",
+  "code_sources": [
+    "bench/run_sharing.py",
+    "sysfs/tools/layout.c",
+    "sysfs/lib/sharing.c",
+    "sysfs/include/sysfs/sharing.h"
+  ],
+  "conditions": {
+    "note": "offsets and sizes only; what sharing a line costs needs four real cores"
+  },
+  "generated_at": "2026-09-15T15:09:49+00:00",
+  "kind": "artefact",
+  "machine": {
+    "arch": "aarch64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "aarch64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "sharing-layout",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "built_for": "cross-aarch64-qemu",
+    "layouts": {
+      "line_bytes": 64,
+      "packed": {
+        "offsets": [
+          0,
+          8
+        ],
+        "same_line": true,
+        "size": 16
+      },
+      "padded": {
+        "offsets": [
+          0,
+          64
+        ],
+        "same_line": false,
+        "size": 128
+      }
+    }
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "user-mode QEMU, for the answers only \u2014 no duration is taken here",
+    "flags": "the book's portable flags"
+  }
+}

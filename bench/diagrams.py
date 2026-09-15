@@ -530,7 +530,7 @@ def struct_padding(result: str) -> str:
 def dispatch_table() -> str:
     """An array of function pointers, and what an indirect call actually does.
 
-    The pattern ch03 exists to teach and ch09 relies on: a kernel that must do *something*
+    The pattern ch03 exists to teach and ch16 relies on: a kernel that must do *something*
     different for each of several devices does not write a switch, it writes a table and indexes
     it. Drawn because the mechanism is two dereferences — one to fetch the address, one to jump to
     it — and a sentence describing that is worth much less than a picture of it.
@@ -592,7 +592,7 @@ def dispatch_table() -> str:
         width - 2 * margin,
         [
             "A direct call names its target inside the instruction; the CPU knows where it is going",
-            "before it fetches the operand. An indirect call does not, and ch17 measures what the",
+            "before it fetches the operand. An indirect call does not, and ch24 measures what the",
             "branch predictor makes of that difference.",
         ],
     )
@@ -671,7 +671,7 @@ def stack_frame() -> str:
 def sections_to_segments(result: str) -> str:
     """Eighteen sections become two segments, and one of them is partly not in the file.
 
-    The figure ch05 is for. Sections are the linker's view and segments are the loader's, the same
+    The figure ch12 is for. Sections are the linker's view and segments are the loader's, the same
     bytes described twice for two audiences, and the collapse from one to the other is where a
     reader stops thinking of an executable as a list of named parts and starts thinking of it as
     an address space. Everything here is read from the stamped result.
@@ -846,20 +846,444 @@ def trap_path(result: str) -> str:
         width - 2 * margin,
         [
             "Counted, not timed. This target cannot say what an instruction costs, and a count is",
-            "what remains true anyway: the path is this long whatever machine runs it. ch19 prices",
+            "what remains true anyway: the path is this long whatever machine runs it. ch26 prices",
             "the same shape on hardware.",
         ],
     )
     return _svg(width, int(foot + 48), body, "The path of one system call into the kernel and back")
 
 
+def sv39_walk(result: str) -> str:
+    """One virtual address, taken apart into the four things translation does with it.
+
+    Drawn because the split is the mechanism and a sentence describing it is not memorable. Three
+    nine-bit indices and a twelve-bit offset, each pointing at the level that consumes it — and
+    the twenty-five bits at the top, which translation never looks at and which must therefore
+    agree with bit 38 or the address is not an address.
+
+    The spans come from the stamped result, so the figure cannot claim a geometry the model and
+    the kernel have not agreed on.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    sv39 = load_result(result)["summary"]["sv39"]
+    spans = sv39["spans"]
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "How Sv39 reads a virtual address",
+        "Nine bits per level, three levels, and twelve bits it never touches.",
+    )
+
+    # Bit widths, drawn to scale: the unused quarter is genuinely a third of the word.
+    bits = [
+        ("63:39 — copies bit 38", 25),
+        ("L2", 9),
+        ("L1", 9),
+        ("L0", 9),
+        ("offset", 12),
+    ]
+    scale = (width - 2 * margin) / sum(count for _, count in bits)
+    row_y = margin + 58
+    parts, _ = cells(margin, row_y, [(label, count * scale) for label, count in bits], height=40)
+    body += parts
+
+    # Each index names the table that consumes it, and what one of its entries covers.
+    levels = [
+        ("L2", "root table", spans["2"]),
+        ("L1", "second table", spans["1"]),
+        ("L0", "third table", spans["0"]),
+    ]
+    box_w, gap = 176, 24
+    table_y = row_y + 116
+    cursor = margin + 96
+    index_x = margin + 25 * scale
+    for name, role, span in levels:
+        body.append(_rect(cursor, table_y, box_w, 74, fill=PANEL))
+        body.append(_text(cursor + 14, table_y + 26, role, size=13, weight="700"))
+        body.append(_mono(cursor + 14, table_y + 46, f"{sv39['entries_per_table']} entries"))
+        body.append(
+            _text(
+                cursor + 14, table_y + 64, f"one entry covers {_bytes(span)}", size=11.5, fill=MUTED
+            )
+        )
+        body.append(_arrow(index_x + 4.5 * scale, row_y + 40, cursor + box_w / 2, table_y - 4))
+        body.append(_mono(index_x + 4.5 * scale, row_y + 58, name, anchor="middle", fill=MUTED))
+        index_x += 9 * scale
+        cursor += box_w + gap
+
+    note_y = table_y + 108
+    body.append(
+        _text(
+            margin,
+            note_y,
+            "The offset is not translated. It is copied.",
+            size=13.5,
+            weight="700",
+        )
+    )
+    body += footnote(
+        margin,
+        note_y + 42,
+        width - 2 * margin,
+        [
+            f"Why nine: a {sv39['page_bytes']}-byte page holds {sv39['entries_per_table']} entries "
+            f"of {sv39['entry_bytes']} bytes, and {sv39['entries_per_table']} is nine bits.",
+            "Three levels of nine, plus twelve of offset, is thirty-nine — which is where the name comes from.",
+        ],
+    )
+    return _svg(width, note_y + 92, body, "Sv39 address translation")
+
+
+def _bytes(count: int) -> str:
+    """Byte counts as a reader says them, for figure labels only."""
+    for unit, size in (("GiB", 1 << 30), ("MiB", 1 << 20), ("KiB", 1 << 10)):
+        if count >= size:
+            return f"{count // size} {unit}"
+    return f"{count} B"
+
+
+def address_space_cost(result: str) -> str:
+    """Why the smallest address space in the system has the worst overhead.
+
+    The totals in the table next to this figure are not explicable without it. init maps six
+    pages, and they are not in one place: four at the bottom of the address space and two at the
+    very top. Each cluster forces its own chain down from the root, and a chain is two pages
+    whether it ends in one mapping or five hundred.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    tables = load_result(result)["summary"]["tables"]
+    init, kernel = tables["init"], tables["kernel"]
+    runs = init["runs"]
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "A page table's size is decided by where the pages are",
+        "init's address space: six mapped pages, five pages of table to describe them.",
+    )
+
+    # The virtual address space as one rule, with the two clusters marked where they fall.
+    line_y = margin + 78
+    left, right = margin + 10, width - margin - 10
+    body.append(_line(left, line_y, right, line_y))
+    body.append(_text(left, line_y + 26, "0", size=11.5, fill=MUTED, family=MONO))
+    body.append(
+        _text(right, line_y + 26, "MAXVA", size=11.5, fill=MUTED, anchor="end", family=MONO)
+    )
+
+    marks = []
+    for index, run in enumerate(runs):
+        at = left if index == 0 else right - 26
+        body.append(_rect(at, line_y - 15, 26, 30, fill=PANEL))
+        body.append(_mono(at + 13, line_y + 5, str(run["pages"]), anchor="middle"))
+        marks.append((at + 13, f"{run['pages']} pages at {run['start']:#x}"))
+
+    # Under each cluster, the chain of tables it forces. The root is shared; nothing else is.
+    chain_y = line_y + 66
+    box_w = 176
+    for at, label in marks:
+        # The clusters sit at the two ends of the address space, so their boxes have to be
+        # pulled back inside the canvas; the arrow keeps them attached to the mark they explain.
+        box_x = min(max(at - box_w / 2, margin), width - margin - box_w)
+        centre = box_x + box_w / 2
+        anchor = "start" if at < width / 2 else "end"
+        text_x = box_x if anchor == "start" else box_x + box_w
+        body.append(_text(text_x, chain_y - 14, label, size=11.5, fill=MUTED, anchor=anchor))
+        for step, name in enumerate(("its own L1 table", "its own L0 table")):
+            top = chain_y + step * 40
+            body.append(_rect(box_x, top, box_w, 32, fill=PANEL))
+            body.append(_text(centre, top + 21, name, size=12, anchor="middle"))
+        body.append(_arrow(at, line_y + 18, centre, chain_y - 4))
+
+    shared_y = chain_y + 96
+    body.append(_rect(width / 2 - 88, shared_y, 176, 32, fill=PANEL))
+    body.append(_text(width / 2, shared_y + 21, "one shared root", size=12, anchor="middle"))
+
+    total = sum(init["table_pages"])
+    verdict_y = shared_y + 76
+    body.append(
+        _text(
+            margin,
+            verdict_y,
+            f"{total} pages of table for {init['leaf_entries'][0]} pages of memory.",
+            size=13.5,
+            weight="700",
+        )
+    )
+    body += footnote(
+        margin,
+        verdict_y + 42,
+        width - 2 * margin,
+        [
+            f"The kernel maps {kernel['leaf_entries'][0]} pages in {sum(kernel['table_pages'])} "
+            "pages of table, because almost all of them are consecutive.",
+            "Same mechanism, opposite result: the cost is per region, not per page.",
+        ],
+    )
+    return _svg(width, verdict_y + 92, body, "What an address space costs to describe")
+
+
+def fault_decision(result: str) -> str:
+    """What the kernel does with a fault, and the one question that decides it.
+
+    Drawn because the shape is the argument. A page fault is not an error report; it is the
+    hardware calling a function of the kernel's choosing at the exact moment a particular address
+    is touched, and handing it the address. Everything interesting that is built on faults is
+    built by changing the test in the middle box.
+
+    The counts come from the stamped result, so the figure cannot claim a workload the
+    measurement does not support.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    run = load_result(result)["summary"]["faultload"]
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "A page fault is a question the kernel gets to answer",
+        "The hardware supplies the address. What happens next is entirely policy.",
+    )
+
+    stages = [
+        ("touch", "a load or a store"),
+        ("fault", "walk stopped"),
+        ("stval", "the address"),
+        ("below sz?", "the only test"),
+    ]
+    row_y = margin + 62
+    parts, _ = chain(margin, row_y, stages, box_width=142, box_height=52, gap=26)
+    body += parts
+
+    # The two answers, and what each costs in this run.
+    branch_y = row_y + 112
+    outcomes = [
+        (
+            "yes",
+            "allocate a page, map it, and re-run the instruction that faulted",
+            f"{run['lazy_pages']} pages this run",
+        ),
+        (
+            "no",
+            "the process asked for an address it never requested: kill it",
+            f"{run['refused']} this run",
+        ),
+    ]
+    box_w = (width - 2 * margin - 28) / 2
+    for index, (answer, what, count) in enumerate(outcomes):
+        box_x = margin + index * (box_w + 28)
+        body.append(_rect(box_x, branch_y, box_w, 92, fill=PANEL))
+        body.append(_text(box_x + 16, branch_y + 28, answer, size=14, weight="700"))
+        body.append(_text(box_x + 16, branch_y + 52, what, size=12, fill=MUTED))
+        body.append(_mono(box_x + 16, branch_y + 76, count))
+        body.append(_arrow(margin + 3 * 168 + 71, row_y + 52, box_x + box_w / 2, branch_y - 4))
+
+    note_y = branch_y + 132
+    body.append(
+        _text(
+            margin,
+            note_y,
+            "Unlike a system call, the faulting instruction runs again.",
+            size=13.5,
+            weight="700",
+        )
+    )
+    body += footnote(
+        margin,
+        note_y + 42,
+        width - 2 * margin,
+        [
+            "Change the test and you get a different feature from the same hook: copy-on-write, a "
+            "guard page, a page fetched from disk.",
+            "This chapter measures one of them. The others are named in the text and not "
+            "measured, which is not the same as being free.",
+        ],
+    )
+    return _svg(width, note_y + 92, body, "What a kernel does with a page fault")
+
+
+def interrupt_sources(result: str) -> str:
+    """Where interrupts come from, and which of them a workload decides the number of.
+
+    Drawn rather than tabulated because the asymmetry is the whole content, and a table with an
+    empty cell in it invites the reader to think a number is merely missing. Two of these three
+    sources produce counts this book will not print, and the figure says which and why on the
+    face of it.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    run = load_result(result)["summary"]["intrload"]
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "Three sources, and only one countable answer",
+        "The work was fixed. Whether the interrupt count was fixed too depends on the device.",
+    )
+
+    sources = [
+        (
+            "Disk",
+            "one completion per request",
+            f"{run['disk_interrupts']} interrupts, every run",
+            True,
+        ),
+        (
+            "Console",
+            "\u201cready for more\u201d, whenever that is",
+            "a different number every run",
+            False,
+        ),
+        (
+            "Timer",
+            "once per tick of elapsed time",
+            "a fact about the host, not the guest",
+            False,
+        ),
+    ]
+    box_w = (width - 2 * margin - 2 * 20) / 3
+    row_y = margin + 62
+    for index, (title, mechanism, verdict, countable) in enumerate(sources):
+        box_x = margin + index * (box_w + 20)
+        body.append(_rect(box_x, row_y, box_w, 132, fill=PANEL))
+        body.append(_text(box_x + 16, row_y + 30, title, size=15, weight="700"))
+        body.append(_text(box_x + 16, row_y + 54, mechanism, size=11.5, fill=MUTED))
+        body.append(_line(box_x + 12, row_y + 72, box_x + box_w - 12, row_y + 72, dash="3 3"))
+        body.append(
+            _text(
+                box_x + 16,
+                row_y + 94,
+                "recorded" if countable else "not recorded",
+                size=11,
+                weight="700",
+                fill=INK if countable else WARN,
+            )
+        )
+        body.append(_text(box_x + 16, row_y + 114, verdict, size=11.5, fill=MUTED))
+
+    note_y = row_y + 190
+    body.append(
+        _text(
+            margin,
+            note_y,
+            "A block request is completed once. \u201cReady for more\u201d is not a unit of anything.",
+            size=13.5,
+            weight="700",
+        )
+    )
+    body += footnote(
+        margin,
+        note_y + 42,
+        width - 2 * margin,
+        [
+            "Same image, same workload: the disk count was identical on every run and the console "
+            "count was not, over a spread of nearly a third.",
+            "So one of these is a property of the work and the other is a property of the "
+            "afternoon, and only one of them belongs in a table.",
+        ],
+    )
+    return _svg(width, note_y + 92, body, "Where interrupts come from")
+
+
 #: fragment name -> the function that draws it
+def sampling_profile(result: str) -> str:
+    """How one cycle becomes one line in a report, and where the attribution goes wrong.
+
+    Drawn because the shape explains both of the chapter's surprises at once. A profiler does not
+    watch your program; it arranges to be interrupted every so often and writes down where the
+    program was. Everything a profile can and cannot tell you follows from that sentence — it is
+    why the answer is statistical, why a rare-but-slow function can be invisible, and why the
+    instruction blamed is not the instruction that was waiting.
+
+    The loop's shape comes from the stamped listing, so the figure cannot describe a loop the
+    compiler is not emitting.
+    """
+    from bench.stamp import load_result  # noqa: PLC0415
+
+    listing = load_result(result)["summary"]["listings"]["sysfs_tally_scatter"]
+    margin, width = 24, 780
+    body = heading(
+        margin,
+        margin + 12,
+        "A profile is a sample of where the program was, not a record of where it went",
+        "Nothing watches the program. Something interrupts it, and writes down an address.",
+    )
+
+    stages = [
+        ("a counter", "counts cycles"),
+        ("overflow", "it wraps"),
+        ("interrupt", "the core traps"),
+        ("the PC", "written down"),
+        ("a symbol", "looked up later"),
+    ]
+    row_y = margin + 64
+    parts, _ = chain(margin, row_y, stages, box_width=132, box_height=52, gap=18)
+    body += parts
+
+    # Where the attribution goes wrong, drawn as the loop it goes wrong in.
+    loop_y = row_y + 104
+    body.append(_text(margin, loop_y, "The loop the samples land in", size=13.5, weight="700"))
+    steps = [
+        ("load the key", "sequential — in cache", False),
+        ("load the counter", "scattered — this is the wait", True),
+        ("add one, store it back", "cannot start until the load returns", False),
+        ("test and branch", "where the sample is often written down", False),
+    ]
+    step_y = loop_y + 22
+    for index, (what, why, culprit) in enumerate(steps):
+        y = step_y + index * 40
+        body.append(_rect(margin, y, width - 2 * margin, 34, fill=PANEL))
+        body.append(_mono(margin + 14, y + 22, what))
+        body.append(
+            _text(
+                margin + 226,
+                y + 22,
+                why,
+                size=12,
+                fill=WARN if culprit else MUTED,
+                weight="700" if culprit else "400",
+            )
+        )
+
+    note_y = step_y + len(steps) * 40 + 30
+    body.append(
+        _text(
+            margin,
+            note_y,
+            "The interrupt arrives some instructions after the one that caused the stall.",
+            size=13.5,
+            weight="700",
+            fill=WARN,
+        )
+    )
+    body += footnote(
+        margin,
+        note_y + 44,
+        width - 2 * margin,
+        [
+            "So the report blames a cheap instruction standing next to an expensive one. The fix "
+            "is to read the neighbourhood, never the line.",
+            f"The loop above is the one the compiler emitted for this book\u2019s scatter pass, "
+            f"{listing['instructions']} instructions in total.",
+        ],
+    )
+    return _svg(width, note_y + 96, body, "How a sampling profiler attributes a cycle")
+
+
 DIAGRAMS = {
     "ch00-targets": two_target_map,
-    "ch01-stages": toolchain_stages,
-    "ch02-padding": struct_padding,
+    "ch09-stages": toolchain_stages,
+    "ch10-padding": struct_padding,
     "ch03-dispatch": dispatch_table,
-    "ch04-frame": stack_frame,
-    "ch05-segments": sections_to_segments,
-    "ch06-trap-path": trap_path,
+    "ch11-frame": stack_frame,
+    "ch12-segments": sections_to_segments,
+    "ch13-trap-path": trap_path,
+    "ch14-walk": sv39_walk,
+    "ch14-address-spaces": address_space_cost,
+    "ch15-decision": fault_decision,
+    "ch16-sources": interrupt_sources,
+    "ch27-sampling": sampling_profile,
 }

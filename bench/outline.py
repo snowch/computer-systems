@@ -18,6 +18,8 @@ from dataclasses import dataclass
 TARGET_MEANING = {
     "xv6": "runs on the xv6 teaching kernel under QEMU; answers questions about structure",
     "host": "runs natively on real hardware; the only place a timing may be measured",
+    "bare": "runs under qemu-system-riscv64 with no operating system at all; answers questions "
+    "about what the hardware does, and like `xv6` is never timed",
     "both": "uses both targets, and says which one every example and figure came from",
 }
 
@@ -34,7 +36,7 @@ class Chapter:
     #: Checkpoint tag, or None for a chapter that leaves no code behind (CHECKPOINTS.md).
     tag: str | None = None
     #: Earlier chapters whose *cost* this one measures. The spine across the seam between the
-    #: two targets: Part III is not a second book, it is Part II's chapters asked again as
+    #: two targets: Part V is not a second book, it is Part IV's chapters asked again as
     #: questions about time. A chapter that names its counterpart is a chapter the reader
     #: arrives at already knowing the mechanism, needing only the price.
     #:
@@ -53,7 +55,7 @@ class Chapter:
     #: Which instruction set's disassembly this chapter asks the reader to read, or None.
     #:
     #: The two targets do not share an instruction set, and the honest accounting of what that
-    #: costs is exactly this field: a reader who learned RISC-V in Part I meets AArch64 in the
+    #: costs is exactly this field: a reader who learned RISC-V in Part III meets AArch64 in the
     #: chapters marked ``aarch64`` and nowhere else. The claim is load-bearing — it is the reason
     #: the split is affordable — so it is a fact here rather than a sentence three pages repeat
     #: and then disagree about, which is what happened before this existed.
@@ -76,16 +78,19 @@ class Chapter:
         return f"chapters/{self.label}_{self.slug}.md"
 
 
-PART_I = "Part I — Foundations"
-PART_II = "Part II — The operating system layer"
-PART_III = "Part III — Where the cycles go"
+PART_START = "Getting started"
+PART_C = "Part I — C, and what the machine does with it"
+PART_BARE = "Part II — The machine with nothing on it"
+PART_MACHINE = "Part III — What a computer does with a program"
+PART_OS = "Part IV — The operating system layer"
+PART_COST = "Part V — Where the cycles go"
 
 CHAPTERS: tuple[Chapter, ...] = (
     Chapter(
         0,
         "prerequisites_and_setup",
         "Prerequisites and Setup",
-        PART_I,
+        PART_START,
         "both",
         "What do I need on my desk, and how do I know it works?",
         "ch00-setup",
@@ -93,33 +98,32 @@ CHAPTERS: tuple[Chapter, ...] = (
     ),
     Chapter(
         1,
-        "what_a_computer_does_with_a_program",
-        "What a Computer Does With a Program",
-        PART_I,
-        "both",
-        "What actually happens between a source file and a result, and which of it costs anything?",
-        "ch01-whole-stack",
+        "reading_c",
+        "Reading C",
+        PART_C,
+        "xv6",
+        "How do I read a C declaration, and what does each piece of it become?",
+        "ch01-reading-c",
         reads_disassembly="riscv",
-        owes="Object and section sizes at each toolchain stage (`xv6`), and instruction counts for "
-        "the same program under `perf stat` (`host`).",
+        owes="What each construct compiles to: `p + 1` scaled by the element type, `->` as an "
+        "offset on a load, and a struct's members at the addresses ch10 will explain.",
     ),
     Chapter(
         2,
-        "representing_information",
-        "Representing Information",
-        PART_I,
+        "c_without_a_runtime",
+        "C Without a Runtime",
+        PART_C,
         "xv6",
-        "What is a number to this machine, and when does that answer bite?",
-        "ch02-bits",
-        reads_disassembly="riscv",
-        owes="Type sizes, alignments and struct layouts, and what signed overflow and shifts "
-        "actually compile to.",
+        "I already write C — which of my habits stop working in a kernel?",
+        "ch02-no-runtime",
+        owes="What the kernel does not have, counted from the kernel as built: its stack size, "
+        "its floating-point instructions, and how much of the C library it reimplements.",
     ),
     Chapter(
         3,
         "c_for_people_who_will_read_a_kernel",
         "C for People Who Will Read a Kernel",
-        PART_I,
+        PART_C,
         "xv6",
         "Which parts of C are really about addresses, and how do I read them without flinching?",
         "ch03-c",
@@ -128,133 +132,212 @@ CHAPTERS: tuple[Chapter, ...] = (
     ),
     Chapter(
         4,
+        "a_trap_with_nothing_else",
+        "A Trap, With Nothing Else in the Machine",
+        PART_BARE,
+        "bare",
+        "What is a trap, when nothing else is going on?",
+        "ch04-bare-trap",
+        owes="The whole of a trap in one program: where the handler was, where the interrupted "
+        "instruction was, and that execution resumed after it.",
+    ),
+    Chapter(
+        5,
+        "interrupts_and_privilege",
+        "Interrupts, and Who Is Allowed To",
+        PART_BARE,
+        "bare",
+        "What arrives without being asked for, and what does a privilege level actually restrict?",
+        "ch05-bare-interrupt",
+        owes="A timer interrupt taken with no kernel present, and an access refused because the "
+        "program had dropped a privilege level.",
+    ),
+    Chapter(
+        6,
+        "one_page_table_two_harts",
+        "One Page Table, Two Harts",
+        PART_BARE,
+        "bare",
+        "What does address translation do, and what does a second core break?",
+        "ch06-bare-paging",
+        owes="One mapping installed by hand and an address that means something else afterwards; "
+        "and a counter two harts disagree about.",
+    ),
+    Chapter(
+        7,
+        "a_system_call_of_your_own",
+        "A System Call of Your Own",
+        PART_BARE,
+        "bare",
+        "What has to exist before `ecall` is a system call rather than a trap?",
+        "ch07-bare-syscall",
+        owes="A call number, arguments and a return value crossing the boundary, and the count of "
+        "registers this handler has to save once the caller is a stranger.",
+    ),
+    Chapter(
+        8,
+        "fork_built_rather_than_read",
+        "fork, Built Rather Than Read",
+        PART_BARE,
+        "bare",
+        "What is the least a machine needs before two programs can run on it?",
+        "ch08-bare-fork",
+        owes="Two address spaces from one, a return value that differs between them, and the "
+        "count of pages copied — beside what xv6 copies for the same call.",
+    ),
+    Chapter(
+        9,
+        "what_a_computer_does_with_a_program",
+        "What a Computer Does With a Program",
+        PART_MACHINE,
+        "both",
+        "What actually happens between a source file and a result, and which of it costs anything?",
+        "ch09-whole-stack",
+        reads_disassembly="riscv",
+        owes="Object and section sizes at each toolchain stage (`xv6`), and instruction counts for "
+        "the same program under `perf stat` (`host`).",
+    ),
+    Chapter(
+        10,
+        "representing_information",
+        "Representing Information",
+        PART_MACHINE,
+        "xv6",
+        "What is a number to this machine, and when does that answer bite?",
+        "ch10-bits",
+        reads_disassembly="riscv",
+        owes="Type sizes, alignments and struct layouts, and what signed overflow and shifts "
+        "actually compile to.",
+    ),
+    Chapter(
+        11,
         "machine_level_code_on_riscv",
         "Machine-Level Code on RISC-V",
-        PART_I,
+        PART_MACHINE,
         "xv6",
         "What did the compiler actually emit, and how do I read it?",
-        "ch04-asm",
+        "ch11-asm",
         reads_disassembly="riscv",
         owes="Instruction mix and frame sizes for a set of small functions at `-O0` and `-O2`. "
         "Static facts about emitted code, never timings.",
     ),
     Chapter(
-        5,
+        12,
         "linking_and_loading",
         "Linking and Loading",
-        PART_I,
+        PART_MACHINE,
         "xv6",
         "How does a file on disk become an address space?",
-        "ch05-elf",
+        "ch12-elf",
         owes="Section and segment tables for xv6's own binaries, and what `exec` maps where.",
     ),
     Chapter(
-        6,
+        13,
         "traps_and_system_calls",
         "Traps and System Calls",
-        PART_II,
+        PART_OS,
         "xv6",
         "What does the hardware do when a program asks the kernel for something?",
-        "ch06-traps",
+        "ch13-traps",
         owes="Instructions on the trap path, counted by instrumentation rather than timed, and the "
         "register and CSR state saved and restored.",
     ),
     Chapter(
-        7,
+        14,
         "virtual_memory",
         "Virtual Memory",
-        PART_II,
+        PART_OS,
         "xv6",
         "What is an address, and who decides what it means?",
-        "ch07-vm",
+        "ch14-vm",
         owes="The page-table shape of a running process: levels, entries, and physical pages "
         "consumed per mapping.",
     ),
     Chapter(
-        8,
+        15,
         "page_faults_as_a_feature",
         "Page Faults as a Feature",
-        PART_II,
+        PART_OS,
         "xv6",
         "What can a kernel do with a fault it expected?",
-        "ch08-faults",
+        "ch15-faults",
         owes="Fault counts and pages allocated for one workload, with each feature and without it.",
     ),
     Chapter(
-        9,
+        16,
         "interrupts_and_drivers",
         "Interrupts and Drivers",
-        PART_II,
+        PART_OS,
         "xv6",
         "How does a device get the CPU's attention, and what does the CPU do about it?",
-        "ch09-devices",
+        "ch16-devices",
         owes="Interrupt counts by source over a defined workload, and buffer occupancy under load.",
     ),
     Chapter(
-        10,
+        17,
         "locks_and_memory_ordering",
         "Locks and Memory Ordering",
-        PART_II,
+        PART_OS,
         "xv6",
         "What breaks when two harts touch the same memory, and what is the minimum fix?",
-        "ch10-locks",
-        owes="Acquisitions and contentions per lock, and the interleavings that break an unlocked "
-        "counter — deterministic under QEMU, which is the one thing emulation makes easier.",
+        "ch17-locks",
+        owes="What a lock is made of, in instructions: the atomic that excludes, the fence that "
+        "orders, and what turning interrupts off costs beside them.",
     ),
     Chapter(
-        11,
+        18,
         "scheduling_and_context_switches",
         "Scheduling and Context Switches",
-        PART_II,
+        PART_OS,
         "xv6",
         "What exactly is saved, and what does it mean to say a thread 'runs'?",
-        "ch11-sched",
+        "ch18-sched",
         owes="Context switches per workload, bytes saved per switch, and the exact register set.",
     ),
     Chapter(
-        12,
+        19,
         "the_file_system",
         "The File System",
-        PART_II,
+        PART_OS,
         "xv6",
         "What has to be true on the disk for a crash mid-write to be survivable?",
-        "ch12-fs",
+        "ch19-fs",
         owes="Block reads and writes for a traced operation, and the amplification between a "
         "one-byte write and the disk traffic it causes.",
     ),
     Chapter(
-        13,
+        20,
         "the_same_program_on_both_targets",
         "The Same Program on Both Targets",
-        PART_II,
+        PART_OS,
         "both",
         "What does watching a program in a debugger fail to tell me about what it costs?",
-        "ch13-bridge",
-        answers=("ch04", "ch06", "ch07"),
+        "ch20-bridge",
+        answers=("ch11", "ch13", "ch14"),
         owes="The same structural facts from both targets, and the first side-by-side timing: the "
         "board's, against QEMU's meaningless equivalent, shown deliberately.",
     ),
     Chapter(
-        14,
+        21,
         "measuring",
         "Measuring",
-        PART_III,
+        PART_COST,
         "host",
         "How do I get a number I would defend, and how would I know it was wrong?",
-        "ch14-measuring",
+        "ch21-measuring",
         owes="Clock resolution and read cost; one fixed workload's distribution over many "
         "repetitions; the same benchmark made to give three answers by changing what should "
         "not matter.",
     ),
     Chapter(
-        15,
+        22,
         "the_memory_hierarchy",
         "The Memory Hierarchy",
-        PART_III,
+        PART_COST,
         "host",
         "Where is the data, and what does each extra step out cost?",
-        "ch15-memory",
-        answers=("ch02", "ch07"),
+        "ch22-memory",
+        answers=("ch10", "ch14"),
         assumes="a particular cache hierarchy — the levels, sizes, line size and TLB reach "
         "are this core's. The method transfers to any machine; the numbers do not, and "
         "measuring your own is the exercise.",
@@ -262,28 +345,28 @@ CHAPTERS: tuple[Chapter, ...] = (
         "against the vendor's figures; TLB reach.",
     ),
     Chapter(
-        16,
+        23,
         "optimising_code",
         "Optimising Code",
-        PART_III,
+        PART_COST,
         "host",
         "What will the compiler do for me, and what will it never do?",
-        "ch16-optimising",
-        answers=("ch04",),
+        "ch23-optimising",
+        answers=("ch11",),
         reads_disassembly="aarch64",
         owes="Each transformation at `-O0`, `-O2` and `-O3` with the disassembly that explains it, "
         "including one where the optimisation does nothing because the compiler had already "
         "done it.",
     ),
     Chapter(
-        17,
+        24,
         "the_cpu",
         "The CPU",
-        PART_III,
+        PART_COST,
         "host",
         "What is this core doing between fetching an instruction and finishing it?",
-        "ch17-cpu",
-        answers=("ch04",),
+        "ch24-cpu",
+        answers=("ch11",),
         reads_disassembly="aarch64",
         assumes="a specific microarchitecture. The reference is an out-of-order, 4-wide "
         "Cortex-A76; core width, branch predictor and PMU event names all differ elsewhere, "
@@ -292,14 +375,14 @@ CHAPTERS: tuple[Chapter, ...] = (
         "length; the cost of a mispredict, derived and stated as derived.",
     ),
     Chapter(
-        18,
+        25,
         "memory_ordering_on_real_hardware",
         "Memory Ordering on Real Hardware",
-        PART_III,
+        PART_COST,
         "host",
         "What do four cores cost each other, and what does a fence actually buy?",
-        "ch18-concurrency",
-        answers=("ch10",),
+        "ch25-concurrency",
+        answers=("ch17",),
         assumes="four cores, and this interconnect's coherence behaviour. A different core "
         "count moves the scaling curve without changing the mechanism; two cores make the "
         "chapter thin.",
@@ -307,43 +390,43 @@ CHAPTERS: tuple[Chapter, ...] = (
         "cost; scaling from one core to four.",
     ),
     Chapter(
-        19,
+        26,
         "the_os_layers_cost",
         "The OS Layer's Cost on Real Hardware",
-        PART_III,
+        PART_COST,
         "host",
         "What does Linux charge for the services xv6 showed me?",
-        "ch19-os-cost",
-        answers=("ch06", "ch08", "ch11"),
+        "ch26-os-cost",
+        answers=("ch13", "ch15", "ch18"),
         owes="The cost of a system call, a fault and a switch, each beside the cheapest available "
         "baseline; a minor fault against a major one; `vDSO` against a real trap.",
     ),
     Chapter(
-        20,
+        27,
         "whole_machine_profiling",
         "Whole-Machine Profiling",
-        PART_III,
+        PART_COST,
         "host",
         "How do I find the bottleneck in something I did not write?",
-        "ch20-profiling",
+        "ch27-profiling",
         assumes="that perf can sample. ARM PMUs support counter-overflow interrupts as "
         "standard, so this works on the reference machine — but most affordable RISC-V cores "
-        "do not, and a reader following Part III on one will find this the chapter they "
+        "do not, and a reader following Part V on one will find this the chapter they "
         "cannot run.",
         owes="Profiles of the supplied program before and after, and a sampling artefact shown "
         "deliberately.",
     ),
     Chapter(
-        21,
+        28,
         "vectors",
         "Vectors",
-        PART_III,
+        PART_COST,
         "host",
         "What does vectorising actually buy, and when will the compiler do it for me?",
-        "ch21-vectors",
+        "ch28-vectors",
         reads_disassembly="aarch64",
         assumes="a vector unit — NEON on the reference core. This chapter became measurable "
-        "when Part III moved to AArch64; on a RISC-V board without RVV 1.0 it reverts to "
+        "when Part V moved to AArch64; on a RISC-V board without RVV 1.0 it reverts to "
         "reasoning about code the compiler emits but the hardware cannot run.",
         owes="Speedup per loop with and without vectorisation, the emitted code that explains "
         "each, and one loop the compiler refuses — measured against the arithmetic bound, not "
@@ -415,7 +498,7 @@ APPENDICES: tuple[Appendix, ...] = (
         "xv6_file_map",
         "An xv6 File Map",
         holds="What lives in which file of the kernel, and which chapter reads it. The companion "
-        "to Part II, and the page to keep open while reading [ch06](#ch06) onwards.",
+        "to Part IV, and the page to keep open while reading [ch13](#ch13) onwards.",
         source="The submodule at its pinned commit, so the map describes the tree a reader "
         "actually has rather than a version of xv6 from a paper.",
     ),
@@ -432,14 +515,31 @@ APPENDICES: tuple[Appendix, ...] = (
         "aarch64_for_riscv_readers",
         "AArch64 for RISC-V Readers",
         holds="Registers and calling convention, the load/store and branch forms, atomics and "
-        "fences — each beside its RISC-V equivalent from Part I.",
-        source="A translation, not a reference. Written for someone who has read [ch04](#ch04) "
-        "and is about to read [ch16](#ch16), and organised as *you know this already, here it "
-        "is again*. It takes its shape from ch16, so it is drafted after it.",
+        "fences — each beside its RISC-V equivalent from Part III.",
+        source="A translation, not a reference. Written for someone who has read [ch11](#ch11) "
+        "and is about to read [ch23](#ch23), and organised as *you know this already, here it "
+        "is again*. It takes its shape from ch23, so it is drafted after it.",
+    ),
+    Appendix(
+        "G",
+        "reading_xv6",
+        "Reading xv6 Alongside This Book",
+        holds="Which of this book's chapters covers the ground of which part of the xv6 "
+        "commentary, and one system call traced through every layer it touches.",
+        source="The submodule at its pinned commit, read rather than recalled, so the trace "
+        "describes the code the reader has checked out. The commentary is named as a companion "
+        "and is never a source.",
     ),
 )
 
-PARTS: tuple[str, ...] = (PART_I, PART_II, PART_III)
+PARTS: tuple[str, ...] = (
+    PART_START,
+    PART_C,
+    PART_BARE,
+    PART_MACHINE,
+    PART_OS,
+    PART_COST,
+)
 
 
 def reading_disassembly(instruction_set: str) -> tuple[str, ...]:

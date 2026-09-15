@@ -46,8 +46,8 @@ from bench.stamp import (
 #: symbols in the order a chapter meets them).
 #:
 #: One result per file per architecture rather than one big result, because the fingerprint is
-#: taken over the sources a result names — so editing ch02's example would otherwise invalidate
-#: ch01's listings and send an author to the wrong chapter looking for what changed.
+#: taken over the sources a result names — so editing ch10's example would otherwise invalidate
+#: ch09's listings and send an author to the wrong chapter looking for what changed.
 SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
     "shapes": (
         "sysfs/lib/shapes.c",
@@ -66,6 +66,39 @@ SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
             "sysfs_call_through",
         ),
     ),
+    "profiling": (
+        "sysfs/lib/profiling.c",
+        "sysfs/include/sysfs/profiling.h",
+        ("sysfs_tally_decode", "sysfs_tally_scatter"),
+    ),
+    "pipeline": (
+        "sysfs/lib/pipeline.c",
+        "sysfs/include/sysfs/pipeline.h",
+        (
+            "sysfs_sum_chain1",
+            "sysfs_sum_chain2",
+            "sysfs_sum_chain4",
+            "sysfs_sum_chain8",
+            "sysfs_count_over",
+            "sysfs_count_over_calling",
+        ),
+    ),
+    "bridge": (
+        "sysfs/lib/bridge.c",
+        "sysfs/include/sysfs/bridge.h",
+        ("sysfs_bridge_sequential", "sysfs_bridge_chased"),
+    ),
+    "ordering": (
+        "sysfs/lib/ordering.c",
+        "sysfs/include/sysfs/ordering.h",
+        (
+            "sysfs_bump_plain",
+            "sysfs_bump_relaxed",
+            "sysfs_bump_ordered",
+            "sysfs_publish",
+            "sysfs_publish_unordered",
+        ),
+    ),
     "frames": (
         "sysfs/lib/frames.c",
         "sysfs/include/sysfs/frames.h",
@@ -80,6 +113,16 @@ SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
             "sysfs_signed_quarter",
             "sysfs_unsigned_quarter",
         ),
+    ),
+    "declarations": (
+        "sysfs/lib/declarations.c",
+        "sysfs/include/sysfs/declarations.h",
+        ("sysfs_step_narrow", "sysfs_step_wide", "sysfs_reach_through"),
+    ),
+    "oscalls": (
+        "sysfs/lib/oscalls.c",
+        "sysfs/include/sysfs/oscalls.h",
+        ("sysfs_raw_getpid", "sysfs_libc_getpid"),
     ),
     "stages": (
         "sysfs/lib/stages.c",

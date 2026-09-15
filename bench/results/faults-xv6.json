@@ -1,0 +1,62 @@
+{
+  "code_fingerprint": "8f7779b7d7411af5",
+  "code_sources": [
+    "bench/run_faults.py",
+    "bench/xv6.py",
+    "xv6/apps/faultload.c",
+    "xv6/patches/15-fault-census.patch"
+  ],
+  "conditions": {
+    "attribution": "per process, and only the workload's row is recorded; the shell allocates too",
+    "cpus": 3,
+    "note": "counts only: pages allocated and faults taken; nothing here was timed",
+    "policies": "both are this kernel's own \u2014 sbrk allocates on request, sbrklazy on touch"
+  },
+  "generated_at": "2026-09-15T15:10:00+00:00",
+  "kind": "measurement",
+  "machine": {
+    "arch": "riscv64",
+    "emulator": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "kernel": "xv6-riscv @ 9e3161a",
+    "kind": "qemu",
+    "measured_under": "emulation",
+    "model": "qemu virt (-machine virt -bios none)"
+  },
+  "name": "faults-xv6",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "faultload": {
+      "asked_eager": 64,
+      "asked_lazy": 80,
+      "eager_pages": 84,
+      "eager_pages_before_main": 20,
+      "lazy_pages": 17,
+      "load_faults": 0,
+      "name": "faultload",
+      "pages_never_allocated": 63,
+      "refused": 0,
+      "store_faults": 17,
+      "touched_lazy": 17
+    },
+    "workload": [
+      "faultload"
+    ]
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "qemu-system-riscv64 -machine virt",
+    "flags": "xv6's own CFLAGS"
+  }
+}

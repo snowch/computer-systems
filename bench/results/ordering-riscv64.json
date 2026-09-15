@@ -1,0 +1,71 @@
+{
+  "code_fingerprint": "ca4a581d71356e7a",
+  "code_sources": [
+    "bench/run_disasm.py",
+    "bench/disasm.py",
+    "sysfs/lib/ordering.c",
+    "sysfs/include/sysfs/ordering.h"
+  ],
+  "conditions": {
+    "compiler": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "note": "no timing: this records what the compiler chose, not what it cost"
+  },
+  "generated_at": "2026-09-15T15:09:40+00:00",
+  "kind": "listing",
+  "machine": {
+    "arch": "riscv64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "riscv64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "ordering-riscv64",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "listings": {
+      "sysfs_bump_ordered": {
+        "instructions": 3,
+        "symbol": "sysfs_bump_ordered",
+        "text": "0000000000000010 <sysfs_bump_ordered>:\n  10:\tli\ta5,1\n  12:\tamoadd.d.aqrl\tzero,a5,(a0)\n  16:\tret"
+      },
+      "sysfs_bump_plain": {
+        "instructions": 4,
+        "symbol": "sysfs_bump_plain",
+        "text": "0000000000000000 <sysfs_bump_plain>:\n   0:\tld\ta5,0(a0)\n   2:\taddi\ta5,a5,1\n   4:\tsd\ta5,0(a0)\n   6:\tret"
+      },
+      "sysfs_bump_relaxed": {
+        "instructions": 3,
+        "symbol": "sysfs_bump_relaxed",
+        "text": "0000000000000008 <sysfs_bump_relaxed>:\n   8:\tli\ta5,1\n   a:\tamoadd.d\tzero,a5,(a0)\n   e:\tret"
+      },
+      "sysfs_publish": {
+        "instructions": 5,
+        "symbol": "sysfs_publish",
+        "text": "0000000000000018 <sysfs_publish>:\n  18:\tsd\ta2,0(a0)\n  1a:\tli\ta5,1\n  1c:\tfence\trw,w\n  20:\tsw\ta5,0(a1)\n  22:\tret"
+      },
+      "sysfs_publish_unordered": {
+        "instructions": 4,
+        "symbol": "sysfs_publish_unordered",
+        "text": "0000000000000024 <sysfs_publish_unordered>:\n  24:\tsd\ta2,0(a0)\n  26:\tli\ta5,1\n  28:\tsw\ta5,0(a1)\n  2a:\tret"
+      }
+    },
+    "source": "sysfs/lib/ordering.c"
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 compiled to an object file and disassembled",
+    "flags": "-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c",
+    "objdump": "riscv64-linux-gnu-objdump -d --no-show-raw-insn --disassemble=<fn>"
+  }
+}

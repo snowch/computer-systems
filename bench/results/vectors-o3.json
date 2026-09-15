@@ -1,0 +1,71 @@
+{
+  "code_fingerprint": "407db2eb4c8ffb60",
+  "code_sources": [
+    "bench/run_vectors.py",
+    "bench/disasm.py",
+    "sysfs/lib/vectors.c",
+    "sysfs/include/sysfs/vectors.h"
+  ],
+  "conditions": {
+    "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "note": "what the compiler chose at this level, not what the choice cost"
+  },
+  "generated_at": "2026-09-15T15:09:42+00:00",
+  "kind": "listing",
+  "machine": {
+    "arch": "aarch64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "aarch64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "vectors-o3",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "listings": {
+      "sysfs_vec_gather": {
+        "instructions": 10,
+        "symbol": "sysfs_vec_gather",
+        "text": "00000000000001a4 <sysfs_vec_gather>:\n 1a4:\tcbz\tx3, 1c8 <sysfs_vec_gather+0x24>\n 1a8:\tmov\tx4, #0x0                   \t// #0\n 1ac:\tnop\n 1b0:\tldrsw\tx5, [x2, x4, lsl #2]\n 1b4:\tldr\ts0, [x1, x5, lsl #2]\n 1b8:\tstr\ts0, [x0, x4, lsl #2]\n 1bc:\tadd\tx4, x4, #0x1\n 1c0:\tcmp\tx3, x4\n 1c4:\tb.ne\t1b0 <sysfs_vec_gather+0xc>  // b.any\n 1c8:\tret"
+      },
+      "sysfs_vec_running": {
+        "instructions": 11,
+        "symbol": "sysfs_vec_running",
+        "text": "00000000000001d0 <sysfs_vec_running>:\n 1d0:\tcbz\tx2, 1f8 <sysfs_vec_running+0x28>\n 1d4:\tmovi\tv0.2s, #0x0\n 1d8:\tmov\tx3, #0x0                   \t// #0\n 1dc:\tfmov\ts2, #5.000000000000000000e-01\n 1e0:\tldr\ts1, [x1, x3, lsl #2]\n 1e4:\tfmadd\ts0, s0, s2, s1\n 1e8:\tstr\ts0, [x0, x3, lsl #2]\n 1ec:\tadd\tx3, x3, #0x1\n 1f0:\tcmp\tx2, x3\n 1f4:\tb.ne\t1e0 <sysfs_vec_running+0x10>  // b.any\n 1f8:\tret"
+      },
+      "sysfs_vec_scale": {
+        "instructions": 56,
+        "symbol": "sysfs_vec_scale",
+        "text": "0000000000000000 <sysfs_vec_scale>:\n   0:\tcbz\tx2, 40 <sysfs_vec_scale+0x40>\n   4:\tsub\tx3, x2, #0x1\n   8:\tcmp\tx3, #0x4\n   c:\tb.ls\tc0 <sysfs_vec_scale+0xc0>  // b.plast\n  10:\tadd\tx4, x1, #0x4\n  14:\tmov\tx3, #0x0                   \t// #0\n  18:\tsub\tx4, x0, x4\n  1c:\tcmp\tx4, #0x8\n  20:\tb.hi\t44 <sysfs_vec_scale+0x44>  // b.pmore\n  24:\tnop\n  28:\tldr\ts1, [x1, x3, lsl #2]\n  2c:\tfmul\ts1, s1, s0\n  30:\tstr\ts1, [x0, x3, lsl #2]\n  34:\tadd\tx3, x3, #0x1\n  38:\tcmp\tx2, x3\n  3c:\tb.ne\t28 <sysfs_vec_scale+0x28>  // b.any\n  40:\tret\n  44:\tdup\tv2.4s, v0.s[0]\n  48:\tlsr\tx4, x2, #2\n  4c:\tlsl\tx4, x4, #4\n  50:\tldr\tq1, [x1, x3]\n  54:\tfmul\tv1.4s, v1.4s, v2.4s\n  58:\tstr\tq1, [x0, x3]\n  5c:\tadd\tx3, x3, #0x10\n  60:\tcmp\tx3, x4\n  64:\tb.ne\t50 <sysfs_vec_scale+0x50>  // b.any\n  68:\tand\tx3, x2, #0xfffffffffffffffc\n  6c:\ttst\tx2, #0x3\n  70:\tb.eq\t40 <sysfs_vec_scale+0x40>  // b.none\n  74:\tldr\ts1, [x1, x3, lsl #2]\n  78:\tadd\tx5, x3, #0x1\n  7c:\tlsl\tx4, x3, #2\n  80:\tfmul\ts1, s1, s0\n  84:\tstr\ts1, [x0, x3, lsl #2]\n  88:\tcmp\tx2, x5\n  8c:\tb.ls\t40 <sysfs_vec_scale+0x40>  // b.plast\n  90:\tadd\tx5, x4, #0x4\n  94:\tadd\tx3, x3, #0x2\n  98:\tldr\ts1, [x1, x5]\n  9c:\tfmul\ts1, s1, s0\n  a0:\tstr\ts1, [x0, x5]\n  a4:\tcmp\tx2, x3\n  a8:\tb.ls\t40 <sysfs_vec_scale+0x40>  // b.plast\n  ac:\tadd\tx4, x4, #0x8\n  b0:\tldr\ts1, [x1, x4]\n  b4:\tfmul\ts0, s1, s0\n  b8:\tstr\ts0, [x0, x4]\n  bc:\tret\n  c0:\tmov\tx3, #0x0                   \t// #0\n  c4:\tldr\ts1, [x1, x3, lsl #2]\n  c8:\tfmul\ts1, s1, s0\n  cc:\tstr\ts1, [x0, x3, lsl #2]\n  d0:\tadd\tx3, x3, #0x1\n  d4:\tcmp\tx2, x3\n  d8:\tb.ne\t28 <sysfs_vec_scale+0x28>  // b.any\n  dc:\tb\t40 <sysfs_vec_scale+0x40>"
+      },
+      "sysfs_vec_sum_f32": {
+        "instructions": 9,
+        "symbol": "sysfs_vec_sum_f32",
+        "text": "0000000000000180 <sysfs_vec_sum_f32>:\n 180:\tmovi\tv0.2s, #0x0\n 184:\tcbz\tx1, 1a0 <sysfs_vec_sum_f32+0x20>\n 188:\tadd\tx1, x0, x1, lsl #2\n 18c:\tnop\n 190:\tldr\ts1, [x0], #4\n 194:\tfadd\ts0, s0, s1\n 198:\tcmp\tx1, x0\n 19c:\tb.ne\t190 <sysfs_vec_sum_f32+0x10>  // b.any\n 1a0:\tret"
+      },
+      "sysfs_vec_sum_i32": {
+        "instructions": 40,
+        "symbol": "sysfs_vec_sum_i32",
+        "text": "00000000000000e0 <sysfs_vec_sum_i32>:\n  e0:\tmov\tx4, x0\n  e4:\tcbz\tx1, 16c <sysfs_vec_sum_i32+0x8c>\n  e8:\tsub\tx0, x1, #0x1\n  ec:\tcmp\tx0, #0x2\n  f0:\tb.ls\t174 <sysfs_vec_sum_i32+0x94>  // b.plast\n  f4:\tlsr\tx3, x1, #2\n  f8:\tmov\tx2, x4\n  fc:\tmovi\tv0.4s, #0x0\n 100:\tadd\tx3, x4, x3, lsl #4\n 104:\tnop\n 108:\tldr\tq1, [x2], #16\n 10c:\tsaddw\tv0.2d, v0.2d, v1.2s\n 110:\tsaddw2\tv0.2d, v0.2d, v1.4s\n 114:\tcmp\tx2, x3\n 118:\tb.ne\t108 <sysfs_vec_sum_i32+0x28>  // b.any\n 11c:\taddp\td0, v0.2d\n 120:\tand\tx2, x1, #0xfffffffffffffffc\n 124:\tfmov\tx0, d0\n 128:\ttst\tx1, #0x3\n 12c:\tb.eq\t168 <sysfs_vec_sum_i32+0x88>  // b.none\n 130:\tldrsw\tx5, [x4, x2, lsl #2]\n 134:\tadd\tx3, x2, #0x1\n 138:\tlsl\tx6, x2, #2\n 13c:\tadd\tx0, x0, x5\n 140:\tcmp\tx1, x3\n 144:\tb.ls\t168 <sysfs_vec_sum_i32+0x88>  // b.plast\n 148:\tadd\tx4, x4, x6\n 14c:\tadd\tx2, x2, #0x2\n 150:\tldrsw\tx3, [x4, #4]\n 154:\tadd\tx0, x0, x3\n 158:\tcmp\tx1, x2\n 15c:\tb.ls\t168 <sysfs_vec_sum_i32+0x88>  // b.plast\n 160:\tldrsw\tx1, [x4, #8]\n 164:\tadd\tx0, x0, x1\n 168:\tret\n 16c:\tmov\tx0, #0x0                   \t// #0\n 170:\tret\n 174:\tmov\tx2, #0x0                   \t// #0\n 178:\tmov\tx0, #0x0                   \t// #0\n 17c:\tb\t130 <sysfs_vec_sum_i32+0x50>"
+      }
+    },
+    "source": "sysfs/lib/vectors.c"
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 compiled to an object file and disassembled",
+    "flags": "-O2 -Wall -Wextra -O3 -c",
+    "objdump": "aarch64-linux-gnu-objdump -d --no-show-raw-insn --disassemble=<fn>"
+  }
+}

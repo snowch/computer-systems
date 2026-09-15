@@ -1,0 +1,330 @@
+{
+  "code_fingerprint": "589ced30ac3ab4b4",
+  "code_sources": [
+    "bench/run_filemap.py"
+  ],
+  "conditions": {
+    "note": "line counts of the submodule at its pinned commit; nothing was compiled",
+    "why": "a hand-written file map describes whichever xv6 its author was reading"
+  },
+  "generated_at": "2026-09-15T15:09:43+00:00",
+  "kind": "artefact",
+  "machine": {
+    "arch": "riscv64",
+    "kernel": "xv6-riscv @ 9e3161a",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "the xv6 submodule's source, read rather than built"
+  },
+  "name": "filemap-xv6",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "files": {
+      "bio.c": {
+        "bytes": 3366,
+        "lines": 153
+      },
+      "buf.h": {
+        "bytes": 246,
+        "lines": 11
+      },
+      "console.c": {
+        "bytes": 4187,
+        "lines": 203
+      },
+      "defs.h": {
+        "bytes": 6144,
+        "lines": 186
+      },
+      "elf.h": {
+        "bytes": 753,
+        "lines": 42
+      },
+      "entry.S": {
+        "bytes": 609,
+        "lines": 21
+      },
+      "exec.c": {
+        "bytes": 4271,
+        "lines": 176
+      },
+      "fcntl.h": {
+        "bytes": 115,
+        "lines": 5
+      },
+      "file.c": {
+        "bytes": 3571,
+        "lines": 179
+      },
+      "file.h": {
+        "bytes": 1008,
+        "lines": 40
+      },
+      "fs.c": {
+        "bytes": 17585,
+        "lines": 741
+      },
+      "fs.h": {
+        "bytes": 1976,
+        "lines": 61
+      },
+      "kalloc.c": {
+        "bytes": 1666,
+        "lines": 82
+      },
+      "kernelvec.S": {
+        "bytes": 1515,
+        "lines": 64
+      },
+      "log.c": {
+        "bytes": 6262,
+        "lines": 261
+      },
+      "main.c": {
+        "bytes": 1279,
+        "lines": 45
+      },
+      "memlayout.h": {
+        "bytes": 1975,
+        "lines": 63
+      },
+      "param.h": {
+        "bytes": 948,
+        "lines": 14
+      },
+      "pipe.c": {
+        "bytes": 2857,
+        "lines": 143
+      },
+      "plic.c": {
+        "bytes": 916,
+        "lines": 47
+      },
+      "printk.c": {
+        "bytes": 3053,
+        "lines": 152
+      },
+      "proc.c": {
+        "bytes": 15098,
+        "lines": 701
+      },
+      "proc.h": {
+        "bytes": 3251,
+        "lines": 104
+      },
+      "riscv.h": {
+        "bytes": 7757,
+        "lines": 417
+      },
+      "sleeplock.c": {
+        "bytes": 848,
+        "lines": 55
+      },
+      "sleeplock.h": {
+        "bytes": 249,
+        "lines": 9
+      },
+      "spinlock.c": {
+        "bytes": 2895,
+        "lines": 116
+      },
+      "spinlock.h": {
+        "bytes": 188,
+        "lines": 8
+      },
+      "start.c": {
+        "bytes": 1552,
+        "lines": 66
+      },
+      "stat.h": {
+        "bytes": 294,
+        "lines": 11
+      },
+      "string.c": {
+        "bytes": 1430,
+        "lines": 106
+      },
+      "swtch.S": {
+        "bytes": 794,
+        "lines": 42
+      },
+      "syscall.c": {
+        "bytes": 3672,
+        "lines": 151
+      },
+      "syscall.h": {
+        "bytes": 498,
+        "lines": 23
+      },
+      "sysfile.c": {
+        "bytes": 9186,
+        "lines": 530
+      },
+      "sysproc.c": {
+        "bytes": 1590,
+        "lines": 112
+      },
+      "trampoline.S": {
+        "bytes": 3894,
+        "lines": 153
+      },
+      "trap.c": {
+        "bytes": 5452,
+        "lines": 220
+      },
+      "types.h": {
+        "bytes": 230,
+        "lines": 10
+      },
+      "uart.c": {
+        "bytes": 3897,
+        "lines": 155
+      },
+      "virtio.h": {
+        "bytes": 3612,
+        "lines": 99
+      },
+      "virtio_disk.c": {
+        "bytes": 8813,
+        "lines": 333
+      },
+      "vm.c": {
+        "bytes": 11451,
+        "lines": 491
+      },
+      "vm.h": {
+        "bytes": 42,
+        "lines": 2
+      }
+    },
+    "mapped_lines": 5137,
+    "reads": {
+      "bio.c": {
+        "chapter": "ch19",
+        "for": "the buffer cache, and why a read can cost nothing"
+      },
+      "console.c": {
+        "chapter": "ch16",
+        "for": "a device driver small enough to read in full"
+      },
+      "entry.S": {
+        "chapter": "ch13",
+        "for": "the first instructions the kernel runs, before there is a stack"
+      },
+      "exec.c": {
+        "chapter": "ch15",
+        "for": "what a fresh address space is built out of"
+      },
+      "file.c": {
+        "chapter": "ch19",
+        "for": "what a file descriptor actually is"
+      },
+      "fs.c": {
+        "chapter": "ch19",
+        "for": "inodes, blocks, and the path from a name to a byte"
+      },
+      "kalloc.c": {
+        "chapter": "ch15",
+        "for": "the physical page allocator a fault ends up calling"
+      },
+      "kernelvec.S": {
+        "chapter": "ch16",
+        "for": "the trap path taken when the kernel itself is interrupted"
+      },
+      "log.c": {
+        "chapter": "ch19",
+        "for": "the write-ahead log ch19 counts the amplification of"
+      },
+      "memlayout.h": {
+        "chapter": "ch14",
+        "for": "what is mapped where, and why the trampoline is at the top"
+      },
+      "plic.c": {
+        "chapter": "ch16",
+        "for": "which device is allowed to interrupt which hart"
+      },
+      "proc.c": {
+        "chapter": "ch18",
+        "for": "the scheduler, and both halves of a context switch"
+      },
+      "proc.h": {
+        "chapter": "ch18",
+        "for": "the context ch18 counts the registers of"
+      },
+      "riscv.h": {
+        "chapter": "ch14",
+        "for": "the Sv39 field definitions, as macros over a 64-bit word"
+      },
+      "sleeplock.c": {
+        "chapter": "ch17",
+        "for": "the other kind, and when each is correct"
+      },
+      "spinlock.c": {
+        "chapter": "ch17",
+        "for": "the lock, and the memory barriers around it"
+      },
+      "spinlock.h": {
+        "chapter": "ch17",
+        "for": "what a lock is made of"
+      },
+      "start.c": {
+        "chapter": "ch13",
+        "for": "the machine-mode setup that hands over to supervisor mode"
+      },
+      "swtch.S": {
+        "chapter": "ch18",
+        "for": "the switch itself \u2014 fourteen registers and nothing else"
+      },
+      "syscall.c": {
+        "chapter": "ch13",
+        "for": "the dispatch table, and how arguments cross the boundary"
+      },
+      "syscall.h": {
+        "chapter": "ch13",
+        "for": "the call numbers"
+      },
+      "sysproc.c": {
+        "chapter": "ch13",
+        "for": "the process calls, including the one ch13's workload uses"
+      },
+      "trampoline.S": {
+        "chapter": "ch13",
+        "for": "uservec and userret \u2014 the register moves ch13 counts"
+      },
+      "trap.c": {
+        "chapter": "ch13",
+        "for": "where a trap is decided, and where a page fault would be handled"
+      },
+      "uart.c": {
+        "chapter": "ch16",
+        "for": "the registers underneath it"
+      },
+      "virtio_disk.c": {
+        "chapter": "ch19",
+        "for": "the only device in the system that makes you wait"
+      },
+      "vm.c": {
+        "chapter": "ch14",
+        "for": "the page-table walk, mapping, and the kernel's own address space"
+      }
+    },
+    "total_lines": 6603
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "none",
+    "execution": "none \u2014 the tree is read, not built",
+    "flags": "none"
+  }
+}

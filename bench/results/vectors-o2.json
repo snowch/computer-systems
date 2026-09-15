@@ -1,0 +1,71 @@
+{
+  "code_fingerprint": "407db2eb4c8ffb60",
+  "code_sources": [
+    "bench/run_vectors.py",
+    "bench/disasm.py",
+    "sysfs/lib/vectors.c",
+    "sysfs/include/sysfs/vectors.h"
+  ],
+  "conditions": {
+    "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "note": "what the compiler chose at this level, not what the choice cost"
+  },
+  "generated_at": "2026-09-15T15:09:42+00:00",
+  "kind": "listing",
+  "machine": {
+    "arch": "aarch64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "aarch64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "vectors-o2",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "listings": {
+      "sysfs_vec_gather": {
+        "instructions": 10,
+        "symbol": "sysfs_vec_gather",
+        "text": "0000000000000074 <sysfs_vec_gather>:\n  74:\tcbz\tx3, 98 <sysfs_vec_gather+0x24>\n  78:\tmov\tx4, #0x0                   \t// #0\n  7c:\tnop\n  80:\tldrsw\tx5, [x2, x4, lsl #2]\n  84:\tldr\ts0, [x1, x5, lsl #2]\n  88:\tstr\ts0, [x0, x4, lsl #2]\n  8c:\tadd\tx4, x4, #0x1\n  90:\tcmp\tx3, x4\n  94:\tb.ne\t80 <sysfs_vec_gather+0xc>  // b.any\n  98:\tret"
+      },
+      "sysfs_vec_running": {
+        "instructions": 11,
+        "symbol": "sysfs_vec_running",
+        "text": "00000000000000a0 <sysfs_vec_running>:\n  a0:\tcbz\tx2, c8 <sysfs_vec_running+0x28>\n  a4:\tmovi\tv0.2s, #0x0\n  a8:\tmov\tx3, #0x0                   \t// #0\n  ac:\tfmov\ts2, #5.000000000000000000e-01\n  b0:\tldr\ts1, [x1, x3, lsl #2]\n  b4:\tfmadd\ts0, s0, s2, s1\n  b8:\tstr\ts0, [x0, x3, lsl #2]\n  bc:\tadd\tx3, x3, #0x1\n  c0:\tcmp\tx2, x3\n  c4:\tb.ne\tb0 <sysfs_vec_running+0x10>  // b.any\n  c8:\tret"
+      },
+      "sysfs_vec_scale": {
+        "instructions": 9,
+        "symbol": "sysfs_vec_scale",
+        "text": "0000000000000000 <sysfs_vec_scale>:\n   0:\tcbz\tx2, 20 <sysfs_vec_scale+0x20>\n   4:\tmov\tx3, #0x0                   \t// #0\n   8:\tldr\ts1, [x1, x3, lsl #2]\n   c:\tfmul\ts1, s1, s0\n  10:\tstr\ts1, [x0, x3, lsl #2]\n  14:\tadd\tx3, x3, #0x1\n  18:\tcmp\tx2, x3\n  1c:\tb.ne\t8 <sysfs_vec_scale+0x8>  // b.any\n  20:\tret"
+      },
+      "sysfs_vec_sum_f32": {
+        "instructions": 8,
+        "symbol": "sysfs_vec_sum_f32",
+        "text": "0000000000000054 <sysfs_vec_sum_f32>:\n  54:\tmovi\tv0.2s, #0x0\n  58:\tcbz\tx1, 70 <sysfs_vec_sum_f32+0x1c>\n  5c:\tadd\tx1, x0, x1, lsl #2\n  60:\tldr\ts1, [x0], #4\n  64:\tfadd\ts0, s0, s1\n  68:\tcmp\tx0, x1\n  6c:\tb.ne\t60 <sysfs_vec_sum_f32+0xc>  // b.any\n  70:\tret"
+      },
+      "sysfs_vec_sum_i32": {
+        "instructions": 12,
+        "symbol": "sysfs_vec_sum_i32",
+        "text": "0000000000000024 <sysfs_vec_sum_i32>:\n  24:\tcbz\tx1, 4c <sysfs_vec_sum_i32+0x28>\n  28:\tmov\tx2, x0\n  2c:\tmov\tx0, #0x0                   \t// #0\n  30:\tadd\tx3, x2, x1, lsl #2\n  34:\tnop\n  38:\tldrsw\tx1, [x2], #4\n  3c:\tadd\tx0, x0, x1\n  40:\tcmp\tx2, x3\n  44:\tb.ne\t38 <sysfs_vec_sum_i32+0x14>  // b.any\n  48:\tret\n  4c:\tmov\tx0, #0x0                   \t// #0\n  50:\tret"
+      }
+    },
+    "source": "sysfs/lib/vectors.c"
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 compiled to an object file and disassembled",
+    "flags": "-O2 -Wall -Wextra -c",
+    "objdump": "aarch64-linux-gnu-objdump -d --no-show-raw-insn --disassemble=<fn>"
+  }
+}

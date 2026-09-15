@@ -1,0 +1,61 @@
+{
+  "code_fingerprint": "9434772f75e9f7a0",
+  "code_sources": [
+    "bench/run_disasm.py",
+    "bench/disasm.py",
+    "sysfs/lib/declarations.c",
+    "sysfs/include/sysfs/declarations.h"
+  ],
+  "conditions": {
+    "compiler": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "note": "no timing: this records what the compiler chose, not what it cost"
+  },
+  "generated_at": "2026-09-15T15:09:39+00:00",
+  "kind": "listing",
+  "machine": {
+    "arch": "riscv64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "riscv64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "declarations-riscv64",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "listings": {
+      "sysfs_reach_through": {
+        "instructions": 4,
+        "symbol": "sysfs_reach_through",
+        "text": "0000000000000008 <sysfs_reach_through>:\n   8:\tlw\ta4,4(a0)\n   a:\tld\ta0,8(a0)\n   c:\tadd\ta0,a0,a4\n   e:\tret"
+      },
+      "sysfs_step_narrow": {
+        "instructions": 2,
+        "symbol": "sysfs_step_narrow",
+        "text": "0000000000000000 <sysfs_step_narrow>:\n   0:\tlw\ta0,4(a0)\n   2:\tret"
+      },
+      "sysfs_step_wide": {
+        "instructions": 2,
+        "symbol": "sysfs_step_wide",
+        "text": "0000000000000004 <sysfs_step_wide>:\n   4:\tld\ta0,8(a0)\n   6:\tret"
+      }
+    },
+    "source": "sysfs/lib/declarations.c"
+  },
+  "target": "xv6",
+  "toolchain": {
+    "cc": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 compiled to an object file and disassembled",
+    "flags": "-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c",
+    "objdump": "riscv64-linux-gnu-objdump -d --no-show-raw-insn --disassemble=<fn>"
+  }
+}

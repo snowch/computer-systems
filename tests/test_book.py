@@ -43,7 +43,12 @@ def test_chapter_declares_the_target_the_plan_gives_it(chapter: Chapter):
     match = re.search(r"\|\s*\*\*Target\*\*\s*\|([^|]+)\|", header)
     assert match, f"{chapter.path} has no Target row in its header block"
     declared = match.group(1)
-    expected = {"xv6": "`xv6`", "host": "`host`", "both": "`xv6` and `host`"}[chapter.target]
+    expected = {
+        "xv6": "`xv6`",
+        "host": "`host`",
+        "bare": "`bare`",
+        "both": "`xv6` and `host`",
+    }[chapter.target]
     assert expected in declared, (
         f"{chapter.path} declares {declared.strip()!r}, but the outline says {chapter.target!r}"
     )
@@ -108,8 +113,12 @@ def test_written_chapters_have_an_originality_entry():
         text = (ROOT / chapter.path).read_text()
         if "[DRAFT]" in text:
             continue
-        assert chapter.label in originality, (
-            f"{chapter.label} has lost its [DRAFT] marker but ORIGINALITY.md does not cover it"
+        # The heading, not the label anywhere in the file. A passing mention in another
+        # chapter's entry — or in a footer saying which chapters are still stubs — used to
+        # satisfy this, which is how ch28 briefly had no entry and a green test.
+        assert f"## {chapter.label} ·" in originality, (
+            f"{chapter.label} has lost its [DRAFT] marker but ORIGINALITY.md has no "
+            f"'## {chapter.label} ·' section for it"
         )
 
 
@@ -139,7 +148,7 @@ def test_the_board_prompt_keeps_its_non_negotiables():
 
     The counter requirement is the one that matters: it is the only one with no workaround, it is
     not printed on the box, and on RISC-V it depends on the firmware rather than the chip. A
-    prompt that dropped it would send someone to buy a board that cannot run Part III.
+    prompt that dropped it would send someone to buy a board that cannot run Part V.
     """
     text = PROMPT.read_text()
     for required in (
@@ -151,7 +160,7 @@ def test_the_board_prompt_keeps_its_non_negotiables():
 
 
 def test_the_board_prompt_keeps_the_riscv_warning():
-    """Hard-won, and the reason Part III is not on RISC-V. It must not be quietly dropped.
+    """Hard-won, and the reason Part V is not on RISC-V. It must not be quietly dropped.
 
     A reader who asks for a RISC-V board should be told which of counting and sampling actually
     works on the core they are considering, because the answer differs per core and no product
@@ -316,35 +325,39 @@ def test_pairing_is_in_the_chapter_header(chapter: Chapter):
 
 
 def test_every_part_three_chapter_either_pairs_or_is_deliberately_standalone():
-    """Part III is Part II re-asked as cost questions, so an unpaired chapter needs a reason.
+    """Part V is Part IV re-asked as cost questions, so an unpaired chapter needs a reason.
 
-    Three have one. ch14 teaches measurement itself and has no earlier counterpart; ch20 is about
-    the whole machine rather than one mechanism; ch21 is about hardware Part II never described.
+    Three have one. ch21 teaches measurement itself and has no earlier counterpart; ch27 is about
+    the whole machine rather than one mechanism; ch28 is about hardware Part IV never described.
     Anything else unpaired is an oversight, not a decision.
+
+    ``PARTS[-1]`` rather than ``PARTS[2]``: the cost part was the third of three until Part I was
+    added in front of it, at which point index 2 quietly became a different part and the test
+    started reporting the toolchain chapters as unpaired. The last part is what this is about.
     """
-    standalone = {"ch14", "ch20", "ch21"}
+    standalone = {"ch21", "ch27", "ch28"}
     unpaired = {
         chapter.label
         for chapter in CHAPTERS
-        if chapter.part == PARTS[2] and not chapter.answers and chapter.label not in standalone
+        if chapter.part == PARTS[-1] and not chapter.answers and chapter.label not in standalone
     }
     assert not unpaired, (
-        f"these Part III chapters neither pair with an earlier chapter nor are listed as "
+        f"these Part V chapters neither pair with an earlier chapter nor are listed as "
         f"deliberately standalone: {sorted(unpaired)}"
     )
 
 
 @pytest.mark.parametrize("chapter", PAIRED, ids=[c.label for c in PAIRED])
 def test_the_preface_shows_the_pairing(chapter: Chapter):
-    """The preface promises the reader that Part III re-asks Part II. The table must stay true.
+    """The preface promises the reader that Part V re-asks Part IV. The table must stay true.
 
     It lives in the preface rather than ch00 because it is an argument about how the book is
     built, which a reader needs before deciding to read it — where ch00 is about getting two
-    machines working. ch13 is exempt: it crosses the seam rather than costing one mechanism, and
+    machines working. ch20 is exempt: it crosses the seam rather than costing one mechanism, and
     the preface discusses it in prose instead.
     """
-    if chapter.label == "ch13":
-        pytest.skip("ch13 is the crossing itself, not a row in the table")
+    if chapter.label == "ch20":
+        pytest.skip("ch20 is the crossing itself, not a row in the table")
     preface = (ROOT / "index.md").read_text()
     section = preface[preface.index("### One argument, not two tutorials") :]
     assert chapter.label in section, (
@@ -380,7 +393,7 @@ def test_pages_agree_on_which_chapters_read_disassembly(page: str):
     Two rules, because the pages are not the same length. Every page must name the complete
     **AArch64** set, since that is the cost being claimed and an understatement of it is the
     failure that matters. No page may name a chapter that does not read disassembly at all.
-    Naming the RISC-V side as well is optional — `hardware/README.md` is about Part III only.
+    Naming the RISC-V side as well is optional — `hardware/README.md` is about Part V only.
 
     ch00 is excluded throughout: it *demonstrates* both rather than requiring either.
     """
@@ -388,7 +401,10 @@ def test_pages_agree_on_which_chapters_read_disassembly(page: str):
         label for label in reading_disassembly(kind) if label != "ch00"
     }
     text = (ROOT / page).read_text()
-    found = _labels_near(text, "disassembly")
+    # ch00 comes off both sides, not just the outline's. It reads disassembly on both
+    # architectures and is excluded from the *cost* being claimed, so a page naming it in this
+    # paragraph — the preface points at it for exactly that reason — is telling the truth.
+    found = _labels_near(text, "disassembly") - {"ch00"}
     assert found, f"{page} no longer says anything about reading disassembly"
 
     missing = without_ch00("aarch64") - found
@@ -400,7 +416,7 @@ def test_pages_agree_on_which_chapters_read_disassembly(page: str):
 
 
 def test_checkpoint_tags_match_the_outline():
-    """CHECKPOINTS.md and the outline had disagreed about ch21 since Part III moved to AArch64.
+    """CHECKPOINTS.md and the outline had disagreed about ch28 since Part V moved to AArch64.
 
     The chapter stopped being unmeasurable and started leaving code behind; PLAN.md was updated
     and the tag table was not. A reader following the tags would have looked for a checkpoint the
@@ -472,6 +488,17 @@ def test_every_appendix_says_what_it_will_hold(appendix: Appendix):
     """
     assert appendix.holds and appendix.source, f"Appendix {appendix.letter} is undescribed"
     text = (ROOT / appendix.path).read_text()
+
+    if "[DRAFT]" not in text:
+        # The promise is discharged once the page exists, exactly as a written chapter's `owes`
+        # row is. What replaces it is the stricter requirement: a page with its marker off must
+        # not still be carrying the scaffolding a stub is made of.
+        leftovers = [marker for marker in ("Not written yet", "[To write") if marker in text]
+        assert not leftovers, (
+            f"Appendix {appendix.letter} has lost its [DRAFT] marker but still contains {leftovers}"
+        )
+        return
+
     assert appendix.holds in text, f"Appendix {appendix.letter} does not say what it will hold"
     assert appendix.source in text, f"Appendix {appendix.letter} does not say where it comes from"
 
@@ -482,6 +509,51 @@ def test_the_appendices_are_not_all_the_same_page():
         (ROOT / appendix.path).read_text().split("# Appendix", 1)[1] for appendix in APPENDICES
     }
     assert len(bodies) == len(APPENDICES), "two appendices are the same page under two titles"
+
+
+def _verify_numbers_module():
+    """Import the script by path. Its name has a hyphen in it, so `import` will not do."""
+    import importlib.util  # noqa: PLC0415
+
+    spec = importlib.util.spec_from_file_location("vn", ROOT / "scripts" / "verify-numbers.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+CAUGHT = [
+    "the median was 120 ns",
+    "it took 1.5 ms",
+    "3.2x faster than before",
+    "a 15% improvement",
+    "83 instructions of trap path",
+    "2,400 cycles",
+]
+
+#: Things that look like a figure to a careless regex and are not one. The vector arrangement
+#: specifiers are the ones that actually got through: `v0.4s` contains `0.4s`, and appendix F is
+#: made of them.
+NOT_CAUGHT = [
+    "`v0.4s` is four 32-bit lanes",
+    "`movi v0.2s, #0` is how a float zero is made",
+    "the `v0.16b` form",
+    "register `x8` carries the call number",
+    "Sv39 has three levels",
+]
+
+
+def test_the_typed_number_rule_catches_a_figure_and_not_a_register_name():
+    """The guard on the guard, added when the rule reported a vector register as a duration.
+
+    Both halves matter. A rule that stopped catching figures would let the book's whole premise
+    quietly lapse; a rule that fires on `v0.4s` teaches an author to reach for the exemption
+    comment, which is worse, because the exemption is meant to be rare enough to read.
+    """
+    pattern = _verify_numbers_module().MEASURED_FIGURE
+    missed = [line for line in CAUGHT if not pattern.search(line)]
+    assert not missed, f"a measured figure typed into prose would now go through: {missed}"
+    spurious = {line: pattern.findall(line) for line in NOT_CAUGHT if pattern.search(line)}
+    assert not spurious, f"not measurements, and reported as such: {spurious}"
 
 
 def test_every_published_page_is_checked_for_typed_numbers():
@@ -561,7 +633,7 @@ def test_ci_runs_nothing_a_contributor_cannot_run():
     """`make check` must be exactly what CI runs, or a check only fires after the push.
 
     It was not. `bench.run_setup --check` lived in the workflow alone, so six commits passed
-    locally while CI was red on a result ch06's kernel patch had made stale. A check a
+    locally while CI was red on a result ch13's kernel patch had made stale. A check a
     contributor cannot run is one that reports at the worst possible moment, and it is worth a
     test rather than a convention because the drift is invisible: both files stay valid.
 

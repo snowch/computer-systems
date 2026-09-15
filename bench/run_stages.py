@@ -40,7 +40,7 @@ SOURCE = "sysfs/tools/sameanswer.c"
 XV6_APP = "xv6/apps/sameanswer.c"
 HEADER = "sysfs/include/sysfs/stages.h"
 
-#: The cross compiler Part I is written against. Named rather than resolved, because this result
+#: The cross compiler Part III is written against. Named rather than resolved, because this result
 #: is a statement about the RISC-V toolchain specifically and picking whatever happens to be
 #: installed would make the numbers depend on the machine that ran the script.
 CC = "riscv64-linux-gnu-gcc"

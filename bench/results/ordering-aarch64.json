@@ -1,0 +1,71 @@
+{
+  "code_fingerprint": "7f13621c298f9b63",
+  "code_sources": [
+    "bench/run_disasm.py",
+    "bench/disasm.py",
+    "sysfs/lib/ordering.c",
+    "sysfs/include/sysfs/ordering.h"
+  ],
+  "conditions": {
+    "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "note": "no timing: this records what the compiler chose, not what it cost"
+  },
+  "generated_at": "2026-09-15T15:09:40+00:00",
+  "kind": "listing",
+  "machine": {
+    "arch": "aarch64",
+    "kind": "toolchain",
+    "measured_under": "compilation",
+    "model": "aarch64 cross compiler, any machine \u2014 nothing here was executed"
+  },
+  "name": "ordering-aarch64",
+  "recorded_on": {
+    "arch": "x86_64",
+    "cpu": {
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.44-fc-v33",
+    "kind": "other",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
+  },
+  "summary": {
+    "listings": {
+      "sysfs_bump_ordered": {
+        "instructions": 7,
+        "symbol": "sysfs_bump_ordered",
+        "text": "0000000000000030 <sysfs_bump_ordered>:\n  30:\tstp\tx29, x30, [sp, #-16]!\n  34:\tmov\tx1, x0\n  38:\tmov\tx0, #0x1                   \t// #1\n  3c:\tmov\tx29, sp\n  40:\tbl\t0 <__aarch64_ldadd8_acq_rel>\n  44:\tldp\tx29, x30, [sp], #16\n  48:\tret"
+      },
+      "sysfs_bump_plain": {
+        "instructions": 4,
+        "symbol": "sysfs_bump_plain",
+        "text": "0000000000000000 <sysfs_bump_plain>:\n   0:\tldr\tx1, [x0]\n   4:\tadd\tx1, x1, #0x1\n   8:\tstr\tx1, [x0]\n   c:\tret"
+      },
+      "sysfs_bump_relaxed": {
+        "instructions": 7,
+        "symbol": "sysfs_bump_relaxed",
+        "text": "0000000000000010 <sysfs_bump_relaxed>:\n  10:\tstp\tx29, x30, [sp, #-16]!\n  14:\tmov\tx1, x0\n  18:\tmov\tx0, #0x1                   \t// #1\n  1c:\tmov\tx29, sp\n  20:\tbl\t0 <__aarch64_ldadd8_relax>\n  24:\tldp\tx29, x30, [sp], #16\n  28:\tret"
+      },
+      "sysfs_publish": {
+        "instructions": 4,
+        "symbol": "sysfs_publish",
+        "text": "0000000000000050 <sysfs_publish>:\n  50:\tstr\tx2, [x0]\n  54:\tmov\tw0, #0x1                   \t// #1\n  58:\tstlr\tw0, [x1]\n  5c:\tret"
+      },
+      "sysfs_publish_unordered": {
+        "instructions": 4,
+        "symbol": "sysfs_publish_unordered",
+        "text": "0000000000000060 <sysfs_publish_unordered>:\n  60:\tstr\tx2, [x0]\n  64:\tmov\tw3, #0x1                   \t// #1\n  68:\tstr\tw3, [x1]\n  6c:\tret"
+      }
+    },
+    "source": "sysfs/lib/ordering.c"
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "execution": "none \u2014 compiled to an object file and disassembled",
+    "flags": "-O2 -Wall -Wextra -c",
+    "objdump": "aarch64-linux-gnu-objdump -d --no-show-raw-insn --disassemble=<fn>"
+  }
+}

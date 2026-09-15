@@ -1,17 +1,17 @@
 {
-  "code_fingerprint": "87f0718df5343dee",
+  "code_fingerprint": "848aebe77783ac8d",
   "code_sources": [
     "bench/run_traps.py",
     "bench/xv6.py",
     "xv6/apps/trapload.c",
-    "xv6/patches/06-trap-census.patch"
+    "xv6/patches/13-trap-census.patch"
   ],
   "conditions": {
     "cpus": 3,
     "note": "counts only \u2014 QEMU models no timing, so none is recorded (ch00)",
     "workload": "trapload"
   },
-  "generated_at": "2026-09-14T19:24:53+00:00",
+  "generated_at": "2026-09-15T15:09:58+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",
@@ -29,7 +29,7 @@
       "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
     },
     "cpus_online": "0-3",
-    "kernel": "Linux 6.18.44-fc-v24",
+    "kernel": "Linux 6.18.44-fc-v33",
     "kind": "other",
     "os": "Ubuntu 24.04.4 LTS",
     "python": "3.11.15"

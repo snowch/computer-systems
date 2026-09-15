@@ -3,7 +3,7 @@
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
  * The xv6 build of this program is xv6/apps/sameanswer.c and differs only in which headers it
- * includes. That is the point of ch01's last section: identical arithmetic, identical output,
+ * includes. That is the point of ch09's last section: identical arithmetic, identical output,
  * two machines.
  */
 

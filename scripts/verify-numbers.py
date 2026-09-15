@@ -64,8 +64,15 @@ def published_pages() -> list[Path]:
 #: Frequencies are deliberately absent. "1.5 GHz" is a specification, not a measurement, and
 #: §5 allows a specification when it cites a primary source.
 COST_UNITS = r"ns|µs|us|ms|s|cycles?|instructions|IPC|[KMG]i?B/s|bytes/cycle"
+#: A figure has to *start* a figure. ``\b`` does not say that: in ``v0.4s`` — an AArch64 vector
+#: register with four 32-bit lanes — it happily finds ``0.4s`` and reports four tenths of a second
+#: typed into prose. Appendix F is full of those and none of them is a measurement, so the leading
+#: digit must not be preceded by a word character or a dot.
+_FIGURE_START = r"(?<![\w.])"
 MEASURED_FIGURE = re.compile(
-    rf"\b\d+(?:[.,]\d+)?\s*(?:{COST_UNITS})\b" rf"|\b\d+\.\d+\s*[x×]\b" rf"|\b\d+(?:\.\d+)?\s*%"
+    rf"{_FIGURE_START}\d+(?:[.,]\d+)?\s*(?:{COST_UNITS})\b"
+    rf"|{_FIGURE_START}\d+\.\d+\s*[x×]\b"
+    rf"|{_FIGURE_START}\d+(?:\.\d+)?\s*%"
 )
 
 #: A MyST comment on the line before, for a figure that is legitimately a cited specification
@@ -113,7 +120,7 @@ def check_results(problems: list[str]) -> int:
             problems.append(f"{name}.json has no code_fingerprint — regenerate it")
         else:
             try:
-                expected = code_fingerprint(payload.get("code_sources"))
+                expected = code_fingerprint(payload.get("code_sources"), payload.get("target"))
             except FileNotFoundError as exc:
                 problems.append(f"{name}.json names a source that no longer exists: {exc}")
                 expected = None

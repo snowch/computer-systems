@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "35e7218fd30bb059",
+  "code_fingerprint": "a2323e245a881da7",
   "code_sources": [
     "bench/run_stages.py",
     "sysfs/tools/stages.sh",
@@ -12,7 +12,7 @@
     "note": "sizes and symbol counts only; nothing here was executed or timed",
     "xv6_link": "against xv6's own user library, by xv6's own Makefile"
   },
-  "generated_at": "2026-09-14T20:23:33+00:00",
+  "generated_at": "2026-09-15T15:09:45+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "riscv64",
@@ -28,7 +28,7 @@
       "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
     },
     "cpus_online": "0-3",
-    "kernel": "Linux 6.18.44-fc-v24",
+    "kernel": "Linux 6.18.44-fc-v33",
     "kind": "other",
     "os": "Ubuntu 24.04.4 LTS",
     "python": "3.11.15"
