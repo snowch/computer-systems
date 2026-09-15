@@ -32,10 +32,21 @@ mechanism to a machine that has none — a trap, an interrupt, a page table, a s
 descriptor table with `read` and `write` over it, and finally a second process made from the
 first.
 
-It sits here, rather than inside [Part IV](#part4), because these primitives belong to the
-*hardware*. A trap vector, a saved program counter and the instruction that returns from a trap are
-in the privileged specification, not in anybody's kernel. Having written the three-instruction
-version yourself and watched it work changes what xv6's trap handling looks like: an arrangement of
+They do not all come from the same place, and the division is the part's shape.
+[ch04](#a-trap-with-nothing-else)–[ch07](#a-system-call-of-your-own) are things the *hardware*
+hands you: a trap vector, a saved program counter and the instruction that returns from a trap are
+in the privileged specification, not in anybody's kernel.
+[ch08](#a-small-integer-that-means-a-device) and [ch09](#fork-built-rather-than-read) are not.
+A descriptor table, and a second process made from the first, are inventions of software — no
+hardware has heard of either — and that is exactly why they are built here instead of read about
+later. A descriptor turns out to be an index into an array, and `fork()` turns out to be a copy;
+neither needs an operating system to exist, and finding that out on a machine with no operating
+system on it is the shortest route to believing it.
+
+So the part sits before [Part IV](#part4) rather than inside it for two reasons, not one. The
+hardware's mechanisms were never the kernel's to begin with. The software's are, and meeting them
+without a kernel is how you learn there is nothing magic in them. Having written the three-instruction trap
+handler yourself and watched it work changes what xv6's trap handling looks like: an arrangement of
 things you have built, rather than a wall of new ideas.
 
 ## What it leaves out

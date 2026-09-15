@@ -568,6 +568,68 @@ def test_every_prose_mention_of_a_part_is_a_link(path):
     )
 
 
+#: "Three chapters and one job", "Six chapters, each building one primitive" — a *paragraph*
+#: opening by counting chapters.
+#:
+#: Anchored to a paragraph rather than a line. These files are hard-wrapped, so a line break falls
+#: wherever the column runs out: part2 says "the alternative ordering puts three chapters of file
+#: format between you and the first interesting thing", and "three chapters" landed at the start
+#: of a line. That is a subset claim mid-sentence and has to stay sayable, exactly as the
+#: preface's "Five chapters depend on the reference machine" does.
+COUNTS_ITS_CHAPTERS = re.compile(r"(?:\A|\n\n)(\S+) chapters\b", re.I)
+
+
+@pytest.mark.parametrize("part", PART_PAGES, ids=[p.label for p in PART_PAGES])
+def test_a_part_that_counts_its_chapters_counts_them_right(part: Part):
+    """The preface's totals are checked; a part page's were not, and they are the same claim.
+
+    Part I opens "Three chapters and one job" and Part II "Six chapters, each building one
+    primitive". Both are true, both are typed, and neither was derived from anything — so
+    inserting a chapter into either part would have left the page contradicting its own header,
+    which lists the chapter range two lines above and is generated.
+
+    Only an opening sentence that starts by counting is checked. A part is free to say "three of
+    these" about a subset further down, exactly as the preface is.
+    """
+    text = (ROOT / part.path).read_text()
+    actual = len(in_part(part))
+    wrong = [
+        f"{part.path} says {word} chapters; the outline gives it {actual}"
+        for word in COUNTS_ITS_CHAPTERS.findall(text)
+        if NUMBER_WORDS.get(word.lower()) not in (None, actual)
+    ]
+    assert not wrong, "\n".join(wrong)
+
+
+BIB_ENTRY = re.compile(r"@(\w+)\{([^,]+),(.*?)\n\}", re.S)
+
+
+def test_every_reference_can_be_followed():
+    """A citation the reader cannot follow is half a citation.
+
+    §5 requires every factual claim about hardware to cite a measurement or a primary source, and
+    the whole point of naming the source is that the reader can go and read it. The preface's
+    "Cox et al. (n.d.)" and "Gregg (2020)" rendered as blue, underlined, and inert: the theme
+    styles a citation as a link whether or not it has anywhere to go, which on a phone — where
+    there is no hover card — is indistinguishable from a broken link.
+
+    Sixteen of the twenty entries had the address all along, in ``howpublished``, which is the
+    BibTeX-correct field for a web resource and the one myst's renderer does not read. It reads
+    ``url`` and ``doi``. So this asks for one of those, and ``howpublished`` stays for the sake of
+    any other tool that opens this file.
+    """
+    text = (ROOT / "references.bib").read_text()
+    entries = BIB_ENTRY.findall(text)
+    assert len(entries) > 15, f"only {len(entries)} entries parsed — has the format changed?"
+    unfollowable = [
+        key.strip() for _, key, body in entries if not re.search(r"^\s*(url|doi)\s*=", body, re.M)
+    ]
+    assert not unfollowable, (
+        "these references give the reader nowhere to go — add a `url` or a `doi`, because the "
+        "citation renders as a link either way:\n  " + "\n  ".join(unfollowable)
+    )
+
+
 def test_appendices_exist_and_are_listed():
     for appendix in APPENDICES:
         assert (ROOT / appendix.path).exists(), appendix.path
