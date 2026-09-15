@@ -137,10 +137,12 @@ carries to your machine is the method. That is what the list above is.
 [ch00](#prerequisites-and-setup) sits before all of it and is setup: two targets working, and a script that
 tells you what your machine can currently run.
 
-The kernel [Part IV](#part4) reads has its own commentary @xv6-book, free from MIT and written by its
-authors. It explains what that code does; this book asks what it costs. They go well together and
-[Appendix G](#appendix-g) is the map — which of these chapters covers the ground of which of its
-topics, and one system call traced through every layer it touches.
+[Part IV](#part4) reads a real kernel, and that kernel has a book of its own: *xv6: a simple,
+Unix-like teaching operating system* @xv6-book, written by its authors and free from MIT. The two
+do different jobs — it explains what the code does, this book asks what that costs — and they go
+well together. [Appendix G](#appendix-g) lines them up by topic rather than by chapter number,
+because its numbering moves between revisions. The same appendix traces one system call through
+every layer it touches.
 
 ## Two machines, on purpose
 
