@@ -60,20 +60,19 @@ Someone who has spent years around computers and programs fluently — a scripti
 Java, or anything else with a runtime underneath it — and who has never had a reason to write C or
 read a kernel.
 
-**You do not need to know C.** Part I is three chapters about exactly that, and it is not a C
+**You do not need to know C.** [Part I](#part1) is three chapters about exactly that, and it is not a C
 tutorial: control flow, functions and operators are assumed from whatever language you already
 use. What it teaches is the part your language was built to hide — that memory is one array of
 bytes and everything in it has an index — and then the assumptions that stop holding when there is
-no runtime underneath you. [Chapter 1](#memory-is-one-array) is the on-ramp; [chapter 2](#c-without-a-runtime) is the unlearning;
-[chapter 3](#c-for-people-who-will-read-a-kernel) sorts C's constructs by a single question, *has the machine heard of this?*
+no runtime underneath you. [ch01](#memory-is-one-array) is the on-ramp; [ch02](#c-without-a-runtime) is the unlearning;
+[ch03](#c-for-people-who-will-read-a-kernel) sorts C's constructs by a single question, *has the machine heard of this?*
 
-**You do not need OS internals.** That is Part IV, and it is the point of using a kernel small
+**You do not need OS internals.** That is [Part IV](#part4), and it is the point of using a kernel small
 enough to read rather than one that has to be described.
 
-**You do not need any hardware background.** Earlier drafts of this page asked for digital logic
-and a pipeline diagram. Nothing in the book actually relies on either — [ch25](#the-cpu) builds the
-pipeline from nothing, because a reader who has seen a five-stage diagram in a lecture still has
-no idea what a real core does with a branch — so the requirement has come out.
+**You do not need any hardware background.** No digital logic, and no pipeline diagram.
+[ch25](#the-cpu) builds the pipeline from nothing, on the grounds that a reader who has seen a
+five-stage diagram in a lecture still has no idea what a real core does with a branch.
 
 ### If you come from a managed language
 
@@ -131,7 +130,7 @@ machine's, and every chapter says so. The transferable part is the method.
 | **[Part IV](#part4)** — The operating system layer | A kernel small enough to read, taken apart: traps, virtual memory, faults, drivers, locks, scheduling, files |
 | **[Part V](#part5)** — Where the cycles go | Part IV's chapters asked again as questions about time, on hardware that can answer them |
 
-[Chapter 0](#prerequisites-and-setup) sits before all of it and is setup: two targets working, and a script that
+[ch00](#prerequisites-and-setup) sits before all of it and is setup: two targets working, and a script that
 tells you what your machine can currently run.
 
 The kernel Part IV reads has its own commentary @xv6-book, free from MIT and written by its
@@ -163,7 +162,7 @@ laptop, not extrapolated from a different machine.
 The split is not a compromise; it is the argument. QEMU will happily answer a question about
 nanoseconds and the answer will be meaningless, because it models no cache, no branch predictor
 and no pipeline. Watching a program in a debugger tells you what it *does*. Only real hardware
-tells you what it *costs*. [Chapter 20](#the-same-program-on-both-targets) puts the same program through both and makes
+tells you what it *costs*. [ch21](#the-same-program-on-both-targets) puts the same program through both and makes
 the gap concrete.
 
 ### Why they do not share an instruction set
@@ -203,13 +202,13 @@ follow that a single-architecture book could not offer.
 has to *assert* that its ideas generalise. This one demonstrates it, by having them survive a
 change of architecture in front of you.
 
-**You get two memory models instead of one.** [Chapter 17](#locks-and-memory-ordering) teaches RISC-V's;
-[chapter 25](#memory-ordering-on-real-hardware) measures ARM's, which is also weak and differently specified. A reader shown only one would reasonably
+**You get two memory models instead of one.** [ch18](#locks-and-memory-ordering) teaches RISC-V's;
+[ch26](#memory-ordering-on-real-hardware) measures ARM's, which is also weak and differently specified. A reader shown only one would reasonably
 conclude that model *is* memory ordering. Shown two, you learn it is a family, that a fence is an
 architecture-specific spelling of an architecture-independent need, and that store buffers and
 coherence are what actually transfer.
 
-**[Chapter 20](#the-same-program-on-both-targets) gets harder in the way that matters.** Three things differ between watching a program
+**[ch21](#the-same-program-on-both-targets) gets harder in the way that matters.** Three things differ between watching a program
 under xv6 and profiling it on real hardware: emulation against hardware, one kernel against
 another, one instruction set against another. Attributing a difference to the wrong one is the
 commonest way to be confidently wrong about performance, and that chapter is where you practise
@@ -218,7 +217,7 @@ separating them.
 Reading disassembly is a small part of the book, and this is the whole of what the split costs
 you. In Parts I and III it is RISC-V: [ch01](#memory-is-one-array), [ch03](#c-for-people-who-will-read-a-kernel), [ch10](#what-a-computer-does-with-a-program), [ch11](#representing-information) and
 [ch12](#machine-level-code-on-riscv). In Part V it is AArch64: [ch24](#optimising-code), [ch25](#the-cpu) and [ch29](#vectors).
-[Chapter 0](#prerequisites-and-setup) shows one small function compiled both ways, so the difference is concrete
+[ch00](#prerequisites-and-setup) shows one small function compiled both ways, so the difference is concrete
 rather than promised, and [Appendix F](#appendix-f) is a translation between the two for the
 reader who meets the second having learned the first. Everything else is method, and method
 does not have an architecture.
@@ -260,7 +259,7 @@ in.
 
 A laptop for Parts I, II and III — everything there runs under emulation, free. For Part V, a small
 Linux machine whose `perf` can count and sample; a Raspberry Pi 5 is the reference, and one you
-already own may well do. [Chapter 0](#prerequisites-and-setup) is the setup, and a script that tells you which
+already own may well do. [ch00](#prerequisites-and-setup) is the setup, and a script that tells you which
 targets your machine can currently run and whether its counters are real.
 
 The book does not tell you which kernel to run. Whether a machine's performance counters work is

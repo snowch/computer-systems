@@ -36,7 +36,7 @@ about nine thousand lines, which you can stop mid-trap and inspect. Parts III an
 so does everything the book says about *what a program does*.
 
 **`host`** is a small Linux machine on the desk, reached over SSH — a Raspberry Pi 5 in this book.
-Everything about *what a program costs* is measured there, natively. Part V lives there.
+Everything about *what a program costs* is measured there, natively. [Part V](#part5) lives there.
 
 The one thing worth repeating from the preface, because every later chapter depends on it: QEMU is
 a functional emulator. It computes what the instructions compute and models nothing else — no
@@ -795,7 +795,7 @@ do, rather than what its documentation says it has.
 The xv6 source @xv6-riscv-source is worth browsing before [ch10](#what-a-computer-does-with-a-program), without trying to
 understand it. Its authors also wrote a commentary on it, which is excellent and which this book
 deliberately does not follow the structure of; if you want a second account of the same kernel
-after Part IV, that is the one to read.
+after [Part IV](#part4), that is the one to read.
 
 [ch10](#what-a-computer-does-with-a-program) takes a single program and follows it from source text to a result on both targets,
 and asks — for the first of many times — which parts of that journey cost anything.

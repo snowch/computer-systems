@@ -24,7 +24,7 @@ What actually happens between a source file and a result, and which of it costs 
 Most of it costs nothing. That is the finding, and it is worth arriving at rather than being
 told: a great deal of what looks like work in a C program has been finished before the machine
 is switched on, and the part that remains is smaller and stranger than the source suggests.
-Separating the two is the skill the rest of Part III is built on, because you cannot ask what a
+Separating the two is the skill the rest of [Part III](#part3) is built on, because you cannot ask what a
 program costs until you know which parts of it still exist at the time it runs.
 
 ## The material

@@ -193,7 +193,7 @@ rather than as complexity.
 registers is [ch19](#scheduling-and-context-switches).
 
 **Whether your kernel C is correct.** Nothing here is a checker. The habits in this chapter narrow
-where to look; they do not tell you that you have looked hard enough, and the problems in Part IV
+where to look; they do not tell you that you have looked hard enough, and the problems in [Part IV](#part4)
 are about mechanisms that defeat careful reading entirely.
 
 **Anything about C++ or freestanding C beyond this kernel.** "Freestanding" is a word the standard

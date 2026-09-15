@@ -216,7 +216,7 @@ message.
 xv6's `kernel/exec.c` @xv6-riscv-source is about a hundred and fifty lines and is now readable end
 to end. It is the shortest complete answer to "what happens when you run a program" that exists
 anywhere, and having written a reader for the format it consumes, you will find it contains no
-surprises at all. That feeling is what Part III was for.
+surprises at all. That feeling is what [Part III](#part3) was for.
 
-[ch14](#traps-and-system-calls) begins Part IV by asking what happens when that program asks the kernel for
+[ch14](#traps-and-system-calls) begins [Part IV](#part4) by asking what happens when that program asks the kernel for
 something.

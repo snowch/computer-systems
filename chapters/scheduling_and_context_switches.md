@@ -128,7 +128,7 @@ none of that is in forty lines and none of it is visible in a switch count.
 **Anything about more threads than cores.** This workload never had enough runnable processes to
 make the scheduler choose, which is why the timer never intervened. A measurement of scheduling
 needs contention for the CPU, contention is a question about time, and this chapter has spent its
-whole length explaining why that question goes to Part V.
+whole length explaining why that question goes to [Part V](#part5).
 
 **What `sched` does about the lock, exactly.** The dance between `sched`, `scheduler` and
 `p->lock` is the subtlest twenty lines in xv6 and is worth reading with the invariants in front of
@@ -180,7 +180,7 @@ it will say something it would not have said before.
 `kernel/swtch.S` is the fourteen stores and fourteen loads this chapter counted, and was the
 fourteen lines [ch12](#machine-level-code-on-riscv) sent you to look at without explaining. It has not changed; you have.
 
-[ch20](#the-file-system) is the last of Part IV and the one with a disk in it. A file system has to survive
+[ch20](#the-file-system) is the last of [Part IV](#part4) and the one with a disk in it. A file system has to survive
 being interrupted at any instruction by a power cut, which is a stronger requirement than anything
 a lock provides, and it is met by writing things down in an order chosen so that every prefix of
 the sequence is survivable.

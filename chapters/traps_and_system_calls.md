@@ -20,7 +20,7 @@ short_title: "14 · Traps and System Calls"
 
 What does the hardware do when a program asks the kernel for something?
 
-Part III ended with a program loaded into an address space and running. It cannot do anything
+[Part III](#part3) ended with a program loaded into an address space and running. It cannot do anything
 useful on its own — it cannot read a file, write to the console, or obtain more memory — because
 none of those are things a user program is permitted to do. Everything interesting requires asking,
 and the asking has a mechanism. This chapter is that mechanism, end to end, for one call.
@@ -71,7 +71,7 @@ xv6 solves it the way real kernels do: one page, the **trampoline**, mapped at t
 address in every address space, kernel and user alike. The switch happens inside that page, so
 whichever table is active the instruction after the switch is at an address that is still valid.
 [ch15](#virtual-memory) is where page tables become a mechanism rather than a word; this is the one place in
-Part IV where a chapter has to promise that something later will make sense.
+[Part IV](#part4) where a chapter has to promise that something later will make sense.
 
 ### How long is the path?
 
@@ -88,7 +88,7 @@ over eighty instructions of pure bookkeeping.
 the interrupt state back in one instruction.
 
 **This is a count and not a cost**, and the distinction is the whole reason it appears here rather
-than in Part V. What an instruction costs depends on a pipeline and a cache, and this target has
+than in [Part V](#part5). What an instruction costs depends on a pipeline and a cache, and this target has
 neither. What is true regardless of the machine is that the path is this long. [ch27](#the-os-layers-cost) takes
 the same shape to hardware and puts a price on it.
 

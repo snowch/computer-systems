@@ -21,7 +21,7 @@ short_title: "27 · The OS Layer's Cost on Real Hardware"
 
 What does Linux charge for the services xv6 showed me?
 
-Part IV took three things apart — a system call, a page fault, a context switch — and counted
+[Part IV](#part4) took three things apart — a system call, a page fault, a context switch — and counted
 what each one moved. It could not do anything else: the target has no cache, no predictor and no
 memory latency, so a duration measured there describes a laptop. This is the chapter where those
 three things meet a machine with a clock, and the counts become a model that can be wrong.
@@ -138,7 +138,7 @@ up to date, and the process never traps.
 
 This closes a loop opened five chapters earlier. [ch22](#measuring)'s clock is cheap enough to time
 things with *because* of this mechanism; a clock that trapped would be an instrument of the same
-order as much of what Part V measures, and most of this book's timings would be impossible to
+order as much of what [Part V](#part5) measures, and most of this book's timings would be impossible to
 take in the form they are taken.
 
 And it is the listing above, made expensive. Two calls, indistinguishable in C, one of which

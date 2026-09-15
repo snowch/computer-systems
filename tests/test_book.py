@@ -456,6 +456,54 @@ def test_a_prerequisite_comes_earlier_than_the_chapter_that_needs_it(chapter: Ch
     )
 
 
+SPELLED_OUT_CHAPTER_LINK = re.compile(r"\[[Cc]hapter \d+\]\(#")
+
+
+def test_every_chapter_link_uses_the_books_own_form():
+    """`[ch21](#anchor)`, never `[Chapter 20](#anchor)`.
+
+    Not a style rule. `scripts/sync-labels.py` derives the number in a link from the anchor it
+    points at, and it recognises one spelling; a link written the other way is outside the check
+    and drifts silently. Four of the ten that existed had gone off by one when a chapter was
+    inserted into Part II, all of them in the preface, all of them still resolving perfectly.
+    """
+    offenders = []
+    for path in [
+        ROOT / "index.md",
+        *sorted((ROOT / "chapters").glob("*.md")),
+        *sorted((ROOT / "appendices").glob("*.md")),
+    ]:
+        for found in SPELLED_OUT_CHAPTER_LINK.findall(path.read_text()):
+            offenders.append(f"{path.name}: {found!r}")
+    assert not offenders, "these are outside sync-labels.py's reach and will drift: " + "; ".join(
+        offenders
+    )
+
+
+MENTIONS_A_PART = re.compile(r"(?<!\[)\bPart (I{1,3}|IV|V)\b(?!\]\()")
+LINKS_A_PART = re.compile(r"\[Part (I{1,3}|IV|V)\]\(")
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_a_part_a_chapter_names_is_reachable_from_it(chapter: Chapter):
+    """Naming a part without ever linking it leaves the reader with nowhere to go.
+
+    The part pages are newer than most of the prose, so every mention written before they existed
+    was plain text — including the preface's "You do not need OS internals. That is Part IV",
+    which is exactly where a reader deciding whether the book is for them would want to look.
+
+    One link per part per page is the rule, not every mention: a paragraph that links the same
+    part four times is worse than one that links it once.
+    """
+    text = (ROOT / chapter.path).read_text()
+    linked = set(LINKS_A_PART.findall(text))
+    unreachable = sorted({m for m in MENTIONS_A_PART.findall(text) if m not in linked})
+    assert not unreachable, (
+        f"{chapter.path} names Part {', Part '.join(unreachable)} and never links "
+        f"{'them' if len(unreachable) > 1 else 'it'}"
+    )
+
+
 def test_appendices_exist_and_are_listed():
     for appendix in APPENDICES:
         assert (ROOT / appendix.path).exists(), appendix.path

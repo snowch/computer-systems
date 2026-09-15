@@ -214,7 +214,7 @@ which is the durable skill: allocators change, and prologues do not.
 
 ## Problems
 
-Three, and the first is the hardest thing in Part III so far.
+Three, and the first is the hardest thing in [Part III](#part3) so far.
 
 **12.1 — Write the C that produced this.**
 A listing, and you write a C function that compiles to the same instructions. Not similar ones —

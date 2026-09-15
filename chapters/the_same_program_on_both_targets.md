@@ -70,12 +70,12 @@ Read the loop bodies. The sequential route loads a value, advances a pointer by 
 and branches. The chased route does the same and then loads again to find out where to go next,
 and has to compute an address from an index rather than stepping.
 
-So: one more load, and a shift and an add. Everything Part III and Part IV have to say about these
+So: one more load, and a shift and an add. Everything [Part III](#part3) and [Part IV](#part4) have to say about these
 two functions is in that sentence, and it predicts that the chased route costs somewhat under
 twice what the sequential one does.
 
 **Hold on to that prediction.** It is the most that a complete structural understanding can offer,
-it was arrived at correctly, and Part V exists because of how wrong it is.
+it was arrived at correctly, and [Part V](#part5) exists because of how wrong it is.
 
 ### The number that is not here
 

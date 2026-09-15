@@ -20,7 +20,7 @@ short_title: "20 · The File System"
 
 What has to be true on the disk for a crash mid-write to be survivable?
 
-Every mechanism in Part IV so far has assumed the machine keeps running. A lock is held until it
+Every mechanism in [Part IV](#part4) so far has assumed the machine keeps running. A lock is held until it
 is released; a page is mapped until it is unmapped; a process runs until it is switched away.
 A file system cannot assume any of that. The power can fail between any two instructions, and what
 is on the platter afterwards is whatever had reached it — so the only tool available is *the order
@@ -213,4 +213,4 @@ this book to turn out to be a cache with a lock around it.
 [ch21](#the-same-program-on-both-targets) is the hinge. Everything Part IV has established is about what a program *does*, on a
 target chosen because you can stop it and look. The next chapter puts the same program on a machine
 where you cannot, and asks what the first instrument failed to tell you — which is the question the
-whole of Part V exists to answer.
+whole of [Part V](#part5) exists to answer.

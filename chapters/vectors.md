@@ -13,7 +13,7 @@ short_title: "29 · Vectors"
 |---|---|
 | **Target** | `host` — the reference machine, natively |
 | **Prerequisites** | [ch28](#whole-machine-profiling) |
-| **Assumes** | a vector unit — NEON on the reference core. This chapter became measurable when Part V moved to AArch64; on a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run. |
+| **Assumes** | a vector unit — NEON on the reference core. This chapter became measurable when [Part V](#part5) moved to AArch64; on a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run. |
 | **What it measures** | Which of five loops the compiler widens, at three sets of flags: `bench/results/vectors-census.json` |
 :::
 
