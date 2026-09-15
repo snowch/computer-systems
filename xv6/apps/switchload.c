@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch11 counts context switches by why the process gave up the CPU. Only one of those reasons is
+ * ch13 counts context switches by why the process gave up the CPU. Only one of those reasons is
  * a number a workload can fix: a process that exits switches away exactly once and does not come
  * back. How many times the timer took the CPU away, and how many times a process waited for
  * something that had not happened yet, are facts about how long things took.

@@ -104,10 +104,10 @@ CORE_SOURCES: tuple[str, ...] = ("bench/measure.py",)
 
 #: Sources that are core to *one target only*, keyed by target.
 #:
-#: ch14 adds the book's clock, through which every duration in Part III is read — so a change to
+#: ch16 adds the book's clock, through which every duration in Part IV is read — so a change to
 #: it changes what every `host` figure means, and belongs in those figures' fingerprints. It does
 #: not belong in an xv6 result's: a page-table census does not depend on how the book tells the
-#: time, and putting it in CORE_SOURCES made every structural result in Parts I and II churn the
+#: time, and putting it in CORE_SOURCES made every structural result in Parts II and III churn the
 #: moment the clock was touched. The plan said that would happen once. It would in fact have
 #: happened on every edit to the clock for the rest of the book, which is the kind of noise that
 #: teaches people to re-stamp without reading what moved.

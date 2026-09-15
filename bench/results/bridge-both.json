@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "7d62ec5ae7f2cbec",
+  "code_fingerprint": "7278db864c484811",
   "code_sources": [
     "bench/run_bridge.py",
     "sysfs/lib/bridge.c",
@@ -11,7 +11,7 @@
     "note": "answers and instruction counts only; no duration appears here by design",
     "why": "a host-target timing is only taken on the board, by make bench-board"
   },
-  "generated_at": "2026-09-14T22:38:43+00:00",
+  "generated_at": "2026-09-15T09:23:28+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "riscv64",
@@ -23,11 +23,11 @@
   "recorded_on": {
     "arch": "x86_64",
     "cpu": {
-      "bogomips": "5600.47",
-      "model name": "Intel(R) Xeon(R) Processor @ 2.80GHz"
+      "bogomips": "4200.00",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
     },
     "cpus_online": "0-3",
-    "kernel": "Linux 6.18.44-fc-v24",
+    "kernel": "Linux 6.18.44-fc-v33",
     "kind": "other",
     "os": "Ubuntu 24.04.4 LTS",
     "python": "3.11.15"

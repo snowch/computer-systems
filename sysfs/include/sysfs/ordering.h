@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch10's claim is that "two threads updating a counter can lose an update" is not a fact about
+ * ch12's claim is that "two threads updating a counter can lose an update" is not a fact about
  * threads. It is a fact about what `counter++` compiles to, and the only way to be sure of it is
  * to look. These four functions do the same arithmetic under four different promises, and the
  * chapter prints what each becomes.

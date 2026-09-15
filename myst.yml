@@ -40,36 +40,44 @@ project:
   toc:
     - file: index.md
 
-    - title: Part I — Foundations
+    - title: Getting started
       children:
         - file: chapters/ch00_prerequisites_and_setup.md
-        - file: chapters/ch01_what_a_computer_does_with_a_program.md
-        - file: chapters/ch02_representing_information.md
+
+    - title: Part I — C, and what the machine does with it
+      children:
+        - file: chapters/ch01_reading_c.md
+        - file: chapters/ch02_c_without_a_runtime.md
         - file: chapters/ch03_c_for_people_who_will_read_a_kernel.md
-        - file: chapters/ch04_machine_level_code_on_riscv.md
-        - file: chapters/ch05_linking_and_loading.md
 
-    - title: Part II — The operating system layer
+    - title: Part II — What a computer does with a program
       children:
-        - file: chapters/ch06_traps_and_system_calls.md
-        - file: chapters/ch07_virtual_memory.md
-        - file: chapters/ch08_page_faults_as_a_feature.md
-        - file: chapters/ch09_interrupts_and_drivers.md
-        - file: chapters/ch10_locks_and_memory_ordering.md
-        - file: chapters/ch11_scheduling_and_context_switches.md
-        - file: chapters/ch12_the_file_system.md
-        - file: chapters/ch13_the_same_program_on_both_targets.md
+        - file: chapters/ch04_what_a_computer_does_with_a_program.md
+        - file: chapters/ch05_representing_information.md
+        - file: chapters/ch06_machine_level_code_on_riscv.md
+        - file: chapters/ch07_linking_and_loading.md
 
-    - title: Part III — Where the cycles go
+    - title: Part III — The operating system layer
       children:
-        - file: chapters/ch14_measuring.md
-        - file: chapters/ch15_the_memory_hierarchy.md
-        - file: chapters/ch16_optimising_code.md
-        - file: chapters/ch17_the_cpu.md
-        - file: chapters/ch18_memory_ordering_on_real_hardware.md
-        - file: chapters/ch19_the_os_layers_cost.md
-        - file: chapters/ch20_whole_machine_profiling.md
-        - file: chapters/ch21_vectors.md
+        - file: chapters/ch08_traps_and_system_calls.md
+        - file: chapters/ch09_virtual_memory.md
+        - file: chapters/ch10_page_faults_as_a_feature.md
+        - file: chapters/ch11_interrupts_and_drivers.md
+        - file: chapters/ch12_locks_and_memory_ordering.md
+        - file: chapters/ch13_scheduling_and_context_switches.md
+        - file: chapters/ch14_the_file_system.md
+        - file: chapters/ch15_the_same_program_on_both_targets.md
+
+    - title: Part IV — Where the cycles go
+      children:
+        - file: chapters/ch16_measuring.md
+        - file: chapters/ch17_the_memory_hierarchy.md
+        - file: chapters/ch18_optimising_code.md
+        - file: chapters/ch19_the_cpu.md
+        - file: chapters/ch20_memory_ordering_on_real_hardware.md
+        - file: chapters/ch21_the_os_layers_cost.md
+        - file: chapters/ch22_whole_machine_profiling.md
+        - file: chapters/ch23_vectors.md
 
     - title: Appendices
       children:

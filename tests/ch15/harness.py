@@ -1,4 +1,4 @@
-"""Compile the reader's hierarchy analysis and ask it questions."""
+"""Compile the reader's crossing model and ask it questions."""
 
 from __future__ import annotations
 
@@ -8,30 +8,36 @@ from pathlib import Path
 from bench.measure import PORTABLE_FLAGS, HostTarget, compile_program
 from bench.stamp import ROOT
 
-HIERARCHY = ROOT / "tests" / "ch15" / "hierarchy.c"
+CROSSING = ROOT / "tests" / "ch15" / "crossing.c"
 NATIVE = HostTarget(name="native-other", cc="cc", flags=PORTABLE_FLAGS)
+
+#: name -> (emulated, kernel, instruction set), mirroring the table in crossing.c.
+CONFIGS = {
+    "A": (1, "x", "r"),
+    "B": (1, "l", "r"),
+    "C": (0, "l", "r"),
+    "D": (0, "l", "a"),
+    "E": (0, "x", "r"),
+    "F": (1, "l", "a"),
+}
 
 
 def build(build_dir: Path) -> Path:
-    return compile_program([HIERARCHY], build_dir / "ch15hierarchy", NATIVE).path
+    return compile_program([CROSSING], build_dir / "ch15crossing", NATIVE).path
 
 
 def ask(program: Path, commands: list[str]) -> dict:
     printed = subprocess.run(
         [str(program), *commands], capture_output=True, text=True, check=True
     ).stdout
-    out: dict = {"steps": {}, "line": {}, "lines": {}}
+    out: dict = {"isolates": {}, "pair": {}, "transfers": {}}
     for line in printed.splitlines():
         parts = line.split()
         match parts:
-            case ["steps", index, _count, *found]:
-                out["steps"][int(index)] = [int(v) for v in found]
-            case ["line", index, value]:
-                out["line"][int(index)] = int(value)
-            case ["lines", elements, value]:
-                out["lines"][int(elements)] = int(value)
+            case ["isolates", case, verdict]:
+                out["isolates"][case] = verdict
+            case ["pair", case, found, other]:
+                out["pair"][case] = (int(found), other)
+            case ["transfers", what, verdict]:
+                out["transfers"][what] = int(verdict)
     return out
-
-
-def curve(points: list[tuple[int, int]]) -> tuple[str, str]:
-    return ".".join(str(x) for x, _ in points), ".".join(str(y) for _, y in points)

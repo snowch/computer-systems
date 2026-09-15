@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Create a chapter or appendix stub with the book's standard shape.
 
-    python3 scripts/new-chapter.py 7          # chapters/ch07_virtual_memory.md
+    python3 scripts/new-chapter.py 7          # chapters/ch09_virtual_memory.md
     python3 scripts/new-chapter.py --all      # every chapter and appendix that is missing
 
 The seven-part shape comes from PLAN.md §12.1 and is not negotiable: the repetition is what makes

@@ -1,4 +1,4 @@
-"""Compile the reader's profile reader and ask it questions."""
+"""Compile the reader's sharing model and ask it questions."""
 
 from __future__ import annotations
 
@@ -8,29 +8,27 @@ from pathlib import Path
 from bench.measure import PORTABLE_FLAGS, HostTarget, compile_program
 from bench.stamp import ROOT
 
-PROFILER = ROOT / "tests" / "ch20" / "profiler.c"
+SHARING = ROOT / "tests" / "ch20" / "sharing.c"
 NATIVE = HostTarget(name="native-other", cc="cc", flags=PORTABLE_FLAGS)
+LINE = 64
 
 
 def build(build_dir: Path) -> Path:
-    return compile_program([PROFILER], build_dir / "ch20profiler", NATIVE).path
-
-
-def tree_command(nodes: list[tuple[int, int]]) -> str:
-    """`t` takes parent:exclusive pairs, in an order where every parent precedes its children."""
-    return "t" + ".".join(f"{parent}:{exclusive}" for parent, exclusive in nodes)
+    return compile_program([SHARING], build_dir / "ch20sharing", NATIVE).path
 
 
 def ask(program: Path, commands: list[str]) -> dict:
     printed = subprocess.run(
         [str(program), *commands], capture_output=True, text=True, check=True
     ).stdout
-    out: dict = {"inclusive": {}, "needed": {}, "aliased": {}}
+    out: dict = {"pairs": {}, "speedup": {}, "spelling": {}}
     for line in printed.splitlines():
         parts = line.split()
         match parts:
-            case ["inclusive", index, *values]:
-                out["inclusive"][int(index)] = [int(v) for v in values]
-            case [("needed" | "aliased") as what, index, value]:
-                out[what][int(index)] = int(value)
+            case ["pairs", index, value]:
+                out["pairs"][int(index)] = int(value)
+            case ["speedup", case, value]:
+                out["speedup"][case] = int(value)
+            case ["spelling", case, *words]:
+                out["spelling"][case] = " ".join(words)
     return out

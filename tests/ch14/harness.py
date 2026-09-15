@@ -1,4 +1,4 @@
-"""Compile the reader's measurement code and ask it questions."""
+"""Compile the reader's file-system model and ask it questions."""
 
 from __future__ import annotations
 
@@ -8,26 +8,28 @@ from pathlib import Path
 from bench.measure import PORTABLE_FLAGS, HostTarget, compile_program
 from bench.stamp import ROOT
 
-MEASURING = ROOT / "tests" / "ch14" / "measuring.c"
+FILESYSTEM = ROOT / "tests" / "ch14" / "filesystem.c"
 NATIVE = HostTarget(name="native-other", cc="cc", flags=PORTABLE_FLAGS)
+
+NOTHING, REPLAY = 0, 1
 
 
 def build(build_dir: Path) -> Path:
-    return compile_program([MEASURING], build_dir / "ch14measuring", NATIVE).path
+    return compile_program([FILESYSTEM], build_dir / "ch14fs", NATIVE).path
 
 
 def ask(program: Path, commands: list[str]) -> dict:
     printed = subprocess.run(
         [str(program), *commands], capture_output=True, text=True, check=True
     ).stdout
-    out: dict = {"summary": {}, "repetitions": {}, "warmup": {}}
+    out: dict = {"writes": {}, "crash": {}, "safe": {}}
     for line in printed.splitlines():
         parts = line.split()
         match parts:
-            case ["summary", index, minimum, median, p90, mean]:
-                out["summary"][int(index)] = tuple(int(v) for v in (minimum, median, p90, mean))
-            case ["repetitions", case, value]:
-                out["repetitions"][case] = int(value)
-            case ["warmup", index, value]:
-                out["warmup"][int(index)] = int(value)
+            case ["writes", blocks, count]:
+                out["writes"][int(blocks)] = int(count)
+            case ["crash", stage, verdict]:
+                out["crash"][int(stage)] = int(verdict)
+            case ["safe", order, verdict]:
+                out["safe"][order] = int(verdict)
     return out

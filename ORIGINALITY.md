@@ -65,7 +65,7 @@ started with a RISC-V SBC" vendor guides and blog posts.
 
 ---
 
-## ch01 · What a Computer Does With a Program
+## ch04 · What a Computer Does With a Program
 
 **Closest in subject.** Every introduction to the C toolchain: the opening chapter of *Computer
 Systems: A Programmer's Perspective*, which also walks a program through preprocess, compile,
@@ -103,7 +103,7 @@ undergraduate systems course.
 
 ---
 
-## ch02 · Representing Information
+## ch05 · Representing Information
 
 **Closest in subject.** This is the most heavily covered topic in the field. *Computer Systems: A
 Programmer's Perspective* chapter 2 is the obvious neighbour — information storage, integer
@@ -178,7 +178,7 @@ the "pointers are hard" genre generally. Also every "C for systems programmers" 
   function's name deliberately does not match the slot it belongs in, so it cannot be solved by
   matching strings.
 - **`volatile` is bounded rather than recommended.** The chapter states exactly what it
-  guarantees and says plainly that it is not a threading primitive, deferring to ch10 — a
+  guarantees and says plainly that it is not a threading primitive, deferring to ch12 — a
   distinction much of the comparable material blurs.
 - **Citations are primary only**: the C standard and the xv6 source. The reader is pointed at
   `kernel/uart.c` as a first real thing to read, with a warning about which part of it they are
@@ -186,7 +186,7 @@ the "pointers are hard" genre generally. Also every "C for systems programmers" 
 
 ---
 
-## ch04 · Machine-Level Code on RISC-V
+## ch06 · Machine-Level Code on RISC-V
 
 **Closest in subject.** *Computer Systems: A Programmer's Perspective* chapter 3, which is the
 canonical treatment of machine-level code and procedure calls; *The RISC-V Reader*; the machine
@@ -226,7 +226,7 @@ code chapters of Patterson & Hennessy; and every "reading assembly" tutorial.
 
 ---
 
-## ch05 · Linking and Loading
+## ch07 · Linking and Loading
 
 **Closest in subject.** *Computer Systems: A Programmer's Perspective* chapter 7 is the canonical
 treatment of linking; *Linkers and Loaders* (Levine) is the book-length one; and there is a large
@@ -265,7 +265,7 @@ genre of "ELF explained" articles and annotated hexdumps.
 
 ---
 
-## ch06 · Traps and System Calls
+## ch08 · Traps and System Calls
 
 **Closest in subject.** The xv6 book's chapter on traps and system calls, which walks the same
 `trampoline.S` and `usertrap` on the same kernel; MIT 6.1810's system-call lab; *Operating Systems:
@@ -278,10 +278,10 @@ documentation for the very kernel being read, so the separation is deliberate an
   of the trap path's length read out of the built kernel, and a census of what a fixed workload
   actually asked for, read out of a running one. Neither appears in the comparable material,
   which is narrative.
-- **The framing is "a trap is not a call", derived from ch04.** The chapter's argument runs from
+- **The framing is "a trap is not a call", derived from ch06.** The chapter's argument runs from
   the calling convention: a called function preserves callee-saved registers because both sides
   agreed; an interrupted program agreed to nothing, so the path must save everything. That
-  reasoning is this book's, it reuses ch04's material rather than restating background, and it
+  reasoning is this book's, it reuses ch06's material rather than restating background, and it
   sets up the register problem.
 - **The kernel patch is not the MIT lab.** 6.1810's syscall lab asks for `trace(mask)` and
   `sysinfo()`. This book's patch is a per-cause trap census printed on Ctrl-T, mirroring xv6's
@@ -302,7 +302,7 @@ documentation for the very kernel being read, so the separation is deliberate an
   book is not cited here or anywhere except "Where to go next" in other chapters, and this chapter
   does not send the reader to it at all — it sends them to the assembly.
 
-## ch07 · Virtual Memory
+## ch09 · Virtual Memory
 
 **Closest in subject.** The xv6 book's chapter on page tables, which walks Sv39 and `vm.c` on the
 same kernel; *Operating Systems: Three Easy Pieces* on paging and multi-level page tables;
@@ -324,10 +324,10 @@ different problems.
   arrived at from a census this book's patch prints, not from any existing exposition.
 - **Sv39's geometry is derived, not recited.** The chapter's claim is that only the page size and
   the entry size were chosen and every other number is forced. That framing is this book's, it
-  matches ch04's treatment of the calling convention, and it produces a table whose right-hand
+  matches ch06's treatment of the calling convention, and it produces a table whose right-hand
   column is "where it comes from".
 - **The kernel patch is not a lab exercise from any course.** It is a page-table census on Ctrl-V,
-  mirroring xv6's own Ctrl-P convention and this book's own ch06 patch. MIT 6.1810's page-table
+  mirroring xv6's own Ctrl-P convention and this book's own ch08 patch. MIT 6.1810's page-table
   labs ask for `vmprint`, a speed-up of `getpid` via a shared page, and a superpage allocator;
   none of those is this, and the chapter deliberately does not set them.
 - **The cross-check is the unusual part.** `sysfs/tools/sv39.c` derives the required table count
@@ -335,7 +335,7 @@ different problems.
   its tables by walking them; the runner refuses to stamp a result in which the two disagree. The
   published figure is therefore an agreement between a specification and a kernel rather than a
   single observation. No comparable text does this because none of them is stamping results.
-- **ch06 is repaid in this chapter's currency.** The trapframe and trampoline cost two page-table
+- **ch08 is repaid in this chapter's currency.** The trapframe and trampoline cost two page-table
   pages per process, because nothing else is within a gigabyte of them. That is a consequence of
   the previous chapter's mechanism, expressed in a unit the previous chapter could not measure,
   and it is this book's observation.
@@ -349,7 +349,7 @@ different problems.
   xv6 book is not cited, and the chapter sends the reader to `vm.c` rather than to any commentary
   on it.
 
-## ch08 · Page Faults as a Feature
+## ch10 · Page Faults as a Feature
 
 **Closest in subject.** The xv6 book's chapter on traps and page faults; MIT 6.1810's lazy-
 allocation and copy-on-write labs, which set exactly the two features this subject suggests;
@@ -384,10 +384,10 @@ famous assignments, so both are deliberately not set — and the reason is not o
 - **Determinism is by construction.** `faultload` fixes and prints every quantity, the kernel
   counts independently, and the runner refuses a result in which they disagree, one latched from
   the wrong process, or one in which the handler declined a fault. That machinery is this book's
-  and exists because ch06 was got wrong first.
+  and exists because ch08 was got wrong first.
 - **Citations are primary only**: the RISC-V privileged specification and xv6's own source.
 
-## ch09 · Interrupts and Drivers
+## ch11 · Interrupts and Drivers
 
 **Closest in subject.** The xv6 book's chapter on device drivers and interrupts, which walks the
 same `uart.c` and PLIC; MIT 6.1810's networking lab; *Operating Systems: Three Easy Pieces* on I/O
@@ -407,7 +407,7 @@ top-half/bottom-half split.
   device is never slow. So the book can show the structure and not the pressure that produced it,
   and says so rather than narrating the standard explanation as though it had been demonstrated.
   Turning "what this target cannot show" into the section a reader remembers is this book's shape.
-- **The patch counts and changes nothing**, as in ch08 — no driver is added, no policy altered.
+- **The patch counts and changes nothing**, as in ch10 — no driver is added, no policy altered.
 - **The filesystem-image dependency is named.** The disk figure depends on `mkfs`'s layout, which
   nothing in the stamping scheme covers; the result records the image's digest and the chapter
   explains why a later chapter will move the number. That is bookkeeping no textbook has, because
@@ -423,7 +423,7 @@ top-half/bottom-half split.
   is close to a well-known lab, and which no test could grade without becoming one.
 - **Citations are primary only**: the RISC-V privileged specification and xv6's own source.
 
-## ch10 · Locks and Memory Ordering
+## ch12 · Locks and Memory Ordering
 
 **Closest in subject.** The xv6 book's chapter on locking, which walks the same `spinlock.c`; MIT
 6.1810's locks lab; *Operating Systems: Three Easy Pieces* on locks and concurrency; and the
@@ -439,7 +439,7 @@ and ARM architecture manuals.
 - **Atomicity and ordering are separated by showing that the spelling changes and the instruction
   count does not.** `amoadd.d` against `amoadd.d.aqrl` is the same single instruction with two
   letters added. That framing — ordering is free here in instructions and is not free everywhere —
-  is this book's, and it sets up ch18 rather than restating a memory-model chapter.
+  is this book's, and it sets up ch20 rather than restating a memory-model chapter.
 - **The AArch64 outlined-atomics finding is original to this measurement.** The same C becomes one
   instruction on RISC-V and a call to a run-time-dispatched helper on AArch64, because the
   compiler cannot assume LSE. It was found by disassembling both, not taken from anywhere.
@@ -448,7 +448,7 @@ and ARM architecture manuals.
   twenty-five does the mutual exclusion, `release` contains no atomic at all, and `push_off`
   plus `pop_off` outweigh both primitives — are this book's, and follow from counting rather than
   from reading the source.
-- **ch09's debt is paid explicitly.** The book's own unlocked census counters are judged against
+- **ch11's debt is paid explicitly.** The book's own unlocked census counters are judged against
   the chapter's own evidence, and defended on the grounds that locking the trap path would change
   the thing being measured by an amount comparable to what is being counted. A book auditing its
   own instrumentation in the chapter that explains why it is wrong is not a move any textbook
@@ -468,7 +468,7 @@ and ARM architecture manuals.
   — the one thing this target cannot show.
 - **Citations are primary only**: the RISC-V unprivileged specification and xv6's own source.
 
-## ch11 · Scheduling and Context Switches
+## ch13 · Scheduling and Context Switches
 
 **Closest in subject.** The xv6 book's chapter on scheduling, which walks the same `swtch`,
 `sched` and `sleep`; MIT 6.1810's threads lab; *Operating Systems: Three Easy Pieces* on
@@ -479,18 +479,18 @@ scheduling policy and on the abstraction of a thread.
 - **The chapter's spine is a ratio the comparable material does not compute.** A trap saves
   thirty-one registers and a switch saves fourteen, both read out of this book's own earlier
   measurement and out of the kernel as built. The explanation — a trap is not a call and a switch
-  is, so ch04's convention has already done most of the work — reuses this book's own chapters
+  is, so ch06's convention has already done most of the work — reuses this book's own chapters
   rather than restating background, and turns "context switches are expensive" into a claim with a
   number attached.
 - **Switches are attributed by reason, and only the workload-determined one is published.** That
   discipline is this book's and is applied for the fourth time here; the chapter states it briefly
   rather than re-deriving it, and reports the finding that the timer never preempted anything in
   this workload without publishing the count.
-- **The patch's first version contained ch10's race**, a shared reason-slot written by one hart and
+- **The patch's first version contained ch12's race**, a shared reason-slot written by one hart and
   read by another, and the count came out twice what the workload could have caused. It is fixed
   with a per-process field and the patch's own comment says so. A book that gets caught by the
   chapter it just wrote, and prints that, is not a form any textbook uses.
-- **The problems are original.** 11.1 grades ch04's convention applied to the switch, so the
+- **The problems are original.** 11.1 grades ch06's convention applied to the switch, so the
   chapter's headline ratio becomes something the reader derives rather than reads. 11.2 uses two
   orderings of the same six events with different answers, so the problem cannot be passed by
   recognising a diagram. 11.3 picks burst lengths on which no two policies agree, so a reader who
@@ -499,7 +499,7 @@ scheduling policy and on the abstraction of a thread.
   itself — the one thing this chapter can simply show the reader, disassembled.
 - **Citations are primary only**: xv6's own source.
 
-## ch12 · The File System
+## ch14 · The File System
 
 **Closest in subject.** The xv6 book's chapters on the file system and on logging; MIT 6.1810's
 file-system and large-files labs; *Operating Systems: Three Easy Pieces* on file-system
@@ -535,7 +535,7 @@ implementation, journalling and crash consistency; and the journalling chapter o
   exercises rather than questions about what the disk is charged.
 - **Citations are primary only**: xv6's own source.
 
-## ch13 · The Same Program on Both Targets
+## ch15 · The Same Program on Both Targets
 
 **Closest in subject.** No single work is close, which is unusual for this book. The nearest
 material is the "measurement is hard" literature — Mytkowicz et al. on measurement bias, and the
@@ -548,8 +548,8 @@ Performance* — and the pointer-chase microbenchmark, which is folklore and app
   anywhere.** It is the hinge between a target chosen for visibility and a target chosen for
   cost, and its argument is about the twelve chapters that precede it.
 - **The program is chosen so the structural model is right and useless at once.** Two routes over
-  the same data, the same answer, and loop bodies differing by one load — so Parts I and II
-  predict a factor under two, correctly, and Part III exists because of the size of the error.
+  the same data, the same answer, and loop bodies differing by one load — so Parts II and III
+  predict a factor under two, correctly, and Part IV exists because of the size of the error.
   The pointer chase is a well-known shape; using it as the moment a book's own method runs out is
   not.
 - **The confound is named as three simultaneous variables and then turned into an exercise.**
@@ -558,7 +558,7 @@ Performance* — and the pointer-chase microbenchmark, which is folklore and app
   own move and the reason the chapter is placed where it is.
 - **"Structure transfers and cost does not" is argued to be wrong in both directions.** The
   instruction count is structural and does not transfer; the layout is structural and transfers
-  only because ch02 measured that it does. Problem 13.3 is built on exactly those two.
+  only because ch05 measured that it does. Problem 13.3 is built on exactly those two.
 - **The central figure is pending and the chapter says so in its own voice**, with a paragraph on
   why an emulated duration would be worse than no duration. Writing the argument so that it
   stands without the number, and landing the number later as a one-command change, is this book's
@@ -566,7 +566,7 @@ Performance* — and the pointer-chase microbenchmark, which is folklore and app
 - **Citations**: the measurement-bias paper is cited as a primary source in "Where to go next";
   no textbook is used for content.
 
-## ch14 · Measuring
+## ch16 · Measuring
 
 **Closest in subject.** *Performance Analysis and Tuning on Modern CPUs* and *Systems Performance*
 both open with measurement methodology; Mytkowicz et al. on measurement bias; the benchmarking
@@ -575,7 +575,7 @@ without number.
 
 **How this differs, and the care taken.**
 
-- **The chapter is placed and shaped by this book's own argument.** It exists because ch13 has just
+- **The chapter is placed and shaped by this book's own argument.** It exists because ch15 has just
   shown the structural model failing, and it measures the instrument before anything is measured
   with it. Its four sections are the four ways this book's own figures could be wrong.
 - **Measurement bias is demonstrated rather than cited**, by an experiment the reader runs: the
@@ -602,7 +602,7 @@ without number.
 - **Citations are primary only**: the measurement-bias paper and the Linux manual pages. The
   benchmarking textbooks are not cited at all.
 
-## ch15 · The Memory Hierarchy
+## ch17 · The Memory Hierarchy
 
 **Closest in subject.** *What Every Programmer Should Know About Memory* (Drepper); *Computer
 Systems: A Programmer's Perspective* chapter 6, including its memory-mountain figure; *Performance
@@ -611,7 +611,7 @@ microbenchmark literature. The pointer-chase latency probe is long-standing folk
 
 **How this differs, and the care taken.**
 
-- **The chapter's job is set by ch13 rather than by the topic.** It exists to explain a specific
+- **The chapter's job is set by ch15 rather than by the topic.** It exists to explain a specific
   earlier prediction failing, and it closes by judging that prediction — the extra load was never
   the difference; the difference is that one program can overlap its accesses and the other
   cannot. That arc belongs to this book.
@@ -622,7 +622,7 @@ microbenchmark literature. The pointer-chase latency probe is long-standing folk
 - **The instrument's shape is argued rather than assumed.** A dependent chase measures latency and
   an independent walk measures parallelism; the chapter says which it built and why, and says that
   every number it produces is therefore a worst case.
-- **The TLB section is ch07's cost, in ch07's own terms.** Three levels of page table become three
+- **The TLB section is ch09's cost, in ch09's own terms.** Three levels of page table become three
   extra memory accesses, and the counter-intuitive consequence — data fitting in cache while
   translations do not — is drawn out because this book has already made the reader build the walk.
 - **The vendor comparison is a stated policy, not a check.** Where the datasheet and the
@@ -635,7 +635,7 @@ microbenchmark literature. The pointer-chase latency probe is long-standing folk
 - **Citations are primary only**: the SoC documentation and the core's technical reference manual.
   Drepper and CS:APP are not cited, here or anywhere.
 
-## ch16 · Optimising Code
+## ch18 · Optimising Code
 
 **Closest in subject.** *Computer Systems: A Programmer's Perspective* chapter 5, which is the
 canonical treatment of hand-optimising a loop and measuring each step; *Performance Analysis and
@@ -652,13 +652,13 @@ Tuning on Modern CPUs* on compiler transformations; and Agner Fog's optimisation
   `-O3`, because the hand-written version is harder for the compiler to analyse. The plan asked
   for "at least one case where the optimisation does nothing"; the measurement supplied something
   better.
-- **The figure is a real result rather than a pending one, in a Part III chapter.** Instruction
+- **The figure is a real result rather than a pending one, in a Part IV chapter.** Instruction
   counts are compiler output, so CI regenerates them every push, and the chapter's claims about
   this compiler are continuously checked against this compiler. What the surviving differences
   cost is separated out, declared pending, and explicitly not claimed.
 - **Problems 16.1 and 16.2 are graded against the book's own stamped result**, so a future
   compiler that changes its mind changes the right answer rather than making the book wrong. That
-  is a form this book invented for ch09 and this is its cleanest use.
+  is a form this book invented for ch11 and this is its cleanest use.
 - **Problem 16.3 is graded by compiling.** Five functions, identical arithmetic, differing in what
   becomes of the result; the test compiles them and counts, and the threshold follows the compiler
   rather than being asserted. The two traps — a store to a variable nothing reads, which is
@@ -666,7 +666,7 @@ Tuning on Modern CPUs* on compiler transformations; and Agner Fog's optimisation
 - **Citations are primary only**: the compiler's own manual page. No optimisation textbook is
   cited.
 
-## ch17 · The CPU
+## ch19 · The CPU
 
 **Closest in subject.** *Performance Analysis and Tuning on Modern CPUs* on the out-of-order
 pipeline and top-down analysis; Agner Fog's microarchitecture manual; *Computer Architecture: A
@@ -684,7 +684,7 @@ is folklore and appears in CS:APP chapter 5 among many others.
   the reader to beat the author at a prediction the author got wrong is not a form the comparable
   material uses.
 - **The accumulator example is used against instruction counts rather than for speed.** Its point
-  here is that the shortest program is the slowest, which closes ch16's explicit deferral; the
+  here is that the shortest program is the slowest, which closes ch18's explicit deferral; the
   instruction counts that make that visible are stamped and regenerated rather than asserted.
 - **Problem 17.2's model is presented with its own limit.** The formula predicts more accumulators
   are always better; the stub and the scaffolding test both say what actually stops it — register
@@ -696,7 +696,7 @@ is folklore and appears in CS:APP chapter 5 among many others.
   book's.
 - **Citations are primary only**: the core's technical reference manual and `perf list`.
 
-## ch18 · Memory Ordering on Real Hardware
+## ch20 · Memory Ordering on Real Hardware
 
 **Closest in subject.** *A Primer on Memory Consistency and Cache Coherence*; the false-sharing
 sections of *What Every Programmer Should Know About Memory* and *Performance Analysis and Tuning
@@ -706,10 +706,10 @@ Amdahl's law.
 **How this differs, and the care taken.**
 
 - **The chapter's reason for existing is the book's two-architecture decision, and it says so.**
-  Its middle section puts AArch64's `stlr` beside RISC-V's `fence rw,w` — both printed by ch10
+  Its middle section puts AArch64's `stlr` beside RISC-V's `fence rw,w` — both printed by ch12
   from real disassembly — and draws the conclusion that a reader shown one weak memory model
   concludes that model is memory ordering. No single-architecture treatment can make that move,
-  and it is the return on a cost PLAN §5 paid two chapters of Part III for.
+  and it is the return on a cost PLAN §5 paid two chapters of Part IV for.
 - **The false-sharing figure needs no machine and is measured anyway.** Whether two counters land
   on one line is decided by the layout, so it is stamped from a cross build, and the runner
   refuses a layout in which the packed structure has stopped sharing or the padded one has
@@ -723,11 +723,11 @@ Amdahl's law.
 - **"Atomics are expensive" is refused as a fact about atomics.** The two columns of the cost
   table are the same instruction differing by a large factor on something not in the instruction.
 - **The limitation section separates what the machine does from what the model permits**, and says
-  that no measurement can replace ch10's problem about permission — a reordering that never
+  that no measurement can replace ch12's problem about permission — a reordering that never
   happens on this chip may be allowed on the next one.
 - **Citations are primary only**: the two architectures' specifications.
 
-## ch19 · The OS Layer's Cost on Real Hardware
+## ch21 · The OS Layer's Cost on Real Hardware
 
 **Closest in subject.** The system-call and page-fault chapters of *Operating Systems: Three Easy
 Pieces* and of the xv6 book; *Systems Performance*'s treatment of system-call overhead and its
@@ -736,8 +736,8 @@ chapter; and the many published "how expensive is a system call" microbenchmarks
 
 **How this differs, and the care taken.**
 
-- **The chapter is built as a verdict on Part II rather than as an introduction to anything.**
-  Its first figure is Part II's own counts, gathered from three results the book already
+- **The chapter is built as a verdict on Part III rather than as an introduction to anything.**
+  Its first figure is Part III's own counts, gathered from three results the book already
   committed, and its job is to turn them into a bound that the measurement can contradict. No
   existing treatment can do that, because no existing treatment spent seven chapters counting the
   same three services on a kernel the reader can stop mid-trap.
@@ -749,7 +749,7 @@ chapter; and the many published "how expensive is a system call" microbenchmarks
 - **The calling-convention observation is derived, not recited.** The register holding the call
   number is not one the C convention would pick, and the chapter's reason is that the process and
   the kernel were compiled separately and so cannot have agreed by being compiled together —
-  which is ch04's argument about callee-saved registers, reused rather than restated.
+  which is ch06's argument about callee-saved registers, reused rather than restated.
 - **Problem 19.1 is deliberately not the standard "beware of measurement overhead" warning.** It
   is arithmetic whose interesting property is that at a single iteration the two harnesses agree:
   putting the clock outside the loop divides the overhead rather than removing it. The test
@@ -769,7 +769,7 @@ chapter; and the many published "how expensive is a system call" microbenchmarks
 - **Citations are primary only**: the ARM architecture reference manual for the exception model,
   and Linux's own generic system-call table for the number in the listing.
 
-## ch20 · Whole-Machine Profiling
+## ch22 · Whole-Machine Profiling
 
 **Closest in subject.** *Systems Performance*'s profiling and flame-graph chapters; *Performance
 Analysis and Tuning on Modern CPUs* on `perf` and on skid; the `perf` wiki and tutorial; the
@@ -790,12 +790,12 @@ writing on sampling profilers' pitfalls.
 - **The example program is the book's own and is built round a specific misdirection.** The phase
   with the conspicuous arithmetic and a conditional is cheap; the phase that is three lines long
   is the cost. Neither the program nor the misdirection is anyone else's, and the payoff is a
-  census row the reader can already interpret from ch17 and ch18.
+  census row the reader can already interpret from ch19 and ch20.
 - **The line-holds-a-run observation is reused rather than introduced.** That the keys miss two
-  thirds of the counters and still touch every line is ch18's coherence-works-in-lines argument
+  thirds of the counters and still touch every line is ch20's coherence-works-in-lines argument
   reappearing as a capacity argument, and the chapter says so rather than presenting it fresh.
 - **Skid is derived from the mechanism rather than stated as a caveat.** The diagram draws the
-  counter overflowing into an interrupt — ch09's mechanism, met already, doing a job unrelated to
+  counter overflowing into an interrupt — ch11's mechanism, met already, doing a job unrelated to
   a device — and the attribution error follows from that, with the chapter's rule being "read the
   neighbourhood, never the line".
 - **Problem 20.3 is the chapter's original contribution to a well-worn topic.** Aliasing between a
@@ -812,7 +812,7 @@ writing on sampling profilers' pitfalls.
   expensive because of a decision made in a different phase that no amount of sampling points at.
 - **Citations are primary only**: `perf_event_open(2)` and the measurement-bias paper.
 
-## ch21 · Vectors
+## ch23 · Vectors
 
 **Closest in subject.** Every compiler's own auto-vectorisation documentation; the SIMD chapters
 of *Performance Analysis and Tuning on Modern CPUs*; Goldberg's paper and the many treatments of

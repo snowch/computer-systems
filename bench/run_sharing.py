@@ -6,10 +6,10 @@
 
 The question that decides whether two cores will fight — do these two fields land on the same
 line — is answered by the compiler and the layout, so it can be answered here. What the fight
-costs needs four cores and is `ch18-sharing`, pending on the board.
+costs needs four cores and is `ch20-sharing`, pending on the board.
 
 Built for the reference architecture and run under user-mode QEMU for its *answers*, which is the
-same arrangement [ch13] uses: a layout is a fact about a data model and an ABI, and both are
+same arrangement [ch15] uses: a layout is a fact about a data model and an ABI, and both are
 present in a cross build.
 """
 

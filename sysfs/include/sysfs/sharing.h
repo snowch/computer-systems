@@ -16,7 +16,7 @@
 
 #include <stdint.h>
 
-/* The line size this layout is built around. ch15 measures it rather than assuming it, and a
+/* The line size this layout is built around. ch17 measures it rather than assuming it, and a
  * reader whose machine differs should say so here and watch the figures move. */
 #define SYSFS_LINE_BYTES 64
 

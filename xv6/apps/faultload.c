@@ -2,10 +2,10 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch08 compares xv6's two allocation policies, which this kernel already offers: `sbrk` allocates
+ * ch10 compares xv6's two allocation policies, which this kernel already offers: `sbrk` allocates
  * when you ask and `sbrklazy` allocates when you touch. The comparison is only worth anything if
  * the workload is fixed by construction rather than observed to be steady, which is the lesson
- * ch06 paid for — so every quantity below is a constant this program decided, and it prints them
+ * ch08 paid for — so every quantity below is a constant this program decided, and it prints them
  * so that `bench/run_faults.py` can refuse to record a census that disagrees.
  *
  * The three phases are chosen to bracket the trade rather than to demonstrate a win.

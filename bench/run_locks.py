@@ -6,7 +6,7 @@
 
 Not a measurement, and the reason is the chapter. What a lock *costs* is contention, contention is
 a question about how long one core made another wait, and this target has no opinion about
-duration — so a number here would describe the laptop. [ch18] prices contention on hardware.
+duration — so a number here would describe the laptop. [ch20] prices contention on hardware.
 
 What is available, and is worth more than a fabricated timing, is what the primitives *are*. The
 kernel is disassembled as built, so these are the instructions the machine actually runs rather
@@ -36,7 +36,7 @@ from bench.stamp import (
 )
 
 #: The four functions every critical section in xv6 passes through. Ordinary C functions with
-#: sizes in the symbol table, so objdump can bound them by name — unlike ch06's assembly labels.
+#: sizes in the symbol table, so objdump can bound them by name — unlike ch08's assembly labels.
 PRIMITIVES = ("acquire", "release", "push_off", "pop_off")
 
 #: RISC-V spells atomics and ordering distinctly enough to classify by mnemonic.

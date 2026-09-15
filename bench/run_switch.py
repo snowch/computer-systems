@@ -8,14 +8,14 @@ Two facts, and the first is the chapter.
 
 **What `swtch` saves**, read out of the kernel as built. A context switch is a function call, so
 the ABI has already dealt with everything a caller was willing to lose — which means the switch
-itself has to preserve far less than [ch06]'s trap path, and the difference is not an optimisation
+itself has to preserve far less than [ch08]'s trap path, and the difference is not an optimisation
 but a consequence of one side having agreed to the convention.
 
 **How many switches a workload causes**, by reason. Only one of the three reasons is a number the
 workload fixes: a process that exits switches away exactly once. How often the timer took the CPU
 away is a statement about elapsed time, and how often a process waited is a statement about
 whether the thing it waited for had already happened — so those two are counted by the kernel and
-declined by this runner, for [ch09]'s reasons.
+declined by this runner, for [ch11]'s reasons.
 """
 
 from __future__ import annotations
@@ -39,7 +39,7 @@ from bench.stamp import (
 )
 
 WORKLOAD = ["switchload"]
-PATCH = "xv6/patches/11-switch-census.patch"
+PATCH = "xv6/patches/13-switch-census.patch"
 APP = "xv6/apps/switchload.c"
 
 #: Ctrl-X, which the patch binds to printing the census.

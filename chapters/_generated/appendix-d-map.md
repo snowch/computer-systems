@@ -2,32 +2,32 @@
 
 | File | Lines | Read by | For |
 |---|---|---|---|
-| `kernel/entry.S` | 21 | [ch06](#ch06) | the first instructions the kernel runs, before there is a stack |
-| `kernel/start.c` | 66 | [ch06](#ch06) | the machine-mode setup that hands over to supervisor mode |
-| `kernel/syscall.c` | 151 | [ch06](#ch06) | the dispatch table, and how arguments cross the boundary |
-| `kernel/syscall.h` | 23 | [ch06](#ch06) | the call numbers |
-| `kernel/sysproc.c` | 112 | [ch06](#ch06) | the process calls, including the one ch06's workload uses |
-| `kernel/trampoline.S` | 153 | [ch06](#ch06) | uservec and userret — the register moves ch06 counts |
-| `kernel/trap.c` | 220 | [ch06](#ch06) | where a trap is decided, and where a page fault would be handled |
-| `kernel/memlayout.h` | 63 | [ch07](#ch07) | what is mapped where, and why the trampoline is at the top |
-| `kernel/riscv.h` | 417 | [ch07](#ch07) | the Sv39 field definitions, as macros over a 64-bit word |
-| `kernel/vm.c` | 491 | [ch07](#ch07) | the page-table walk, mapping, and the kernel's own address space |
-| `kernel/exec.c` | 176 | [ch08](#ch08) | what a fresh address space is built out of |
-| `kernel/kalloc.c` | 82 | [ch08](#ch08) | the physical page allocator a fault ends up calling |
-| `kernel/console.c` | 203 | [ch09](#ch09) | a device driver small enough to read in full |
-| `kernel/kernelvec.S` | 64 | [ch09](#ch09) | the trap path taken when the kernel itself is interrupted |
-| `kernel/plic.c` | 47 | [ch09](#ch09) | which device is allowed to interrupt which hart |
-| `kernel/uart.c` | 155 | [ch09](#ch09) | the registers underneath it |
-| `kernel/sleeplock.c` | 55 | [ch10](#ch10) | the other kind, and when each is correct |
-| `kernel/spinlock.c` | 116 | [ch10](#ch10) | the lock, and the memory barriers around it |
-| `kernel/spinlock.h` | 8 | [ch10](#ch10) | what a lock is made of |
-| `kernel/proc.c` | 701 | [ch11](#ch11) | the scheduler, and both halves of a context switch |
-| `kernel/proc.h` | 104 | [ch11](#ch11) | the context ch11 counts the registers of |
-| `kernel/swtch.S` | 42 | [ch11](#ch11) | the switch itself — fourteen registers and nothing else |
-| `kernel/bio.c` | 153 | [ch12](#ch12) | the buffer cache, and why a read can cost nothing |
-| `kernel/file.c` | 179 | [ch12](#ch12) | what a file descriptor actually is |
-| `kernel/fs.c` | 741 | [ch12](#ch12) | inodes, blocks, and the path from a name to a byte |
-| `kernel/log.c` | 261 | [ch12](#ch12) | the write-ahead log ch12 counts the amplification of |
-| `kernel/virtio_disk.c` | 333 | [ch12](#ch12) | the only device in the system that makes you wait |
+| `kernel/entry.S` | 21 | [ch08](#ch08) | the first instructions the kernel runs, before there is a stack |
+| `kernel/start.c` | 66 | [ch08](#ch08) | the machine-mode setup that hands over to supervisor mode |
+| `kernel/syscall.c` | 151 | [ch08](#ch08) | the dispatch table, and how arguments cross the boundary |
+| `kernel/syscall.h` | 23 | [ch08](#ch08) | the call numbers |
+| `kernel/sysproc.c` | 112 | [ch08](#ch08) | the process calls, including the one ch08's workload uses |
+| `kernel/trampoline.S` | 153 | [ch08](#ch08) | uservec and userret — the register moves ch08 counts |
+| `kernel/trap.c` | 220 | [ch08](#ch08) | where a trap is decided, and where a page fault would be handled |
+| `kernel/memlayout.h` | 63 | [ch09](#ch09) | what is mapped where, and why the trampoline is at the top |
+| `kernel/riscv.h` | 417 | [ch09](#ch09) | the Sv39 field definitions, as macros over a 64-bit word |
+| `kernel/vm.c` | 491 | [ch09](#ch09) | the page-table walk, mapping, and the kernel's own address space |
+| `kernel/exec.c` | 176 | [ch10](#ch10) | what a fresh address space is built out of |
+| `kernel/kalloc.c` | 82 | [ch10](#ch10) | the physical page allocator a fault ends up calling |
+| `kernel/console.c` | 203 | [ch11](#ch11) | a device driver small enough to read in full |
+| `kernel/kernelvec.S` | 64 | [ch11](#ch11) | the trap path taken when the kernel itself is interrupted |
+| `kernel/plic.c` | 47 | [ch11](#ch11) | which device is allowed to interrupt which hart |
+| `kernel/uart.c` | 155 | [ch11](#ch11) | the registers underneath it |
+| `kernel/sleeplock.c` | 55 | [ch12](#ch12) | the other kind, and when each is correct |
+| `kernel/spinlock.c` | 116 | [ch12](#ch12) | the lock, and the memory barriers around it |
+| `kernel/spinlock.h` | 8 | [ch12](#ch12) | what a lock is made of |
+| `kernel/proc.c` | 701 | [ch13](#ch13) | the scheduler, and both halves of a context switch |
+| `kernel/proc.h` | 104 | [ch13](#ch13) | the context ch13 counts the registers of |
+| `kernel/swtch.S` | 42 | [ch13](#ch13) | the switch itself — fourteen registers and nothing else |
+| `kernel/bio.c` | 153 | [ch14](#ch14) | the buffer cache, and why a read can cost nothing |
+| `kernel/file.c` | 179 | [ch14](#ch14) | what a file descriptor actually is |
+| `kernel/fs.c` | 741 | [ch14](#ch14) | inodes, blocks, and the path from a name to a byte |
+| `kernel/log.c` | 261 | [ch14](#ch14) | the write-ahead log ch14 counts the amplification of |
+| `kernel/virtio_disk.c` | 333 | [ch14](#ch14) | the only device in the system that makes you wait |
 
-*Conditions: target `xv6`; the xv6 submodule's source, read rather than built; xv6-riscv @ 9e3161a; none; `none`; 2026-09-14. Source: `bench/results/filemap-xv6.json`, code hash `fd792a1b7bbb06c1`.*
+*Conditions: target `xv6`; the xv6 submodule's source, read rather than built; xv6-riscv @ 9e3161a; none; `none`; 2026-09-15. Source: `bench/results/filemap-xv6.json`, code hash `2cf92fda6a925392`.*

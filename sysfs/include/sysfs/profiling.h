@@ -3,7 +3,7 @@
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
  * Everything measured up to here has been code this book wrote, in a loop chosen to isolate one
- * mechanism, with the answer already known. That is the wrong shape for the skill ch20 is about,
+ * mechanism, with the answer already known. That is the wrong shape for the skill ch22 is about,
  * which is finding the expensive part of something nobody explained to you.
  *
  * So: three phases over a stream of records, one of which dominates. The header says what each

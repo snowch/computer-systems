@@ -4,12 +4,12 @@
     python3 -m bench.run_loops           # compile each variant at each level and stamp the counts
     python3 -m bench.run_loops --check   # re-compile and compare; write nothing
 
-Not a timing, and it does not need to be. The question ch16 asks first is *whether the source
+Not a timing, and it does not need to be. The question ch18 asks first is *whether the source
 change survived the compiler at all* — and that is answered by the instruction counts, which are
 compiler output rather than machine behaviour, so CI regenerates them on every push exactly as it
 does the listings.
 
-What the surviving differences cost is a separate question, needs the board, and is `ch16-cost`.
+What the surviving differences cost is a separate question, needs the board, and is `ch18-cost`.
 """
 
 from __future__ import annotations

@@ -49,16 +49,16 @@ python3 -m pip install -r requirements.txt -r requirements-dev.txt
 python3 scripts/verify-setup.py     # says which targets this machine can run
 ```
 
-On a laptop with a RISC-V cross compiler and QEMU, that is everything Parts I and II need —
-fourteen chapters. Part III needs a small Linux machine that can count and sample:
+On a laptop with a RISC-V cross compiler and QEMU, that is everything Parts II and III need —
+fourteen chapters. Part IV needs a small Linux machine that can count and sample:
 **[`hardware/`](hardware/)** says what it has to do, why that turned out to mean an ARM machine
 rather than a RISC-V one, and how to check the one you have. `verify-setup.py` is what decides,
 not a spec sheet.
 
 **The two targets do not share an instruction set, and that is deliberate.** The kernel small
 enough to read in an afternoon is a RISC-V kernel; the hardware whose counters work is an ARM
-one. `hardware/README.md` shows the evidence. Reading disassembly is confined to ch01–ch04
-(RISC-V) and ch16, ch17 and ch21 (AArch64), with Appendix F translating between them; the rest is
+one. `hardware/README.md` shows the evidence. Reading disassembly is confined to ch04–ch06
+(RISC-V) and ch18, ch19 and ch23 (AArch64), with Appendix F translating between them; the rest is
 method, and method does not have an architecture.
 
 ```bash

@@ -46,8 +46,8 @@ from bench.stamp import (
 #: symbols in the order a chapter meets them).
 #:
 #: One result per file per architecture rather than one big result, because the fingerprint is
-#: taken over the sources a result names — so editing ch02's example would otherwise invalidate
-#: ch01's listings and send an author to the wrong chapter looking for what changed.
+#: taken over the sources a result names — so editing ch05's example would otherwise invalidate
+#: ch04's listings and send an author to the wrong chapter looking for what changed.
 SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
     "shapes": (
         "sysfs/lib/shapes.c",
@@ -113,6 +113,11 @@ SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
             "sysfs_signed_quarter",
             "sysfs_unsigned_quarter",
         ),
+    ),
+    "declarations": (
+        "sysfs/lib/declarations.c",
+        "sysfs/include/sysfs/declarations.h",
+        ("sysfs_step_narrow", "sysfs_step_wide", "sysfs_reach_through"),
     ),
     "oscalls": (
         "sysfs/lib/oscalls.c",

@@ -1,4 +1,4 @@
-"""The reader's predictor model, built once for chapter 17's problems."""
+"""The reader's hierarchy analysis, built once for chapter 15's three problems."""
 
 from __future__ import annotations
 
@@ -8,5 +8,5 @@ from tests.ch17.harness import build
 
 
 @pytest.fixture(scope="session")
-def predictor(build_dir):
+def hierarchy(build_dir):
     return build(build_dir)

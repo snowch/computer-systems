@@ -5,7 +5,7 @@
  *   sv39 decode 0x3fffffe000
  *   sv39 tables 0x0:4 0x3fffffe000:2
  *
- * ch07's claim is that a page table's size is decided by *where* an address space's pages are and
+ * ch09's claim is that a page table's size is decided by *where* an address space's pages are and
  * not by how many of them there are. `tables` is that claim as a function: hand it the runs of
  * pages an address space maps and it says how many page-table pages Sv39 needs to describe them,
  * without looking at a machine. The chapter checks its answer against a running kernel's count of

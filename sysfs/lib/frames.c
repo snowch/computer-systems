@@ -1,4 +1,4 @@
-/* The functions ch04 measures the frames of.
+/* The functions ch06 measures the frames of.
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  */

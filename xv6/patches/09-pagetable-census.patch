@@ -1,0 +1,148 @@
+diff -urN a/kernel/console.c b/kernel/console.c
+--- a/kernel/console.c	2026-09-14 20:30:13.840914650 +0000
++++ b/kernel/console.c	2026-09-14 20:31:23.337664318 +0000
+@@ -152,6 +152,9 @@
+   case C('T'): // Print the trap census (Systems From Scratch, ch08).
+     trapdump();
+     break;
++  case C('V'): // Print the page-table census (Systems From Scratch, ch09).
++    ptdump();
++    break;
+   case C('P'): // Print process list.
+     procdump();
+     break;
+diff -urN a/kernel/defs.h b/kernel/defs.h
+--- a/kernel/defs.h	2026-09-14 20:30:13.845340680 +0000
++++ b/kernel/defs.h	2026-09-14 20:31:16.614510570 +0000
+@@ -103,6 +103,7 @@
+ int             either_copyout(int user_dst, uint64 dst, void *src, uint64 len);
+ int             either_copyin(void *dst, int user_src, uint64 src, uint64 len);
+ void            procdump(void);
++void            ptdump(void);
+ 
+ // swtch.S
+ void            swtch(struct context*, struct context*);
+@@ -154,6 +155,8 @@
+ void            uartputc_sync(int);
+ 
+ // vm.c
++extern pagetable_t kernel_pagetable;
++void            ptcensus(pagetable_t, char*, int, char*);
+ void            kvminit(void);
+ void            kvminithart(void);
+ void            kvmmap(pagetable_t, uint64, uint64, uint64, int);
+diff -urN a/kernel/proc.c b/kernel/proc.c
+--- a/kernel/proc.c	2026-09-14 20:30:13.837353721 +0000
++++ b/kernel/proc.c	2026-09-14 20:31:16.590812940 +0000
+@@ -699,3 +699,22 @@
+     printk("\n");
+   }
+ }
++
++// Print the page-table census: the kernel's own map, then one line per live process.
++// Systems From Scratch, ch09. Runs on Ctrl-V, mirroring Ctrl-P's convention above -- and, like
++// procdump, takes no lock, because a dump that can wedge the machine it is diagnosing is worse
++// than a dump that is occasionally one process out of date.
++void
++ptdump(void)
++{
++  struct proc *p;
++
++  printk("\nptcensus 1\n");
++  ptcensus(kernel_pagetable, "kernel", 0, "kernel");
++  for (p = proc; p < &proc[NPROC]; p++) {
++    if (p->state == UNUSED || p->pagetable == 0)
++      continue;
++    ptcensus(p->pagetable, "proc", p->pid, p->name);
++  }
++  printk("end ptcensus\n");
++}
+diff -urN a/kernel/vm.c b/kernel/vm.c
+--- a/kernel/vm.c	2026-09-14 20:30:13.833625373 +0000
++++ b/kernel/vm.c	2026-09-14 20:32:57.681627077 +0000
+@@ -489,3 +489,85 @@
+   }
+   return 0;
+ }
++
++// -- page-table census (Systems From Scratch, ch09) -----------------------------------------
++//
++// A page table exists so that an address can mean something, and like any data structure it
++// occupies memory. Nothing in xv6 counts that memory, because nothing in xv6 needs to. ch09 does,
++// because the book's question at every layer is what a mechanism costs -- and here the cost is
++// not time, which QEMU cannot be asked about, but physical pages spent describing where the
++// other physical pages are.
++//
++// The walk is freewalk's, with the destruction removed and counting put in its place. A PTE is a
++// leaf when any of R, W or X is set; with V set and none of them, it points at the next level
++// down. That one test is the whole of Sv39's structure.
++//
++// Regions are reported as well as totals, because the totals are not explicable without them. A
++// page table's size is decided by where the mappings are and not by how many there are, so the
++// runs of consecutive pages are the reason for every number on the summary line.
++
++struct ptshape {
++  uint64 tables[3]; // interior pages, indexed by level: 2 is the root
++  uint64 leaves[3]; // leaf PTEs, by the level each was found at
++  uint64 mapped;    // bytes those leaves make addressable
++  uint64 regions;   // runs of consecutive mapped pages
++  uint64 start;     // the run currently being accumulated
++  uint64 end;
++  char *kind;
++  int pid;
++};
++
++static void
++ptflush(struct ptshape *shape)
++{
++  if (shape->end == shape->start)
++    return;
++  printk("ptcensus region %s %d %p %ld\n", shape->kind, shape->pid, (void *)shape->start,
++         (shape->end - shape->start) >> PGSHIFT);
++  shape->regions++;
++  shape->start = shape->end = 0;
++}
++
++static void
++ptcount(pagetable_t pagetable, int level, uint64 base, struct ptshape *shape)
++{
++  shape->tables[level]++;
++  for (int i = 0; i < 512; i++) {
++    pte_t pte = pagetable[i];
++    if ((pte & PTE_V) == 0)
++      continue;
++    uint64 va = base + ((uint64)i << PXSHIFT(level));
++    if (pte & (PTE_R | PTE_W | PTE_X)) {
++      // A leaf. How much it covers is decided by the level it was found at rather than by
++      // anything in the entry, which is what makes a superpage a superpage -- worth counting by
++      // level even in a kernel that never creates one.
++      uint64 size = 1L << PXSHIFT(level);
++      shape->leaves[level]++;
++      shape->mapped += size;
++      if (va != shape->end)
++        ptflush(shape);
++      if (shape->end == shape->start)
++        shape->start = va;
++      shape->end = va + size;
++    } else if (level > 0) {
++      ptcount((pagetable_t)PTE2PA(pte), level - 1, va, shape);
++    }
++  }
++}
++
++// One line per run of consecutive pages, then one summary line, in the key/value shape the
++// book's runners parse.
++void
++ptcensus(pagetable_t pagetable, char *kind, int pid, char *name)
++{
++  struct ptshape shape;
++
++  memset(&shape, 0, sizeof(shape));
++  shape.kind = kind;
++  shape.pid = pid;
++  ptcount(pagetable, 2, 0, &shape);
++  ptflush(&shape);
++  printk("ptcensus table %s %d %s tables %ld %ld %ld leaves %ld %ld %ld bytes %ld regions %ld\n",
++         kind, pid, name, shape.tables[2], shape.tables[1], shape.tables[0], shape.leaves[2],
++         shape.leaves[1], shape.leaves[0], shape.mapped, shape.regions);
++}

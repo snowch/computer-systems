@@ -2,14 +2,14 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch13 needs a program that Parts I and II explain completely and whose cost they do not predict
+ * ch15 needs a program that Parts II and III explain completely and whose cost they do not predict
  * at all. These two functions add up exactly the same numbers and return exactly the same answer.
  * One walks an array from beginning to end; the other follows a chain through the same array,
  * visiting every element exactly once, in an order arranged so that no two consecutive visits are
  * near each other.
  *
  * Structurally they are nearly the same function: the same additions, the same loop, one extra
- * load. Everything Part II can say about one, it says about the other. What separates them is not
+ * load. Everything Part III can say about one, it says about the other. What separates them is not
  * visible in any of it.
  *
  * The bodies arrive through a macro rather than a library, for stages.h's reason: an xv6 user
@@ -21,7 +21,7 @@
 #define SYSFS_BRIDGE_H
 
 /* `next` is an index rather than a pointer so the structure has the same size and layout on both
- * targets — which is ch02's subject, and the reason this comparison is allowed to be made. */
+ * targets — which is ch05's subject, and the reason this comparison is allowed to be made. */
 struct sysfs_cell {
   long value;
   long next;
@@ -31,7 +31,7 @@ struct sysfs_cell {
   /* A stride that visits everything. Any odd number coprime with count       \
    * closes the cycle; a little under a third keeps consecutive visits far    \
    * apart without being a power of two, which would land them on a small set \
-   * of cache sets — a distinction ch15 has the equipment to explain. */      \
+   * of cache sets — a distinction ch17 has the equipment to explain. */      \
   long sysfs_bridge_stride(long count) {                                      \
     long stride = count / 3;                                                  \
     if (stride < 1)                                                           \

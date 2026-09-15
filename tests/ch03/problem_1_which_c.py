@@ -5,7 +5,7 @@ Four listings, four candidate functions, and the job is to say which is which.
 You are not expected to do it by eye, and guessing from the shapes is the slow way. Every
 candidate is C you can compile: put each one in a file, build it the way `sysfs/tools/stages.sh`
 does, disassemble it and compare. That loop — *change the source, look at the output* — is the
-one this chapter is really teaching, and the rest of Part I assumes you have it.
+one this chapter is really teaching, and the rest of Part II assumes you have it.
 """
 
 from __future__ import annotations

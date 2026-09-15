@@ -5,7 +5,7 @@
  * The four sums add the same numbers with the same number of additions. They differ only in how
  * many accumulators they use, which decides how long the chain of dependent additions is — and
  * therefore how many of them the machine can have in flight at once. Instruction counts cannot
- * see that difference at all, which is ch16's closing point turned into an experiment.
+ * see that difference at all, which is ch18's closing point turned into an experiment.
  *
  * The branch functions all perform the same comparison the same number of times. They differ in
  * how predictable the outcome is, which is not a property of the instruction either.
@@ -30,7 +30,7 @@ long sysfs_sum_chain8(const long *values, long count);
 /* Count how many values satisfy a condition. Written as a branch, and worth compiling before
  * assuming it is one: a compiler that can see both sides are cheap will replace the branch with a
  * conditional move or a conditional increment, and there is then nothing left to mispredict.
- * ch17 finds out which happened rather than assuming. */
+ * ch19 finds out which happened rather than assuming. */
 long sysfs_count_over(const long *values, long count, long threshold);
 
 /* The same count, with something in the taken case that cannot be turned into arithmetic. A call

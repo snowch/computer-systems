@@ -8,4 +8,4 @@
 | Lines in those | 5137 |
 | Files nothing in this book opens | 17 |
 
-*Conditions: target `xv6`; the xv6 submodule's source, read rather than built; xv6-riscv @ 9e3161a; none; `none`; 2026-09-14. Source: `bench/results/filemap-xv6.json`, code hash `fd792a1b7bbb06c1`.*
+*Conditions: target `xv6`; the xv6 submodule's source, read rather than built; xv6-riscv @ 9e3161a; none; `none`; 2026-09-15. Source: `bench/results/filemap-xv6.json`, code hash `2cf92fda6a925392`.*

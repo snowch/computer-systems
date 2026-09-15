@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch01 follows a program from source text to a result and asks which of that journey costs
+ * ch04 follows a program from source text to a result and asks which of that journey costs
  * anything at run time. The answer is easiest to see when two pieces of code that a reader would
  * call identical are compiled side by side, so this header defines exactly that: the same sum,
  * with the same loop, differing only in whether the compiler can know where the loop stops.
@@ -28,7 +28,7 @@
  * `folded` counts to a bound the compiler can read. `counted` counts to one that arrives in a
  * register at run time. Nothing else differs: same loop, same accumulator, same arithmetic, same
  * optimisation level. What the compiler does with them does not resemble that at all, and
- * ch01 reads both listings side by side.
+ * ch04 reads both listings side by side.
  *
  * Defined through a macro so the xv6 app and the host tool are the same bytes. */
 #define SYSFS_STAGES_DEFINE_SUMS                            \

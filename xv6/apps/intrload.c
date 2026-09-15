@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch09 counts interrupts by source. A count is only worth printing if the workload that caused it
+ * ch11 counts interrupts by source. A count is only worth printing if the workload that caused it
  * is fixed by construction, so every quantity here is a constant this program decided and prints.
  *
  * Two devices, because they are interesting in different ways: the console is a character at a

@@ -47,7 +47,7 @@ STAGE = ROOT / "xv6" / "stage"
 #: xv6's shell prompt. Everything here is a search for this two-character string.
 PROMPT = "$ "
 
-#: Default core count. Three, matching upstream's own default, and enough that ch10 and ch11 have
+#: Default core count. Three, matching upstream's own default, and enough that ch12 and ch13 have
 #: something to say about concurrency while a boot still takes about a second.
 DEFAULT_CPUS = 3
 
@@ -216,7 +216,7 @@ def qemu_command(stage: Path, cpus: int = DEFAULT_CPUS, memory: str = "128M") ->
         # so every boot starts from the same filesystem. Without it a measurement that writes a
         # file would depend on how many times the suite had been run since `mkfs` last ran — and
         # while QEMU does not in fact flush this image before it is killed, "the emulator happens
-        # not to get round to it" is not a property to record numbers against. ch09 counts disk
+        # not to get round to it" is not a property to record numbers against. ch11 counts disk
         # interrupts, which is what made the question worth settling rather than assuming.
         f"file={stage / 'fs.img'},if=none,format=raw,id=x0,snapshot=on",
         "-device",

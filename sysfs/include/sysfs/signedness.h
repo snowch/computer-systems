@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch02 reads the disassembly of these rather than describing them. Each pair differs by one
+ * ch05 reads the disassembly of these rather than describing them. Each pair differs by one
  * word — `int` against `unsigned` — and the machine code differs by far more than that, because
  * the two types do not make the same promises and the compiler is allowed to use the difference.
  */

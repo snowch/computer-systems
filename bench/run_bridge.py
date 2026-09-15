@@ -8,9 +8,9 @@ One source, two routes through the same data, two targets. What is recorded here
 two targets agree about — the answer, the structure, the instruction counts — and the point of the
 chapter is that the list is complete and predicts nothing about cost.
 
-The duration is not here and cannot be. It is `ch13-cost`, which is declared pending until
+The duration is not here and cannot be. It is `ch15-cost`, which is declared pending until
 ``make bench-board`` runs on the reference machine, and the chapter is written so that the
-argument stands either way: what Parts I and II establish about these two functions is the same
+argument stands either way: what Parts II and III establish about these two functions is the same
 whether or not the board has reported.
 """
 

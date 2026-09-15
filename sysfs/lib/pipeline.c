@@ -64,7 +64,7 @@ long sysfs_count_over(const long *values, long count, long threshold) {
   long hits = 0;
 
   /* Deliberately a branch rather than arithmetic. A compiler that turns this into a conditional
-   * move removes the thing being measured, and ch17 says how to notice that it has. */
+   * move removes the thing being measured, and ch19 says how to notice that it has. */
   for (long i = 0; i < count; i++)
     if (values[i] > threshold)
       hits++;

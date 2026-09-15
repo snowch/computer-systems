@@ -9,7 +9,7 @@
  *
  * Every figure in the census is a property of the program and its sizes, so it is the same on any
  * machine and CI can regenerate it. That is the point of it being here: the census is a
- * *prediction*, written down before the profile exists, and ch20 is about the difference.
+ * *prediction*, written down before the profile exists, and ch22 is about the difference.
  */
 
 #include <stdio.h>

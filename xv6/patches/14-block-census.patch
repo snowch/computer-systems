@@ -1,0 +1,135 @@
+diff -urN a/kernel/bio.c b/kernel/bio.c
+--- a/kernel/bio.c	2026-09-14 21:42:18.674858025 +0000
++++ b/kernel/bio.c	2026-09-14 21:42:18.707710290 +0000
+@@ -95,6 +95,7 @@
+ 
+   b = bget(dev, blockno);
+   if (!b->valid) {
++    blocknote(0); // Systems From Scratch, ch14: a block the cache did not have
+     virtio_disk_rw(b, 0);
+     b->valid = 1;
+   }
+@@ -108,6 +109,7 @@
+ {
+   if (!holdingsleep(&b->lock))
+     panic("bwrite");
++  blocknote(1); // Systems From Scratch, ch14: a block on its way to the platter
+   virtio_disk_rw(b, 1);
+ }
+ 
+@@ -151,3 +153,63 @@
+   b->refcnt--;
+   release(&bcache.lock);
+ }
++
++
++// -- block census (Systems From Scratch, ch14) ----------------------------------------------
++//
++// Counts the traffic that actually reaches the device, which is not the same as the traffic a
++// program asked for and is the whole subject of ch14. A read that the buffer cache satisfies
++// never gets here; a block written twice in one transaction gets here once. What is left is what
++// the disk sees.
++//
++// Nothing is locked, for ch12's reason and with ch12's justification: a lock on the block path
++// would be work on the block path, and the figures the book publishes from this are the ones a
++// fixed workload fixes.
++
++struct blockcensus {
++  uint64 reads;
++  uint64 writes;
++  uint64 log_blocks;
++  uint64 commits;
++};
++
++struct blockcensus bcensus;
++
++void
++blocknote(int write)
++{
++  if (write)
++    bcensus.writes++;
++  else
++    bcensus.reads++;
++}
++
++void
++lognote(int commit)
++{
++  if (commit)
++    bcensus.commits++;
++  else
++    bcensus.log_blocks++;
++}
++
++// Printed on Ctrl-B, the way Ctrl-P prints the process table.
++void
++blockdump(void)
++{
++  printk("\nblockcensus 1\n");
++  printk("blockcensus reads %ld writes %ld logged %ld commits %ld\n", bcensus.reads,
++         bcensus.writes, bcensus.log_blocks, bcensus.commits);
++  printk("end blockcensus\n");
++}
++
++// Zeroed on Ctrl-Z, so that a workload can be measured without the boot in front of it.
++void
++blockreset(void)
++{
++  bcensus.reads = 0;
++  bcensus.writes = 0;
++  bcensus.log_blocks = 0;
++  bcensus.commits = 0;
++  printk("\nblockcensus reset\n");
++}
+diff -urN a/kernel/console.c b/kernel/console.c
+--- a/kernel/console.c	2026-09-14 21:42:18.681237911 +0000
++++ b/kernel/console.c	2026-09-14 21:42:18.708117029 +0000
+@@ -152,6 +152,12 @@
+   case C('T'): // Print the trap census (Systems From Scratch, ch08).
+     trapdump();
+     break;
++  case C('B'): // Print the block census (Systems From Scratch, ch14).
++    blockdump();
++    break;
++  case C('Z'): // Zero the block census (Systems From Scratch, ch14).
++    blockreset();
++    break;
+   case C('X'): // Print the switch census (Systems From Scratch, ch13).
+     switchdump();
+     break;
+diff -urN a/kernel/defs.h b/kernel/defs.h
+--- a/kernel/defs.h	2026-09-14 21:42:18.684988302 +0000
++++ b/kernel/defs.h	2026-09-14 21:42:18.708025854 +0000
+@@ -107,6 +107,10 @@
+ void            faultdump(void);
+ void            intrdump(void);
+ void            switchdump(void);
++void            blockdump(void);
++void            blockreset(void);
++void            blocknote(int);
++void            lognote(int);
+ void            switchnote(struct proc*);
+ void            intrnote(int);
+ void            uartnote(int, uint64);
+diff -urN a/kernel/log.c b/kernel/log.c
+--- a/kernel/log.c	2026-09-14 21:42:18.678030594 +0000
++++ b/kernel/log.c	2026-09-14 21:45:17.520280607 +0000
+@@ -202,6 +202,7 @@
+ static void
+ commit()
+ {
++  lognote(1); // Systems From Scratch, ch14
+   if (log.lh.n > 0) {
+     write_log();      // Write modified blocks from cache to log
+     write_head();     // Write header to disk -- the real commit
+@@ -237,6 +238,10 @@
+   }
+   log.lh.block[i] = b->blockno;
+   if (i == log.lh.n) { // Add new block to log?
++    // Systems From Scratch, ch14: counted here rather than on entry, because xv6 absorbs a
++    // repeated write to the same block and a count of calls would not be a count of blocks.
++    // The chapter's arithmetic is about blocks, so this has to be too.
++    lognote(0);
+     bpin(b);
+     log.lh.n++;
+   }

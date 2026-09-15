@@ -1,4 +1,4 @@
-"""The reader's console model, built once for chapter 9's problems."""
+"""The reader's page-table program, built once for chapter 7's three problems."""
 
 from __future__ import annotations
 
@@ -8,5 +8,6 @@ from tests.ch09.harness import build
 
 
 @pytest.fixture(scope="session")
-def console(build_dir):
+def walk(build_dir):
+    """The reader's walk.c, compiled. All three problems live in it."""
     return build(build_dir)

@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * bench/run_disasm.py compiles this and captures both functions, so the listings ch01 prints are
+ * bench/run_disasm.py compiles this and captures both functions, so the listings ch04 prints are
  * the ones this repository's compiler actually emits rather than ones anybody typed.
  */
 

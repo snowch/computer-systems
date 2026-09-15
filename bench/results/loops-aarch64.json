@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "6b0d8b28b94b070c",
+  "code_fingerprint": "0f8da51aa2b6b51f",
   "code_sources": [
     "bench/run_loops.py",
     "sysfs/lib/loops.c",
@@ -8,7 +8,7 @@
   "conditions": {
     "note": "instruction counts only; what the surviving differences cost needs the board"
   },
-  "generated_at": "2026-09-14T22:15:13+00:00",
+  "generated_at": "2026-09-15T09:23:29+00:00",
   "kind": "listing",
   "machine": {
     "arch": "aarch64",
@@ -24,7 +24,7 @@
       "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
     },
     "cpus_online": "0-3",
-    "kernel": "Linux 6.18.44-fc-v24",
+    "kernel": "Linux 6.18.44-fc-v33",
     "kind": "other",
     "os": "Ubuntu 24.04.4 LTS",
     "python": "3.11.15"
