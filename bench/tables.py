@@ -1075,3 +1075,19 @@ def kernel_pools_table(name: str) -> str:
     }
     rows = [[f"`{bound}`", run[bound], meaning.get(bound, "")] for bound in sorted(run)]
     return render_table(["Bound", "Value", "What it limits"], rows)
+
+
+def first_program_table(name: str) -> str:
+    """What ch01's first complete program prints, so the chapter can quote rather than assert.
+
+    No address appears here. One would differ on every run; the distance between two does not,
+    and the distance is what the chapter is about.
+    """
+    run = load_result(name)["summary"]
+    rows = [
+        ["`value`", run["value"]],
+        ["`*&value` — the same thing again", run["roundtrip"]],
+        ["Bytes from one `int32_t` to the next", run["steps"]["int32"]],
+        ["Bytes from one `int64_t` to the next", run["steps"]["int64"]],
+    ]
+    return render_table(["What the program printed", "Value"], rows)

@@ -525,6 +525,10 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         result="kernelc-xv6",
     ),
     # -- ch01 ---------------------------------------------------------------------------
+    "ch01-firstc": Table(
+        render=tables.first_program_table,
+        result="firstc",
+    ),
     "ch01-step-narrow": Listing(
         symbol="sysfs_step_narrow",
         results=("declarations-riscv64",),

@@ -23,6 +23,18 @@ the `cdecl` tradition of declaration-reading rules.
 
 **How this differs, and the care taken.**
 
+- **It opens with one complete program, which no other chapter in the book does.** Every other
+  piece of C here is a fragment lifted out of a file, and a reader who has never written C has
+  never seen where the pieces go. The four incidental things in it — `#include`, `main`, `printf`,
+  `return` — are named once, explicitly so they stop being in the way, and then not taught.
+- **Its first measurement is deliberately not an address.** An address differs on every run and
+  contains no fact; the relationships between addresses do not change, and those are what the
+  chapter is about. No introduction consulted makes that distinction — printing `&x` is close to
+  universal in them, and it shows the reader a number they cannot learn anything from.
+- **The disassembly confirms something the reader has already watched happen**, rather than
+  introducing it. The program prints four and eight; the listings then show the two instructions
+  that produce them. That ordering is the chapter's own, and it is why the pointer section is no
+  longer the first thing in it.
 - **It is not a C tutorial and the chapter says which parts it is refusing to teach.** Control
   flow, functions and operators are assumed from the reader's other language, explicitly. What is
   taught is the memory model, on the stated grounds that it is the part the reader's other

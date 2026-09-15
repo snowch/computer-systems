@@ -13,15 +13,32 @@ short_title: "ch01 Reading C"
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch00](#ch00) |
-| **What it measures** | What `p + 1` and `->` become: `bench/results/declarations-riscv64.json` |
+| **What it measures** | What one complete program prints: `bench/results/firstc.json`; what `p + 1` and `->` become: `bench/results/declarations-riscv64.json` |
 :::
 
 ## The question
 
 How do I read a C declaration, and what does each piece of it become?
 
+### What Part I is for
+
+Three chapters and one job: enough C to read a kernel, and no more.
+
+That "no more" is a real limit rather than modesty. C is a large language and most of it never
+appears in the code this book reads, so a part that covered it would spend most of its length on
+things you are never going to meet here. What is covered instead is the part your own language was
+built to hide — that memory is one array of bytes, and everything in it has an index.
+
+**ch01** is that model: addresses, declarations, arrays, structs, and what each becomes when
+compiled. **[ch02](#ch02)** is what stops being true when there is no library underneath you, which
+is the part an application programmer of any language gets wrong first. **[ch03](#ch03)** sorts C's
+constructs by a single question — has the machine heard of this? — and answers it with disassembly
+rather than with assertion.
+
+At the end of the three you will not be a C programmer. You will be able to read one, which is the
+thing the rest of the book actually requires, and [Part II](#ch04) starts requiring it immediately.
+
 :::{note} Which of these three chapters you need
-:class: dropdown
 
 **If you already write C**, skip to [ch02](#ch02). This chapter is the on-ramp; ch02 is the one
 about the habits that stop working in a kernel, and it is written for you.
@@ -33,6 +50,39 @@ genuinely different and the part a kernel is made of.
 :::
 
 ## The material
+
+### One whole program
+
+Every piece of C you have seen in this book so far has been a fragment — a function lifted out of
+a file, with no beginning and no end. Here is a complete one, and it is the shortest complete one
+this book has.
+
+```{literalinclude} ../sysfs/tools/firstc.c
+:language: c
+```
+
+Four things in it are not the subject of this chapter and are worth naming once so they stop being
+in the way.
+
+`#include` pastes in a file of declarations, so that `printf` is a name the compiler has heard of
+before you use it. `main` is where a program starts, and there is exactly one. `printf` writes to
+the terminal, and the `%d` in its first argument is a hole the next argument fills. `return 0` at
+the end of `main` is the program's exit status, and zero means nothing went wrong.
+
+Build it and run it:
+
+```bash
+cc -o firstc sysfs/tools/firstc.c && ./firstc
+```
+
+That is the whole loop this part asks you to get into: change the source, build it, look at what
+came out. Nothing later in the chapter needs anything more elaborate.
+
+```{include} _generated/ch01-firstc.md
+```
+
+Those four numbers are the rest of the chapter, and the rest of the chapter is why they are what
+they are.
 
 ### Memory is one array, and everything has an index
 
@@ -52,14 +102,33 @@ Three questions follow, and they are the ones worth asking of any C you read:
 `&x` gives you the index of `x`'s first byte. `*p` goes to the index in `p` and reads what is
 there. Those two are inverses and there is nothing else to them.
 
+### `&` and `*`, watched rather than described
+
+Two operators, and they are inverses.
+
+`&x` gives the index of where `x` lives. `*p` goes to the index held in `p` and reads what is
+there. So `*&x` is `x` again, which is the second row of that table, printed by a program rather
+than asserted by a paragraph.
+
+**The program never prints an address**, and the reason matters more than it looks. An address is
+different every time the program runs and means nothing by itself; there is no fact in it. What is
+the same every time — and what is worth knowing — is the *relationship* between two addresses. The
+last two rows are that relationship, and they are the whole of pointer arithmetic.
+
+Two arrays, both of two elements. The distance from the first element to the second is four bytes
+in one and eight in the other, and nothing in the expression that computed it said four or eight.
+The type did.
+
 ### A pointer is an index with a type stapled to it
 
 `int *p` says: `p` holds an index, and what lives at that index is an `int`. The type is not
 decoration. It is how the compiler knows how many bytes to take, how to interpret them, and — this
 is the part that surprises people — **how far one step is**.
 
-Here are two functions. Both take a pointer and return the element after the one it points at.
-The source of each is the same three characters, `p + 1`.
+That is the fact from the outside. Here it is from underneath.
+
+Two functions, each taking a pointer and returning the element after the one it points at. The
+source of each is the same three characters, `p + 1`.
 
 ```{literalinclude} ../sysfs/lib/declarations.c
 :language: c
@@ -184,10 +253,17 @@ out of the free memory itself.
 
 ## What we measured
 
-Nothing here is a cost. Three listings, captured by the machinery [ch09](#ch09) explains and
-re-captured by CI on every push, establishing two things a reader would otherwise have to take on
-trust: that `p + 1` compiles to a different offset for different element types, and that `->`
-compiles to an offset on a load with no lookup of any kind.
+Nothing here is a cost. Two things, and they are the same fact seen from two sides.
+
+What the first program printed, which is the chapter's claims as a reader can reproduce them:
+that `*&x` is `x`, and that consecutive elements are one element apart rather than one byte. The
+runner refuses to stamp a run where either stops holding, because both are things the chapter asks
+the reader to take on trust for exactly as long as it takes to run the program.
+
+Then three listings, captured by the machinery [ch09](#ch09) explains and re-captured by CI on
+every push, showing the same two facts from underneath: that `p + 1` compiles to a different
+offset for different element types, and that `->` compiles to an offset on a load with no lookup
+of any kind.
 
 Both are facts about what this compiler did. That they are *required* is a claim about the
 standard @iso-c17 and would hold on a compiler emitting entirely different instructions.
