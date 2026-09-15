@@ -30,11 +30,15 @@ tell you* is mandatory, and it is where the target, the tooling or the hardware 
 usually the most useful part of the chapter.
 
 :::{note} Where this book is
-All twenty-four chapters and five of the six appendices are written. Thirteen figures are still
-marked *pending*: they are `host` measurements that have to be taken on the reference machine, and
-until they are you will see a box saying so rather than a number. Appendix C waits for the same
-machine — which events a board exposes is a property of its silicon, kernel and firmware together,
-and cannot be drafted from a desk.
+Twenty-four of the twenty-nine chapters are written, and six of the seven appendices. The five
+still being drafted are all of [Part II](#ch04), which teaches each primitive of the machine on
+its own before Part IV meets them entangled inside a kernel; each carries its target, its question
+and the measurements it owes you, so the table of contents is already a map of where it is going.
+
+Thirteen figures are marked *pending*: they are `host` measurements that have to be taken on the
+reference machine, and until they are you will see a box saying so rather than a number. Appendix C
+waits for the same machine — which events a board exposes is a property of its silicon, kernel and
+firmware together, and cannot be drafted from a desk.
 
 **[Download the whole book as a PDF](systems-from-scratch.pdf)** — every chapter and appendix in
 one file, built from the same source as this site, so the two cannot disagree about what a
