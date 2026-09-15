@@ -515,6 +515,15 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
             f"{BOARD} (`bench/results/vectors-host.json`)."
         ),
     ),
+    # -- ch02 ---------------------------------------------------------------------------
+    "ch02-absences": Table(
+        render=tables.kernel_absences_table,
+        result="kernelc-xv6",
+    ),
+    "ch02-pools": Table(
+        render=tables.kernel_pools_table,
+        result="kernelc-xv6",
+    ),
     # -- ch01 ---------------------------------------------------------------------------
     "ch01-step-narrow": Listing(
         symbol="sysfs_step_narrow",

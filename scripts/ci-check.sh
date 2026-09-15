@@ -120,6 +120,9 @@ python3 -m bench.run_sharing --check
 echo "== ch22's program still has the shape the chapter profiles =="
 python3 -m bench.run_profile --check
 
+echo "== the kernel still lacks what ch02 says it lacks =="
+python3 -m bench.run_kernelc --check
+
 echo "== appendix D still describes the kernel tree that is checked out =="
 python3 -m bench.run_filemap --check
 

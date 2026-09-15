@@ -7,13 +7,12 @@ short_title: Preface
 
 *From bits to cycles, measured on real hardware.*
 
-:::{warning} This book is being written
-[Chapter 0](#ch00) is complete and the toolchain around it works end to end. Every other
-chapter is a stub, and every stub names its target, its question and the measurements it owes you
-— so the table of contents is already a usable map of where the book is going. The six appendices
-each say what they will hold and where that content has to come from. The
-[project plan](https://github.com/snowch/computer-systems/blob/main/PLAN.md) has the long version,
-and what each chapter must produce before it loses its `[DRAFT]` marker.
+:::{note} Where this book is
+All twenty-four chapters and five of the six appendices are written. Thirteen figures are still
+marked *pending*: they are `host` measurements that have to be taken on the reference machine, and
+until they are you will see a box saying so rather than a number. Appendix C waits for the same
+machine — which events a board exposes is a property of its silicon, kernel and firmware together,
+and cannot be drafted from a desk.
 
 **[Download the whole book as a PDF](systems-from-scratch.pdf)** — every chapter and appendix in
 one file, built from the same source as this site, so the two cannot disagree about what a
@@ -153,9 +152,20 @@ hundred pages in.
 ## Who it is for
 
 Someone who has seen digital logic and a pipeline diagram, has spent years around computers, is
-fluent in a scripting language, and has never had a reason to read a kernel. You do not need to
-know C well; [chapter 3](#ch03) covers the parts that are really about addresses. You do not
-need OS internals; that is Part III.
+fluent in a scripting language, and has never had a reason to read a kernel. You do not need OS
+internals; that is Part III.
+
+**You do not need to know C**, and Part I is three chapters about exactly that. It is not a C
+tutorial: control flow, functions and operators are assumed from whatever language you already
+use. What it covers is the part your other language was built to hide — that memory is one array
+of bytes and everything in it has an index — and then the habits that stop working when there is
+no library underneath you.
+
+Two readers arrive here and they need different chapters, so the part says which.
+[Chapter 1](#ch01) is the on-ramp for someone who has never written C. [Chapter 2](#ch02) is for
+someone who writes it for applications and is about to lose the heap, the library and the
+assumption that only one thread is looking. [Chapter 3](#ch03) is for both, and sorts C's
+constructs by a single question: has the machine heard of this?
 
 ## What you will need
 

@@ -1035,3 +1035,43 @@ def xv6_kernel_size_table(name: str) -> str:
         ["Files nothing in this book opens", len(run["files"]) - mapped],
     ]
     return render_table(["The kernel, counted", "Value"], rows)
+
+
+def kernel_absences_table(name: str) -> str:
+    """What the kernel does not have, counted from the kernel that is checked in.
+
+    An absence is harder to believe than a presence, which is why each row carries the number that
+    settles it rather than the word "none". The instruction count is there to give the zero a
+    denominator: no floating point in nine thousand instructions is a decision, and no floating
+    point in nine is an accident of a small sample.
+    """
+    run = load_result(name)["summary"]
+    rows = [
+        ["Instructions in the kernel", f"{run['kernel']['instructions']:,}"],
+        ["…that name a floating-point register", run["kernel"]["floating_point"]],
+        ["Heap functions it defines", len(run["heap_functions"])],
+        ["C library functions it reimplements", run["reimplemented_count"]],
+    ]
+    return render_table(["The kernel as built", "Value"], rows)
+
+
+def kernel_pools_table(name: str) -> str:
+    """The compile-time bounds that are this kernel's allocator.
+
+    Every one of them is the length of an array that exists for the whole run. A hosted program
+    would ask for memory and check whether it arrived; a kernel this size decides the maximum in
+    advance and returns a failure when the pool is full.
+    """
+    run = load_result(name)["summary"]["pool_bounds"]
+    meaning = {
+        "NPROC": "processes",
+        "NCPU": "harts",
+        "NOFILE": "open files, per process",
+        "NFILE": "open files, system-wide",
+        "NINODE": "in-memory inodes",
+        "NDEV": "device drivers",
+        "NBUF": "disk blocks cached",
+        "MAXARG": "arguments to `exec`",
+    }
+    rows = [[f"`{bound}`", run[bound], meaning.get(bound, "")] for bound in sorted(run)]
+    return render_table(["Bound", "Value", "What it limits"], rows)

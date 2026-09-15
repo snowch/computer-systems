@@ -15,6 +15,77 @@ feels like "the standard way to present this", that is the signal to design a di
 
 ---
 
+## ch01 · Reading C
+
+**Closest in subject.** Every introduction to C ever written, and in particular the pointer and
+declaration chapters of K&R and of the many "C for programmers who know another language" guides;
+the `cdecl` tradition of declaration-reading rules.
+
+**How this differs, and the care taken.**
+
+- **It is not a C tutorial and the chapter says which parts it is refusing to teach.** Control
+  flow, functions and operators are assumed from the reader's other language, explicitly. What is
+  taught is the memory model, on the stated grounds that it is the part the reader's other
+  language was built to hide — which is a scope no general C introduction can take, because it
+  has to teach the whole language.
+- **The two claims most likely to be taken on trust are measured instead.** `sysfs/lib/declarations.c`
+  exists to be disassembled: the same `p + 1` compiles to a four-byte step for one element type
+  and an eight-byte step for another, and `->` compiles to an offset on a load with no member
+  lookup at run time. No introduction consulted shows either; they assert both.
+- **The declaration rule is derived from why declarations are shaped as they are** — that they
+  mirror use, so `int *p` says the expression `*p` has type `int` — rather than given as a spiral
+  or right-left recipe to memorise.
+- **Problem 1.1's hard case is one the author got wrong first.** `int (*x[4])(void)` is an array
+  of pointers, not a pointer to an array, and the reference implementation written to check the
+  problem was solvable failed exactly there. The scaffolding test that caught it is in the repository
+  asserting that case by name.
+- **Problem 1.2 checks the copy with a sum the harness takes itself**, rather than through the
+  reader's own compare, because checking one unsolved function with another lets two wrong
+  answers agree.
+- **The chapter defers rather than duplicates.** Struct offsets, alignment, byte order and bit
+  manipulation are ch05's and are established there by measurement; the preprocessor is ch04's.
+  A part that repeated them would be the book disagreeing with itself.
+- **Citations are primary only**: the C standard, for what the language requires as opposed to
+  what this compiler did.
+
+---
+
+## ch02 · C Without a Runtime
+
+**Closest in subject.** OSTEP and the xv6 book on kernel memory management; "kernel C" sections of
+various OS course notes; the Linux kernel's own coding-style and API documentation; writing on
+freestanding C.
+
+**How this differs, and the care taken.**
+
+- **The chapter's structure is a single claim with consequences, not a list of warnings.** There
+  is nothing underneath you; every difference follows from removing the library and the kernel
+  beneath. The sections are the consequences in order, and the chapter says to read them that way.
+- **Every absence is counted rather than asserted.** `bench/run_kernelc.py` reads the built kernel:
+  zero instructions naming a floating-point register out of nine thousand, zero heap functions
+  defined, thirteen library functions reimplemented, and the compile-time bounds that stand in for
+  an allocator. An absence is the weakest kind of claim and the easiest to go stale, so the runner
+  refuses to stamp a census in which the kernel has acquired floating point or a heap.
+- **The instruction count is in the table to give the zero a denominator**, which is stated: no
+  floating point in nine thousand instructions is a decision and no floating point in nine is a
+  small sample.
+- **The floating-point section explains the decision rather than reporting it** — the registers
+  are process state, saving them costs every switch whether or not a process used one, so the
+  kernel declines and therefore may not use them either. Real kernels are named as making the
+  same trade differently, by saving lazily, which is ch10's mechanism used for something else.
+- **Problem 2.2 is a cross-product whose interesting cell only exists because it is one.** A
+  function that can run out and returns `void` has no way to report it — a bug in the interface
+  rather than the body — and it is invisible unless the two axes are crossed. The scaffolding
+  asserts that cell is exactly two of the twelve.
+- **Problem 2.1's subject is the exhaustion case**, on the stated grounds that it is the one an
+  application programmer has never had to write, and its scaffolding pins three ways a buggy
+  caller frees something that was not allocated.
+- **The limitations section declines the word "freestanding"**, saying that what matters is which
+  specific things are missing from this kernel rather than a conformance mode.
+- **Citations are primary only**: the C standard.
+
+---
+
 ## ch00 · Prerequisites and Setup
 
 **Closest in subject.** Setup and tooling material generally: the MIT 6.1810 tools page, the
@@ -62,6 +133,44 @@ started with a RISC-V SBC" vendor guides and blog posts.
 - **Citations are primary only**: the RISC-V ISA, privileged, psABI and SBI specifications, the
   vendor documentation, and the SiFive core manual. The xv6 book and the textbooks above appear in
   "Where to go next" and are not a source for any of the chapter's content.
+
+---
+
+## ch03 · C for People Who Will Read a Kernel
+
+**Closest in subject.** Every C book's chapter on pointers, and in particular *The C Programming
+Language* chapter 5, the pointer chapters of *Computer Systems: A Programmer's Perspective*, and
+the "pointers are hard" genre generally. Also every "C for systems programmers" course handout.
+
+**How this differs.**
+
+- **Sorted by whether the machine has heard of the construct.** The comparable material is
+  organised by language feature: pointers, then arrays, then function pointers, then qualifiers.
+  This chapter has one axis and it is not a C axis — *does this survive to the instruction
+  stream?* `static` vanishes, an array parameter is discarded, `volatile` survives into every
+  load, and a function pointer changes the instruction. That organising question comes from this
+  book's spine rather than from C, and it produces a different order and a different selection.
+- **It is explicitly not a C tutorial, and says which parts it refuses to cover.** The chapter's
+  stated job is to make kernel source readable, so it covers what appears in kernel source and
+  stops. No style guidance, no idiom catalogue, nothing about the parts of C xv6 does not use.
+- **Each claim is settled by compiling both sides.** `volatile` is not described, it is shown as
+  one load against four. The claim that an array parameter is a pointer parameter is not asserted,
+  it is checked instruction for instruction by a test, so a compiler that disagreed would fail CI
+  rather than quietly making the sentence false. `sysfs/lib/addresses.c` was written for this book.
+- **The dispatch-table figure is drawn for this book** and shows the mechanism — a slot holds an
+  address, the call is a load then a jump — rather than illustrating a syntax.
+- **The problems are original.** 3.1 generates its own listings from the reader's toolchain rather
+  than storing them, so the puzzle cannot go stale or disagree with their compiler. 3.2 is a
+  storage-duration bug of the shape that made the C library grow `_r` variants, checked by whether
+  both answers survive to one `printf`. 3.3 asks the reader to fill a dispatch table where one
+  function's name deliberately does not match the slot it belongs in, so it cannot be solved by
+  matching strings.
+- **`volatile` is bounded rather than recommended.** The chapter states exactly what it
+  guarantees and says plainly that it is not a threading primitive, deferring to ch12 — a
+  distinction much of the comparable material blurs.
+- **Citations are primary only**: the C standard and the xv6 source. The reader is pointed at
+  `kernel/uart.c` as a first real thing to read, with a warning about which part of it they are
+  not equipped for yet.
 
 ---
 
@@ -145,44 +254,6 @@ every few years.
   can point at and later chapters benefit from.
 - **Citations are primary only**: the C standard, the RISC-V unprivileged specification, and the
   psABI.
-
----
-
-## ch03 · C for People Who Will Read a Kernel
-
-**Closest in subject.** Every C book's chapter on pointers, and in particular *The C Programming
-Language* chapter 5, the pointer chapters of *Computer Systems: A Programmer's Perspective*, and
-the "pointers are hard" genre generally. Also every "C for systems programmers" course handout.
-
-**How this differs.**
-
-- **Sorted by whether the machine has heard of the construct.** The comparable material is
-  organised by language feature: pointers, then arrays, then function pointers, then qualifiers.
-  This chapter has one axis and it is not a C axis — *does this survive to the instruction
-  stream?* `static` vanishes, an array parameter is discarded, `volatile` survives into every
-  load, and a function pointer changes the instruction. That organising question comes from this
-  book's spine rather than from C, and it produces a different order and a different selection.
-- **It is explicitly not a C tutorial, and says which parts it refuses to cover.** The chapter's
-  stated job is to make kernel source readable, so it covers what appears in kernel source and
-  stops. No style guidance, no idiom catalogue, nothing about the parts of C xv6 does not use.
-- **Each claim is settled by compiling both sides.** `volatile` is not described, it is shown as
-  one load against four. The claim that an array parameter is a pointer parameter is not asserted,
-  it is checked instruction for instruction by a test, so a compiler that disagreed would fail CI
-  rather than quietly making the sentence false. `sysfs/lib/addresses.c` was written for this book.
-- **The dispatch-table figure is drawn for this book** and shows the mechanism — a slot holds an
-  address, the call is a load then a jump — rather than illustrating a syntax.
-- **The problems are original.** 3.1 generates its own listings from the reader's toolchain rather
-  than storing them, so the puzzle cannot go stale or disagree with their compiler. 3.2 is a
-  storage-duration bug of the shape that made the C library grow `_r` variants, checked by whether
-  both answers survive to one `printf`. 3.3 asks the reader to fill a dispatch table where one
-  function's name deliberately does not match the slot it belongs in, so it cannot be solved by
-  matching strings.
-- **`volatile` is bounded rather than recommended.** The chapter states exactly what it
-  guarantees and says plainly that it is not a threading primitive, deferring to ch12 — a
-  distinction much of the comparable material blurs.
-- **Citations are primary only**: the C standard and the xv6 source. The reader is pointed at
-  `kernel/uart.c` as a first real thing to read, with a warning about which part of it they are
-  not equipped for yet.
 
 ---
 
