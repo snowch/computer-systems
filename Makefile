@@ -64,9 +64,16 @@ bench-board:  ## Re-run every host-target measurement. ON THE MACHINE BEING MEAS
 	  "Host-target figures are measured natively on the machine itself. Emulated timings are not\n" \
 	  "measurements, and the book does not print them. See ch00.", file=sys.stderr) or sys.exit(1))'
 	$(PYTHON) -m bench.run_setup --target host
+	$(PYTHON) -m bench.run_measuring
+	$(PYTHON) -m bench.run_hierarchy
 	@echo
 	@echo "Now re-render and commit:"
 	@echo "  $(PYTHON) scripts/render-figures.py && git add bench/results chapters/_generated"
+	@echo
+	@echo "Figures still waiting on a runner that has not been written yet:"
+	@$(PYTHON) -c 'import sys; sys.path.insert(0, "."); \
+	  from tests.test_board import RUNNER_NOT_WRITTEN; \
+	  print("  " + ", ".join(sorted(RUNNER_NOT_WRITTEN)) if RUNNER_NOT_WRITTEN else "  none")'
 
 .PHONY: figures
 figures:  ## Re-render every table, listing and diagram from committed results
