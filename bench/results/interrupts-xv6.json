@@ -1,10 +1,10 @@
 {
-  "code_fingerprint": "ff749e3d23ea97cb",
+  "code_fingerprint": "e50b2fb70834918f",
   "code_sources": [
     "bench/run_interrupts.py",
     "bench/xv6.py",
     "xv6/apps/intrload.c",
-    "xv6/patches/11-interrupt-census.patch"
+    "xv6/patches/16-interrupt-census.patch"
   ],
   "conditions": {
     "cpus": 3,
@@ -13,7 +13,7 @@
     "note": "counts only; nothing here was timed, and two counts are deliberately absent",
     "omitted": "timer and UART interrupt counts, which measure elapsed time rather than work"
   },
-  "generated_at": "2026-09-15T09:24:09+00:00",
+  "generated_at": "2026-09-15T15:10:02+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",

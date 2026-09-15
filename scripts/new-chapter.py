@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Create a chapter or appendix stub with the book's standard shape.
 
-    python3 scripts/new-chapter.py 7          # chapters/ch09_virtual_memory.md
+    python3 scripts/new-chapter.py 7          # chapters/ch14_virtual_memory.md
     python3 scripts/new-chapter.py --all      # every chapter and appendix that is missing
 
 The seven-part shape comes from PLAN.md §12.1 and is not negotiable: the repetition is what makes
@@ -29,6 +29,7 @@ from bench.outline import APPENDICES, CHAPTERS, Appendix, Chapter  # noqa: E402
 #: nine host chapters until it was caught.
 TARGET_LABEL = {
     "xv6": "`xv6` — the teaching kernel under QEMU",
+    "bare": "`bare` — the same machine under QEMU with no operating system on it",
     "host": "`host` — Linux on real hardware, natively ([hardware](#ch00))",
     "both": "`xv6` and `host` — every example says which",
 }

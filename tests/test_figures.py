@@ -119,7 +119,7 @@ def test_listing_shows_each_architecture_once(name: str, figure: Listing):
     """No two blocks in one figure may be indistinguishable from their labels.
 
     Originally this compared architectures alone, because comparing architectures was the only
-    reason a figure had more than one block. ch23 gave it a second: the same function compiled at
+    reason a figure had more than one block. ch28 gave it a second: the same function compiled at
     two optimisation levels, which is one architecture twice and entirely deliberate. What must
     still never happen is two blocks a reader cannot tell apart, so the key is what the label
     says — architecture and level — rather than architecture on its own.
@@ -222,7 +222,7 @@ def board_result(tmp_path, monkeypatch):
 
 @pytest.mark.parametrize("arch", sorted(CPUINFO))
 def test_board_table_describes_either_architecture(arch: str, board_result):
-    """The reference machine is ARM; a reader may follow Part IV on a RISC-V board.
+    """The reference machine is ARM; a reader may follow Part V on a RISC-V board.
 
     A table hard-coded to one of them prints a column of dashes on the other, which reads as a
     broken measurement rather than a different machine. This is the check that the author, who

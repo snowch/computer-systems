@@ -10,7 +10,7 @@ inflate the answer by more than the answer. So `blockload` performs the same ope
 differing in one `write` call, the census is zeroed before each, and what is subtracted is
 everything that is not the byte.
 
-Deterministic for the same filesystem image, which [ch11] established and which this runner
+Deterministic for the same filesystem image, which [ch16] established and which this runner
 depends on more heavily: block counts are decided by where the file system puts things.
 """
 
@@ -33,7 +33,7 @@ from bench.stamp import (
     write_result,
 )
 
-PATCH = "xv6/patches/14-block-census.patch"
+PATCH = "xv6/patches/19-block-census.patch"
 APP = "xv6/apps/blockload.c"
 
 RESET = "\x1a"  # Ctrl-Z, which the patch binds to zeroing the census

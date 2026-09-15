@@ -1,4 +1,4 @@
-"""ch06's stack walker finds the frames the source says are there.
+"""ch11's stack walker finds the frames the source says are there.
 
 The walk is the chapter's claim that a backtrace is a loop over a linked list. If the chain ever
 comes back shorter than the call depth, either the walker is wrong or the compiler inlined

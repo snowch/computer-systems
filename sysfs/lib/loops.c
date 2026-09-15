@@ -3,7 +3,7 @@
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
  * Written to be compiled and compared rather than to be admired. The hand-optimised versions are
- * what a careful programmer writes when they do not trust the compiler, which is the habit ch18
+ * what a careful programmer writes when they do not trust the compiler, which is the habit ch23
  * is about examining.
  */
 

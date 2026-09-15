@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 21's measurements: what Linux charges for the three services Part III took apart.
+"""Chapter 21's measurements: what Linux charges for the three services Part IV took apart.
 
     python3 -m bench.run_oscost          # on the board only
     python3 -m bench.run_oscost --check  # re-run and compare; write nothing
@@ -16,7 +16,7 @@ compares the vDSO route with itself and prints two identical numbers, which is w
 development machine printed while this was being written.
 
 And the two clock routes must actually differ. If they do not on the board, either the vDSO is not
-being used or the raw path is not trapping, and `ch21-vdso`'s entire point is the gap between them.
+being used or the raw path is not trapping, and `ch26-vdso`'s entire point is the gap between them.
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ from bench.board import governor, require_board, stamp_timing, timed_run
 from bench.stamp import ROOT, load_result, measurement_differences, write_result
 
 WORKLOAD = "sysfs/bench/oscost.c"
-FIGURE = "ch21-cost, ch21-faults and ch21-vdso"
+FIGURE = "ch26-cost, ch26-faults and ch26-vdso"
 
 #: What each service is measured against. Chosen to be unflattering: in each pair the difference
 #: is doing the thing against not doing it.
@@ -112,7 +112,7 @@ def capture() -> list[dict[str, Any]]:
     if faults["faults"].get("major", 0) <= faults["faults"].get("minor", 0):
         raise OsCostError(
             f"a major fault measured {faults['faults'].get('major')} ns and a minor one "
-            f"{faults['faults'].get('minor')} ns. ch21's claim is that waiting for storage is "
+            f"{faults['faults'].get('minor')} ns. ch26's claim is that waiting for storage is "
             "orders of magnitude worse; if it is not, posix_fadvise did not drop the page cache "
             "and the 'major' fault was served from memory."
         )

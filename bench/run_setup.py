@@ -144,7 +144,7 @@ def perf_capability() -> dict[str, Any]:
     """Whether ``perf stat`` on this board reads real hardware counters, and which ones.
 
     This is the single most important thing chapter 0 establishes about the board, because every
-    chapter in Part IV assumes it. On RISC-V the counters reach Linux through the SBI PMU
+    chapter in Part V assumes it. On RISC-V the counters reach Linux through the SBI PMU
     extension, so the answer depends on the firmware as much as on the silicon — which means it
     has to be asked of the machine rather than looked up.
 
@@ -208,8 +208,8 @@ def perf_can_sample() -> dict[str, Any]:
     Counting and sampling are different capabilities and a board can have the first without the
     second. Sampling needs the counters to raise an overflow interrupt, which on RISC-V means the
     **Sscofpmf** extension @riscv-sscofpmf; a kernel without it says so at boot and then refuses.
-    The SiFive U74 does not implement it. That is the difference between ch21, which counts, and
-    ch22, which samples, so it is recorded as a fact about the board rather than discovered in a
+    The SiFive U74 does not implement it. That is the difference between ch26, which counts, and
+    ch27, which samples, so it is recorded as a fact about the board rather than discovered in a
     chapter.
 
     **This asks for samples rather than for an exit code.** An earlier version ran

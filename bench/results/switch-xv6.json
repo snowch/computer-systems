@@ -1,17 +1,17 @@
 {
-  "code_fingerprint": "ee502b2c63887854",
+  "code_fingerprint": "4cc6d66ecbb7fcfd",
   "code_sources": [
     "bench/run_switch.py",
     "bench/xv6.py",
     "xv6/apps/switchload.c",
-    "xv6/patches/13-switch-census.patch"
+    "xv6/patches/18-switch-census.patch"
   ],
   "conditions": {
     "cpus": 3,
     "note": "counts and register widths only; a switch is never timed on this target",
     "omitted": "switches caused by the timer or by waiting, which measure elapsed time"
   },
-  "generated_at": "2026-09-15T09:24:10+00:00",
+  "generated_at": "2026-09-15T15:10:03+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",

@@ -5,7 +5,7 @@
     python3 -m bench.run_elf --check   # re-read and compare; write nothing
 
 Structure, not cost. Sections, segments and symbol counts are facts about a file, read by the
-book's own reader rather than by ``readelf`` — which is the point of ch07 having written one.
+book's own reader rather than by ``readelf`` — which is the point of ch12 having written one.
 
 The subject is xv6's own programs, built by xv6's Makefile with xv6's linker script, because a
 Linux binary's answer to "where does this get loaded" is complicated by a dynamic loader and a

@@ -32,11 +32,11 @@ currently run, and with two measurements that record what those targets actually
 The preface makes the case for the arrangement; this is the operational version of it.
 
 **`xv6`** is the MIT teaching kernel under `qemu-system-riscv64`: a complete operating system in
-about nine thousand lines, which you can stop mid-trap and inspect. Parts II and III live there, and
+about nine thousand lines, which you can stop mid-trap and inspect. Parts III and IV live there, and
 so does everything the book says about *what a program does*.
 
 **`host`** is a small Linux machine on the desk, reached over SSH — a Raspberry Pi 5 in this book.
-Everything about *what a program costs* is measured there, natively. Part IV lives there.
+Everything about *what a program costs* is measured there, natively. Part V lives there.
 
 The one thing worth repeating from the preface, because every later chapter depends on it: QEMU is
 a functional emulator. It computes what the instructions compute and models nothing else — no
@@ -61,9 +61,9 @@ contains a duration at all.
 ```
 
 :::{note} You can start with one target
-The xv6 target runs on any laptop and covers Parts II and III — fourteen chapters. If the Pi has
-not arrived yet, set up the xv6 half now and come back to the rest before [ch15](#ch15). Nothing
-in Parts II and III depends on hardware you do not have.
+The xv6 target runs on any laptop and covers Parts III and IV — fourteen chapters. If the Pi has
+not arrived yet, set up the xv6 half now and come back to the rest before [ch20](#ch20). Nothing
+in Parts III and IV depends on hardware you do not have.
 :::
 
 ## What to buy
@@ -71,7 +71,7 @@ in Parts II and III depends on hardware you do not have.
 A **Raspberry Pi 5 with 4 GB or more**, and an active cooler. That is the whole decision. Every Pi
 5 has the counters this book needs — same SoC, same four cores, no variant where they are missing
 — so there is no specification to compare and nothing to get wrong except the RAM, and only
-because [ch20](#ch20) wants four cores with room to work.
+because [ch25](#ch25) wants four cores with room to work.
 
 | | What | Why this one |
 |---|---|---|
@@ -81,19 +81,19 @@ because [ch20](#ch20) wants four cores with room to work.
 | **Storage** | A microSD card that is not the cheapest on the shelf | An NVMe drive on a PCIe HAT is nicer and not required |
 | **Network** | An Ethernet cable — any working one | WiFi works. Wired keeps the radio's driver from doing interrupt work on the cores you are measuring |
 
-You also need a development machine for Parts II and III — anything that runs Homebrew or apt and
+You also need a development machine for Parts III and IV — anything that runs Homebrew or apt and
 holds an SSH key. It never measures anything.
 
 **The cooler earns its line in the table.** A Pi 5 that throttles is running a benchmark at one
 clock speed and finishing it at another, which is not a slow measurement but a wrong one, and one
-of the more instructive ways to be wrong. [ch16](#ch16) treats throttling as a measurement hazard
+of the more instructive ways to be wrong. [ch21](#ch21) treats throttling as a measurement hazard
 and shows how to catch it happening; a cooler means you meet it deliberately rather than in every
 run you ever take.
 
 ### Why a separate board, and not the laptop you are reading this on
 
 A laptop can almost certainly count and sample — `perf` on x86-64 is mature, and on Linux you
-could start Part IV this afternoon. The reason not to is that the machine is too complicated to
+could start Part V this afternoon. The reason not to is that the machine is too complicated to
 learn on. A current laptop has cores of two different kinds, a clock that moves constantly, two
 threads sharing one core's execution units, and a scheduler migrating your benchmark across all of
 it. Each of those makes a measurement harder to attribute. The Pi 5 is four identical cores with
@@ -101,7 +101,7 @@ one cache hierarchy and no hyper-threading: when a number moves, something you d
 
 That is the book's own argument applied to its own tooling — use the instrument that can answer
 the question. A laptop is a *faster* machine and a *worse* instrument. If a Pi is genuinely not
-possible, Part IV still runs on a Linux laptop, and every chapter whose reading depends on the
+possible, Part V still runs on a Linux laptop, and every chapter whose reading depends on the
 core's shape says so in its own header.
 
 The Pi is not the *most* legible instrument, and it is worth knowing what it is not. An **in-order**
@@ -113,39 +113,39 @@ spent runs through enough machinery that a small experiment occasionally comes o
 Two reasons that is the right trade anyway. The in-order RISC-V option could not sample, which
 cost more than legibility bought. And **every machine you are likely to care about optimising
 reorders**, so learning to attribute cycles on one is the skill that transfers.
-[ch19](#ch19) is harder for it, says so in its own header, and is more useful as a result. If you
+[ch24](#ch24) is harder for it, says so in its own header, and is more useful as a result. If you
 want the clean version too, an in-order Cortex-A53 — a Pi 3 or Pi Zero 2 W — costs very little,
-and running ch19's experiments on both is an instructive afternoon.
+and running ch24's experiments on both is an instructive afternoon.
 
-### It is an ARM machine, and Parts II and III are RISC-V
+### It is an ARM machine, and Parts III and IV are RISC-V
 
 That is deliberate: `perf` has to both count *and* sample, no affordable RISC-V core does both,
-and choosing one would have cost two chapters of Part IV. The preface has the evidence; this
+and choosing one would have cost two chapters of Part V. The preface has the evidence; this
 chapter is about getting the machine working.
 
 % number-ok: SoC specification from @rpi-bcm2712; every figure in this book comes from the machine itself
 Its SoC is a BCM2712: four Arm Cortex-A76 cores at 2.4 GHz, 64 kB of L1 instruction and data
 cache each, 512 kB of L2 per core, and 2 MB of L3 shared between them @rpi-bcm2712. Those are the
-vendor's numbers, and the book does not repeat them anywhere else — [ch17](#ch17) measures that
+vendor's numbers, and the book does not repeat them anywhere else — [ch22](#ch22) measures that
 hierarchy rather than quoting it, and comparing what it finds against this paragraph is one of the
-more satisfying results in Part IV.
+more satisfying results in Part V.
 
 Three levels with a private L2 and a shared L3 is a genuinely good shape to learn on. The private
-level shows you locality; the shared one is where [ch20](#ch20)'s cores collide.
+level shows you locality; the shared one is where [ch25](#ch25)'s cores collide.
 
 ### If you already own something else
 
-The book recommends one machine because one machine is enough, not because the rest of Part IV
+The book recommends one machine because one machine is enough, not because the rest of Part V
 is about Raspberry Pis. What a machine actually has to do is short:
 
 | | Requirement | Why |
 |---|---|---|
 | **Must** | 64-bit Linux, reachable over SSH | |
-| **Must** | `perf stat -e cycles,instructions -- true` returns real counts | **The one requirement with no workaround.** Part IV does not exist without it |
-| **Must** | `perf record` can sample | [ch22](#ch22) is entirely sampling. A different capability from counting |
-| **Must** | 4 GB RAM, 4 cores | [ch20](#ch20) measures what cores cost each other |
-| **Nice** | NVMe or a fast SSD | Builds and [ch14](#ch14) are far less tedious |
-| **Nice** | A SIMD unit the compiler targets — NEON, or RVV 1.0 | [ch23](#ch23) measures vectorisation |
+| **Must** | `perf stat -e cycles,instructions -- true` returns real counts | **The one requirement with no workaround.** Part V does not exist without it |
+| **Must** | `perf record` can sample | [ch27](#ch27) is entirely sampling. A different capability from counting |
+| **Must** | 4 GB RAM, 4 cores | [ch25](#ch25) measures what cores cost each other |
+| **Nice** | NVMe or a fast SSD | Builds and [ch19](#ch19) are far less tedious |
+| **Nice** | A SIMD unit the compiler targets — NEON, or RVV 1.0 | [ch28](#ch28) measures vectorisation |
 | **Nice** | Few kinds of core, and a clock that holds still | Not required. It is why the reference is a Pi rather than a laptop |
 
 An old laptop, a spare desktop, a Rock 5B, another single-board computer you have in a drawer: run
@@ -160,7 +160,7 @@ that a given machine will work for you.
 The practical version: **the requirement you cannot check before it arrives is the one that
 matters most.** No product listing can honestly promise you working performance counters, because
 they depend on the image as much as on the board. Buy somewhere with a return policy, and run
-`scripts/verify-setup.py` on day one rather than the week you reach Part IV.
+`scripts/verify-setup.py` on day one rather than the week you reach Part V.
 :::
 
 ### The requirement to be suspicious about
@@ -206,7 +206,7 @@ question about that machine and not about a version string.
 
 ### The reference machine, and why your numbers will differ
 
-Every figure in Part IV of this repository was measured on the machine that its result names —
+Every figure in Part V of this repository was measured on the machine that its result names —
 each one stamps the model, the core and the kernel that produced it, so no figure is ambiguous
 about where it came from.
 
@@ -221,19 +221,19 @@ being told.
 
 | Chapter | What it assumes | What changes on a different machine |
 |---|---|---|
-| [ch17](#ch17) | A particular cache hierarchy — levels, sizes, line size, TLB reach | The numbers, entirely. The method is the chapter, and measuring *your own* hierarchy is the exercise |
-| [ch19](#ch19) | An out-of-order, 4-wide core, and the PMU events it exposes | Width, predictor and event names all differ. On an **in-order** core these experiments get easier to read, not harder |
-| [ch20](#ch20) | Four cores, and this interconnect's coherence behaviour | A different core count moves the scaling curve without changing the mechanism. Two cores make the chapter thin |
-| [ch22](#ch22) | That `perf` can **sample**, not only count | Standard on a mainline ARM kernel. Most affordable RISC-V cores cannot, so this is the chapter a RISC-V reader will find they cannot run |
-| [ch23](#ch23) | A vector unit — NEON here | On a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run |
+| [ch22](#ch22) | A particular cache hierarchy — levels, sizes, line size, TLB reach | The numbers, entirely. The method is the chapter, and measuring *your own* hierarchy is the exercise |
+| [ch24](#ch24) | An out-of-order, 4-wide core, and the PMU events it exposes | Width, predictor and event names all differ. On an **in-order** core these experiments get easier to read, not harder |
+| [ch25](#ch25) | Four cores, and this interconnect's coherence behaviour | A different core count moves the scaling curve without changing the mechanism. Two cores make the chapter thin |
+| [ch27](#ch27) | That `perf` can **sample**, not only count | Standard on a mainline ARM kernel. Most affordable RISC-V cores cannot, so this is the chapter a RISC-V reader will find they cannot run |
+| [ch28](#ch28) | A vector unit — NEON here | On a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run |
 
 The pattern is worth noticing, because it is the same one the two targets follow. A chapter's
 *mechanism* survives a change of hardware; its *numbers* do not. That is why the book insists on
-stamping every figure with the machine that produced it, and why [ch17](#ch17) is written as an
+stamping every figure with the machine that produced it, and why [ch22](#ch22) is written as an
 instruction rather than a table — a cache hierarchy you measured is worth more than one you read.
 
 If none of your numbers resemble the committed ones and you want to know whether that is your
-board or your method: it is almost always your board, and [ch16](#ch16) is where you learn to
+board or your method: it is almost always your board, and [ch21](#ch21) is where you learn to
 tell the difference.
 
 `hardware/README.md` has the requirements, the prompt and the verification step in one place, for
@@ -263,15 +263,15 @@ kernel with mainline device trees on the same board may have no hardware PMU exp
 whatever — not because the chip lacks one, but because nothing told the kernel it was there. One
 command settles it either way, and it is the next section.
 
-**2. Boot it, wired if you can.** Not because the link speed matters — nothing in Part IV touches
+**2. Boot it, wired if you can.** Not because the link speed matters — nothing in Part V touches
 the network, so bandwidth, latency and the grade of cable are all irrelevant to every number in
 this book. What a radio does is make the machine do work you did not ask for: its driver takes
 interrupts and runs softirqs on the same cores your benchmark is running on, and a lossy link adds
-`sshd` wakeups on top. [ch20](#ch20) and [ch21](#ch21), which measure small per-operation costs,
+`sshd` wakeups on top. [ch25](#ch25) and [ch26](#ch26), which measure small per-operation costs,
 are where that is most likely to show.
 
 Most likely, and not measured. This book has not put a number on it, which means you should treat
-the advice as hygiene rather than as a result — and [ch16](#ch16) will hand you the tools to
+the advice as hygiene rather than as a result — and [ch21](#ch21) will hand you the tools to
 settle it yourself, because "the same benchmark, one thing changed that should not matter" is
 exactly that chapter's subject. Run it both ways and find out whether you can tell.
 
@@ -328,7 +328,7 @@ broken tool. If nothing packaged matches, build it from the kernel source tree w
 
 ### Proving the counters are real
 
-This is the one capability Part IV cannot work around, and it is worth being suspicious about,
+This is the one capability Part V cannot work around, and it is worth being suspicious about,
 because `perf` reports a failure to reach hardware in a way that is easy to skim past.
 
 Ask:
@@ -371,7 +371,7 @@ machine the failure is usually further down — the counters are machine-mode CS
 the firmware's SBI PMU extension @riscv-sbi, so check for `CONFIG_RISCV_PMU_SBI` and a firmware
 that provides it.
 
-Until `perf stat` prints real counts, Part IV cannot start, and no amount of care in the chapters
+Until `perf stat` prints real counts, Part V cannot start, and no amount of care in the chapters
 substitutes for it.
 
 ### Counting is not sampling
@@ -421,13 +421,13 @@ extension @riscv-sscofpmf, and a kernel on a core without it says so at boot and
 riscv-pmu-sbi: Perf sampling/filtering is not supported as sscof extension is not available
 ```
 
-[ch22](#ch22) is entirely about sampling, so on a machine that cannot do it that chapter has
+[ch27](#ch27) is entirely about sampling, so on a machine that cannot do it that chapter has
 nothing to measure. `verify-setup.py` reports the two capabilities separately, precisely so you
 find out now rather than three hundred pages in.
 
 The distinction generalises well beyond RISC-V, which is why it is worth learning here: a
 profiler that samples is answering a different question, with different failure modes, from a
-counter that totals. [ch16](#ch16) takes that apart properly and [ch22](#ch22) depends on it.
+counter that totals. [ch21](#ch21) takes that apart properly and [ch27](#ch27) depends on it.
 
 ## Setting up the xv6 target
 
@@ -446,9 +446,9 @@ sudo apt install -y gcc-riscv64-linux-gnu qemu-system-misc qemu-user-static gdb-
 
 `qemu-user-static` is worth installing even though no chapter requires it. It runs a cross-built
 RV64 binary directly on an x86-64 or Apple-silicon machine, which means every `host`-target
-example in Part IV can be compiled and **checked for correctness** away from the board. It
+example in Part V can be compiled and **checked for correctness** away from the board. It
 cannot tell you anything about time, and the repository does not let it try — but it is the
-difference between being able to work on Part IV from a train and not.
+difference between being able to work on Part V from a train and not.
 
 ### The repository
 
@@ -577,7 +577,7 @@ decision has to be a branch and the function comes out with three separate exits
 That is a real difference and you should resist the obvious conclusion about it. Nothing above
 says which is faster. A predicted branch is nearly free and an unpredictable one is not; `csel`
 pays a fixed price either way and creates a dependency the branch does not have. Which wins
-depends on the data, and finding out takes a machine — [ch18](#ch18) and [ch19](#ch19) are where
+depends on the data, and finding out takes a machine — [ch23](#ch23) and [ch24](#ch24) are where
 that happens. Here it is enough to have seen that the choice exists.
 
 Two smaller things in the same listings, both worth checking yourself:
@@ -598,7 +598,7 @@ the linker.
 
 The second thing is `sext.w`, which RISC-V emits on each path and AArch64 does not emit anywhere:
 one keeps a 32-bit `int` in a 64-bit register and has to say so, the other has a 32-bit view of the
-register and uses it. Neither is in the C. Both are the kind of thing [ch06](#ch06) is for.
+register and uses it. Neither is in the C. Both are the kind of thing [ch11](#ch11) is for.
 
 :::{note} None of that was typed
 `bench/run_disasm.py` compiled `sysfs/lib/shapes.c` for each architecture, ran `objdump` on the
@@ -606,8 +606,8 @@ object file, and wrote a stamped result. The block above is rendered from those 
 regenerates both on every push and fails if one instruction differs.
 
 It can do that because a listing depends on the compiler and not on the machine — so unlike every
-number in Part IV, this one is checked automatically, every time. Both halves of that sentence
-matter, and [ch16](#ch16) is about the half that cannot be.
+number in Part V, this one is checked automatically, every time. Both halves of that sentence
+matter, and [ch21](#ch21) is about the half that cannot be.
 :::
 
 ## What we measured
@@ -626,7 +626,7 @@ This is the **LP64** data model: `long` and pointers are 64-bit, `int` stays 32-
 scalar type's alignment equals its size. RISC-V spells its variant LP64D, for the
 double-precision float ABI @riscv-psabi; AArch64 arrives at the same layout by its own route. If
 you have only ever worked on 64-bit Linux this will look like the way things are. It is a choice
-the ABI made — twice, independently — and [ch05](#ch05) takes it apart.
+the ABI made — twice, independently — and [ch10](#ch10) takes it apart.
 
 The third table is the one worth staring at. Two structs, the same three members, different
 declaration order:
@@ -637,7 +637,7 @@ declaration order:
 The compiler did not reorder them — C forbids it — so writing them in the order that happened to
 occur to you cost bytes that hold nothing at all. On one struct that is an oddity. Across an array
 of a few million of them it is the difference between fitting in cache and not, which is
-[ch17](#ch17)'s subject and the first place this chapter's dry table turns into a number of
+[ch22](#ch22)'s subject and the first place this chapter's dry table turns into a number of
 nanoseconds.
 
 And the reference machine's own account of itself:
@@ -677,7 +677,7 @@ and the five chapters whose reading depends on this particular core say so in th
 can be measuring a different clock at the end than at the start. That is not a flaw in the board —
 it is what most real hardware does, including the laptop you are reading this on, and a book that
 measured on a machine which never throttled would be teaching you to ignore something that
-matters. [ch16](#ch16) deals with it properly.
+matters. [ch21](#ch21) deals with it properly.
 
 ## Problems
 
@@ -705,7 +705,7 @@ from one rule — and it is the same rule on both architectures, which is the po
 `tests/ch00/ch00ping.c` is a program that prints nothing. Make `ch00ping 41` print `pong 42`. The
 arithmetic is not the exercise: the exercise is the path from a file in a test directory, through
 the cross compiler, into xv6's user library, onto a file system image, into QEMU, and out of a
-shell. If any link in that chain is missing you want to find out now, not in [ch08](#ch08).
+shell. If any link in that chain is missing you want to find out now, not in [ch13](#ch13).
 
 ```bash
 python3 -m pytest tests/ch00 -q          # all three, including the ones you have not solved
@@ -728,7 +728,7 @@ separates a confident answer from a correct one.
 
 For the reference machine, Raspberry Pi's own documentation @rpi-bcm2712 gives the SoC and its
 cache hierarchy, and Arm's Cortex-A76 technical reference manual @arm-a76-trm gives the pipeline
-and the PMU events [ch19](#ch19) reads. The RISC-V hardware the preface argues against is
+and the PMU events [ch24](#ch24) reads. The RISC-V hardware the preface argues against is
 documented at @starfive-jh7110 and @sifive-u74 if you want to follow that thread. Either way the
 caveat stands: where a document and a measurement disagree, the book prints the measurement and
 says so.
@@ -737,10 +737,10 @@ The study behind that decision is @riscv-pmu-profiling, and it is worth reading 
 touch RISC-V — it is a good example of what it looks like to establish what a machine can actually
 do, rather than what its documentation says it has.
 
-The xv6 source @xv6-riscv-source is worth browsing before [ch04](#ch04), without trying to
+The xv6 source @xv6-riscv-source is worth browsing before [ch09](#ch09), without trying to
 understand it. Its authors also wrote a commentary on it, which is excellent and which this book
 deliberately does not follow the structure of; if you want a second account of the same kernel
-after Part III, that is the one to read.
+after Part IV, that is the one to read.
 
-[ch04](#ch04) takes a single program and follows it from source text to a result on both targets,
+[ch09](#ch09) takes a single program and follows it from source text to a result on both targets,
 and asks — for the first of many times — which parts of that journey cost anything.

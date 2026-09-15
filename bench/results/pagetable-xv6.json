@@ -1,11 +1,11 @@
 {
-  "code_fingerprint": "1d0269c2a3bfab2c",
+  "code_fingerprint": "d5270bba53bb9c1e",
   "code_sources": [
     "bench/run_pagetable.py",
     "bench/xv6.py",
     "sysfs/tools/sv39.c",
     "sysfs/lib/sv39.c",
-    "xv6/patches/09-pagetable-census.patch"
+    "xv6/patches/14-pagetable-census.patch"
   ],
   "conditions": {
     "cpus": 3,
@@ -13,7 +13,7 @@
     "note": "structure only: page-table pages, leaf entries and where the mappings are",
     "subjects": "the kernel's own map, and init's \u2014 both fixed by the build, not the run"
   },
-  "generated_at": "2026-09-15T09:24:06+00:00",
+  "generated_at": "2026-09-15T15:09:59+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",

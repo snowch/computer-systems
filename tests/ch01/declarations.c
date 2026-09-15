@@ -31,7 +31,7 @@
  *
  * Read from the name outwards, taking whatever binds tightest first: `[]` and `()` bind tighter
  * than `*`, and parentheses override that. The two that differ only by a pair of brackets are the
- * reason this problem exists — one of them is how every driver in ch11 is reached.
+ * reason this problem exists — one of them is how every driver in ch16 is reached.
  */
 #define D_VALUE 0
 #define D_POINTER 1
@@ -87,7 +87,7 @@ int d_compare(const void *a, const void *b, uint64_t n) {
  * already on a boundary is its own answer in both directions.
  *
  * This is address arithmetic, not pointer arithmetic: the quantity is a number of bytes and
- * nothing here scales by an element. The kernel does this on every page it touches, and ch10's
+ * nothing here scales by an element. The kernel does this on every page it touches, and ch15's
  * allocator opens by rounding one way and closing by rounding the other — which is the pair of
  * decisions this problem is really about.
  *

@@ -1,4 +1,4 @@
-"""The reader's cost model, built once for chapter 19's three problems."""
+"""The reader's measurement code, built once for chapter 14's three problems."""
 
 from __future__ import annotations
 
@@ -8,5 +8,5 @@ from tests.ch21.harness import build
 
 
 @pytest.fixture(scope="session")
-def oscost(build_dir):
+def measuring(build_dir):
     return build(build_dir)

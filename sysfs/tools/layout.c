@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch20's first measurement needs no machine: whether two counters land on the same cache line is
+ * ch25's first measurement needs no machine: whether two counters land on the same cache line is
  * decided by the compiler and the layout, and both are knowable before anything runs. What that
  * costs needs four cores and is the rest of the chapter.
  */

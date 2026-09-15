@@ -106,8 +106,8 @@ def resolve_host_target(prefer_portable: bool = False) -> HostTarget:
 
     Then cross-compilation with user-mode emulation, which gets the reference architecture's
     semantics onto an x86-64 CI runner. AArch64 is tried before RISC-V because ch00's reference
-    machine is a Pi; the RISC-V path stays because Parts II and III need that toolchain anyway and
-    a reader following Part IV on a RISC-V board should have their examples checked too.
+    machine is a Pi; the RISC-V path stays because Parts III and IV need that toolchain anyway and
+    a reader following Part V on a RISC-V board should have their examples checked too.
 
     Then the plain native compiler, which exercises the test logic and nothing else.
     """
@@ -223,7 +223,7 @@ def repeat(work: Callable[[], float], n: int, warmup: int = 0) -> list[float]:
 def summarise(samples: Sequence[float]) -> dict[str, Any]:
     """Reduce samples to what the book prints: a floor, a typical case, and a tail.
 
-    No mean. See this module's docstring, and ch16 for the measurement that settles it.
+    No mean. See this module's docstring, and ch21 for the measurement that settles it.
     """
     if not samples:
         raise ValueError("cannot summarise an empty sample set")

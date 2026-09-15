@@ -11,7 +11,7 @@ percentage is the ratio between those, and it is the number the chapter asks for
 speedup.
 
 Deliberately not clamped. A loop that comes out above its arithmetic bound has had something other
-than its width change, and ch23 says that is a signal to look again rather than a triumph. A
+than its width change, and ch28 says that is a signal to look again rather than a triumph. A
 runner that quietly pinned it to a hundred would turn the one informative result into a success.
 
 The census in `bench.run_vectors` already establishes which of these five the compiler widens and
@@ -32,11 +32,11 @@ from bench.stamp import ROOT, load_result, measurement_differences, write_result
 WORKLOAD = "sysfs/bench/vectorcost.c"
 LIBRARY = "sysfs/lib/vectors.c"
 HEADER = "sysfs/include/sysfs/vectors.h"
-FIGURE = "ch23-speedup"
+FIGURE = "ch28-speedup"
 
 #: The width of one vector register on this book's `host` architecture, in bits. NEON is fixed at
 #: 128; a scalable extension would make this a property of the running machine instead, which is
-#: the limitation ch23's own last section names.
+#: the limitation ch28's own last section names.
 VECTOR_BITS = 128
 
 #: The two builds. The first is what a reader building this code gets.

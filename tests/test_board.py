@@ -50,7 +50,7 @@ RUNNER_NOT_WRITTEN: set[str] = set()
 def shape_for(result: str) -> dict:
     """The summary a runner declares it will write for this result.
 
-    A module may produce more than one — ch21 asks three questions of one boundary and writes
+    A module may produce more than one — ch26 asks three questions of one boundary and writes
     three results from one workload — so a module with several declares `SHAPES` keyed by result
     name and one with a single result declares `SHAPE`.
     """
@@ -66,7 +66,7 @@ def test_every_pending_result_has_a_runner_or_is_a_declared_debt():
     """The check that would have caught it.
 
     Twelve of the thirteen pending results had no code that could produce them, and nothing said
-    so: `make bench-board` would have run, written one file, and left every Part IV figure
+    so: `make bench-board` would have run, written one file, and left every Part V figure
     pending with no way to fill it. A pending figure is a promise, and a promise needs something
     that can keep it.
     """

@@ -1,10 +1,10 @@
 {
-  "code_fingerprint": "13fb78d5c7c0490b",
+  "code_fingerprint": "8f7779b7d7411af5",
   "code_sources": [
     "bench/run_faults.py",
     "bench/xv6.py",
     "xv6/apps/faultload.c",
-    "xv6/patches/10-fault-census.patch"
+    "xv6/patches/15-fault-census.patch"
   ],
   "conditions": {
     "attribution": "per process, and only the workload's row is recorded; the shell allocates too",
@@ -12,7 +12,7 @@
     "note": "counts only: pages allocated and faults taken; nothing here was timed",
     "policies": "both are this kernel's own \u2014 sbrk allocates on request, sbrklazy on touch"
   },
-  "generated_at": "2026-09-15T09:24:07+00:00",
+  "generated_at": "2026-09-15T15:10:00+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",

@@ -1,4 +1,4 @@
-/* The four functions ch05 disassembles. One line each, on purpose.
+/* The four functions ch10 disassembles. One line each, on purpose.
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  */

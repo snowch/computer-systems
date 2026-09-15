@@ -10,16 +10,16 @@ An appendix in this book is a reference, not a chapter: no argument, no narrativ
 in it either cites a primary source or comes from a stamped result under `bench/results/`.
 
 This is a translation rather than a reference. It is written for someone who has read
-[ch06](#ch06) and is about to read [ch18](#ch18), and it is organised as *you know this already,
+[ch11](#ch11) and is about to read [ch23](#ch23), and it is organised as *you know this already,
 here it is again*. For anything not in the book's path, the architecture reference manual is the
 document; this page will not substitute for it and does not try.
 
 ## Why there are two
 
-Part II and Part III are RISC-V because the kernel small enough to read in an afternoon is a RISC-V
-kernel. Part IV is AArch64 because that is where the performance counters work: sampling needs a
+Part III and Part IV are RISC-V because the kernel small enough to read in an afternoon is a RISC-V
+kernel. Part V is AArch64 because that is where the performance counters work: sampling needs a
 PMU that can raise an interrupt on counter overflow, and no affordable RISC-V core does both.
-[ch00](#ch00) has the evidence and [ch20](#ch20) has the return — a reader shown one weak memory
+[ch00](#ch00) has the evidence and [ch25](#ch25) has the return — a reader shown one weak memory
 model concludes that model *is* memory ordering.
 
 So the crossing is deliberate, and this page is the cost of it, paid in one place.
@@ -46,7 +46,7 @@ Two differences that change how listings read.
 **The `w` registers are not a convention, they are the instruction.** `add w0, w1, w2` is a
 32-bit add that zero-extends into the full register; `add x0, x1, x2` is a 64-bit add. RISC-V
 spells this with separate mnemonics (`addw` against `add`). You will see `w` registers constantly
-in [ch18](#ch18)'s listings wherever an `int` is involved, and the zero-extension is free rather
+in [ch23](#ch23)'s listings wherever an `int` is involved, and the zero-extension is free rather
 than an extra instruction.
 
 **`x31` is two registers depending on the instruction.** In most positions the encoding means
@@ -69,16 +69,16 @@ Three things to know before reading any AArch64 listing.
 **The addressing modes do arithmetic.** `[x1, x2, lsl #2]` scales an index by four and adds it, in
 the load. RISC-V would need a shift and an add first. This is why an AArch64 inner loop over an
 array is often two instructions shorter than the RISC-V one for the same C, and it is visible in
-every listing in [ch18](#ch18).
+every listing in [ch23](#ch23).
 
 **`stp` and `ldp` move two registers at once.** Almost every non-leaf function prologue you will
 see is `stp x29, x30, [sp, #-16]!` — save the frame pointer and the return address, and decrement
-the stack pointer, in one instruction. The `!` is the write-back. [ch06](#ch06)'s RISC-V prologues
+the stack pointer, in one instruction. The `!` is the write-back. [ch11](#ch11)'s RISC-V prologues
 take three instructions to do the same thing.
 
 **The suffix after the bracket is where the increment went.** `[x2], #16` adds sixteen to `x2`
 *after* the access; `[x2, #16]!` adds it before. Neither exists in RISC-V, and both appear in
-vectorised loops in [ch23](#ch23).
+vectorised loops in [ch28](#ch28).
 
 ## Branches and conditions
 
@@ -95,7 +95,7 @@ b.lt label
 The flags are a side effect that persists, which buys two things RISC-V has no equivalent of.
 
 **Conditional select.** `csel x0, x1, x2, lt` writes one of two registers depending on the flags,
-with no branch at all. [ch19](#ch19) is about what that is worth: a branch the predictor cannot
+with no branch at all. [ch24](#ch24) is about what that is worth: a branch the predictor cannot
 learn costs a pipeline flush every time, and a `csel` costs one instruction always.
 
 **Compare-and-branch-on-zero.** `cbz`/`cbnz` are the exception that does not use the flags, and
@@ -112,7 +112,7 @@ they are extremely common because testing against zero is extremely common.
 
 ## Atomics and ordering
 
-[ch12](#ch12) prints both of these from real disassembly and [ch20](#ch20) is the chapter about
+[ch17](#ch17) prints both of these from real disassembly and [ch25](#ch25) is the chapter about
 what the difference means.
 
 | | RISC-V | AArch64 |
@@ -125,28 +125,28 @@ what the difference means.
 **The asymmetry is the thing to carry away.** RISC-V puts an instruction *between* the two
 operations being ordered; AArch64 folds the ordering into one of them. A reader who learned that a
 barrier is something you put between two things will not recognise `stlr` as a barrier at all,
-which is exactly why [ch20](#ch20) puts them side by side rather than teaching one.
+which is exactly why [ch25](#ch25) puts them side by side rather than teaching one.
 
 Both spell the same requirement. Neither spelling is the concept.
 
 ## Vectors
 
-NEON, in one paragraph, because [ch23](#ch23) is the chapter.
+NEON, in one paragraph, because [ch28](#ch28) is the chapter.
 
 Thirty-two registers, `v0`–`v31`, 128 bits each, addressed by an *arrangement specifier* that says
 how to divide them: `v0.4s` is four 32-bit lanes, `v0.2d` is two 64-bit ones, `v0.16b` is sixteen
 bytes. The same registers are named `q0`–`q31` when the whole 128 bits are meant, and `s0`/`d0`
 when a single scalar float or double is meant.
 
-That last point is a trap [ch23](#ch23) fell into and records: an instruction naming a `v`
+That last point is a trap [ch28](#ch28) fell into and records: an instruction naming a `v`
 register is not evidence of vectorisation. This compiler builds a floating-point zero with
 `movi v0.2s, #0`, in a function whose loop it has refused to widen.
 
 ## What this cannot tell you
 
 **How the two architectures differ where this book does not go.** Exceptions, privilege levels,
-the MMU, system registers — all different, none of it here, because Part IV does not read the
-kernel and Part III does not run on AArch64.
+the MMU, system registers — all different, none of it here, because Part V does not read the
+kernel and Part IV does not run on AArch64.
 
 **Which is better.** They make different choices and the book uses both for what each is good for.
 Nothing on this page is an argument.

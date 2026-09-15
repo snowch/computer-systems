@@ -37,9 +37,17 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 RESULTS_DIR = ROOT / "bench" / "results"
 
-#: The two execution targets. Every result declares one, and the distinction is the spine of the
-#: whole book: ``xv6`` tells you what a program *does*, ``host`` tells you what it *costs*.
-TARGETS = ("host", "xv6")
+#: The execution targets. Every result declares one, and the distinction is the spine of the whole
+#: book: ``xv6`` tells you what a program *does*, ``host`` tells you what it *costs*.
+#:
+#: ``bare`` is that same machine with nothing on it — a program loaded at the reset address under
+#: ``qemu-system-riscv64``, with no kernel, no library and no loader. Part II exists because a
+#: primitive met inside a kernel arrives entangled: a trap in xv6 comes with a privilege change, a
+#: page table swapped mid-flight, thirty-one registers saved into a per-process frame and a
+#: dispatch on cause, and a reader trying to learn what a trap *is* cannot tell which of those is
+#: the trap. It is held to exactly ``xv6``'s rules for exactly ``xv6``'s reason: the emulator
+#: models no cache and no pipeline, so a duration taken there describes the laptop.
+TARGETS = ("host", "xv6", "bare")
 
 #: What a result *is*. Nearly all of them are measurements — a machine was asked a question and
 #: this is what it answered. A ``listing`` is different in kind: it is what a compiler emitted,
@@ -104,10 +112,10 @@ CORE_SOURCES: tuple[str, ...] = ("bench/measure.py",)
 
 #: Sources that are core to *one target only*, keyed by target.
 #:
-#: ch16 adds the book's clock, through which every duration in Part IV is read — so a change to
+#: ch21 adds the book's clock, through which every duration in Part V is read — so a change to
 #: it changes what every `host` figure means, and belongs in those figures' fingerprints. It does
 #: not belong in an xv6 result's: a page-table census does not depend on how the book tells the
-#: time, and putting it in CORE_SOURCES made every structural result in Parts II and III churn the
+#: time, and putting it in CORE_SOURCES made every structural result in Parts III and IV churn the
 #: moment the clock was touched. The plan said that would happen once. It would in fact have
 #: happened on every edit to the clock for the rest of the book, which is the kind of noise that
 #: teaches people to re-stamp without reading what moved.
@@ -556,16 +564,16 @@ def provenance_problems(name: str, payload: dict[str, Any]) -> list[str]:
                 f"measured_under={machine.get('measured_under')!r}, not 'native'."
             )
 
-    if target == "xv6":
+    if target in ("xv6", "bare"):
         if machine.get("kind") != "qemu":
             problems.append(
-                f"{name} declares target 'xv6' but machine.kind is "
+                f"{name} declares target {target!r} but machine.kind is "
                 f"{machine.get('kind')!r}, not 'qemu'."
             )
         timing = timing_keys(payload.get("summary", {}))
         if timing:
             problems.append(
-                f"{name} is an xv6 result carrying what looks like a timing: "
+                f"{name} is a {target!r} result carrying what looks like a timing: "
                 f"{', '.join(timing)}. QEMU models no cache, no predictor and no pipeline, so a "
                 "duration measured inside it means nothing — move the measurement to the board."
             )

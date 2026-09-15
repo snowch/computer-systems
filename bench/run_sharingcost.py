@@ -12,7 +12,7 @@ writes, against one each has to itself.
 **This runner refuses a flat first experiment**, and that refusal is the reason it is worth
 reading. The packed layout must be meaningfully slower than the padded one; if it is not, either
 the counters are not where the layout says they are or the threads are not running at the same
-time, and in both cases ch20's headline figure would be a table showing that false sharing costs
+time, and in both cases ch25's headline figure would be a table showing that false sharing costs
 nothing.
 
 Neither the magnitude nor the direction can be checked anywhere but the board, so nothing here is
@@ -33,7 +33,7 @@ from bench.stamp import ROOT, load_result, measurement_differences, write_result
 WORKLOAD = "sysfs/bench/sharingcost.c"
 LIBRARIES = ["sysfs/lib/sharing.c", "sysfs/lib/ordering.c"]
 HEADERS = ["sysfs/include/sysfs/sharing.h", "sysfs/include/sysfs/ordering.h"]
-FIGURE = "ch20-sharing and ch20-atomics"
+FIGURE = "ch25-sharing and ch25-atomics"
 
 THREADS = (2, 4)
 LAYOUTS = ("packed", "padded")
@@ -46,7 +46,7 @@ CONTENDED = 1.5
 
 
 class SharingCostError(RuntimeError):
-    """The experiment stopped demonstrating what ch20 says it demonstrates."""
+    """The experiment stopped demonstrating what ch25 says it demonstrates."""
 
 
 def parse(text: str) -> dict[str, Any]:
@@ -90,7 +90,7 @@ def capture() -> dict[str, Any]:
             expected_sharing = layout == "packed"
             if facts["same_line"] != expected_sharing:
                 raise SharingCostError(
-                    f"the {layout} layout reported same_line={facts['same_line']}, and ch20 is "
+                    f"the {layout} layout reported same_line={facts['same_line']}, and ch25 is "
                     f"about it being {expected_sharing}. The arena is line-aligned precisely so "
                     "this holds; if it has stopped, the two arrangements are one arrangement."
                 )

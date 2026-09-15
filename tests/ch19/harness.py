@@ -1,4 +1,4 @@
-"""Compile the reader's predictor model and ask it questions."""
+"""Compile the reader's file-system model and ask it questions."""
 
 from __future__ import annotations
 
@@ -8,24 +8,28 @@ from pathlib import Path
 from bench.measure import PORTABLE_FLAGS, HostTarget, compile_program
 from bench.stamp import ROOT
 
-PREDICTOR = ROOT / "tests" / "ch19" / "predictor.c"
+FILESYSTEM = ROOT / "tests" / "ch19" / "filesystem.c"
 NATIVE = HostTarget(name="native-other", cc="cc", flags=PORTABLE_FLAGS)
+
+NOTHING, REPLAY = 0, 1
 
 
 def build(build_dir: Path) -> Path:
-    return compile_program([PREDICTOR], build_dir / "ch19predictor", NATIVE).path
+    return compile_program([FILESYSTEM], build_dir / "ch19fs", NATIVE).path
 
 
 def ask(program: Path, commands: list[str]) -> dict:
     printed = subprocess.run(
         [str(program), *commands], capture_output=True, text=True, check=True
     ).stdout
-    out: dict = {"path": {}, "mispredicts": {}}
+    out: dict = {"writes": {}, "crash": {}, "safe": {}}
     for line in printed.splitlines():
         parts = line.split()
         match parts:
-            case ["path", case, value]:
-                out["path"][case] = int(value)
-            case ["mispredicts", outcomes, value]:
-                out["mispredicts"][outcomes] = int(value)
+            case ["writes", blocks, count]:
+                out["writes"][int(blocks)] = int(count)
+            case ["crash", stage, verdict]:
+                out["crash"][int(stage)] = int(verdict)
+            case ["safe", order, verdict]:
+                out["safe"][order] = int(verdict)
     return out

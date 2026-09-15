@@ -97,7 +97,7 @@ static inline int sysfs_offset_of_last(void) {
 }
 
 /* The same question of the other ordering. Both structs are reported rather than only the
- * wasteful one, because ch05 draws the bytes of each and a picture of where the holes are cannot
+ * wasteful one, because ch10 draws the bytes of each and a picture of where the holes are cannot
  * be assembled from half the offsets. */
 static inline int sysfs_offset_of_size_first(void) {
   struct sysfs_size_order value = {0, 0, 0};

@@ -25,9 +25,9 @@ Everything here follows from this, so do not work around it.
 wanting to relax it, the answer is no: an emulated timing is indistinguishable from a real one
 once it is a number in a table, which is exactly why the check exists.
 
-**The two targets do not share an instruction set, and that is deliberate.** Part IV needs `perf`
+**The two targets do not share an instruction set, and that is deliberate.** Part V needs `perf`
 to count *and* sample, and no purchasable RISC-V core does both — staying on RISC-V would have
-made ch22 and ch23 unmeasurable. PLAN.md §5 and `hardware/README.md` carry the evidence. Do not
+made ch27 and ch28 unmeasurable. PLAN.md §5 and `hardware/README.md` carry the evidence. Do not
 "fix" the inconsistency; it was bought with two chapters.
 
 ## Build
@@ -115,7 +115,7 @@ No marketing tone, no filler, no "in this chapter we will". Figures are drawn by
 show a mechanism.
 
 **Length follows the material.** There is no page target, deliberately. A chapter is as long as
-what it has to convey, and no longer — ch05 has a data model to take apart and ch23 has one
+what it has to convey, and no longer — ch10 has a data model to take apart and ch28 has one
 question about a vector unit, and forcing those to the same size would pad one and cramp the
 other. A chapter is finished when PLAN.md §12.3 is satisfied, never when it reaches a number.
 
@@ -128,7 +128,7 @@ the length — a short chapter still owes the reader "What this cannot tell you"
 - **A timing recorded on the wrong target.** `verify-numbers.py` rejects it, correctly.
 - **Editing `bench/measure.py`.** It is in `CORE_SOURCES`, so every committed result's fingerprint
   changes and `verify-numbers.py` fails until each is regenerated. Cheap for `xv6` results, and
-  for `host` results it means going to the board. Treat it as frozen; ch16 adds the timing library
+  for `host` results it means going to the board. Treat it as frozen; ch21 adds the timing library
   to it once, deliberately.
 - **Adding an executable cell to a chapter.** The book build is pure markdown and must stay that
   way — otherwise publishing a web page depends on a RISC-V toolchain.
@@ -155,7 +155,7 @@ and where that content has to come from. Regenerate the lot with
 is the one figure currently `pending=`; PLAN.md §11 has the roadmap and CHECKPOINTS.md the tag
 scheme.
 
-**Five chapters depend on the reference machine** — ch17, ch19, ch20, ch22, ch23 — recorded as the
+**Five chapters depend on the reference machine** — ch22, ch24, ch25, ch27, ch28 — recorded as the
 `assumes` field in `bench/outline.py`. That renders an **Assumes** row in the chapter header and
 is required by `tests/test_book.py` to appear in ch00's list too. A chapter must not acquire a
 hardware dependency without one.

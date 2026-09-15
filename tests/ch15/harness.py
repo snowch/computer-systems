@@ -1,4 +1,9 @@
-"""Compile the reader's crossing model and ask it questions."""
+"""Compile the reader's fault-policy code and ask it questions.
+
+Three pure functions in one program, so there is one thing to build and one place to look. None
+of them touches a kernel: the decisions a fault handler makes are arithmetic and comparisons, and
+separating them from the machinery is how you find out whether you understand them.
+"""
 
 from __future__ import annotations
 
@@ -8,36 +13,40 @@ from pathlib import Path
 from bench.measure import PORTABLE_FLAGS, HostTarget, compile_program
 from bench.stamp import ROOT
 
-CROSSING = ROOT / "tests" / "ch15" / "crossing.c"
+POLICY = ROOT / "tests" / "ch15" / "policy.c"
 NATIVE = HostTarget(name="native-other", cc="cc", flags=PORTABLE_FLAGS)
 
-#: name -> (emulated, kernel, instruction set), mirroring the table in crossing.c.
-CONFIGS = {
-    "A": (1, "x", "r"),
-    "B": (1, "l", "r"),
-    "C": (0, "l", "r"),
-    "D": (0, "l", "a"),
-    "E": (0, "x", "r"),
-    "F": (1, "l", "a"),
-}
+PAGE = 4096
+
+#: The kernel's own names, so the reader is answering in the kernel's terms.
+EAGER, LAZY = 1, 2
+LOAD, STORE, FETCH = 13, 15, 12
+ALLOCATE, KILL, PANIC = 0, 1, 2
+AT_REQUEST, AT_TOUCH, NEVER = 0, 1, 2
 
 
 def build(build_dir: Path) -> Path:
-    return compile_program([CROSSING], build_dir / "ch15crossing", NATIVE).path
+    return compile_program([POLICY], build_dir / "ch15policy", NATIVE).path
 
 
 def ask(program: Path, commands: list[str]) -> dict:
     printed = subprocess.run(
         [str(program), *commands], capture_output=True, text=True, check=True
     ).stdout
-    out: dict = {"isolates": {}, "pair": {}, "transfers": {}}
+    out: dict = {"faults": [], "action": {}, "observed": {}}
     for line in printed.splitlines():
         parts = line.split()
         match parts:
-            case ["isolates", case, verdict]:
-                out["isolates"][case] = verdict
-            case ["pair", case, found, other]:
-                out["pair"][case] = (int(found), other)
-            case ["transfers", what, verdict]:
-                out["transfers"][what] = int(verdict)
+            case ["faults", count]:
+                out["faults"].append(int(count))
+            case ["action", cause, va, mapped, verdict]:
+                out["action"][(int(cause), int(va), int(mapped))] = int(verdict)
+            case ["observed", policy, requested, touched, available, verdict]:
+                key = (int(policy), int(requested), int(touched), int(available))
+                out["observed"][key] = int(verdict)
     return out
+
+
+def count_faults(program: Path, runs: list[tuple[int, int]]) -> int:
+    commands = [f"t{start:#x},{length:#x}" for start, length in runs] + ["n"]
+    return ask(program, commands)["faults"][0]

@@ -43,7 +43,7 @@ def test_the_hard_pairs_are_actually_in_the_table():
 
 
 def test_an_array_of_function_pointers_is_an_array_of_pointers():
-    """Scaffolding: the one ch11 actually uses, and the one most likely to be got wrong.
+    """Scaffolding: the one ch16 actually uses, and the one most likely to be got wrong.
 
     `int (*x[4])(void)` binds the subscript first, so the name is an array; what it is an array of
     is pointers. A reader who takes the `*` first calls it a pointer and is wrong.

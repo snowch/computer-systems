@@ -94,9 +94,9 @@ _OPTIMISATION_FLAG = re.compile(r"-O\w+|-f[\w-]+")
 def optimisation_level(result: dict[str, Any]) -> str:
     """The flags a listing was built with that decide what the compiler is allowed to emit.
 
-    The last ``-O`` wins, because that is what a command line does and because ch23 builds the
+    The last ``-O`` wins, because that is what a command line does and because ch28 builds the
     same source at two levels by appending one to the other exactly as a reader would. Any ``-f``
-    flags come with it, and they have to: two of ch23's three builds are both ``-O3`` and differ
+    flags come with it, and they have to: two of ch28's three builds are both ``-O3`` and differ
     only in whether the compiler may change the program's answer, so a label naming the level
     alone would put two different listings under identical headings.
     """
@@ -113,7 +113,7 @@ def listing_label(name: str, symbol: str) -> str:
     a hand-typed one would be the first thing to go stale.
 
     The optimisation level is in the label rather than only in the conditions line underneath
-    because ch23 prints the same function twice, from two levels, and without it the two blocks
+    because ch28 prints the same function twice, from two levels, and without it the two blocks
     are indistinguishable at a glance — which is the one thing the figure is for.
     """
     result = load_result(name)
@@ -336,7 +336,7 @@ def xv6_environment_table(name: str) -> str:
 #: ``/proc/cpuinfo`` key -> the label this table gives it, in the order the rows appear.
 #:
 #: Both architectures are listed because the reference machine is an ARM one and a reader
-#: following Part IV on a RISC-V board is supported. A key absent from this mapping is still
+#: following Part V on a RISC-V board is supported. A key absent from this mapping is still
 #: printed, under its own name: a table that silently dropped something the kernel reported would
 #: be a table you could not trust to be complete, which is the opposite of what it is for.
 CORE_IDENTITY_LABELS = {
@@ -381,7 +381,7 @@ def board_identity_table(name: str) -> str:
     """The board's account of itself, read from the running machine rather than a datasheet.
 
     A spec sheet describes a product line. ``/proc/cpuinfo`` describes the silicon that produced
-    the numbers in every other table in Part IV, which is the one that matters when two of them
+    the numbers in every other table in Part V, which is the one that matters when two of them
     disagree.
 
     Nothing here is architecture-specific, deliberately. The reference machine is an ARM one and a
@@ -404,7 +404,7 @@ def board_identity_table(name: str) -> str:
     ]
     rows += core_identity_rows(machine.get("cpu", {}))
     rows += [
-        # The two capabilities Part IV is built on, and they are separate questions: a core can
+        # The two capabilities Part V is built on, and they are separate questions: a core can
         # count perfectly well and be unable to sample at all. ch00 says why.
         ["`perf stat` reads hardware counters", summary.get("perf_counters_readable")],
         ["Cycle counter event", summary.get("perf_cycles_event")],
@@ -543,14 +543,14 @@ def lock_primitives_table(name: str) -> str:
 def switch_cost_table(name: str) -> str:
     """What a context switch moves, beside what a trap moves.
 
-    The comparison is the content, so both are in one table. ch08's figure is loaded rather than
+    The comparison is the content, so both are in one table. ch13's figure is loaded rather than
     repeated, so the two cannot disagree; `run_traps --check` keeps that one current.
     """
     swtch = load_result(name)["summary"]["swtch"]
     trap = load_result("traps-xv6")["summary"]["path"]
     rows = [
         ["Registers a context switch saves", swtch["registers_saved"]],
-        ["Registers a trap saves ([ch08](#ch08))", trap["uservec"]["register_stores"]],
+        ["Registers a trap saves ([ch13](#ch13))", trap["uservec"]["register_stores"]],
         ["Bytes a switch moves, in and out", swtch["bytes_moved"]],
         ["Instructions in `swtch`", swtch["instructions"]],
     ]
@@ -641,7 +641,7 @@ def bridge_cost_table(name: str) -> str:
     Written before the measurement exists, so that landing it is one command rather than a
     rewrite. The columns are the ones the chapter's argument needs: the structural prediction, the
     measured result, and the ratio between them — which is the size of the error and the reason
-    Part IV exists.
+    Part V exists.
     """
     run = load_result(name)["summary"]["bridge"]
     rows = [
@@ -835,7 +835,7 @@ def atomics_cost_table(name: str) -> str:
 
 
 def os_model_table(name: str) -> str:
-    """Part III's structural account of three kernel services, assembled in one place.
+    """Part IV's structural account of three kernel services, assembled in one place.
 
     Every figure here was measured on the xv6 target and is already in the book; gathering them is
     what makes the comparison with Linux a comparison rather than a fresh set of numbers. `name`
@@ -849,25 +849,25 @@ def os_model_table(name: str) -> str:
         [
             "System call",
             f"{traps['path']['uservec']['instructions'] + traps['path']['userret']['instructions']} instructions of trap path",
-            "[ch08](#ch08)",
+            "[ch13](#ch13)",
         ],
         [
             "…of which registers moved",
             f"{traps['path']['uservec']['register_stores'] + traps['path']['userret']['register_loads']}",
-            "[ch08](#ch08)",
+            "[ch13](#ch13)",
         ],
         [
             "Page fault",
             f"{faults['load_faults'] + faults['store_faults']} for {faults['touched_lazy']} first touches",
-            "[ch10](#ch10)",
+            "[ch15](#ch15)",
         ],
         [
             "Context switch",
             f"{switch['registers_saved']} registers, {switch['bytes_moved']} bytes",
-            "[ch13](#ch13)",
+            "[ch18](#ch18)",
         ],
     ]
-    return render_table(["Service", "What Part III established", "Where"], rows)
+    return render_table(["Service", "What Part IV established", "Where"], rows)
 
 
 def os_cost_table(name: str) -> str:
@@ -910,7 +910,7 @@ def vdso_table(name: str) -> str:
 
 
 def tally_census_table(name: str) -> str:
-    """What the program under ch22's profiler does, counted before anybody times it.
+    """What the program under ch27's profiler does, counted before anybody times it.
 
     Written as a prediction. Everything here is a property of the program and its sizes, so it is
     the same on every machine, and the chapter's method is to commit to it and then find out
@@ -1002,7 +1002,7 @@ def vector_speedup_table(name: str) -> str:
 
 
 def xv6_file_map_table(name: str) -> str:
-    """Which file of the kernel each chapter of Part III reads, and how long it is.
+    """Which file of the kernel each chapter of Part IV reads, and how long it is.
 
     Ordered by chapter rather than alphabetically, because the reader arrives here from a chapter
     and wants its rows together. The line counts are walked from the submodule at its pinned

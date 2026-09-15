@@ -14,7 +14,7 @@ notification that it is ready for more, and how many of those you need depends o
 fell out rather than on how many characters there were.
 
 So one of them is a property of the workload and the other is a property of the afternoon, and
-this runner records the first and declines the second — for the same reason ch08 declines to
+this runner records the first and declines the second — for the same reason ch13 declines to
 record timer interrupts, which is also why the timer is missing here.
 
 What it does record about the console is the fact that survives: how many characters the writing
@@ -42,7 +42,7 @@ from bench.stamp import (
 )
 
 WORKLOAD = ["intrload"]
-PATCH = "xv6/patches/11-interrupt-census.patch"
+PATCH = "xv6/patches/16-interrupt-census.patch"
 APP = "xv6/apps/intrload.c"
 
 #: Ctrl-N, which the patch binds to printing the census.

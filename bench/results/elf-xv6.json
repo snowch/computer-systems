@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "66d5b4b575b4219d",
+  "code_fingerprint": "90f438543b8dd128",
   "code_sources": [
     "bench/run_elf.py",
     "sysfs/tools/elfdump.c"
@@ -8,7 +8,7 @@
     "note": "structure only: sections, segments and symbol counts",
     "subjects": "xv6 user programs, linked by xv6's own Makefile and linker script"
   },
-  "generated_at": "2026-09-15T09:23:26+00:00",
+  "generated_at": "2026-09-15T15:09:45+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "riscv64",

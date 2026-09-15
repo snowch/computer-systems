@@ -28,7 +28,7 @@ same source:
 
 That difference decides almost everything about how the two are organised. The commentary follows
 the kernel's own structure, because it is explaining a program. This book follows a question, which
-is why its Part III takes the kernel apart mechanism by mechanism and its Part IV then asks the
+is why its Part IV takes the kernel apart mechanism by mechanism and its Part V then asks the
 price of each — and why a mechanism that is one section there may be a chapter here, or the
 reverse.
 
@@ -44,20 +44,20 @@ between revisions and its topics do not.
 | When the commentary is on | This book is in | And the price is in |
 |---|---|---|
 | Operating system interfaces — processes, `fork`, `exec`, files | [ch02](#ch02) for the memory model it implies; the trace below | — |
-| Operating system organization, isolation, privilege | [ch08](#ch08) | [ch21](#ch21) |
-| Page tables and Sv39 | [ch09](#ch09) | [ch17](#ch17) address translation, [ch21](#ch21) faults |
-| Traps, system calls, and the trap path | [ch08](#ch08) | [ch21](#ch21) |
-| Page faults and what can be built on them | [ch10](#ch10) | [ch21](#ch21) |
-| Interrupts and device drivers | [ch11](#ch11) | — |
-| Locking | [ch12](#ch12) | [ch20](#ch20) |
-| Scheduling and context switching | [ch13](#ch13) | [ch21](#ch21) |
-| File system, logging, buffer cache | [ch14](#ch14) | — |
-| Concurrency revisited, memory ordering | [ch12](#ch12) | [ch20](#ch20) |
+| Operating system organization, isolation, privilege | [ch13](#ch13) | [ch26](#ch26) |
+| Page tables and Sv39 | [ch14](#ch14) | [ch22](#ch22) address translation, [ch26](#ch26) faults |
+| Traps, system calls, and the trap path | [ch13](#ch13) | [ch26](#ch26) |
+| Page faults and what can be built on them | [ch15](#ch15) | [ch26](#ch26) |
+| Interrupts and device drivers | [ch16](#ch16) | — |
+| Locking | [ch17](#ch17) | [ch25](#ch25) |
+| Scheduling and context switching | [ch18](#ch18) | [ch26](#ch26) |
+| File system, logging, buffer cache | [ch19](#ch19) | — |
+| Concurrency revisited, memory ordering | [ch17](#ch17) | [ch25](#ch25) |
 
 Three rows have no price, and the reason is the same each time: the cost of an interrupt, a file
 system and a driver on this machine is the cost of *this machine's* devices, and the reference
 board's storage is an SD card behind a bridge rather than anything a chapter could generalise
-from. [ch11](#ch11) and [ch14](#ch14) say so in their own limitations sections.
+from. [ch16](#ch16) and [ch19](#ch19) say so in their own limitations sections.
 
 ## One call through every layer: `fork`
 
@@ -72,24 +72,24 @@ is a one-line wrapper. Older revisions of the commentary call it `fork`.
 |---|---|---|
 | `allocproc()` finds an unused slot in the fixed process table | allocation without a heap | [ch02](#ch02) |
 | …and returns `0` when there is none, which becomes `-1` | failure that returns rather than raises | [ch02](#ch02), problem 2.2 |
-| `uvmcopy()` walks the parent's page table and copies **every** page | address translation | [ch09](#ch09) |
-| …with a `kalloc()` per page, which can also fail | the physical allocator | [ch10](#ch10) |
-| `*(np->trapframe) = *(p->trapframe)` copies the saved user registers | what a trap saves | [ch08](#ch08) |
-| `np->trapframe->a0 = 0` | the calling convention | [ch06](#ch06), [ch08](#ch08) |
-| `filedup()` over the open files, and `idup()` on the working directory | reference counting | [ch14](#ch14) |
-| `np->state = RUNNABLE` makes it eligible to be chosen | scheduling | [ch13](#ch13) |
+| `uvmcopy()` walks the parent's page table and copies **every** page | address translation | [ch14](#ch14) |
+| …with a `kalloc()` per page, which can also fail | the physical allocator | [ch15](#ch15) |
+| `*(np->trapframe) = *(p->trapframe)` copies the saved user registers | what a trap saves | [ch13](#ch13) |
+| `np->trapframe->a0 = 0` | the calling convention | [ch11](#ch11), [ch13](#ch13) |
+| `filedup()` over the open files, and `idup()` on the working directory | reference counting | [ch19](#ch19) |
+| `np->state = RUNNABLE` makes it eligible to be chosen | scheduling | [ch18](#ch18) |
 
 **Why it returns twice** is the one line worth carrying away, and it is the fourth row. Nothing
 returns twice. The child is a copy of the parent — including the saved register set the trap path
 will restore on the way out — with a single word changed: the register the calling convention uses
 for a return value. Both processes then resume at the instruction after the `ecall`, each reading
-its own `a0`. [ch08](#ch08) is where that saved register set is counted.
+its own `a0`. [ch13](#ch13) is where that saved register set is counted.
 
 **`uvmcopy` copies eagerly**, and the pinned tree is explicit about it: a `kalloc` and a `memmove`
 of a whole page, per page, with no sharing. That is a deliberate simplification and it is what
-makes [ch10](#ch10)'s copy-on-write material a change rather than an explanation — the mechanism
+makes [ch15](#ch15)'s copy-on-write material a change rather than an explanation — the mechanism
 is absent here, so the chapter has somewhere to put it. A production kernel shares the pages and
-marks them read-only, and [ch21](#ch21) is where the difference in cost is measured.
+marks them read-only, and [ch26](#ch26) is where the difference in cost is measured.
 
 **The failure paths are the chapter's second problem, in the source.** `kfork` can fail in two
 places — no free slot, or no free page — and both return `-1` after undoing what they had done. A

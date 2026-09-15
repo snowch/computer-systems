@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "a3cc1f369da04fcd",
+  "code_fingerprint": "7114b6b23c153c39",
   "code_sources": [
     "bench/run_kernelc.py"
   ],
@@ -7,7 +7,7 @@
     "note": "counts and names only; nothing here was executed",
     "why": "ch02's claims about what the kernel lacks should fail when it gains them"
   },
-  "generated_at": "2026-09-15T09:37:01+00:00",
+  "generated_at": "2026-09-15T15:09:44+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "riscv64",

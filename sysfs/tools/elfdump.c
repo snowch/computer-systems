@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch07 takes a binary apart. It could do that with `readelf`, and a reader who has only ever used
+ * ch12 takes a binary apart. It could do that with `readelf`, and a reader who has only ever used
  * `readelf` believes an ELF file is a thing a tool understands. Writing the reader is how it
  * stops being that: the format is a header naming two arrays, and everything else is offsets.
  *

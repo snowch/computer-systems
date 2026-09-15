@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "be36fb1896236ff7",
+  "code_fingerprint": "6de236a71bd9ae24",
   "code_sources": [
     "bench/run_frames.py",
     "bench/disasm.py",
@@ -10,7 +10,7 @@
     "frame_bytes": "read from the prologue's own `addi sp,sp,-N`; 0 means no frame",
     "note": "counts of instructions and stack bytes; nothing was executed or timed"
   },
-  "generated_at": "2026-09-15T09:23:25+00:00",
+  "generated_at": "2026-09-15T15:09:45+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "riscv64",

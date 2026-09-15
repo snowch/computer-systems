@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "a372443634fc1241",
+  "code_fingerprint": "bab0a869ca603a7e",
   "code_sources": [
     "bench/run_profile.py",
     "sysfs/tools/tally.c",
@@ -10,7 +10,7 @@
     "note": "counts only \u2014 every figure here is a property of the program and its sizes",
     "why": "the profile itself belongs to make bench-board, and this is what it is compared against"
   },
-  "generated_at": "2026-09-15T12:26:48+00:00",
+  "generated_at": "2026-09-15T15:09:46+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "aarch64",

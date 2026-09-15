@@ -10,7 +10,7 @@ patch counts and changes nothing. What is missing from the kernel, and from most
 laziness, is the exchange rate: how many pages are saved, and how many entries into the kernel are
 bought with them.
 
-Deterministic by construction rather than by observation, which is the ch08 lesson applied before
+Deterministic by construction rather than by observation, which is the ch13 lesson applied before
 rather than after. ``faultload`` decides how much it asks for and how much of it it touches, and
 prints both; the kernel counts independently; this runner refuses to stamp a result in which the
 two disagree. The shell allocates as well, which is why the census is per process and why only
@@ -36,7 +36,7 @@ from bench.stamp import (
 )
 
 WORKLOAD = ["faultload"]
-PATCH = "xv6/patches/10-fault-census.patch"
+PATCH = "xv6/patches/15-fault-census.patch"
 APP = "xv6/apps/faultload.c"
 
 #: Ctrl-F, which the patch binds to printing the census.

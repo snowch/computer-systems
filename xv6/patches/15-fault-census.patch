@@ -1,0 +1,209 @@
+diff -urN a/kernel/console.c b/kernel/console.c
+--- a/kernel/console.c	2026-09-14 20:51:50.884494783 +0000
++++ b/kernel/console.c	2026-09-14 20:52:27.167420450 +0000
+@@ -152,6 +152,9 @@
+   case C('T'): // Print the trap census (Systems From Scratch, ch13).
+     trapdump();
+     break;
++  case C('F'): // Print the fault census (Systems From Scratch, ch15).
++    faultdump();
++    break;
+   case C('V'): // Print the page-table census (Systems From Scratch, ch14).
+     ptdump();
+     break;
+diff -urN a/kernel/defs.h b/kernel/defs.h
+--- a/kernel/defs.h	2026-09-14 20:51:50.887644233 +0000
++++ b/kernel/defs.h	2026-09-14 20:52:27.167339766 +0000
+@@ -104,6 +104,11 @@
+ int             either_copyin(void *dst, int user_src, uint64 src, uint64 len);
+ void            procdump(void);
+ void            ptdump(void);
++void            faultdump(void);
++void            census_page(int);
++void            census_refused(void);
++uint64          census_fault(uint64, uint64);
++void            census_latch(struct proc*);
+ 
+ // swtch.S
+ void            swtch(struct context*, struct context*);
+diff -urN a/kernel/proc.c b/kernel/proc.c
+--- a/kernel/proc.c	2026-09-14 20:51:50.878174955 +0000
++++ b/kernel/proc.c	2026-09-14 20:52:27.167251648 +0000
+@@ -164,6 +164,7 @@
+   p->sz = 0;
+   p->pid = 0;
+   p->name[0] = 0;
++  memset(&p->fc, 0, sizeof(p->fc)); // Systems From Scratch, ch15
+   p->chan = 0;
+   p->killed = 0;
+   p->xstate = 0;
+@@ -330,6 +331,8 @@
+   if (p == initproc)
+     panic("init exiting");
+ 
++  census_latch(p); // Systems From Scratch, ch15
++
+   // Close all open files.
+   for (int fd = 0; fd < NOFILE; fd++) {
+     if (p->ofile[fd]) {
+@@ -718,3 +721,84 @@
+   }
+   printk("end ptcensus\n");
+ }
++
++
++// -- fault census (Systems From Scratch, ch15) ----------------------------------------------
++//
++// Counting only. This kernel already offers both allocation policies -- sbrk's second argument
++// picks one -- so the book has no policy to add and no business adding one. What it has is a
++// question neither policy answers by itself: what does choosing between them cost? That needs
++// pages allocated and faults taken, for the same workload, under each.
++//
++// The counters live in struct proc because the shell allocates too, and a global total would be
++// a statement about the shell. They are latched on the way out, because the interesting process
++// has usually exited by the time anybody presses a key.
++
++static struct faultcensus latched;
++static char latched_name[16];
++
++void
++census_page(int lazy)
++{
++  struct proc *p = myproc();
++
++  if (p == 0) // during boot there is nobody to charge it to
++    return;
++  if (lazy)
++    p->fc.lazy_pages++;
++  else
++    p->fc.eager_pages++;
++}
++
++void
++census_refused(void)
++{
++  struct proc *p = myproc();
++
++  if (p)
++    p->fc.refused++;
++}
++
++// Records the fault and returns vmfault's own answer unchanged, so the caller's logic is
++// undisturbed by being measured.
++uint64
++census_fault(uint64 scause, uint64 outcome)
++{
++  struct proc *p = myproc();
++
++  if (p) {
++    if (scause == 13)
++      p->fc.load_faults++;
++    else
++      p->fc.store_faults++;
++  }
++  return outcome;
++}
++
++void
++census_latch(struct proc *p)
++{
++  latched = p->fc;
++  safestrcpy(latched_name, p->name, sizeof(latched_name));
++}
++
++// Printed on Ctrl-F, the way Ctrl-P prints the process table. One line per live process and one
++// for the last process to leave, which is normally the one worth looking at.
++void
++faultdump(void)
++{
++  struct proc *p;
++
++  printk("\nfaultcensus 1\n");
++  for (p = proc; p < &proc[NPROC]; p++) {
++    if (p->state == UNUSED)
++      continue;
++    printk("faultcensus live %d %s eager %ld lazy %ld load %ld store %ld refused %ld\n", p->pid,
++           p->name, p->fc.eager_pages, p->fc.lazy_pages, p->fc.load_faults, p->fc.store_faults,
++           p->fc.refused);
++  }
++  printk("faultcensus exited %s eager %ld lazy %ld load %ld store %ld refused %ld\n",
++         latched_name[0] ? latched_name : "none", latched.eager_pages, latched.lazy_pages,
++         latched.load_faults, latched.store_faults, latched.refused);
++  printk("end faultcensus\n");
++}
+diff -urN a/kernel/proc.h b/kernel/proc.h
+--- a/kernel/proc.h	2026-09-14 20:51:50.881332727 +0000
++++ b/kernel/proc.h	2026-09-14 20:51:50.911703448 +0000
+@@ -79,6 +79,19 @@
+ enum procstate { UNUSED, USED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
+ 
+ // Per-process state
++// -- fault census (Systems From Scratch, ch15) --------------------------------------------
++//
++// Counters only. Nothing here changes a policy: this xv6 already offers both, as the second
++// argument to sbrk, and the book's job is to say what choosing between them costs. Per process,
++// because the shell is allocating too and a global total would be a fact about the shell.
++struct faultcensus {
++  uint64 eager_pages;   // pages uvmalloc allocated because somebody asked for them
++  uint64 lazy_pages;    // pages vmfault allocated because somebody touched them
++  uint64 load_faults;   // scause 13 reaching the handler
++  uint64 store_faults;  // scause 15 reaching the handler
++  uint64 refused;       // faults the handler declined: not this process's memory
++};
++
+ struct proc {
+   struct spinlock lock;
+ 
+@@ -101,4 +114,5 @@
+   struct file *ofile[NOFILE];  // Open files
+   struct inode *cwd;           // Current directory
+   char name[16];               // Process name (debugging)
++  struct faultcensus fc;       // Systems From Scratch, ch15
+ };
+diff -urN a/kernel/trap.c b/kernel/trap.c
+--- a/kernel/trap.c	2026-09-14 20:51:50.890950317 +0000
++++ b/kernel/trap.c	2026-09-14 20:52:27.167072410 +0000
+@@ -144,8 +144,10 @@
+   } else if ((which_dev = devintr()) != 0) {
+     // ok
+   } else if ((r_scause() == 15 || r_scause() == 13) &&
+-             vmfault(p->pagetable, p->sz, r_stval(),
+-                     (r_scause() == 13) ? 1 : 0) != 0) {
++             // Systems From Scratch, ch15: count the fault and hand back what vmfault decided,
++             // so the census sees every page fault rather than only the satisfiable ones.
++             census_fault(r_scause(), vmfault(p->pagetable, p->sz, r_stval(),
++                                              (r_scause() == 13) ? 1 : 0)) != 0) {
+     // page fault on lazily-allocated page
+   } else {
+     printk("usertrap(): unexpected scause 0x%lx pid=%d\n", r_scause(), p->pid);
+diff -urN a/kernel/vm.c b/kernel/vm.c
+--- a/kernel/vm.c	2026-09-14 20:51:50.874947801 +0000
++++ b/kernel/vm.c	2026-09-14 20:51:50.911974741 +0000
+@@ -231,6 +231,7 @@
+       return 0;
+     }
+     memset(mem, 0, PGSIZE);
++    census_page(0); // Systems From Scratch, ch15: asked for, so allocated now
+     if (mappages(pagetable, a, PGSIZE, (uint64)mem, PTE_R | PTE_U | xperm) !=
+         0) {
+       kfree(mem);
+@@ -460,8 +461,10 @@
+ {
+   uint64 mem;
+ 
+-  if (va >= psz)
++  if (va >= psz) {
++    census_refused(); // Systems From Scratch, ch15: nothing here belongs to this process
+     return 0;
++  }
+   va = PGROUNDDOWN(va);
+   if (ismapped(pagetable, va)) {
+     return 0;
+@@ -474,6 +477,7 @@
+     kfree((void *)mem);
+     return 0;
+   }
++  census_page(1); // Systems From Scratch, ch15: touched, so allocated only now
+   return mem;
+ }
+ 

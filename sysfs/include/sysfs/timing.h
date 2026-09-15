@@ -2,13 +2,13 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * Every duration in Part IV is read through this header, so that "how was this timed" has one
+ * Every duration in Part V is read through this header, so that "how was this timed" has one
  * answer rather than one per chapter. Three things it deliberately provides and one it
  * deliberately does not.
  *
  * It provides a clock, the cost of reading that clock, and a way to run something many times and
  * report the distribution rather than a number. The last of those is the one that matters: a
- * single duration is not a measurement, it is an anecdote, and the whole of ch16 is about what to
+ * single duration is not a measurement, it is an anecdote, and the whole of ch21 is about what to
  * report instead.
  *
  * It does not provide a "benchmark this function" macro. Deciding what to repeat, what to warm up
@@ -50,6 +50,6 @@ struct sysfs_summary sysfs_summarise(uint64_t *samples, uint64_t count);
 /* Why the minimum, and not the mean, is usually the number to look at: everything that can happen
  * to a measurement on a real machine makes it slower, and nothing makes it faster. The mean is
  * therefore a statement about the interference and the minimum is the closest available statement
- * about the work. ch16 says when that reasoning fails. */
+ * about the work. ch21 says when that reasoning fails. */
 
 #endif /* SYSFS_TIMING_H */

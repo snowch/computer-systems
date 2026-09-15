@@ -1,10 +1,10 @@
 {
-  "code_fingerprint": "618923c34f847d2f",
+  "code_fingerprint": "f43f9081afa7d41c",
   "code_sources": [
     "bench/run_blocks.py",
     "bench/xv6.py",
     "xv6/apps/blockload.c",
-    "xv6/patches/14-block-census.patch"
+    "xv6/patches/19-block-census.patch"
   ],
   "conditions": {
     "cpus": 3,
@@ -12,7 +12,7 @@
     "method": "a difference between two runs of the same program, one of which writes a byte",
     "note": "block counts only; nothing here was timed"
   },
-  "generated_at": "2026-09-15T09:24:11+00:00",
+  "generated_at": "2026-09-15T15:10:04+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",

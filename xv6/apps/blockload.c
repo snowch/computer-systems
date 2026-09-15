@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch14's measurement is an amplification factor, and the honest version of it is a difference.
+ * ch19's measurement is an amplification factor, and the honest version of it is a difference.
  * Running this program costs the file system something before `main` starts: the shell forks, the
  * kernel reads the binary, the directory is consulted. Measuring one run would charge all of that
  * to the byte.

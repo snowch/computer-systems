@@ -221,7 +221,7 @@ def main(argv: list[str] | None = None) -> int:
     status = 0
     for payload in payloads:
         if args.check:
-            status |= compare(payload, "the compiler still makes the same of ch23's five loops")
+            status |= compare(payload, "the compiler still makes the same of ch28's five loops")
         else:
             path = write_result(payload)
             print(f"wrote {Path(path).relative_to(ROOT)}")

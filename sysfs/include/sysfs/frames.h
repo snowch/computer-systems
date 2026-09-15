@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch06 compiles these at -O0 and at -O2 and compares what the compiler did about the stack. A
+ * ch11 compiles these at -O0 and at -O2 and compares what the compiler did about the stack. A
  * leaf function may need no frame at all; one that calls something must keep a return address
  * somewhere; one with more live values than there are registers has to put the rest in memory.
  * The point is that "how big is a stack frame" has no general answer, only a measured one.

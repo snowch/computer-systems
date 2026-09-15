@@ -76,7 +76,7 @@ free_list = r;
 
 That is [ch01](#ch01)'s self-referential struct doing real work, and it is three lines of pointer
 arithmetic that would be undefined behaviour in an application and is the allocator here.
-[ch10](#ch10) is the chapter that measures what it costs.
+[ch15](#ch15) is the chapter that measures what it costs.
 
 ### Memory that is not memory
 
@@ -99,7 +99,7 @@ An application with one thread has exclusive access to its own data by default. 
 does: [ch02](#ch02)'s table gives this machine eight harts, every one of them able to be inside
 the same function as you, on data you are halfway through changing.
 
-What that costs is [ch12](#ch12)'s subject and it is not small. What matters here is the habit:
+What that costs is [ch17](#ch17)'s subject and it is not small. What matters here is the habit:
 when you read a kernel structure, the question "who else can reach this, and what are they holding
 while they do" is not paranoia, it is the first question. `static` on a file-scope variable does
 not make it yours — it makes it invisible to other *files*, and every hart runs the same file.
@@ -117,7 +117,7 @@ accrues to few, so the feature is not offered.
 
 That is the trade in miniature, and it is worth recognising because real kernels make the same one
 differently — usually by saving the registers lazily, the first time a process touches one, which
-is [ch10](#ch10)'s mechanism used for something other than memory.
+is [ch15](#ch15)'s mechanism used for something other than memory.
 
 ### Almost no library, so the kernel writes its own
 
@@ -144,16 +144,16 @@ where their memory comes from, and that is the whole of this chapter in one exer
 
 ### What the language lets you do and you must not
 
-C will not stop you. Neither will the hardware, until [ch10](#ch10). The three that cost the most
+C will not stop you. Neither will the hardware, until [ch15](#ch15). The three that cost the most
 time, all of which compile without a word of complaint:
 
 - **A pointer to a local, after the function returned.** The bytes are still there and still
   readable, right up until the next call writes over them, which is why this produces a bug that
   works in testing.
-- **Reading or writing past the end of an array.** Nothing checks. [ch05](#ch05) has the arithmetic
+- **Reading or writing past the end of an array.** Nothing checks. [ch10](#ch10) has the arithmetic
   that makes a bounds check look right and be wrong.
 - **Two harts writing one variable with no lock**, which works perfectly until the machine is
-  busy. [ch12](#ch12) is the chapter, and [ch20](#ch20) is what it costs on real hardware.
+  busy. [ch17](#ch17) is the chapter, and [ch25](#ch25) is what it costs on real hardware.
 
 ## What we measured
 
@@ -173,12 +173,12 @@ floating-point saving and a great deal more. xv6's answers are the simplest ones
 so they can be read, and reading them is what makes a bigger kernel's answers legible as choices
 rather than as complexity.
 
-**What any of it costs.** No clock in this part. The free list is [ch10](#ch10), locks are
-[ch12](#ch12) and [ch20](#ch20), and the context switch that declines to save floating-point
-registers is [ch13](#ch13).
+**What any of it costs.** No clock in this part. The free list is [ch15](#ch15), locks are
+[ch17](#ch17) and [ch25](#ch25), and the context switch that declines to save floating-point
+registers is [ch18](#ch18).
 
 **Whether your kernel C is correct.** Nothing here is a checker. The habits in this chapter narrow
-where to look; they do not tell you that you have looked hard enough, and the problems in Part III
+where to look; they do not tell you that you have looked hard enough, and the problems in Part IV
 are about mechanisms that defeat careful reading entirely.
 
 **Anything about C++ or freestanding C beyond this kernel.** "Freestanding" is a word the standard

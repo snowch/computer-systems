@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "2cf92fda6a925392",
+  "code_fingerprint": "589ced30ac3ab4b4",
   "code_sources": [
     "bench/run_filemap.py"
   ],
@@ -7,7 +7,7 @@
     "note": "line counts of the submodule at its pinned commit; nothing was compiled",
     "why": "a hand-written file map describes whichever xv6 its author was reading"
   },
-  "generated_at": "2026-09-15T09:23:14+00:00",
+  "generated_at": "2026-09-15T15:09:43+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "riscv64",
@@ -211,111 +211,111 @@
     "mapped_lines": 5137,
     "reads": {
       "bio.c": {
-        "chapter": "ch14",
+        "chapter": "ch19",
         "for": "the buffer cache, and why a read can cost nothing"
       },
       "console.c": {
-        "chapter": "ch11",
+        "chapter": "ch16",
         "for": "a device driver small enough to read in full"
       },
       "entry.S": {
-        "chapter": "ch08",
+        "chapter": "ch13",
         "for": "the first instructions the kernel runs, before there is a stack"
       },
       "exec.c": {
-        "chapter": "ch10",
+        "chapter": "ch15",
         "for": "what a fresh address space is built out of"
       },
       "file.c": {
-        "chapter": "ch14",
+        "chapter": "ch19",
         "for": "what a file descriptor actually is"
       },
       "fs.c": {
-        "chapter": "ch14",
+        "chapter": "ch19",
         "for": "inodes, blocks, and the path from a name to a byte"
       },
       "kalloc.c": {
-        "chapter": "ch10",
+        "chapter": "ch15",
         "for": "the physical page allocator a fault ends up calling"
       },
       "kernelvec.S": {
-        "chapter": "ch11",
+        "chapter": "ch16",
         "for": "the trap path taken when the kernel itself is interrupted"
       },
       "log.c": {
-        "chapter": "ch14",
-        "for": "the write-ahead log ch14 counts the amplification of"
+        "chapter": "ch19",
+        "for": "the write-ahead log ch19 counts the amplification of"
       },
       "memlayout.h": {
-        "chapter": "ch09",
+        "chapter": "ch14",
         "for": "what is mapped where, and why the trampoline is at the top"
       },
       "plic.c": {
-        "chapter": "ch11",
+        "chapter": "ch16",
         "for": "which device is allowed to interrupt which hart"
       },
       "proc.c": {
-        "chapter": "ch13",
+        "chapter": "ch18",
         "for": "the scheduler, and both halves of a context switch"
       },
       "proc.h": {
-        "chapter": "ch13",
-        "for": "the context ch13 counts the registers of"
+        "chapter": "ch18",
+        "for": "the context ch18 counts the registers of"
       },
       "riscv.h": {
-        "chapter": "ch09",
+        "chapter": "ch14",
         "for": "the Sv39 field definitions, as macros over a 64-bit word"
       },
       "sleeplock.c": {
-        "chapter": "ch12",
+        "chapter": "ch17",
         "for": "the other kind, and when each is correct"
       },
       "spinlock.c": {
-        "chapter": "ch12",
+        "chapter": "ch17",
         "for": "the lock, and the memory barriers around it"
       },
       "spinlock.h": {
-        "chapter": "ch12",
+        "chapter": "ch17",
         "for": "what a lock is made of"
       },
       "start.c": {
-        "chapter": "ch08",
+        "chapter": "ch13",
         "for": "the machine-mode setup that hands over to supervisor mode"
       },
       "swtch.S": {
-        "chapter": "ch13",
+        "chapter": "ch18",
         "for": "the switch itself \u2014 fourteen registers and nothing else"
       },
       "syscall.c": {
-        "chapter": "ch08",
+        "chapter": "ch13",
         "for": "the dispatch table, and how arguments cross the boundary"
       },
       "syscall.h": {
-        "chapter": "ch08",
+        "chapter": "ch13",
         "for": "the call numbers"
       },
       "sysproc.c": {
-        "chapter": "ch08",
-        "for": "the process calls, including the one ch08's workload uses"
+        "chapter": "ch13",
+        "for": "the process calls, including the one ch13's workload uses"
       },
       "trampoline.S": {
-        "chapter": "ch08",
-        "for": "uservec and userret \u2014 the register moves ch08 counts"
+        "chapter": "ch13",
+        "for": "uservec and userret \u2014 the register moves ch13 counts"
       },
       "trap.c": {
-        "chapter": "ch08",
+        "chapter": "ch13",
         "for": "where a trap is decided, and where a page fault would be handled"
       },
       "uart.c": {
-        "chapter": "ch11",
+        "chapter": "ch16",
         "for": "the registers underneath it"
       },
       "virtio_disk.c": {
-        "chapter": "ch14",
+        "chapter": "ch19",
         "for": "the only device in the system that makes you wait"
       },
       "vm.c": {
-        "chapter": "ch09",
+        "chapter": "ch14",
         "for": "the page-table walk, mapping, and the kernel's own address space"
       }
     },

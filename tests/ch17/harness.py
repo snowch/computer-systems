@@ -1,4 +1,4 @@
-"""Compile the reader's hierarchy analysis and ask it questions."""
+"""Compile the reader's locking code and ask it questions."""
 
 from __future__ import annotations
 
@@ -8,30 +8,28 @@ from pathlib import Path
 from bench.measure import PORTABLE_FLAGS, HostTarget, compile_program
 from bench.stamp import ROOT
 
-HIERARCHY = ROOT / "tests" / "ch17" / "hierarchy.c"
-NATIVE = HostTarget(name="native-other", cc="cc", flags=PORTABLE_FLAGS)
+LOCKING = ROOT / "tests" / "ch17" / "locking.c"
+
+#: Threads need -pthread, which the book's portable flags have no reason to carry.
+NATIVE = HostTarget(name="native-other", cc="cc", flags=(*PORTABLE_FLAGS, "-pthread"))
 
 
 def build(build_dir: Path) -> Path:
-    return compile_program([HIERARCHY], build_dir / "ch17hierarchy", NATIVE).path
+    return compile_program([LOCKING], build_dir / "ch17locking", NATIVE).path
 
 
-def ask(program: Path, commands: list[str]) -> dict:
+def ask(program: Path, commands: list[str], timeout: float = 120.0) -> dict:
     printed = subprocess.run(
-        [str(program), *commands], capture_output=True, text=True, check=True
+        [str(program), *commands], capture_output=True, text=True, check=True, timeout=timeout
     ).stdout
-    out: dict = {"steps": {}, "line": {}, "lines": {}}
+    out: dict = {"hammer": [], "reorder": {}, "conflict": {}}
     for line in printed.splitlines():
         parts = line.split()
         match parts:
-            case ["steps", index, _count, *found]:
-                out["steps"][int(index)] = [int(v) for v in found]
-            case ["line", index, value]:
-                out["line"][int(index)] = int(value)
-            case ["lines", elements, value]:
-                out["lines"][int(elements)] = int(value)
+            case ["hammer", expected, got]:
+                out["hammer"].append((int(expected), int(got)))
+            case ["reorder", case, verdict]:
+                out["reorder"][case] = int(verdict)
+            case ["conflict", first, second, verdict]:
+                out["conflict"][(first, second)] = int(verdict)
     return out
-
-
-def curve(points: list[tuple[int, int]]) -> tuple[str, str]:
-    return ".".join(str(x) for x, _ in points), ".".join(str(y) for _, y in points)

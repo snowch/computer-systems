@@ -107,7 +107,7 @@ whatever binds tightest first.** `[]` and `()` bind tighter than `*`, and parent
 | `int *const p` | `p` is a pointer you may not repoint |
 
 The two pairs that differ only by parentheses are the ones worth doing slowly, and they are not a
-puzzle for its own sake: `int (*f)(void)` is how every device driver in [ch11](#ch11) is reached,
+puzzle for its own sake: `int (*f)(void)` is how every device driver in [ch16](#ch16) is reached,
 and `const int *` against `int *const` is a distinction the kernel relies on constantly to say
 which of two things it promises not to change.
 
@@ -121,7 +121,7 @@ it, and cannot, because there is nowhere in a pointer to put it.
 
 That is why every kernel function that takes a buffer also takes a count. It is not a style
 preference; there is no alternative. [ch03](#ch03) shows the compiler discarding a length written
-into a parameter's brackets, and [ch05](#ch05) has the bug it causes.
+into a parameter's brackets, and [ch10](#ch10) has the bug it causes.
 
 A string in C is this with one extra convention: a run of bytes ending in a zero one. The zero is
 the length, stored at the end instead of the beginning, which makes finding the length a loop
@@ -145,7 +145,7 @@ the time the machine sees this; they became the numbers in those two load instru
 when the file was compiled. `a->b` is exactly `(*a).b`, and both are exactly "an offset on a
 load".
 
-Which offsets, and why they are not simply the sum of the sizes before them, is [ch05](#ch05)'s
+Which offsets, and why they are not simply the sum of the sizes before them, is [ch10](#ch10)'s
 subject. What matters here is that the offsets are fixed at compile time and the name is gone.
 
 ### Casts, and the two kinds of arithmetic
@@ -184,7 +184,7 @@ out of the free memory itself.
 
 ## What we measured
 
-Nothing here is a cost. Three listings, captured by the machinery [ch04](#ch04) explains and
+Nothing here is a cost. Three listings, captured by the machinery [ch09](#ch09) explains and
 re-captured by CI on every push, establishing two things a reader would otherwise have to take on
 trust: that `p + 1` compiles to a different offset for different element types, and that `->`
 compiles to an offset on a load with no lookup of any kind.
@@ -198,16 +198,16 @@ standard @iso-c17 and would hold on a compiler emitting entirely different instr
 are assumed from whatever language you already use, and C spells them much as it does. What is not
 assumed is the memory model, because that is the part your other language was built to hide.
 
-**What any of this costs.** No chapter in this part has a clock in it. [ch17](#ch17) is where
+**What any of this costs.** No chapter in this part has a clock in it. [ch22](#ch22) is where
 following a pointer acquires a price, and the price turns out to depend on something no listing
 here can show.
 
 **Why the struct offsets are what they are.** This chapter shows that `->` becomes an offset. It
 does not say how the offsets were chosen, and the answer is not "add up the sizes" —
-[ch05](#ch05) takes it apart.
+[ch10](#ch10) takes it apart.
 
 **Whether your pointer is valid.** C has no answer to this and neither does the hardware, until
-[ch10](#ch10). A pointer is an index; nothing checks that the index means anything.
+[ch15](#ch15). A pointer is an index; nothing checks that the index means anything.
 
 ## Problems
 
@@ -216,7 +216,7 @@ Three, in `tests/ch01/declarations.c`.
 **1.1 — Say what each declaration names.**
 The test generates declarations and asks you to classify them. The two that differ only by
 parentheses are the point of the exercise, and they are the two you will meet again in
-[ch11](#ch11).
+[ch16](#ch16).
 
 ```bash
 python3 -m pytest tests/ch01/test_problem_1_declarations.py

@@ -4,7 +4,7 @@
  *
  * A debugger does this for you and makes it look like magic. It is not: with frame pointers
  * enabled, each frame stores the caller's frame pointer at a known offset from its own, so the
- * frames are a linked list and walking them is a loop. ch06 reads this alongside the same walk
+ * frames are a linked list and walking them is a loop. ch11 reads this alongside the same walk
  * done in gdb, and the point of having both is that the second stops being magic.
  *
  * Built with -fno-omit-frame-pointer, without which there is no list to walk — which is itself

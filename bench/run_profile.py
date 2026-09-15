@@ -11,7 +11,7 @@ is a property of the program and its sizes rather than of any machine, so CI reg
 
 Recording it is the chapter's method rather than its decoration. A profile with nothing written
 down beforehand is very easy to agree with: whatever it blames becomes what you expected. The
-census is a prediction committed to before the measurement exists, and ch22 is about what
+census is a prediction committed to before the measurement exists, and ch27 is about what
 happens when the two disagree.
 
 Three refusals, because a census that quietly stopped describing the program would be worse than
@@ -101,7 +101,7 @@ def refuse_a_census_that_no_longer_describes_the_chapter(facts: dict[str, Any]) 
         raise CensusError(
             "the two arrangements computed different checksums "
             f"({facts['checksum']} and {facts['checksum_partitioned']}). They are supposed to be "
-            "the same program written twice; ch22 compares their profiles, and a comparison "
+            "the same program written twice; ch27 compares their profiles, and a comparison "
             "between two different answers is not one."
         )
 
@@ -171,7 +171,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     differences = measurement_differences(committed, payload)
     if not differences:
-        print(f"{payload['name']}: unchanged — the program still has the shape ch22 describes")
+        print(f"{payload['name']}: unchanged — the program still has the shape ch27 describes")
         return 0
     print(f"{payload['name']}: the program has MOVED\n")
     for difference in differences:

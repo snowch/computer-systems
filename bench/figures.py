@@ -8,7 +8,7 @@ longer matches what the results say.
 
 ## Pending figures
 
-Part IV is measured on hardware that is not attached to CI and never will be. A figure whose
+Part V is measured on hardware that is not attached to CI and never will be. A figure whose
 measurement has not been taken yet is declared here with a ``pending`` reason, and renders as a
 warning naming the command that would produce it. That is deliberately not the same thing as a
 placeholder number:
@@ -108,7 +108,7 @@ class Listing:
         return self.results
 
 
-#: The board runs Part IV. Repeating the instruction in every pending reason would be noise, so
+#: The board runs Part V. Repeating the instruction in every pending reason would be noise, so
 #: it lives here and each entry says what specifically is missing.
 BOARD = "run `make bench-board` on the reference machine and commit the result"
 
@@ -135,46 +135,46 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         # RISC-V first: it is the target the reader has already booted by this point in ch00.
         results=("shapes-riscv64", "shapes-aarch64"),
     ),
-    # -- ch04 ---------------------------------------------------------------------------
-    "ch04-stages": Diagram(
+    # -- ch09 ---------------------------------------------------------------------------
+    "ch09-stages": Diagram(
         draw=toolchain_stages,
         alt="The four stages of the toolchain, what each hands on, and what each discards.",
     ),
-    "ch04-stage-sizes": Table(
+    "ch09-stage-sizes": Table(
         render=tables.stage_sizes_table,
         result="stagewalk-riscv64",
     ),
-    "ch04-linking": Table(
+    "ch09-linking": Table(
         render=tables.linking_cost_table,
         result="stagewalk-riscv64",
     ),
-    "ch04-folded": Listing(
+    "ch09-folded": Listing(
         symbol="sysfs_sum_folded",
         results=("stages-riscv64",),
     ),
-    "ch04-counted": Listing(
+    "ch09-counted": Listing(
         symbol="sysfs_sum_counted",
         results=("stages-riscv64",),
     ),
-    # -- ch05 ---------------------------------------------------------------------------
-    "ch05-padding": Diagram(
+    # -- ch10 ---------------------------------------------------------------------------
+    "ch10-padding": Diagram(
         draw=struct_padding,
         alt="Both structs drawn byte by byte, with the bytes no member uses marked.",
         result="setup-xv6",
     ),
-    "ch05-signed-grows": Listing(
+    "ch10-signed-grows": Listing(
         symbol="sysfs_signed_grows",
         results=("signedness-riscv64",),
     ),
-    "ch05-unsigned-grows": Listing(
+    "ch10-unsigned-grows": Listing(
         symbol="sysfs_unsigned_grows",
         results=("signedness-riscv64",),
     ),
-    "ch05-signed-quarter": Listing(
+    "ch10-signed-quarter": Listing(
         symbol="sysfs_signed_quarter",
         results=("signedness-riscv64",),
     ),
-    "ch05-unsigned-quarter": Listing(
+    "ch10-unsigned-quarter": Listing(
         symbol="sysfs_unsigned_quarter",
         results=("signedness-riscv64",),
     ),
@@ -203,147 +203,147 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         symbol="sysfs_call_through",
         results=("addresses-riscv64",),
     ),
-    # -- ch06 ---------------------------------------------------------------------------
-    "ch06-frame": Diagram(
+    # -- ch11 ---------------------------------------------------------------------------
+    "ch11-frame": Diagram(
         draw=stack_frame,
         alt="A stack frame with the saved frame pointer and return address slots marked.",
     ),
-    "ch06-frames": Table(
+    "ch11-frames": Table(
         render=tables.frame_sizes_table,
         result="framesizes-riscv64",
     ),
-    "ch06-leaf": Listing(
+    "ch11-leaf": Listing(
         symbol="sysfs_leaf",
         results=("frames-riscv64",),
     ),
-    "ch06-calls-out": Listing(
+    "ch11-calls-out": Listing(
         symbol="sysfs_calls_out",
         results=("frames-riscv64",),
     ),
-    # -- ch07 ---------------------------------------------------------------------------
-    "ch07-segments": Diagram(
+    # -- ch12 ---------------------------------------------------------------------------
+    "ch12-segments": Diagram(
         draw=sections_to_segments,
         alt="Eighteen ELF sections collapsing into two loadable segments.",
         result="elf-xv6",
     ),
-    "ch07-segment-table": Table(
+    "ch12-segment-table": Table(
         render=tables.elf_segments_table,
         result="elf-xv6",
     ),
-    "ch07-shape": Table(
+    "ch12-shape": Table(
         render=tables.elf_shape_table,
         result="elf-xv6",
     ),
-    # -- ch08 ---------------------------------------------------------------------------
-    "ch08-trap-path": Diagram(
+    # -- ch13 ---------------------------------------------------------------------------
+    "ch13-trap-path": Diagram(
         draw=trap_path,
         alt="One system call from ecall to sret, with the state movement at each end.",
         result="traps-xv6",
     ),
-    "ch08-path-counts": Table(
+    "ch13-path-counts": Table(
         render=tables.trap_path_table,
         result="traps-xv6",
     ),
-    "ch08-census": Table(
+    "ch13-census": Table(
         render=tables.trap_census_table,
         result="traps-xv6",
     ),
-    # -- ch09 ---------------------------------------------------------------------------
-    "ch09-walk": Diagram(
+    # -- ch14 ---------------------------------------------------------------------------
+    "ch14-walk": Diagram(
         draw=sv39_walk,
         alt="A 64-bit virtual address split into three nine-bit indices and a twelve-bit offset.",
         result="pagetable-xv6",
     ),
-    "ch09-sv39": Table(
+    "ch14-sv39": Table(
         render=tables.sv39_geometry_table,
         result="pagetable-xv6",
     ),
-    "ch09-shape": Table(
+    "ch14-shape": Table(
         render=tables.pagetable_shape_table,
         result="pagetable-xv6",
     ),
-    "ch09-address-spaces": Diagram(
+    "ch14-address-spaces": Diagram(
         draw=address_space_cost,
         alt="init's two clusters of mapped pages, and the chain of tables each one forces.",
         result="pagetable-xv6",
     ),
-    # -- ch10 ---------------------------------------------------------------------------
-    "ch10-decision": Diagram(
+    # -- ch15 ---------------------------------------------------------------------------
+    "ch15-decision": Diagram(
         draw=fault_decision,
         alt="A page fault, the one test that decides what happens, and the two outcomes.",
         result="faults-xv6",
     ),
-    "ch10-exchange": Table(
+    "ch15-exchange": Table(
         render=tables.fault_exchange_table,
         result="faults-xv6",
     ),
-    "ch10-causes": Table(
+    "ch15-causes": Table(
         render=tables.fault_causes_table,
         result="faults-xv6",
     ),
-    # -- ch11 ---------------------------------------------------------------------------
-    "ch11-sources": Diagram(
+    # -- ch16 ---------------------------------------------------------------------------
+    "ch16-sources": Diagram(
         draw=interrupt_sources,
         alt="Three interrupt sources, and which of them a fixed workload gives a fixed count for.",
         result="interrupts-xv6",
     ),
-    "ch11-cost": Table(
+    "ch16-cost": Table(
         render=tables.interrupt_cost_table,
         result="interrupts-xv6",
     ),
-    # -- ch12 ---------------------------------------------------------------------------
-    "ch12-race": Listing(
+    # -- ch17 ---------------------------------------------------------------------------
+    "ch17-race": Listing(
         symbol="sysfs_bump_plain",
         results=("ordering-riscv64", "ordering-aarch64"),
     ),
-    "ch12-atomic": Listing(
+    "ch17-atomic": Listing(
         symbol="sysfs_bump_relaxed",
         results=("ordering-riscv64", "ordering-aarch64"),
     ),
-    "ch12-ordered": Listing(
+    "ch17-ordered": Listing(
         symbol="sysfs_bump_ordered",
         results=("ordering-riscv64",),
     ),
-    "ch12-publish": Listing(
+    "ch17-publish": Listing(
         symbol="sysfs_publish",
         results=("ordering-riscv64", "ordering-aarch64"),
     ),
-    "ch12-primitives": Table(
+    "ch17-primitives": Table(
         render=tables.lock_primitives_table,
         result="locks-xv6",
     ),
-    # -- ch13 ---------------------------------------------------------------------------
-    "ch13-swtch": Table(
+    # -- ch18 ---------------------------------------------------------------------------
+    "ch18-swtch": Table(
         render=tables.switch_cost_table,
         result="switch-xv6",
     ),
-    "ch13-census": Table(
+    "ch18-census": Table(
         render=tables.switch_census_table,
         result="switch-xv6",
     ),
-    # -- ch14 ---------------------------------------------------------------------------
-    "ch14-amplification": Table(
+    # -- ch19 ---------------------------------------------------------------------------
+    "ch19-amplification": Table(
         render=tables.block_amplification_table,
         result="blocks-xv6",
     ),
-    "ch14-cost": Table(
+    "ch19-cost": Table(
         render=tables.block_cost_table,
         result="blocks-xv6",
     ),
-    # -- ch15 ---------------------------------------------------------------------------
-    "ch15-sequential": Listing(
+    # -- ch20 ---------------------------------------------------------------------------
+    "ch20-sequential": Listing(
         symbol="sysfs_bridge_sequential",
         results=("bridge-riscv64", "bridge-aarch64"),
     ),
-    "ch15-chased": Listing(
+    "ch20-chased": Listing(
         symbol="sysfs_bridge_chased",
         results=("bridge-riscv64", "bridge-aarch64"),
     ),
-    "ch15-agreement": Table(
+    "ch20-agreement": Table(
         render=tables.bridge_agreement_table,
         result="bridge-both",
     ),
-    "ch15-cost": Table(
+    "ch20-cost": Table(
         render=tables.bridge_cost_table,
         result="bridge-host",
         pending=(
@@ -351,92 +351,92 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
             f"{BOARD} (`bench/results/bridge-host.json`)."
         ),
     ),
-    # -- ch16 ---------------------------------------------------------------------------
-    "ch16-clock": Table(
+    # -- ch21 ---------------------------------------------------------------------------
+    "ch21-clock": Table(
         render=tables.clock_table,
         result="measuring-host",
         pending=f"The instrument has not been measured yet: {BOARD} (`bench/results/measuring-host.json`).",
     ),
-    "ch16-spread": Table(
+    "ch21-spread": Table(
         render=tables.spread_table,
         result="measuring-host",
         pending=f"The distribution has not been taken yet: {BOARD} (`bench/results/measuring-host.json`).",
     ),
-    "ch16-bias": Table(
+    "ch21-bias": Table(
         render=tables.bias_table,
         result="measuring-host",
         pending=f"The bias experiment has not been run yet: {BOARD} (`bench/results/measuring-host.json`).",
     ),
-    # -- ch17 ---------------------------------------------------------------------------
-    "ch17-levels": Table(
+    # -- ch22 ---------------------------------------------------------------------------
+    "ch22-levels": Table(
         render=tables.hierarchy_levels_table,
         result="hierarchy-host",
         pending=f"The hierarchy has not been probed yet: {BOARD} (`bench/results/hierarchy-host.json`).",
     ),
-    "ch17-line": Table(
+    "ch22-line": Table(
         render=tables.hierarchy_line_table,
         result="hierarchy-host",
         pending=f"The line size has not been measured yet: {BOARD} (`bench/results/hierarchy-host.json`).",
     ),
-    "ch17-vendor": Table(
+    "ch22-vendor": Table(
         render=tables.hierarchy_vendor_table,
         result="hierarchy-host",
         pending=f"Nothing has been measured to compare the datasheet with yet: {BOARD} (`bench/results/hierarchy-host.json`).",
     ),
-    # -- ch18 ---------------------------------------------------------------------------
-    "ch18-variants": Table(
+    # -- ch23 ---------------------------------------------------------------------------
+    "ch23-variants": Table(
         render=tables.loop_variants_table,
         result="loops-aarch64",
     ),
-    "ch18-cost": Table(
+    "ch23-cost": Table(
         render=tables.loop_cost_table,
         result="loops-host",
         pending=f"The surviving variants have not been timed yet: {BOARD} (`bench/results/loops-host.json`).",
     ),
-    # -- ch19 ---------------------------------------------------------------------------
-    "ch19-shapes": Table(
+    # -- ch24 ---------------------------------------------------------------------------
+    "ch24-shapes": Table(
         render=tables.pipeline_shapes_table,
         result="pipeline-shapes",
     ),
-    "ch19-ilp": Table(
+    "ch24-ilp": Table(
         render=tables.pipeline_cost_table,
         result="pipeline-host",
         pending=f"The chains have not been timed yet: {BOARD} (`bench/results/pipeline-host.json`).",
     ),
-    "ch19-branches": Table(
+    "ch24-branches": Table(
         render=tables.mispredict_table,
         result="pipeline-host",
         pending=f"The predictor has not been measured yet: {BOARD} (`bench/results/pipeline-host.json`).",
     ),
-    # -- ch20 ---------------------------------------------------------------------------
-    "ch20-layout": Table(
+    # -- ch25 ---------------------------------------------------------------------------
+    "ch25-layout": Table(
         render=tables.sharing_layout_table,
         result="sharing-layout",
     ),
-    "ch20-sharing": Table(
+    "ch25-sharing": Table(
         render=tables.sharing_cost_table,
         result="sharing-host",
         pending=f"The cores have not been made to fight yet: {BOARD} (`bench/results/sharing-host.json`).",
     ),
-    "ch20-atomics": Table(
+    "ch25-atomics": Table(
         render=tables.atomics_cost_table,
         result="sharing-host",
         pending=f"The atomics have not been timed yet: {BOARD} (`bench/results/sharing-host.json`).",
     ),
-    # -- ch21 ---------------------------------------------------------------------------
-    "ch21-model": Table(
+    # -- ch26 ---------------------------------------------------------------------------
+    "ch26-model": Table(
         render=tables.os_model_table,
         result="traps-xv6",
     ),
-    "ch21-trap": Listing(
+    "ch26-trap": Listing(
         symbol="sysfs_raw_getpid",
         results=("oscalls-aarch64",),
     ),
-    "ch21-call": Listing(
+    "ch26-call": Listing(
         symbol="sysfs_libc_getpid",
         results=("oscalls-aarch64",),
     ),
-    "ch21-cost": Table(
+    "ch26-cost": Table(
         render=tables.os_cost_table,
         result="oscost-host",
         pending=(
@@ -444,7 +444,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
             f"{BOARD} (`bench/results/oscost-host.json`)."
         ),
     ),
-    "ch21-faults": Table(
+    "ch26-faults": Table(
         render=tables.fault_cost_table,
         result="faultcost-host",
         pending=(
@@ -452,7 +452,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
             f"{BOARD} (`bench/results/faultcost-host.json`)."
         ),
     ),
-    "ch21-vdso": Table(
+    "ch26-vdso": Table(
         render=tables.vdso_table,
         result="vdso-host",
         pending=(
@@ -460,27 +460,27 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
             f"{BOARD} (`bench/results/vdso-host.json`)."
         ),
     ),
-    # -- ch22 ---------------------------------------------------------------------------
-    "ch22-census": Table(
+    # -- ch27 ---------------------------------------------------------------------------
+    "ch27-census": Table(
         render=tables.tally_census_table,
         result="tally-census",
     ),
-    "ch22-sampling": Diagram(
+    "ch27-sampling": Diagram(
         draw=sampling_profile,
         alt="A cycle counter overflowing into an interrupt, the PC written down, and the loop "
         "where the instruction blamed is not the instruction that waited.",
         result="profiling-aarch64",
     ),
-    "ch22-scatter": Listing(
+    "ch27-scatter": Listing(
         symbol="sysfs_tally_scatter",
         results=("profiling-aarch64",),
     ),
-    "ch22-profile": Table(
+    "ch27-profile": Table(
         render=tables.profile_table,
         result="profile-host",
         pending=(f"Nothing has been profiled yet: {BOARD} (`bench/results/profile-host.json`)."),
     ),
-    "ch22-skid": Table(
+    "ch27-skid": Table(
         render=tables.skid_table,
         result="skid-host",
         pending=(
@@ -488,26 +488,26 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
             f"{BOARD} (`bench/results/skid-host.json`)."
         ),
     ),
-    # -- ch23 ---------------------------------------------------------------------------
-    "ch23-loops": Table(
+    # -- ch28 ---------------------------------------------------------------------------
+    "ch28-loops": Table(
         render=tables.vector_loops_table,
         result="vectors-census",
     ),
-    "ch23-scale": Listing(
+    "ch28-scale": Listing(
         symbol="sysfs_vec_scale",
         # The book's own level first, because that is what a reader building this code gets.
         results=("vectors-o2", "vectors-o3"),
     ),
-    "ch23-sum-f32": Listing(
+    "ch28-sum-f32": Listing(
         symbol="sysfs_vec_sum_f32",
         # The refusal, then the same loop with permission to change the answer.
         results=("vectors-o3", "vectors-o3fast"),
     ),
-    "ch23-running": Listing(
+    "ch28-running": Listing(
         symbol="sysfs_vec_running",
         results=("vectors-o3fast",),
     ),
-    "ch23-speedup": Table(
+    "ch28-speedup": Table(
         render=tables.vector_speedup_table,
         result="vectors-host",
         pending=(

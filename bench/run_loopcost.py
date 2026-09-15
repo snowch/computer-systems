@@ -25,7 +25,7 @@ from bench.stamp import ROOT, load_result, measurement_differences, write_result
 WORKLOAD = "sysfs/bench/loopcost.c"
 LIBRARY = "sysfs/lib/loops.c"
 HEADER = "sysfs/include/sysfs/loops.h"
-FIGURE = "ch18-cost"
+FIGURE = "ch23-cost"
 
 #: How many digits of a per-element figure are worth printing. Two: the difference between the
 #: variants is in the second one, and a third would be claiming a precision the clock's own
@@ -62,7 +62,7 @@ def capture() -> dict[str, Any]:
     if disagreed:
         raise LoopCostError(
             f"{disagreed} computed a different total from `plain`. The five are one computation "
-            "written five ways, and ch18's comparison is only a comparison while that holds."
+            "written five ways, and ch23's comparison is only a comparison while that holds."
         )
     empty = sorted(name for name, data in facts["loops"].items() if not data["total_ns"])
     if empty:

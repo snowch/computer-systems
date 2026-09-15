@@ -29,7 +29,7 @@ from bench.board import governor, require_board, stamp_timing, timed_run
 from bench.stamp import ROOT, load_result, measurement_differences, write_result
 
 WORKLOAD = "sysfs/bench/hierarchy.c"
-FIGURE = "ch17-levels, ch17-line and ch17-vendor"
+FIGURE = "ch22-levels, ch22-line and ch22-vendor"
 
 #: How much slower one point has to be than the one before it to count as a step rather than as
 #: noise. A latency curve over a cache boundary roughly doubles; a run-to-run wobble does not
@@ -106,13 +106,13 @@ def derive(facts: dict[str, Any]) -> dict[str, Any]:
     if not line_steps:
         raise HierarchyError(
             "the stride sweep is flat: no gap between visits made the chase slower. Either the "
-            "chain is not being followed or the compiler removed it, and ch17's line-size figure "
+            "chain is not being followed or the compiler removed it, and ch22's line-size figure "
             "cannot come from a curve with no step in it."
         )
     if not size_steps:
         raise HierarchyError(
             "the size sweep is flat: growing the working set cost nothing. That would mean there "
-            "is no hierarchy to measure, which is the one thing ch17 is about."
+            "is no hierarchy to measure, which is the one thing ch22 is about."
         )
 
     vendor = vendor_caches()

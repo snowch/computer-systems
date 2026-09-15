@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "8ee5ed1f8ccd208a",
+  "code_fingerprint": "2bb58616d36158e8",
   "code_sources": [
     "bench/run_vectors.py",
     "sysfs/lib/vectors.c",
@@ -9,7 +9,7 @@
     "note": "a vector instruction is counted by its operands naming a vector register",
     "why": "a heuristic, guarded by refusing a census where the unvectorisable loop widens"
   },
-  "generated_at": "2026-09-15T09:23:15+00:00",
+  "generated_at": "2026-09-15T15:09:43+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "aarch64",

@@ -530,7 +530,7 @@ def struct_padding(result: str) -> str:
 def dispatch_table() -> str:
     """An array of function pointers, and what an indirect call actually does.
 
-    The pattern ch03 exists to teach and ch11 relies on: a kernel that must do *something*
+    The pattern ch03 exists to teach and ch16 relies on: a kernel that must do *something*
     different for each of several devices does not write a switch, it writes a table and indexes
     it. Drawn because the mechanism is two dereferences — one to fetch the address, one to jump to
     it — and a sentence describing that is worth much less than a picture of it.
@@ -592,7 +592,7 @@ def dispatch_table() -> str:
         width - 2 * margin,
         [
             "A direct call names its target inside the instruction; the CPU knows where it is going",
-            "before it fetches the operand. An indirect call does not, and ch19 measures what the",
+            "before it fetches the operand. An indirect call does not, and ch24 measures what the",
             "branch predictor makes of that difference.",
         ],
     )
@@ -671,7 +671,7 @@ def stack_frame() -> str:
 def sections_to_segments(result: str) -> str:
     """Eighteen sections become two segments, and one of them is partly not in the file.
 
-    The figure ch07 is for. Sections are the linker's view and segments are the loader's, the same
+    The figure ch12 is for. Sections are the linker's view and segments are the loader's, the same
     bytes described twice for two audiences, and the collapse from one to the other is where a
     reader stops thinking of an executable as a list of named parts and starts thinking of it as
     an address space. Everything here is read from the stamped result.
@@ -846,7 +846,7 @@ def trap_path(result: str) -> str:
         width - 2 * margin,
         [
             "Counted, not timed. This target cannot say what an instruction costs, and a count is",
-            "what remains true anyway: the path is this long whatever machine runs it. ch21 prices",
+            "what remains true anyway: the path is this long whatever machine runs it. ch26 prices",
             "the same shape on hardware.",
         ],
     )
@@ -1275,15 +1275,15 @@ def sampling_profile(result: str) -> str:
 
 DIAGRAMS = {
     "ch00-targets": two_target_map,
-    "ch04-stages": toolchain_stages,
-    "ch05-padding": struct_padding,
+    "ch09-stages": toolchain_stages,
+    "ch10-padding": struct_padding,
     "ch03-dispatch": dispatch_table,
-    "ch06-frame": stack_frame,
-    "ch07-segments": sections_to_segments,
-    "ch08-trap-path": trap_path,
-    "ch09-walk": sv39_walk,
-    "ch09-address-spaces": address_space_cost,
-    "ch10-decision": fault_decision,
-    "ch11-sources": interrupt_sources,
-    "ch22-sampling": sampling_profile,
+    "ch11-frame": stack_frame,
+    "ch12-segments": sections_to_segments,
+    "ch13-trap-path": trap_path,
+    "ch14-walk": sv39_walk,
+    "ch14-address-spaces": address_space_cost,
+    "ch15-decision": fault_decision,
+    "ch16-sources": interrupt_sources,
+    "ch27-sampling": sampling_profile,
 }

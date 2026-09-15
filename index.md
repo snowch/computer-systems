@@ -66,11 +66,11 @@ bytes and everything in it has an index — and then the assumptions that stop h
 no runtime underneath you. [Chapter 1](#ch01) is the on-ramp; [chapter 2](#ch02) is the unlearning;
 [chapter 3](#ch03) sorts C's constructs by a single question, *has the machine heard of this?*
 
-**You do not need OS internals.** That is Part III, and it is the point of using a kernel small
+**You do not need OS internals.** That is Part IV, and it is the point of using a kernel small
 enough to read rather than one that has to be described.
 
 **You do not need any hardware background.** Earlier drafts of this page asked for digital logic
-and a pipeline diagram. Nothing in the book actually relies on either — [ch19](#ch19) builds the
+and a pipeline diagram. Nothing in the book actually relies on either — [ch24](#ch24) builds the
 pipeline from nothing, because a reader who has seen a five-stage diagram in a lecture still has
 no idea what a real core does with a branch — so the requirement has come out.
 
@@ -84,9 +84,9 @@ missing a concept; you have a correct one that means something else here.
 | A reference | An index into one array of bytes, with a type saying how wide a step is | [ch01](#ch01) |
 | `new`, and a collector | A fixed array decided at compile time, or a free list built out of the free memory | [ch02](#ch02) |
 | An exception | A returned value the caller is expected to look at, and sometimes no way to report at all | [ch02](#ch02) |
-| `volatile`, meaning *ordered between threads* | `volatile`, meaning *do not remove this access* — and **not** a threading primitive | [ch03](#ch03), [ch12](#ch12) |
-| A JIT that optimises what runs hot | A compiler that optimised once, and a listing you can read | [ch04](#ch04), [ch18](#ch18) |
-| A language memory model | Two hardware memory models, neither of which is your language's | [ch12](#ch12), [ch20](#ch20) |
+| `volatile`, meaning *ordered between threads* | `volatile`, meaning *do not remove this access* — and **not** a threading primitive | [ch03](#ch03), [ch17](#ch17) |
+| A JIT that optimises what runs hot | A compiler that optimised once, and a listing you can read | [ch09](#ch09), [ch23](#ch23) |
+| A language memory model | Two hardware memory models, neither of which is your language's | [ch17](#ch17), [ch25](#ch25) |
 
 The `volatile` row is the one that costs people afternoons. The keyword is spelled the same and
 does a different job, and [ch03](#ch03) shows the compiler obeying the C one, instruction by
@@ -125,14 +125,14 @@ machine's, and every chapter says so. The transferable part is the method.
 | | |
 |---|---|
 | **[Part I](#ch01)** — C, and what the machine does with it | Three chapters, and which of them you need depends on where you are starting. Not a C tutorial |
-| **[Part II](#ch04)** — What a computer does with a program | One program from source text to result: the toolchain, representation, machine code, linking |
-| **[Part III](#ch08)** — The operating system layer | A kernel small enough to read, taken apart: traps, virtual memory, faults, drivers, locks, scheduling, files |
-| **[Part IV](#ch16)** — Where the cycles go | Part III's chapters asked again as questions about time, on hardware that can answer them |
+| **[Part III](#ch09)** — What a computer does with a program | One program from source text to result: the toolchain, representation, machine code, linking |
+| **[Part IV](#ch13)** — The operating system layer | A kernel small enough to read, taken apart: traps, virtual memory, faults, drivers, locks, scheduling, files |
+| **[Part V](#ch21)** — Where the cycles go | Part IV's chapters asked again as questions about time, on hardware that can answer them |
 
 [Chapter 0](#ch00) sits before all of it and is setup: two targets working, and a script that
 tells you what your machine can currently run.
 
-The kernel Part III reads has its own commentary @xv6-book, free from MIT and written by its
+The kernel Part IV reads has its own commentary @xv6-book, free from MIT and written by its
 authors. It explains what that code does; this book asks what it costs. They go well together and
 [Appendix G](#appendix-g) is the map — which of these chapters covers the ground of which of its
 topics, and one system call traced through every layer it touches.
@@ -152,16 +152,16 @@ which one produced it.
 
 The first is **xv6**, the MIT teaching kernel, running under QEMU. It is a complete operating
 system small enough to read in an afternoon, and you can stop the whole machine mid-trap and look
-at anything. Parts II and III live there.
+at anything. Parts III and IV live there.
 
 The second is a small Linux machine on a desk, reached over SSH — a **Raspberry Pi 5** by
-default. Every number in Part IV is measured on it, natively. Not in an emulator, not on the
+default. Every number in Part V is measured on it, natively. Not in an emulator, not on the
 laptop, not extrapolated from a different machine.
 
 The split is not a compromise; it is the argument. QEMU will happily answer a question about
 nanoseconds and the answer will be meaningless, because it models no cache, no branch predictor
 and no pipeline. Watching a program in a debugger tells you what it *does*. Only real hardware
-tells you what it *costs*. [Chapter 15](#ch15) puts the same program through both and makes
+tells you what it *costs*. [Chapter 15](#ch20) puts the same program through both and makes
 the gap concrete.
 
 ### Why they do not share an instruction set
@@ -170,7 +170,7 @@ The kernel small enough to read in an afternoon is a RISC-V kernel. The hardware
 actually work is an ARM one. Those are different machines, and pretending otherwise would mean
 lying about one of them.
 
-Part IV needs `perf` to do two separate things: **count** events over a run, and **sample** —
+Part V needs `perf` to do two separate things: **count** events over a run, and **sample** —
 interrupt the program thousands of times a second to ask where it is. Sampling needs the counters
 to raise an interrupt when they overflow. On ARM that is a standard part of the performance
 monitoring unit. On RISC-V it is an optional extension, and a 2025 study of the three RISC-V cores
@@ -183,7 +183,7 @@ you can actually buy @riscv-pmu-profiling found that none of them wins:
 | **Counter-overflow interrupt** | **No** | Yes | Limited |
 | Upstream Linux support | Yes | Partial | **No** |
 
-Read down the columns. Choosing RISC-V for Part IV would have made two of its eight chapters
+Read down the columns. Choosing RISC-V for Part V would have made two of its eight chapters
 unmeasurable — one needs sampling, one needs a vector unit — on boards that are hard to buy, with
 firmware that has broken `perf` between distribution releases. A Raspberry Pi costs none of that.
 
@@ -201,21 +201,21 @@ follow that a single-architecture book could not offer.
 has to *assert* that its ideas generalise. This one demonstrates it, by having them survive a
 change of architecture in front of you.
 
-**You get two memory models instead of one.** [Chapter 12](#ch12) teaches RISC-V's;
-[chapter 20](#ch20) measures ARM's, which is also weak and differently specified. A reader shown only one would reasonably
+**You get two memory models instead of one.** [Chapter 12](#ch17) teaches RISC-V's;
+[chapter 20](#ch25) measures ARM's, which is also weak and differently specified. A reader shown only one would reasonably
 conclude that model *is* memory ordering. Shown two, you learn it is a family, that a fence is an
 architecture-specific spelling of an architecture-independent need, and that store buffers and
 coherence are what actually transfer.
 
-**[Chapter 15](#ch15) gets harder in the way that matters.** Three things differ between watching a program
+**[Chapter 15](#ch20) gets harder in the way that matters.** Three things differ between watching a program
 under xv6 and profiling it on real hardware: emulation against hardware, one kernel against
 another, one instruction set against another. Attributing a difference to the wrong one is the
 commonest way to be confidently wrong about performance, and that chapter is where you practise
 separating them.
 
 Reading disassembly is a small part of the book, and this is the whole of what the split costs
-you. In Parts I and II it is RISC-V: [ch01](#ch01), [ch03](#ch03), [ch04](#ch04), [ch05](#ch05) and
-[ch06](#ch06). In Part IV it is AArch64: [ch18](#ch18), [ch19](#ch19) and [ch23](#ch23).
+you. In Parts I and II it is RISC-V: [ch01](#ch01), [ch03](#ch03), [ch09](#ch09), [ch10](#ch10) and
+[ch11](#ch11). In Part V it is AArch64: [ch23](#ch23), [ch24](#ch24) and [ch28](#ch28).
 [Chapter 0](#ch00) shows one small function compiled both ways, so the difference is concrete
 rather than promised, and [Appendix F](#appendix-f) is a translation between the two for the
 reader who meets the second having learned the first. Everything else is method, and method
@@ -223,24 +223,24 @@ does not have an architecture.
 
 ### One argument, not two tutorials
 
-**Part IV is not a second book. It is Part III's chapters asked again as questions about time.**
+**Part V is not a second book. It is Part IV's chapters asked again as questions about time.**
 Every chapter in it names the earlier chapter whose cost it measures, in its own header:
 
-| When Part IV asks | You already learned the mechanism in |
+| When Part V asks | You already learned the mechanism in |
 |---|---|
-| [ch17](#ch17) — where is the data, and what does each step out cost? | [ch05](#ch05) layout and alignment, [ch09](#ch09) address translation |
-| [ch18](#ch18) — what did that cost? | [ch06](#ch06) what the compiler emitted |
-| [ch19](#ch19) — what is the core doing between fetch and finish? | [ch06](#ch06) the instructions themselves |
-| [ch20](#ch20) — what do four cores cost each other? | [ch12](#ch12) locks, fences and ordering |
-| [ch21](#ch21) — what does Linux charge for this? | [ch08](#ch08) traps, [ch10](#ch10) faults, [ch13](#ch13) switches |
+| [ch22](#ch22) — where is the data, and what does each step out cost? | [ch10](#ch10) layout and alignment, [ch14](#ch14) address translation |
+| [ch23](#ch23) — what did that cost? | [ch11](#ch11) what the compiler emitted |
+| [ch24](#ch24) — what is the core doing between fetch and finish? | [ch11](#ch11) the instructions themselves |
+| [ch25](#ch25) — what do four cores cost each other? | [ch17](#ch17) locks, fences and ordering |
+| [ch26](#ch26) — what does Linux charge for this? | [ch13](#ch13) traps, [ch15](#ch15) faults, [ch18](#ch18) switches |
 
-So you never arrive at a Part IV chapter cold. You arrive knowing the mechanism completely and
+So you never arrive at a Part V chapter cold. You arrive knowing the mechanism completely and
 needing only the price — a better position than either half could put you in alone, and the reason
 the book is arranged this way rather than as theory followed by benchmarks.
 
-Three Part IV chapters have no counterpart, deliberately: [ch16](#ch16) teaches measurement
-itself, [ch22](#ch22) is about the whole machine rather than any one mechanism, and
-[ch23](#ch23) concerns hardware Part III never had reason to describe.
+Three Part V chapters have no counterpart, deliberately: [ch21](#ch21) teaches measurement
+itself, [ch27](#ch27) is about the whole machine rather than any one mechanism, and
+[ch28](#ch28) concerns hardware Part IV never had reason to describe.
 
 ## How the numbers work
 
@@ -256,7 +256,7 @@ in.
 
 ## What you will need
 
-A laptop for Parts I, II and III — everything there runs under emulation, free. For Part IV, a small
+A laptop for Parts I, II and III — everything there runs under emulation, free. For Part V, a small
 Linux machine whose `perf` can count and sample; a Raspberry Pi 5 is the reference, and one you
 already own may well do. [Chapter 0](#ch00) is the setup, and a script that tells you which
 targets your machine can currently run and whether its counters are real.

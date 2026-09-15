@@ -6,14 +6,14 @@
 
 Two kinds of fact, neither of them a duration.
 
-**The census** comes from the kernel itself. ``xv6/patches/08-trap-census.patch`` counts every
+**The census** comes from the kernel itself. ``xv6/patches/13-trap-census.patch`` counts every
 trap by cause and prints the table on Ctrl-T, the way xv6 already prints its process table on
 Ctrl-P. Counting is what is available here: QEMU models no pipeline and no memory system, so a
-time measured inside it describes the laptop, and ch08 says so at length.
+time measured inside it describes the laptop, and ch13 says so at length.
 
 **The path length** is read out of the built kernel. Entering and leaving the kernel is a fixed
 sequence of instructions in ``trampoline.S``, and counting them is a statement about how much
-work a trap *is* that holds regardless of what any machine charges for it. ch21 puts a price on
+work a trap *is* that holds regardless of what any machine charges for it. ch26 puts a price on
 the same path, on hardware.
 """
 
@@ -107,7 +107,7 @@ def read_census(transcript: str) -> dict[str, Any]:
     # occasionally makes one it otherwise does not, so the number moved between two runs of the
     # same workload. What survives here is a number the workload fixed and lists of what occurred.
     #
-    # ch21 counts the lot, on a machine where elapsed time is a fact about the machine.
+    # ch26 counts the lot, on a machine where elapsed time is a fact about the machine.
     probe = syscalls.get(str(PROBE_SYSCALL), 0)
     return {
         "probe_syscall": PROBE_SYSCALL,
@@ -198,7 +198,7 @@ def capture() -> dict[str, Any]:
             "bench/run_traps.py",
             "bench/xv6.py",
             "xv6/apps/trapload.c",
-            "xv6/patches/08-trap-census.patch",
+            "xv6/patches/13-trap-census.patch",
         ],
         toolchain={
             "cc": compiler_version("riscv64-linux-gnu-gcc"),

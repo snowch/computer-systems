@@ -46,8 +46,8 @@ from bench.stamp import (
 #: symbols in the order a chapter meets them).
 #:
 #: One result per file per architecture rather than one big result, because the fingerprint is
-#: taken over the sources a result names — so editing ch05's example would otherwise invalidate
-#: ch04's listings and send an author to the wrong chapter looking for what changed.
+#: taken over the sources a result names — so editing ch10's example would otherwise invalidate
+#: ch09's listings and send an author to the wrong chapter looking for what changed.
 SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
     "shapes": (
         "sysfs/lib/shapes.c",

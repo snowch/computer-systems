@@ -4,7 +4,7 @@
  *
  * Every one of these computes the same result from the same input. They differ in which
  * hand-optimisation has been applied — hoisting, unrolling, strength reduction, and the
- * combination — and ch18's question is which of those the compiler was going to do anyway.
+ * combination — and ch23's question is which of those the compiler was going to do anyway.
  *
  * The answer is not obvious in advance and is not the same at every optimisation level, which is
  * the reason the chapter measures rather than asserting.

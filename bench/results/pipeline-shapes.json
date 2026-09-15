@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "2e3c71929b8ad503",
+  "code_fingerprint": "07c7f415ef6c60ba",
   "code_sources": [
     "bench/run_pipeline.py",
     "sysfs/lib/pipeline.c",
@@ -8,7 +8,7 @@
   "conditions": {
     "note": "what the core is given; what it does with it needs the board"
   },
-  "generated_at": "2026-09-15T09:23:14+00:00",
+  "generated_at": "2026-09-15T15:09:49+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "aarch64",

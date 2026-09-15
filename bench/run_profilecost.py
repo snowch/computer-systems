@@ -41,12 +41,12 @@ from bench.stamp import ROOT, load_result, measurement_differences, write_result
 PROGRAM = "sysfs/tools/tally.c"
 LIBRARY = "sysfs/lib/profiling.c"
 HEADER = "sysfs/include/sysfs/profiling.h"
-FIGURE = "ch22-profile and ch22-skid"
+FIGURE = "ch27-profile and ch27-skid"
 
-#: The loop ch22 reads instruction by instruction.
+#: The loop ch27 reads instruction by instruction.
 HOT = "sysfs_tally_scatter"
 
-#: Below this share of samples a symbol is noise rather than a finding, and ch22's second problem
+#: Below this share of samples a symbol is noise rather than a finding, and ch27's second problem
 #: is the arithmetic for why.
 FLOOR = 1.0
 
@@ -109,7 +109,7 @@ def capture() -> list[dict[str, Any]]:
         )
     if before[HOT] < FLOOR:
         raise ProfileError(
-            f"{HOT} holds {before[HOT]}% of the samples, below the {FLOOR}% floor. ch22's census "
+            f"{HOT} holds {before[HOT]}% of the samples, below the {FLOOR}% floor. ch27's census "
             "predicts it dominates; if it does not, the program or the prediction has changed."
         )
 
@@ -125,7 +125,7 @@ def capture() -> list[dict[str, Any]]:
 
     if not annotated:
         raise ProfileError(
-            f"perf annotate returned no per-instruction samples for {HOT}. Without them ch22's "
+            f"perf annotate returned no per-instruction samples for {HOT}. Without them ch27's "
             "skid figure has nothing to show, and the chapter does not estimate one."
         )
 

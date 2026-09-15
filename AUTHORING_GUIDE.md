@@ -92,7 +92,7 @@ python3 scripts/render-figures.py --check     # fail if a committed one is stale
 ```
 
 ````markdown
-```{include} _generated/ch17-cache-latency.md
+```{include} _generated/ch22-cache-latency.md
 ```
 ````
 
@@ -101,9 +101,9 @@ build. If the number is a cited *specification* rather than a measurement — a 
 datasheet — put `% number-ok: @citekey` on the line before it, so the exemption and its reason are
 visible in review.
 
-### Say which earlier chapter your Part IV chapter costs
+### Say which earlier chapter your Part V chapter costs
 
-Part IV is not a second book. It is Part III's chapters asked again as questions about time, and
+Part V is not a second book. It is Part IV's chapters asked again as questions about time, and
 the thing that keeps it feeling that way is the `answers` field in `bench/outline.py`: the earlier
 chapters whose cost this one measures. It renders as an **Answers the cost of** row in the header,
 and `tests/test_book.py` checks the labels are real, point backwards, and appear in the header.
@@ -114,7 +114,7 @@ instruction set, different memory model — say so and draw the correspondence e
 correspondence *is* the content; a chapter that quietly pretends both halves are the same
 architecture is worse than one that makes the translation.
 
-Three Part IV chapters have no counterpart by design (ch16, ch22, ch23). Any other unpaired one
+Three Part V chapters have no counterpart by design (ch21, ch27, ch28). Any other unpaired one
 fails a test, because it is far more likely to be an oversight than a decision.
 
 ### Never let a chapter depend on the reference hardware silently
@@ -144,7 +144,7 @@ takes under QEMU: that number describes the laptop QEMU is running on.
 For a `host` figure that needs the board, declare it `pending=` with the command that produces it:
 
 ```python
-"ch17-cache-latency": Table(
+"ch22-cache-latency": Table(
     render=tables.latency_table,
     result="cache-latency",
     pending=f"Cache latencies are not measured yet: {BOARD} (`bench/results/cache-latency.json`).",
@@ -169,7 +169,7 @@ it depends on. Record raw samples in the result where they are small enough to b
 distribution someone can re-examine is worth far more than a summary they have to trust.
 
 `CORE_SOURCES` in `bench/stamp.py` invalidates **every** result when it changes. Treat it as
-frozen. ch16 adds the timing library to it once, deliberately.
+frozen. ch21 adds the timing library to it once, deliberately.
 
 ## Problems
 
@@ -187,7 +187,7 @@ A problem is a stub the reader edits and a test that passes only when they are r
 
 ## Cross-references and citations
 
-Chapters carry a label matching their number, so refer to them as `[ch10](#ch10)` and to
+Chapters carry a label matching their number, so refer to them as `[ch15](#ch15)` and to
 appendices as `[Appendix B](#appendix-b)`. MyST resolves these at build time and the build fails on
 a broken reference, which is the point.
 
