@@ -119,6 +119,9 @@ source of each is the same three characters, `p + 1`.
 :end-before: int64_t sysfs_reach_through
 ```
 
+If `4(a0)` and the address column are unfamiliar, [ch00](#prerequisites-and-setup) has a short key
+for reading these; the whole of what is needed here is that parentheses mean memory.
+
 The narrow one:
 
 ```{include} _generated/memory-is-one-array-step-narrow.md
@@ -129,8 +132,9 @@ The wide one:
 ```{include} _generated/memory-is-one-array-step-wide.md
 ```
 
-One instruction each, and they are not the same instruction. The narrow one loads a word from four
-bytes along; the wide one loads a doubleword from eight. **`+ 1` never means "one byte".** It means
+One load each, and they are not the same load. The narrow one loads a word from four bytes along;
+the wide one loads a doubleword from eight. (The `ret` after it is the function returning, which is
+why each listing is two instructions rather than one.) **`+ 1` never means "one byte".** It means
 one *element*, and the element size comes from the type, and the type is not in the expression you
 are reading.
 

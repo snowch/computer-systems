@@ -592,6 +592,38 @@ version of the same compiler — the conditions line under each listing says exa
 ```{include} _generated/prerequisites-and-setup-clamp.md
 ```
 
+:::{note} How to read one of these
+:class: dropdown
+
+Listings appear throughout the book and always have this shape, so it is worth spending a minute
+on the shape once.
+
+**The left-hand column is an address**, in hexadecimal, counted from the start of the function.
+`0:` is the first instruction, and whatever number comes next tells you how many bytes the first
+one took. In the RISC-V listing above the second instruction is at `4`, so the first is four bytes
+long — but further down you will find instructions two bytes apart, because this architecture has
+short forms of its commonest instructions and the compiler uses them unasked. Instructions here
+are *not* all the same length, and [ch04](#a-trap-with-nothing-else) turns on that fact.
+
+**Then the mnemonic**: `blt` is branch-if-less-than, `mv` is move, `ret` is return. You are not
+expected to know these, and this book never asks you to write assembly — only to read enough of it
+to say what the compiler did.
+
+**Then the operands, destination first.** `mv a1,a0` copies `a0` into `a1`, not the other way
+round. That order is a convention and it is the one thing most likely to mislead you if you skim.
+
+**`a0`, `a1`, `a2` are registers** — the processor's own named slots, the fastest storage a program
+has. The `a` ones carry arguments and return values, which is why a function's first argument
+arrives in `a0` and its answer leaves in `a0`. [Appendix A](#appendix-a) lists them all.
+
+**Parentheses mean memory.** `4(a0)` is *the memory at the address in `a0`, plus four* — not `a0`
+times anything. Nearly every listing in [Part I](#part1) turns on that one piece of notation.
+
+Everything under a listing is provenance: which compiler, which flags, which result file it was
+captured from. It is there so that a listing you find surprising can be regenerated rather than
+argued about.
+:::
+
 Read the second comparison in each. AArch64 settles it with `csel` — compute both candidates,
 select one, never branch. RV64GC cannot: there is no conditional select in `rv64gc`
 @riscv-isa-unprivileged, which is what xv6 and every RISC-V example here are built for, so the same
