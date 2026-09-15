@@ -30,4 +30,4 @@
 | `kernel/log.c` | 261 | [ch20](#the-file-system) | the write-ahead log ch19 counts the amplification of |
 | `kernel/virtio_disk.c` | 333 | [ch20](#the-file-system) | the only device in the system that makes you wait |
 
-*Conditions: target `xv6`; the xv6 submodule's source, read rather than built; xv6-riscv @ 9e3161a; none; `none`; 2026-09-15. Source: `bench/results/filemap-xv6.json`, code hash `e4176b53d0b64a41`.*
+*Conditions: target `xv6` · the xv6 submodule's source, read rather than built · xv6-riscv @ 9e3161a · none · `none` · 2026-09-15 · Source: `bench/results/filemap-xv6.json`, code hash `e4176b53d0b64a41`.*

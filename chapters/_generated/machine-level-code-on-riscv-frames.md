@@ -7,4 +7,4 @@
 | `sysfs_many_locals` | 112 | 0 | 46 | 12 | 30 | 0 |
 | `sysfs_accumulates` | 48 | 48 | 35 | 32 | 18 | 13 |
 
-*Conditions: target `xv6`; riscv64 cross compiler, any machine — nothing here was executed; riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `-Wall -Wextra -march=rv64gc -mabi=lp64d -c, at -O0 and -O2`; 2026-09-15. Source: `bench/results/framesizes-riscv64.json`, code hash `6de236a71bd9ae24`.*
+*Conditions: target `xv6` · riscv64 cross compiler, any machine — nothing here was executed · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-Wall -Wextra -march=rv64gc -mabi=lp64d -c, at -O0 and -O2` · 2026-09-15 · Source: `bench/results/framesizes-riscv64.json`, code hash `6de236a71bd9ae24`.*

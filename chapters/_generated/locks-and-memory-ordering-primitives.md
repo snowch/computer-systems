@@ -7,4 +7,4 @@
 | `push_off` | 23 | 0 | 0 | 1 |
 | `release` | 20 | 0 | 1 | 0 |
 
-*Conditions: target `xv6`; riscv64 cross compiler, any machine — nothing here was executed; riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; `xv6's own CFLAGS`; 2026-09-15. Source: `bench/results/locks-xv6.json`, code hash `e05dd3a026d66b2b`.*
+*Conditions: target `xv6` · riscv64 cross compiler, any machine — nothing here was executed · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `xv6's own CFLAGS` · 2026-09-15 · Source: `bench/results/locks-xv6.json`, code hash `e05dd3a026d66b2b`.*

@@ -11,15 +11,15 @@
     "harts": 1,
     "note": "counts and yes-or-no answers only; nothing on this target may be timed"
   },
-  "generated_at": "2026-09-15T16:57:12+00:00",
+  "generated_at": "2026-09-15T18:46:29+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",
     "emulator": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
-    "kernel": "none \u2014 the program is the first thing the processor executes",
+    "kernel": "no firmware, no kernel",
     "kind": "qemu",
     "measured_under": "emulation",
-    "model": "qemu virt (-machine virt -bios none), no firmware and no operating system"
+    "model": "qemu virt (-machine virt -bios none)"
   },
   "name": "paging-bare",
   "recorded_on": {
@@ -48,19 +48,6 @@
   "toolchain": {
     "cc": "riscv64-linux-gnu-gcc",
     "cc_version": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
-    "flags": [
-      "-march=rv64g",
-      "-mabi=lp64",
-      "-mcmodel=medany",
-      "-ffreestanding",
-      "-nostdlib",
-      "-fno-pic",
-      "-fno-stack-protector",
-      "-fno-builtin",
-      "-O1",
-      "-g",
-      "-Wall",
-      "-Werror"
-    ]
+    "flags": "-march=rv64g -mabi=lp64 -mcmodel=medany -ffreestanding -nostdlib -fno-pic -fno-stack-protector -fno-builtin -O1 -g -Wall -Werror"
   }
 }
