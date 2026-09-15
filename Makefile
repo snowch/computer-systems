@@ -71,6 +71,7 @@ bench-board:  ## Re-run every host-target measurement. ON THE MACHINE BEING MEAS
 	$(PYTHON) -m bench.run_pipelinecost
 	$(PYTHON) -m bench.run_vectorcost
 	$(PYTHON) -m bench.run_sharingcost
+	$(PYTHON) -m bench.run_oscost
 	@echo
 	@echo "Now re-render and commit:"
 	@echo "  $(PYTHON) scripts/render-figures.py && git add bench/results chapters/_generated"

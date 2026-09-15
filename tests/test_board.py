@@ -29,6 +29,9 @@ BOARD_RUNNERS = {
     "pipeline-host": "bench.run_pipelinecost",
     "vectors-host": "bench.run_vectorcost",
     "sharing-host": "bench.run_sharingcost",
+    "oscost-host": "bench.run_oscost",
+    "faultcost-host": "bench.run_oscost",
+    "vdso-host": "bench.run_oscost",
 }
 
 #: Figures still waiting for a runner to be written, not just for the board to exist.
@@ -38,12 +41,24 @@ BOARD_RUNNERS = {
 #: Delete a name when its runner lands; the test below fails if one is deleted too early, and
 #: `test_the_debt_list_is_not_padded` fails if one is left here after its runner exists.
 RUNNER_NOT_WRITTEN = {
-    "faultcost-host",
-    "oscost-host",
     "profile-host",
     "skid-host",
-    "vdso-host",
 }
+
+
+def shape_for(result: str) -> dict:
+    """The summary a runner declares it will write for this result.
+
+    A module may produce more than one — ch21 asks three questions of one boundary and writes
+    three results from one workload — so a module with several declares `SHAPES` keyed by result
+    name and one with a single result declares `SHAPE`.
+    """
+    module = importlib.import_module(BOARD_RUNNERS[result])
+    if hasattr(module, "SHAPES"):
+        assert result in module.SHAPES, f"{BOARD_RUNNERS[result]} declares no shape for {result}"
+        return module.SHAPES[result]
+    assert hasattr(module, "SHAPE"), f"{BOARD_RUNNERS[result]} declares no SHAPE"
+    return module.SHAPE
 
 
 def test_every_pending_result_has_a_runner_or_is_a_declared_debt():
@@ -80,9 +95,8 @@ def test_a_runner_declares_the_shape_it_will_write(result: str):
     """
     if result == "setup-host":
         pytest.skip("run_setup predates the shape contract and shares its summary with xv6")
-    module = importlib.import_module(BOARD_RUNNERS[result])
-    assert hasattr(module, "SHAPE"), f"{BOARD_RUNNERS[result]} declares no SHAPE"
-    assert isinstance(module.SHAPE, dict) and module.SHAPE
+    shape = shape_for(result)
+    assert isinstance(shape, dict) and shape
 
 
 def _figures_for(result: str) -> list[tuple[str, Table]]:
@@ -101,12 +115,12 @@ def test_the_shape_a_runner_writes_is_the_shape_its_tables_read(result: str, mon
     two files that each look correct, and the disagreement surfaces as a KeyError on the one
     afternoon the board is plugged in.
     """
-    module = importlib.import_module(BOARD_RUNNERS[result])
+    shape = shape_for(result)
     figures = _figures_for(result)
     assert figures, f"{result} has a runner but no figure cites it"
 
     fake = {
-        "summary": module.SHAPE,
+        "summary": shape,
         "code_fingerprint": "shape-check",
         "machine": {},
         "toolchain": {},
@@ -115,7 +129,7 @@ def test_the_shape_a_runner_writes_is_the_shape_its_tables_read(result: str, mon
 
     for name, figure in figures:
         rendered = figure.render(result)
-        assert rendered.strip(), f"{name} rendered nothing from {BOARD_RUNNERS[result]}'s SHAPE"
+        assert rendered.strip(), f"{name} rendered nothing from {BOARD_RUNNERS[result]}'s shape"
 
 
 def test_no_committed_result_is_a_shape_fixture():
@@ -124,12 +138,10 @@ def test_no_committed_result_is_a_shape_fixture():
     They are full of 111 and 222 precisely so that one reaching `bench/results/` would be
     obvious, and this is what makes it obvious.
     """
-    shapes = {}
-    for result, module_name in BOARD_RUNNERS.items():
-        module = importlib.import_module(module_name)
-        if hasattr(module, "SHAPE"):
-            shapes[result] = module.SHAPE
-    for result, shape in shapes.items():
+    for result in BOARD_RUNNERS:
+        if result == "setup-host":
+            continue
+        shape = shape_for(result)
         path = RESULTS_DIR / f"{result}.json"
         if path.exists():
             assert json.loads(path.read_text())["summary"] != shape, (
