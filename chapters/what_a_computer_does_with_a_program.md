@@ -1,10 +1,10 @@
 ---
 title: "What a Computer Does With a Program"
-short_title: "ch10 What a Computer Does With a Program"
+short_title: "10 · What a Computer Does With a Program"
 ---
 
 (what-a-computer-does-with-a-program)=
-# ch10 · What a Computer Does With a Program
+# 10 · What a Computer Does With a Program
 
 :::{note} Chapter header
 :class: dropdown
@@ -226,7 +226,7 @@ the text.
 Three. Each has a test that passes only when you have solved it, and none of them has an answer
 stored anywhere in this repository.
 
-**1.1 — Which stage produced this?**
+**10.1 — Which stage produced this?**
 `tests/what_a_computer_does_with_a_program/problem_1_stages.py` gives you fragments of the four files and asks which program
 wrote each one. The fragments are real. The fastest way to solve it is not to stare at them but
 to run `sysfs/tools/stages.sh` yourself and look at your own.
@@ -235,7 +235,7 @@ to run `sysfs/tools/stages.sh` yourself and look at your own.
 python3 -m pytest tests/what_a_computer_does_with_a_program/test_problem_1_stages.py
 ```
 
-**1.2 — Predict the ripple.**
+**10.2 — Predict the ripple.**
 Four edits to the program. For each one, say which stages produce a different file afterwards.
 
 This test stores no expected answers. It makes each change, runs the toolchain, and compares the
@@ -247,7 +247,7 @@ believed that was not true.
 python3 -m pytest tests/what_a_computer_does_with_a_program/test_problem_2_ripple.py
 ```
 
-**1.3 — Take the folding away.**
+**10.3 — Take the folding away.**
 Write a function that computes the same sum and that the compiler *cannot* evaluate for you. It
 must still contain a loop, and the machine must actually run it — the test disassembles what came
 out and looks for a backward branch, so returning a constant will not pass and neither will a

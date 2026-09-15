@@ -1,10 +1,10 @@
 ---
 title: "Prerequisites and Setup"
-short_title: "ch00 Prerequisites and Setup"
+short_title: "00 · Prerequisites and Setup"
 ---
 
 (prerequisites-and-setup)=
-# ch00 · Prerequisites and Setup
+# 00 · Prerequisites and Setup
 
 :::{note} Chapter header
 :class: dropdown

@@ -1,10 +1,10 @@
 ---
 title: "The Same Program on Both Targets"
-short_title: "ch21 The Same Program on Both Targets"
+short_title: "21 · The Same Program on Both Targets"
 ---
 
 (the-same-program-on-both-targets)=
-# ch21 · The Same Program on Both Targets
+# 21 · The Same Program on Both Targets
 
 :::{note} Chapter header
 :class: dropdown
@@ -161,7 +161,7 @@ ratio, and knowing which questions your model answers is worth more than a bette
 Three, in `tests/the_same_program_on_both_targets/crossing.c`. All three are graded against a table of six configurations that
 the tests read for themselves, so there is no key to find.
 
-**13.1 — What does comparing these two configurations isolate?**
+**21.1 — What does comparing these two configurations isolate?**
 All thirty-six pairs. A comparison isolates a variable only when it is the single thing that
 differs; otherwise it confounds, and the pair this book's own two targets form confounds all
 three.
@@ -170,7 +170,7 @@ three.
 python3 -m pytest tests/the_same_program_on_both_targets/test_problem_1_isolates.py
 ```
 
-**13.2 — Which configuration would test this claim?**
+**21.2 — Which configuration would test this claim?**
 Somebody says the difference is caused by the emulator, or the kernel, or the instruction set.
 Given where you are, name the configuration that would settle it — or say that none of the six
 will, which happens and is the right answer when it does.
@@ -179,7 +179,7 @@ will, which happens and is the right answer when it does.
 python3 -m pytest tests/the_same_program_on_both_targets/test_problem_2_pair.py
 ```
 
-**13.3 — Does this observation transfer?**
+**21.3 — Does this observation transfer?**
 Six things you could observe about the program. Sorting them into structure and cost gets two of
 them wrong.
 

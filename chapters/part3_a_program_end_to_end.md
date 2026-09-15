@@ -1,6 +1,6 @@
 ---
 title: "Part III — What a computer does with a program"
-short_title: "Part III"
+short_title: "Introduction"
 ---
 
 (part3)=

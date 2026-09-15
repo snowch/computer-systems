@@ -1,10 +1,10 @@
 ---
 title: "Page Faults as a Feature"
-short_title: "ch16 Page Faults as a Feature"
+short_title: "16 · Page Faults as a Feature"
 ---
 
 (page-faults-as-a-feature)=
-# ch16 · Page Faults as a Feature
+# 16 · Page Faults as a Feature
 
 :::{note} Chapter header
 :class: dropdown
@@ -199,7 +199,7 @@ out of the kernel so that being right about them is separable from getting a ker
 Neither this chapter's patch nor anything in `sysfs/` answers any of them: the patch counts and
 decides nothing.
 
-**8.1 — How many faults will these accesses cause?**
+**16.1 — How many faults will these accesses cause?**
 You are given runs of bytes a program touches and asked for the number of first-touch faults.
 
 The trap is the one the whole chapter rests on: a program thinks in bytes and the machine charges
@@ -210,7 +210,7 @@ overlap, repeat and arrive in no order.
 python3 -m pytest tests/page_faults_as_a_feature/test_problem_1_faults.py
 ```
 
-**8.2 — What should the handler do about this fault?**
+**16.2 — What should the handler do about this fault?**
 Allocate, kill, or refuse to have an opinion. Nine cases, and three of them are the ones a handler
 written from the happy path gets wrong: the exact boundary, a page that is already mapped, and a
 cause that is not a page fault at all.
@@ -219,7 +219,7 @@ cause that is not a page fault at all.
 python3 -m pytest tests/page_faults_as_a_feature/test_problem_2_action.py
 ```
 
-**8.3 — When does a program that asks for too much find out?**
+**16.3 — When does a program that asks for too much find out?**
 For each policy, say where the shortage becomes visible: at the request, at the touch, or never.
 
 This is the section above, turned into a function. Getting it right means you can predict which

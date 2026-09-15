@@ -1101,3 +1101,125 @@ def first_program_table(name: str) -> str:
         ["Bytes from one `int64_t` to the next", run["steps"]["int64"]],
     ]
     return render_table(["What the program printed", "Value"], rows)
+
+
+# -- Part II: the machine with nothing on it ----------------------------------------------
+
+#: Which fields of a `bare` result a chapter shows, in what order, and how to read each one.
+#:
+#: Keyed by result, because in Part II one program answers one chapter's question and the table
+#: is the answer. ``bool`` renders yes or no: most of what these programs report is a claim being
+#: true, and printing 1 for it would make a table of ones that nobody reads.
+BARE_TABLES: dict[str, tuple[str, list[tuple[str, str, str]]]] = {
+    "trap-bare": (
+        "One trap, start to finish",
+        [
+            ("mtvec_is_handler", "`mtvec` holds the handler's address", "bool"),
+            ("cause", "`mcause`", "int"),
+            ("cause_is_ecall", "…which is *environment call from machine mode*", "bool"),
+            ("mepc_is_the_ecall", "`mepc` is the address **of** the `ecall`, not after it", "bool"),
+            ("mepc_advance", "Bytes the handler must add before returning", "int"),
+            ("register_survived", "A register set before the trap, still set after it", "bool"),
+            ("taken", "Traps taken", "int"),
+        ],
+    ),
+    "privilege-bare": (
+        "An interrupt nobody asked for, and a refusal",
+        [
+            ("interrupt_arrived", "The timer interrupted a loop that asked for nothing", "bool"),
+            ("cause_is_asynchronous", "`mcause`'s top bit is set: asynchronous", "bool"),
+            ("interrupt_code", "Cause code (machine timer)", "int"),
+            ("machine_register_refused", "Supervisor mode reading a machine register", "bool"),
+            ("refusal_code", "…refused with cause", "int"),
+            ("refusal_is_illegal_instruction", "…which is *illegal instruction*", "bool"),
+            ("back_in_machine_mode", "The handler returned us to machine mode", "bool"),
+        ],
+    ),
+    "paging-bare": (
+        "One page table of three entries",
+        [
+            ("entries_used", "Entries in the table", "int"),
+            ("reached_supervisor", "Translation is on, and the program still runs", "bool"),
+            ("alias_reads_the_same", "Two addresses, one byte", "bool"),
+            ("alias_distance_gigabytes", "Gigabytes between those two addresses", "int"),
+            ("machine_mode_ignores_satp", "Machine mode read it untranslated", "bool"),
+        ],
+    ),
+    "harts-bare": (
+        "What a second core costs an unguarded counter",
+        [
+            ("increments_attempted", "Increments performed", "int"),
+            ("counter_after", "What the counter holds", "int"),
+            ("updates_lost", "Updates lost", "int"),
+            ("atomic_increments_attempted", "Increments performed, atomically", "int"),
+            ("atomic_counter_after", "What that counter holds", "int"),
+            ("atomic_updates_lost", "Updates lost", "int"),
+        ],
+    ),
+    "syscall-bare": (
+        "What crosses the boundary",
+        [
+            ("registers_in_frame", "Registers the handler saves by hand", "int"),
+            ("calls_dispatched", "Calls dispatched", "int"),
+            ("number_crossed", "A call number chose what happened", "bool"),
+            ("result_returned", "3 and 4 went in; this came back", "int"),
+            (
+                "caller_register_in_frame",
+                "The caller's register, read out of the saved frame",
+                "bool",
+            ),
+            ("caller_register_intact", "…and unchanged when the caller resumed", "bool"),
+            ("unknown_call_refused", "Calls refused as unknown", "int"),
+            ("unknown_returned_error", "…by returning an error, not by stopping", "bool"),
+        ],
+    ),
+    "descriptors-bare": (
+        "One table, two destinations",
+        [
+            ("descriptor_slots", "Descriptor slots", "int"),
+            ("open_file_slots", "Open-file slots", "int"),
+            ("backends", "Kinds of thing a descriptor can find", "int"),
+            (
+                "same_call_reached_both",
+                "One `write`, two destinations, one register different",
+                "bool",
+            ),
+            (
+                "memory_kept_the_bytes",
+                "The bytes written to memory are the bytes read back",
+                "bool",
+            ),
+            ("closed_slot_refused", "An unopened descriptor is refused", "bool"),
+            ("dup_shares_the_open_file", "A duplicate is a second name, not a copy", "bool"),
+            ("shared_cursor", "…so six bytes then one more leaves one cursor at", "int"),
+        ],
+    ),
+    "fork-bare": (
+        "Two processes from one",
+        [
+            ("processes", "Processes", "int"),
+            ("address_spaces", "Address spaces", "int"),
+            ("pages_copied", "Pages copied", "int"),
+            ("parent_result", "What `fork` returned to the parent", "int"),
+            ("child_result", "What it returned to the child", "int"),
+            ("both_ran", "Both processes ran", "bool"),
+            ("child_saw_the_parents_byte", "The child began with the parent's data", "bool"),
+            ("childs_write_stayed_in_its_own_page", "…and its writes stayed its own", "bool"),
+        ],
+    ),
+}
+
+
+def bare_claims_table(name: str) -> str:
+    """What one bare-metal program reported, as the chapter's answer to its own question."""
+    run = load_result(name)["summary"]
+    heading, rows = BARE_TABLES[name]
+
+    def cell(field: str, kind: str):
+        value = run[field]
+        if kind != "bool":
+            return value
+        return "yes" if value else "no"
+
+    body = [[label, cell(field, kind)] for field, label, kind in rows if field in run]
+    return render_table([heading, "Observed"], body)

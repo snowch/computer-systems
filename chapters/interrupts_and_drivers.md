@@ -1,10 +1,10 @@
 ---
 title: "Interrupts and Drivers"
-short_title: "ch17 Interrupts and Drivers"
+short_title: "17 · Interrupts and Drivers"
 ---
 
 (interrupts-and-drivers)=
-# ch17 · Interrupts and Drivers
+# 17 · Interrupts and Drivers
 
 :::{note} Chapter header
 :class: dropdown
@@ -174,7 +174,7 @@ settings are the difference between a measurement and a puzzle, and [ch28](#whol
 Three. The first two are in `tests/interrupts_and_drivers/console.c`; the third is a Python stub you fill in with an
 opinion and are graded against the machine.
 
-**9.1 — How many characters does the console lose?**
+**17.1 — How many characters does the console lose?**
 Given a string of arrivals and drains, and a buffer of xv6's own size, say how many are dropped.
 
 A handler cannot block, cannot allocate and has nobody to return an error to, so a character
@@ -185,7 +185,7 @@ loses characters when you paste into it, and it is not a bug in anything.
 python3 -m pytest tests/interrupts_and_drivers/test_problem_1_lost.py
 ```
 
-**9.2 — How many interrupts will this cost?**
+**17.2 — How many interrupts will this cost?**
 Given a number of operations and how many the device reports at once, predict the count — and
 return "undecidable" for the device where the workload does not determine it.
 
@@ -196,7 +196,7 @@ worth more than any number, and it is a skill this book keeps asking for.
 python3 -m pytest tests/interrupts_and_drivers/test_problem_2_interrupts.py
 ```
 
-**9.3 — Which of these counts is a property of the workload?**
+**17.3 — Which of these counts is a property of the workload?**
 Six counters; mark each reproducible or not, before running anything.
 
 You are not being graded against what this book decided. The test boots xv6 several times and

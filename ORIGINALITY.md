@@ -999,3 +999,114 @@ summarises each in a sentence.
   primitive of the machine and where they go instead; Part V's says what it cedes to
   *Systems Performance* and why the relationship is one-way. Neither is a summary of absent
   content.
+
+---
+
+## ch04 · A Trap, With Nothing Else in the Machine
+
+**Closest in subject.** The trap chapters of the xv6 commentary and of *Operating Systems: Three
+Easy Pieces*; the many "bare-metal RISC-V" tutorials that walk through `mtvec` and `mret`.
+
+**How this differs, and the care taken.**
+
+- **It removes the kernel rather than introducing one.** Every treatment consulted teaches traps
+  as part of an operating system, because that is where traps are useful. This part's premise is
+  that useful is the wrong criterion for a first encounter, and the whole program is one handler.
+- **The `mepc` off-by-one is the centre, not a footnote.** That a handler returning without
+  advancing `mepc` loops for ever is usually a warning in passing. Here it is the second section
+  and a problem, because it is the one fact about traps a reader will actually be bitten by.
+- **The register question is framed as "what the compiler could see".** The usual framing is a
+  list of what to save. This chapter has the compiler doing it, explains that it could only do so
+  because both sides were compiled together, and uses the removal of that condition as the reason
+  ch07 exists.
+- The linker script, entry code and console are this book's own, written for the book.
+
+## ch05 · Interrupts, and Who Is Allowed To
+
+**Closest in subject.** Interrupt and privilege-level material in the RISC-V privileged
+specification's own prose, the xv6 commentary's trap chapter, and bare-metal tutorials covering
+the CLINT.
+
+**How this differs, and the care taken.**
+
+- **The two subjects are joined by one claim** — that both are things the machine does *to* a
+  program rather than *for* it — rather than being two topics in one chapter because they happen
+  to share a register.
+- **Privilege is demonstrated by a refusal rather than described by a table.** The standard
+  presentation is a matrix of what each mode may do. Here one instruction is executed in two modes
+  and the difference is a cause code the program prints.
+- **The absence of `mepc + 4` is the point of the interrupt section**, drawing a contrast with the
+  previous chapter's program rather than stating a rule about asynchrony.
+- The PMP paragraph exists because the omission cost real time; no tutorial consulted mentions it
+  at the point where it bites.
+
+## ch06 · One Page Table, Two Harts
+
+**Closest in subject.** Virtual-memory chapters everywhere — CS:APP, OSTEP, the xv6 commentary —
+and the concurrency chapter of any operating-systems text for the lost update.
+
+**How this differs, and the care taken.**
+
+- **The lost update is deterministic by construction.** Every treatment consulted races two
+  threads and observes a shortfall. That teaches that updates go missing at random. This chapter
+  holds one read-modify-write open across the other hart's entire increment, loses exactly one
+  update every run, and can therefore refuse a run where it loses none — which a racing
+  demonstration cannot do and which a committed result requires.
+- **The page table has three entries and no second level.** The standard figure is a multi-level
+  walk diagram. Gigabyte leaves make the whole table quotable, and the multi-level walk is
+  deferred to ch09, where a per-process page actually needs one.
+- **That machine mode ignores `satp`** is given as the reason the chapter needs ch05, rather than
+  as a caveat.
+
+## ch07 · A System Call of Your Own
+
+**Closest in subject.** System-call chapters in the xv6 commentary and OSTEP; calling-convention
+material in the RISC-V psABI.
+
+**How this differs, and the care taken.**
+
+- **It is organised around what stops being true**, not around what a system call is. The four
+  things it adds are stated as missing from ch04's `ecall`, and the fifth — that the caller is now
+  a stranger — is presented as the expensive one.
+- **The thirty-one stores are written out rather than generated.** That is deliberate: the count
+  *is* the chapter's measurement, and a macro would hide the thing being counted.
+- **The error path is given equal weight to the success path**, on the stated grounds that
+  returning an error rather than stopping is a design decision the hardware does not make for you.
+
+## ch08 · A Small Integer That Means a Device
+
+**Closest in subject.** File-descriptor material in the xv6 commentary, OSTEP's persistence
+chapters, and every Unix programming text.
+
+**How this differs, and the care taken.**
+
+- **The two-table structure is the chapter**, rather than a detail introduced when `dup` comes up.
+  The descriptor table and the open-file table are built separately, and the shared cursor is a
+  number the program prints and the runner refuses a run without.
+- **It uses two backends chosen to be as unalike as possible** — a memory-mapped device and an
+  array with a cursor — so that the indirection is visible. Neither is a file, and the chapter
+  says so.
+- **It opens from the reader's own starting point**: a reference to an object in a managed
+  language, corrected. That framing is this book's, following from the audience stated in the
+  preface.
+- The "what this cannot tell you" section names the absence of `open` as the most interesting
+  missing question, rather than listing simplifications.
+
+## ch09 · fork, Built Rather Than Read
+
+**Closest in subject.** The xv6 commentary's treatment of `fork` and `uvmcopy`; OSTEP's process
+API chapter; every operating-systems course's `fork` lecture.
+
+**How this differs, and the care taken.**
+
+- **It refuses the riddle framing.** "A function that returns twice" is near-universal. Here the
+  two returns are two saved frames differing in one slot, and the chapter reaches that by having
+  already built the frame in ch07 for an unrelated reason.
+- **A process is defined as two things the reader has already built**, rather than introduced as a
+  new abstraction: ch07's trap frame plus ch06's address space.
+- **The `copyin` problem is discovered rather than described.** The chapter shows the handler
+  reading a caller's address in machine mode, getting a plausible wrong answer from a PCI window,
+  and derives the need for translation from that — rather than presenting `copyin` as a function
+  that exists.
+- The comparison with xv6's eager copy is a statement about this book's own measurement beside the
+  submodule's code, not a summary of the commentary.

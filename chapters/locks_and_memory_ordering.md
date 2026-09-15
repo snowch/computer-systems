@@ -1,10 +1,10 @@
 ---
 title: "Locks and Memory Ordering"
-short_title: "ch18 Locks and Memory Ordering"
+short_title: "18 · Locks and Memory Ordering"
 ---
 
 (locks-and-memory-ordering)=
-# ch18 · Locks and Memory Ordering
+# 18 · Locks and Memory Ordering
 
 :::{note} Chapter header
 :class: dropdown
@@ -186,7 +186,7 @@ rather than beside it. [ch19](#scheduling-and-context-switches) has the schedule
 Three, in `tests/locks_and_memory_ordering/locking.c`. The first is the only one in this book that is graded by running
 it under real concurrency, because a lock is the one thing that cannot be checked by reading it.
 
-**10.1 — Write a correct lock.**
+**18.1 — Write a correct lock.**
 Four threads take it eight hundred thousand times between them, incrementing an ordinary
 non-atomic counter inside. If the lock works the total is exact; the empty stub loses about
 seventy per cent of them.
@@ -200,7 +200,7 @@ order passes on a strongly ordered machine and protects nothing on a weak one.
 python3 -m pytest tests/locks_and_memory_ordering/test_problem_1_lock.py
 ```
 
-**10.2 — Which reorderings does each barrier actually prevent?**
+**18.2 — Which reorderings does each barrier actually prevent?**
 Eighteen cases. The four that matter are the ones where the annotation is on the operation it does
 not help — an acquire on the second access, a release on the first — and the ones where the two
 accesses touch the same address, which settles the question before any barrier is consulted.
@@ -209,7 +209,7 @@ accesses touch the same address, which settles the question before any barrier i
 python3 -m pytest tests/locks_and_memory_ordering/test_problem_2_reorder.py
 ```
 
-**10.3 — Do these two paths disagree about lock order?**
+**18.3 — Do these two paths disagree about lock order?**
 Given the locks each path takes in order, say whether there is a pair taken both ways round.
 
 Deliberately not "will this hang". A conflicting pair is forbidden whether or not you can build a

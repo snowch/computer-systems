@@ -1,10 +1,10 @@
 ---
 title: "Traps and System Calls"
-short_title: "ch14 Traps and System Calls"
+short_title: "14 · Traps and System Calls"
 ---
 
 (traps-and-system-calls)=
-# ch14 · Traps and System Calls
+# 14 · Traps and System Calls
 
 :::{note} Chapter header
 :class: dropdown
@@ -175,7 +175,7 @@ and what happens when one arrives at the wrong moment, are [ch17](#interrupts-an
 
 Two, and the first is the one every xv6 reader should do once.
 
-**6.1 — Add a system call, end to end.**
+**14.1 — Add a system call, end to end.**
 The census is printed on Ctrl-T, which is no use to a program. Add `trapcount()` and a user program
 that calls it.
 
@@ -192,7 +192,7 @@ zero, and it grows between two runs. A constant fails both.
 python3 -m pytest tests/traps_and_system_calls/test_problem_1_addcall.py
 ```
 
-**6.2 — Which registers must be saved, and which need not be?**
+**14.2 — Which registers must be saved, and which need not be?**
 Count them, then say which ones `uservec` leaves alone and why each is allowed. There is more than
 one reason a register can end up on that list, and this chapter has given you two of them.
 

@@ -351,6 +351,24 @@ def describe_qemu(xv6_dir: Path | None = None) -> dict[str, Any]:
     return machine
 
 
+def describe_bare() -> dict[str, Any]:
+    """The system a ``bare`` result describes: a board, and nothing on it.
+
+    Deliberately not :func:`describe_qemu` with the kernel field blanked. An ``xv6`` result names
+    the commit a reader would check out to see the same thing; a ``bare`` result's equivalent
+    claim is that there is nothing to check out, and saying so in the field rather than omitting
+    it is what stops the absence reading like an oversight.
+    """
+    return {
+        "kind": "qemu",
+        "arch": "riscv64",
+        "model": "qemu virt (-machine virt -bios none), no firmware and no operating system",
+        "measured_under": "emulation",
+        "emulator": qemu_version(),
+        "kernel": "none — the program is the first thing the processor executes",
+    }
+
+
 def qemu_version() -> str:
     binary = shutil.which("qemu-system-riscv64")
     if not binary:

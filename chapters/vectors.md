@@ -1,10 +1,10 @@
 ---
 title: "Vectors"
-short_title: "ch29 Vectors"
+short_title: "29 · Vectors"
 ---
 
 (vectors)=
-# ch29 · Vectors
+# 29 · Vectors
 
 :::{note} Chapter header
 :class: dropdown
@@ -146,7 +146,7 @@ of the running time, has bought you well under one per cent.
 
 Three, in `tests/vectors/lanes.c`.
 
-**21.1 — What the tail costs.**
+**29.1 — What the tail costs.**
 Speedup from a lane count and a trip count. The case to get right is the loop shorter than one
 vector, which gains nothing and pays for all the code.
 
@@ -154,7 +154,7 @@ vector, which gains nothing and pays for all the code.
 python3 -m pytest tests/vectors/test_problem_1_tail.py
 ```
 
-**21.2 — The same numbers, two orders.**
+**29.2 — The same numbers, two orders.**
 Write the sequential sum and the lane-wise one, and watch them disagree. This is the refusal
 above, reproduced rather than described.
 
@@ -162,7 +162,7 @@ above, reproduced rather than described.
 python3 -m pytest tests/vectors/test_problem_2_reassociation.py
 ```
 
-**21.3 — The speedup you were allowed.**
+**29.3 — The speedup you were allowed.**
 A measured speedup as a fraction of the arithmetic bound. Do not clamp it: the value over a
 hundred is the one that tells you something.
 

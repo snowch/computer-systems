@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "a2323e245a881da7",
+  "code_fingerprint": "36d028a6301527bf",
   "code_sources": [
     "bench/run_stages.py",
     "sysfs/tools/stages.sh",
@@ -12,7 +12,7 @@
     "note": "sizes and symbol counts only; nothing here was executed or timed",
     "xv6_link": "against xv6's own user library, by xv6's own Makefile"
   },
-  "generated_at": "2026-09-15T15:09:45+00:00",
+  "generated_at": "2026-09-15T16:48:55+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "riscv64",

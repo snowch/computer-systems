@@ -1,10 +1,10 @@
 ---
 title: "Linking and Loading"
-short_title: "ch13 Linking and Loading"
+short_title: "13 · Linking and Loading"
 ---
 
 (linking-and-loading)=
-# ch13 · Linking and Loading
+# 13 · Linking and Loading
 
 :::{note} Chapter header
 :class: dropdown
@@ -160,7 +160,7 @@ no opinion about.
 
 Three, and the first is the one that makes the format stop being magic.
 
-**5.1 — Finish the reader.**
+**13.1 — Finish the reader.**
 Two functions `sysfs/tools/elfdump.c` does not contain: how much memory a program occupies once
 loaded, and which section covers a given address. The second one requires the indirection this
 chapter describes — a section header does not hold its own name.
@@ -173,7 +173,7 @@ rebuilt.
 python3 -m pytest tests/linking_and_loading/test_problem_1_reader.py
 ```
 
-**5.2 — Which of these links?**
+**13.2 — Which of these links?**
 Five pairs of translation units. Predict whether each produces a program. The test actually links
 them.
 
@@ -185,7 +185,7 @@ you what to think about the fact that it does.
 python3 -m pytest tests/linking_and_loading/test_problem_2_resolve.py
 ```
 
-**5.3 — Read the error, name the cause.**
+**13.3 — Read the error, name the cause.**
 Four link failures, with the messages a linker really produced during the test run. Name the cause
 of each.
 

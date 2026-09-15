@@ -148,12 +148,11 @@ the length — a short chapter still owes the reader "What this cannot tell you"
 
 ## Chapter status
 
-ch00 is written. Everything else is a stub carrying its target, question, prerequisites and the
-measurements it owes, all from `bench/outline.py`; the six appendices carry what they will hold
-and where that content has to come from. Regenerate the lot with
-`python3 scripts/new-chapter.py --all --force`, which refuses to touch a written chapter. The reference machine has not yet produced `setup-host.json`, so `prerequisites-and-setup-board`
-is the one figure currently `pending=`; PLAN.md §11 has the roadmap and CHECKPOINTS.md the tag
-scheme.
+All thirty chapters are written, and six of the seven appendices. Appendix C waits for the
+reference machine: which events a board exposes is a property of its silicon, kernel and firmware
+together and cannot be drafted from a desk. Thirteen figures are `pending=` for the same reason —
+they are `host` measurements and the board has not produced them yet. Regenerate a stub with
+`python3 scripts/new-chapter.py --all --force`, which refuses to touch a written chapter.
 
 **Five chapters depend on the reference machine** — ch22, ch24, ch25, ch27, ch28 — recorded as the
 `assumes` field in `bench/outline.py`. That renders an **Assumes** row in the chapter header and

@@ -1,10 +1,10 @@
 ---
 title: "Memory Ordering on Real Hardware"
-short_title: "ch26 Memory Ordering on Real Hardware"
+short_title: "26 · Memory Ordering on Real Hardware"
 ---
 
 (memory-ordering-on-real-hardware)=
-# ch26 · Memory Ordering on Real Hardware
+# 26 · Memory Ordering on Real Hardware
 
 :::{note} Chapter header
 :class: dropdown
@@ -141,7 +141,7 @@ nobody has yet.
 
 Three, in `tests/memory_ordering_on_real_hardware/sharing.c`.
 
-**18.1 — Which fields will two cores fight over?**
+**26.1 — Which fields will two cores fight over?**
 Given offsets and writers, count the contending pairs. Two fields on one line written by the same
 thread are not one of them.
 
@@ -149,7 +149,7 @@ thread are not one of them.
 python3 -m pytest tests/memory_ordering_on_real_hardware/test_problem_1_pairs.py
 ```
 
-**18.2 — What does the curve look like before you measure it?**
+**26.2 — What does the curve look like before you measure it?**
 Amdahl's law, applied. Do this before the board reports: a prediction you fail to reach is
 information, and a measurement with nothing to compare it against is much less.
 
@@ -157,7 +157,7 @@ information, and a measurement with nothing to compare it against is much less.
 python3 -m pytest tests/memory_ordering_on_real_hardware/test_problem_2_scaling.py
 ```
 
-**18.3 — Same requirement, two architectures.**
+**26.3 — Same requirement, two architectures.**
 Give the spelling each one uses. The table is small; the observation that one of them has no
 separate instruction at all is the reason the problem exists.
 

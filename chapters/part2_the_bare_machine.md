@@ -1,6 +1,6 @@
 ---
 title: "Part II — The machine with nothing on it"
-short_title: "Part II"
+short_title: "Introduction"
 ---
 
 (part2)=

@@ -171,7 +171,7 @@ def part_stub(part: Part, previous: Part | None) -> str:
     )
     return f"""---
 title: "{part.title}"
-short_title: "{part.name}"
+short_title: "Introduction"
 ---
 
 ({part.label})=

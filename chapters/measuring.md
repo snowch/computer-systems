@@ -1,10 +1,10 @@
 ---
 title: "Measuring"
-short_title: "ch22 Measuring"
+short_title: "22 · Measuring"
 ---
 
 (measuring)=
-# ch22 · Measuring
+# 22 · Measuring
 
 :::{note} Chapter header
 :class: dropdown
@@ -175,7 +175,7 @@ forgotten, which is a benchmark that measures an empty loop and reports an enorm
 Four. The first three are in `tests/measuring/measuring.c` and are graded against definitions the tests
 compute for themselves. The fourth has no test and no known answer.
 
-**14.1 — Report the distribution.**
+**22.1 — Report the distribution.**
 Minimum, median, 90th percentile and mean, to the definitions in the stub. The even-length case is
 the one that matters: the median of an even set is a sample that happened, not the average of two
 that did.
@@ -184,7 +184,7 @@ that did.
 python3 -m pytest tests/measuring/test_problem_1_summary.py
 ```
 
-**14.2 — How many repetitions?**
+**22.2 — How many repetitions?**
 Given what the work costs and what the clock costs, the smallest count for which the instrument is
 within budget. One of the cases has the answer "one", and one has the answer "this is not a
 question", and both are worth getting right.
@@ -193,7 +193,7 @@ question", and both are worth getting right.
 python3 -m pytest tests/measuring/test_problem_2_repetitions.py
 ```
 
-**14.3 — How much of this is warm-up?**
+**22.3 — How much of this is warm-up?**
 The definition has two clauses and the second is the whole problem: the prefix you discard has to
 have actually been slow. Leave it out and a single spike in the middle lets you throw away every
 good measurement before it.
@@ -202,7 +202,7 @@ good measurement before it.
 python3 -m pytest tests/measuring/test_problem_3_warmup.py
 ```
 
-**14.4 — Falsify something this book says.**
+**22.4 — Falsify something this book says.**
 [ch00](#prerequisites-and-setup) claims that a wireless link adds interrupt and deferred work to the cores being
 measured, and admits it has not measured the effect. Measure it: run one of this chapter's
 workloads with the board on Ethernet and on its radio, with and without traffic, and report

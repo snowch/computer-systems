@@ -550,6 +550,35 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.xv6_kernel_size_table,
         result="filemap-xv6",
     ),
+    # -- Part II: the machine with nothing on it ----------------------------------------
+    "a-trap-with-nothing-else-trap": Table(
+        render=tables.bare_claims_table,
+        result="trap-bare",
+    ),
+    "interrupts-and-privilege-privilege": Table(
+        render=tables.bare_claims_table,
+        result="privilege-bare",
+    ),
+    "one-page-table-two-harts-paging": Table(
+        render=tables.bare_claims_table,
+        result="paging-bare",
+    ),
+    "one-page-table-two-harts-harts": Table(
+        render=tables.bare_claims_table,
+        result="harts-bare",
+    ),
+    "a-system-call-of-your-own-syscall": Table(
+        render=tables.bare_claims_table,
+        result="syscall-bare",
+    ),
+    "a-small-integer-that-means-a-device-descriptors": Table(
+        render=tables.bare_claims_table,
+        result="descriptors-bare",
+    ),
+    "fork-built-rather-than-read-fork": Table(
+        render=tables.bare_claims_table,
+        result="fork-bare",
+    ),
     "prerequisites-and-setup-board": Table(
         render=tables.board_identity_table,
         result="setup-host",

@@ -1,10 +1,10 @@
 ---
 title: "The Memory Hierarchy"
-short_title: "ch23 The Memory Hierarchy"
+short_title: "23 · The Memory Hierarchy"
 ---
 
 (the-memory-hierarchy)=
-# ch23 · The Memory Hierarchy
+# 23 · The Memory Hierarchy
 
 :::{note} Chapter header
 :class: dropdown
@@ -151,7 +151,7 @@ predictable becomes a thing you do deliberately.
 
 Three, in `tests/the_memory_hierarchy/hierarchy.c`, graded against curves the tests construct with known answers.
 
-**15.1 — Where does the curve step?**
+**23.1 — Where does the curve step?**
 Four curves, including one that drifts upward without stepping. A threshold that calls that a step
 finds levels in every machine, including ones that do not have them.
 
@@ -159,7 +159,7 @@ finds levels in every machine, including ones that do not have them.
 python3 -m pytest tests/the_memory_hierarchy/test_problem_1_steps.py
 ```
 
-**15.2 — What is the line size?**
+**23.2 — What is the line size?**
 The stride at which consecutive visits stop sharing. One of the curves is flat throughout, and the
 right answer there is that there is no answer.
 
@@ -167,7 +167,7 @@ right answer there is that there is no answer.
 python3 -m pytest tests/the_memory_hierarchy/test_problem_2_line.py
 ```
 
-**15.3 — How many lines does this loop touch?**
+**23.3 — How many lines does this loop touch?**
 The arithmetic behind the curve, including the ceiling: past one line per element, a larger stride
 buys the machine nothing back.
 

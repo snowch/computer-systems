@@ -132,6 +132,12 @@ python3 -m bench.run_firstc --check
 echo "== the kernel still lacks what ch02 says it lacks =="
 python3 -m bench.run_kernelc --check
 
+echo "== Part II's programs still do what their chapters say =="
+# These boot for real, on a machine with no operating system on it, and each one is refused
+# unless it still demonstrates its chapter's claim. A program that merely boots and exits proves
+# nothing: ch04's trap could resume without having been taken, ch06's harts could lose nothing.
+python3 -m bench.run_bare --check
+
 echo "== appendix D still describes the kernel tree that is checked out =="
 python3 -m bench.run_filemap --check
 

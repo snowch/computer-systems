@@ -94,6 +94,11 @@ def refuse_a_size_that_describes_this_checkout(scratch: Path) -> None:
     """
     here = str(ROOT).encode()
     for produced in sorted(scratch.iterdir()):
+        if produced.is_dir():
+            # Other targets build under here too — Part II's bare-metal images have their own
+            # subdirectory. The walk produces files directly in scratch and nothing else, so a
+            # directory is somebody else's and reading it as bytes is not a check, it is a crash.
+            continue
         if here in produced.read_bytes():
             raise WalkError(
                 f"{produced.name} contains the path of this checkout ({ROOT}), so its size is "

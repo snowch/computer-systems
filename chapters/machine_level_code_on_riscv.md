@@ -1,10 +1,10 @@
 ---
 title: "Machine-Level Code on RISC-V"
-short_title: "ch12 Machine-Level Code on RISC-V"
+short_title: "12 · Machine-Level Code on RISC-V"
 ---
 
 (machine-level-code-on-riscv)=
-# ch12 · Machine-Level Code on RISC-V
+# 12 · Machine-Level Code on RISC-V
 
 :::{note} Chapter header
 :class: dropdown
@@ -210,7 +210,7 @@ which is the durable skill: allocators change, and prologues do not.
 
 Three, and the first is the hardest thing in Part III so far.
 
-**4.1 — Write the C that produced this.**
+**12.1 — Write the C that produced this.**
 A listing, and you write a C function that compiles to the same instructions. Not similar ones —
 the same ones, in order. The test compiles your attempt with the same toolchain and compares
 mnemonic by mnemonic, so a function that gets the right answer another way does not pass.
@@ -223,7 +223,7 @@ to make askable.
 python3 -m pytest tests/machine_level_code_on_riscv/test_problem_1_reconstruct.py
 ```
 
-**4.2 — Which of these needs a frame?**
+**12.2 — Which of these needs a frame?**
 Four functions. For each, predict whether it gets a frame at `-O2` and whether it saves the return
 address. The test compiles each one and reads the prologue, so you are predicting a compiler
 rather than reciting a rule — and the reasoning that explains the table above explains all four.
@@ -232,7 +232,7 @@ rather than reciting a rule — and the reasoning that explains the table above 
 python3 -m pytest tests/machine_level_code_on_riscv/test_problem_2_frames.py
 ```
 
-**4.3 — Who saves what?**
+**12.3 — Who saves what?**
 Name one register a function writes without saving, and one it saves before using. The test checks
 both against the actual disassembly *and* against which half of the convention each belongs to, so
 an answer that is mechanically true but comes from the wrong group fails and tells you so.

@@ -1,10 +1,10 @@
 ---
 title: "Virtual Memory"
-short_title: "ch15 Virtual Memory"
+short_title: "15 · Virtual Memory"
 ---
 
 (virtual-memory)=
-# ch15 · Virtual Memory
+# 15 · Virtual Memory
 
 :::{note} Chapter header
 :class: dropdown
@@ -220,7 +220,7 @@ Three, and they are one program: `tests/virtual_memory/walk.c` builds a page tab
 where following it stops. Nothing in `sysfs/` does any of those, so the repository contains no
 answer to any of them.
 
-**7.1 — Build a page table, and no more of one than the addresses require.**
+**15.1 — Build a page table, and no more of one than the addresses require.**
 Write `walk_map`, allocating interior tables as you need them.
 
 The grading is the interesting part. The test does not compare your table with a stored one; it
@@ -234,7 +234,7 @@ turned into a check.
 python3 -m pytest tests/virtual_memory/test_problem_1_map.py
 ```
 
-**7.2 — Follow it.**
+**15.2 — Follow it.**
 Write `walk_translate`. The expected answers are the mappings the test asked your own 7.1 to make,
 so the target moves with your implementation rather than being a constant. Two things are easy to
 get wrong and are checked: the offset must survive, and an address that was never mapped must
@@ -248,7 +248,7 @@ kernel that uses superpages.
 python3 -m pytest tests/virtual_memory/test_problem_2_translate.py
 ```
 
-**7.3 — Say where it stopped.**
+**15.3 — Say where it stopped.**
 Write `walk_first_missing_level`. Four probes: one mapped, and one each for a walk that fails at
 the top, the middle and the bottom. Each answer follows from where the test put the mappings, so
 there is nothing to look up.

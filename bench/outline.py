@@ -92,8 +92,19 @@ class Chapter:
 
     @property
     def label(self) -> str:
-        """``ch17`` — what the reader sees. Derived from position, so never an identifier."""
+        """``ch17`` — how prose refers to the chapter. Derived from position, never an identifier.
+
+        The ``ch`` earns its place in a sentence: ``[17]`` in a paragraph with other numbers in it
+        reads as a quantity rather than a destination. It earns nothing in a heading or a sidebar
+        entry, where there is nothing else a number beside a chapter title could mean, so those
+        use :attr:`display` instead.
+        """
         return f"ch{self.number:02d}"
+
+    @property
+    def display(self) -> str:
+        """``17`` — the heading and sidebar form, where the context is already a list of chapters."""
+        return f"{self.number:02d}"
 
     @property
     def path(self) -> str:
