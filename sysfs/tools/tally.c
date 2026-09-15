@@ -63,11 +63,30 @@ static uint64_t distinct_keys(const uint32_t *k, uint64_t n, uint32_t entries) {
   return distinct;
 }
 
+/* How many times to repeat one arrangement when it is being profiled. A sampling profiler needs
+ * the program to run long enough to collect samples, and one pass of this is over in a moment. */
+#define PROFILE_PASSES 40
+
 int main(int argc, char **argv) {
-  int census = argc > 1 && strcmp(argv[1], "census") == 0;
+  const char *mode = argc > 1 ? argv[1] : "";
+  int census = strcmp(mode, "census") == 0;
 
   sysfs_tally_fill(SEED, raw, RECORDS);
   uint64_t taken = sysfs_tally_decode(raw, RECORDS, keys, ENTRIES);
+
+  /* One arrangement at a time, for ch22's before-and-after profiles. A process that ran both
+   * would give one profile covering both, which is a fair description of neither. */
+  if (strcmp(mode, "scatter") == 0 || strcmp(mode, "partitioned") == 0) {
+    uint64_t sum = 0;
+    for (int pass = 0; pass < PROFILE_PASSES; pass++)
+      sum += strcmp(mode, "scatter") == 0
+                 ? sysfs_tally_scatter(keys, RECORDS, table, ENTRIES)
+                 : sysfs_tally_partitioned(keys, RECORDS, table, ENTRIES, BUCKETS, scratch,
+                                           offsets);
+    printf("tally %s %llu passes %d\n", mode, (unsigned long long)sum, PROFILE_PASSES);
+    return 0;
+  }
+
   uint64_t scattered = sysfs_tally_scatter(keys, RECORDS, table, ENTRIES);
   uint64_t partitioned =
       sysfs_tally_partitioned(keys, RECORDS, table, ENTRIES, BUCKETS, scratch, offsets);

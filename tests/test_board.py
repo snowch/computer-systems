@@ -32,6 +32,8 @@ BOARD_RUNNERS = {
     "oscost-host": "bench.run_oscost",
     "faultcost-host": "bench.run_oscost",
     "vdso-host": "bench.run_oscost",
+    "profile-host": "bench.run_profilecost",
+    "skid-host": "bench.run_profilecost",
 }
 
 #: Figures still waiting for a runner to be written, not just for the board to exist.
@@ -40,10 +42,9 @@ BOARD_RUNNERS = {
 #: fail. Every entry is a chapter that cannot be completed on the day the hardware arrives.
 #: Delete a name when its runner lands; the test below fails if one is deleted too early, and
 #: `test_the_debt_list_is_not_padded` fails if one is left here after its runner exists.
-RUNNER_NOT_WRITTEN = {
-    "profile-host",
-    "skid-host",
-}
+#: Empty, and `set()` rather than `{}` — the latter is a dict, and the day this list was
+#: finally cleared it silently became one and took the two tests below with it.
+RUNNER_NOT_WRITTEN: set[str] = set()
 
 
 def shape_for(result: str) -> dict:

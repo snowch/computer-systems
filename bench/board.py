@@ -16,6 +16,7 @@ the result a second time on the way out, so a `host` timing taken on a laptop fa
 from __future__ import annotations
 
 import subprocess
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -215,3 +216,116 @@ def perf_counters(events: list[str], command: list[str]) -> dict[str, int]:
         if len(fields) >= 3 and fields[0].strip().isdigit():
             counts[fields[2].strip()] = int(fields[0])
     return counts
+
+
+def require_perf_sampling(what: str) -> None:
+    """Counting and sampling are different permissions and different hardware.
+
+    `perf stat` needs a counter; `perf record` needs that counter to raise an interrupt when it
+    overflows, which is the capability ch22's header says most affordable RISC-V cores lack and
+    ARM PMUs have as standard. A kernel can also be configured to allow one and not the other, so
+    this probes sampling specifically rather than assuming that working counters imply it.
+    """
+    require_perf(what)
+    with tempfile.TemporaryDirectory() as scratch:
+        recording = Path(scratch) / "probe.data"
+        result = subprocess.run(
+            ["perf", "record", "-q", "-o", str(recording), "--", "sleep", "0.2"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if result.returncode != 0 or not recording.exists():
+            last = result.stderr.strip().splitlines()
+            raise PerfUnavailableError(
+                f"{what} needs perf to *sample*, and this machine would not.\n"
+                "  sudo sysctl kernel.perf_event_paranoid=1\n"
+                "If that does not help, this core's PMU may not raise an interrupt on counter "
+                "overflow, which ch22's header names as the one thing it cannot work around.\n"
+                f"perf said: {last[-1] if last else 'nothing'}"
+            )
+
+
+def perf_record(recording: Path, command: list[str], frequency: int = 999) -> None:
+    """Sample `command` into `recording`.
+
+    The frequency is not a round number on purpose. ch22's third problem is about a fixed sampling
+    period aliasing against a loop of fixed length, and 999 rather than 1000 is the smallest
+    possible acknowledgement that the problem is real — real profilers also jitter the period,
+    which perf does by default.
+    """
+    result = subprocess.run(
+        [
+            "perf",
+            "record",
+            "-q",
+            "-F",
+            str(frequency),
+            "--call-graph",
+            "none",
+            "-o",
+            str(recording),
+            "--",
+            *command,
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise PerfUnavailableError(f"perf record failed:\n{result.stderr[-2000:]}")
+
+
+def perf_report(recording: Path) -> list[tuple[float, str]]:
+    """Read a recording back as (percentage, symbol), heaviest first."""
+    result = subprocess.run(
+        [
+            "perf",
+            "report",
+            "-i",
+            str(recording),
+            "--stdio",
+            "-q",
+            "--no-children",
+            "--percent-limit",
+            "0.1",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise PerfUnavailableError(f"perf report failed:\n{result.stderr[-2000:]}")
+    rows = []
+    for line in result.stdout.splitlines():
+        fields = line.split()
+        if len(fields) >= 4 and fields[0].endswith("%"):
+            try:
+                rows.append((float(fields[0].rstrip("%")), fields[-1]))
+            except ValueError:
+                continue
+    return rows
+
+
+def perf_annotate(recording: Path, symbol: str) -> list[tuple[float, str]]:
+    """Per-instruction samples for one symbol, as (percentage, instruction text)."""
+    result = subprocess.run(
+        ["perf", "annotate", "-i", str(recording), "--stdio", "-s", symbol, "--no-source"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise PerfUnavailableError(f"perf annotate failed:\n{result.stderr[-2000:]}")
+    rows = []
+    for line in result.stdout.splitlines():
+        stripped = line.strip()
+        if not stripped or ":" not in stripped:
+            continue
+        head = stripped.split(":", 1)[0].strip()
+        try:
+            percent = float(head)
+        except ValueError:
+            continue
+        rows.append((percent, stripped.split(":", 1)[1].strip()))
+    return rows
