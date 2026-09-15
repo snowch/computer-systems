@@ -1,42 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 467" width="780" height="467" role="img">
-  <title>The two execution targets and what each can answer</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 467" width="1080" height="467" role="img">
+  <title>The three execution targets and what each can answer</title>
   <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1a1a1a"/></marker></defs>
-  <rect width="780" height="467" fill="#ffffff"/>
-  <text x="24" y="30" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1a1a1a" text-anchor="start">One book, two targets</text>
-  <text x="24" y="50" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">Different machines, and different instruction sets. The mechanisms transfer; the numbers do not.</text>
-  <rect x="24" y="68" width="355.0" height="325" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
-  <text x="40" y="96" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1a1a1a" text-anchor="start">xv6 under QEMU</text>
-  <text x="40" y="114" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">target: xv6 — what the program does</text>
-  <line x1="24" y1="120" x2="379.0" y2="120" stroke="#c9ced6"/>
-  <text x="40" y="146" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#5b6270" text-anchor="start">Answers, exactly</text>
-  <text x="40" y="167" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• which instructions run, in order</text>
-  <text x="40" y="188" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• what a system call does to a process</text>
-  <text x="40" y="209" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• how a page table is walked</text>
-  <text x="40" y="230" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• what exec does to an address space</text>
-  <text x="40" y="251" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• why a scheduler picked this thread</text>
-  <line x1="36" y1="261" x2="367.0" y2="261" stroke="#c9ced6" stroke-dasharray="3 3"/>
-  <text x="40" y="279" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#c2410c" text-anchor="start">Cannot tell you</text>
-  <text x="40" y="302" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ how many cycles anything took</text>
-  <text x="40" y="323" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ whether a load hit in cache</text>
-  <text x="40" y="344" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ whether a branch was predicted</text>
-  <text x="40" y="365" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ what memory latency is</text>
-  <rect x="401.0" y="68" width="355.0" height="325" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
-  <text x="417.0" y="96" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1a1a1a" text-anchor="start">Linux on real hardware</text>
-  <text x="417.0" y="114" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">target: host — what the program costs</text>
-  <line x1="401.0" y1="120" x2="756.0" y2="120" stroke="#c9ced6"/>
-  <text x="417.0" y="146" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#5b6270" text-anchor="start">Answers, exactly</text>
-  <text x="417.0" y="167" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• cycles and instructions retired</text>
-  <text x="417.0" y="188" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• cache and TLB miss rates</text>
-  <text x="417.0" y="209" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• branch mispredictions</text>
-  <text x="417.0" y="230" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• where the time went, by sampling</text>
-  <text x="417.0" y="251" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• what four cores do to each other</text>
-  <line x1="413.0" y1="261" x2="744.0" y2="261" stroke="#c9ced6" stroke-dasharray="3 3"/>
-  <text x="417.0" y="279" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#c2410c" text-anchor="start">Cannot tell you</text>
-  <text x="417.0" y="302" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ the kernel source under a breakpoint</text>
-  <text x="417.0" y="323" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ a page table you can print</text>
-  <text x="417.0" y="344" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ a scheduler you can instrument freely</text>
-  <text x="417.0" y="365" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ an experiment you can repeat exactly</text>
-  <line x1="24" y1="405" x2="756" y2="405" stroke="#c9ced6"/>
-  <text x="24" y="427" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">QEMU is a functional emulator. It has no cache model, no branch predictor and no</text>
-  <text x="24" y="445" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">performance counters — so it will answer a timing question, and the answer will be fiction.</text>
+  <rect width="1080" height="467" fill="#ffffff"/>
+  <text x="24" y="30" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1a1a1a" text-anchor="start">One book, three targets, two machines</text>
+  <text x="24" y="50" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">Two run under emulation and say what a program does; one is real and says what it costs. The mechanisms transfer; the numbers do not.</text>
+  <rect x="24.0" y="68" width="330.6666666666667" height="325" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="40.0" y="96" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1a1a1a" text-anchor="start">No operating system, under QEMU</text>
+  <text x="40.0" y="114" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">target: bare — what the hardware does</text>
+  <line x1="24.0" y1="120" x2="354.6666666666667" y2="120" stroke="#c9ced6"/>
+  <text x="40.0" y="146" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#5b6270" text-anchor="start">Answers, exactly</text>
+  <text x="40.0" y="167" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• what the machine does at reset</text>
+  <text x="40.0" y="188" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• what a trap leaves in mtvec and mcause</text>
+  <text x="40.0" y="209" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• what changes when you leave M-mode</text>
+  <text x="40.0" y="230" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• how the hardware reads a page table</text>
+  <text x="40.0" y="251" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• what a second hart is</text>
+  <line x1="36.0" y1="261" x2="342.6666666666667" y2="261" stroke="#c9ced6" stroke-dasharray="3 3"/>
+  <text x="40.0" y="279" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#c2410c" text-anchor="start">Cannot tell you</text>
+  <text x="40.0" y="302" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ how many cycles anything took</text>
+  <text x="40.0" y="323" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ whether a load hit in cache</text>
+  <text x="40.0" y="344" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ whether a branch was predicted</text>
+  <text x="40.0" y="365" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ what memory latency is</text>
+  <rect x="374.6666666666667" y="68" width="330.6666666666667" height="325" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="390.6666666666667" y="96" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1a1a1a" text-anchor="start">xv6 under QEMU</text>
+  <text x="390.6666666666667" y="114" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">target: xv6 — what a kernel does</text>
+  <line x1="374.6666666666667" y1="120" x2="705.3333333333334" y2="120" stroke="#c9ced6"/>
+  <text x="390.6666666666667" y="146" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#5b6270" text-anchor="start">Answers, exactly</text>
+  <text x="390.6666666666667" y="167" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• which instructions run, in order</text>
+  <text x="390.6666666666667" y="188" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• what a system call does to a process</text>
+  <text x="390.6666666666667" y="209" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• how a page table is walked</text>
+  <text x="390.6666666666667" y="230" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• what exec does to an address space</text>
+  <text x="390.6666666666667" y="251" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• why a scheduler picked this thread</text>
+  <line x1="386.6666666666667" y1="261" x2="693.3333333333334" y2="261" stroke="#c9ced6" stroke-dasharray="3 3"/>
+  <text x="390.6666666666667" y="279" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#c2410c" text-anchor="start">Cannot tell you</text>
+  <text x="390.6666666666667" y="302" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ how many cycles anything took</text>
+  <text x="390.6666666666667" y="323" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ whether a load hit in cache</text>
+  <text x="390.6666666666667" y="344" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ whether a branch was predicted</text>
+  <text x="390.6666666666667" y="365" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ what memory latency is</text>
+  <rect x="725.3333333333334" y="68" width="330.6666666666667" height="325" rx="4" fill="#f6f7f9" stroke="#c9ced6" stroke-width="1"/>
+  <text x="741.3333333333334" y="96" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1a1a1a" text-anchor="start">Linux on real hardware</text>
+  <text x="741.3333333333334" y="114" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">target: host — what the program costs</text>
+  <line x1="725.3333333333334" y1="120" x2="1056.0" y2="120" stroke="#c9ced6"/>
+  <text x="741.3333333333334" y="146" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#5b6270" text-anchor="start">Answers, exactly</text>
+  <text x="741.3333333333334" y="167" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• cycles and instructions retired</text>
+  <text x="741.3333333333334" y="188" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• cache and TLB miss rates</text>
+  <text x="741.3333333333334" y="209" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• branch mispredictions</text>
+  <text x="741.3333333333334" y="230" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• where the time went, by sampling</text>
+  <text x="741.3333333333334" y="251" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#1a1a1a" text-anchor="start">• what four cores do to each other</text>
+  <line x1="737.3333333333334" y1="261" x2="1044.0" y2="261" stroke="#c9ced6" stroke-dasharray="3 3"/>
+  <text x="741.3333333333334" y="279" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#c2410c" text-anchor="start">Cannot tell you</text>
+  <text x="741.3333333333334" y="302" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ the kernel source under a breakpoint</text>
+  <text x="741.3333333333334" y="323" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ a page table you can print</text>
+  <text x="741.3333333333334" y="344" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ a scheduler you can instrument freely</text>
+  <text x="741.3333333333334" y="365" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#5b6270" text-anchor="start">✗ an experiment you can repeat exactly</text>
+  <line x1="24" y1="405" x2="1056" y2="405" stroke="#c9ced6"/>
+  <text x="24" y="427" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">The first two columns are one machine: your laptop, running QEMU, which has no cache model, no branch</text>
+  <text x="24" y="445" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5b6270" text-anchor="start">predictor and no performance counters — so it will answer a timing question, and the answer will be fiction.</text>
 </svg>

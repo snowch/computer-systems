@@ -71,8 +71,10 @@ no runtime underneath you. [ch01](#memory-is-one-array) is the on-ramp; [ch02](#
 enough to read rather than one that has to be described.
 
 **You do not need any hardware background.** No digital logic, and no pipeline diagram.
-[ch25](#the-cpu) builds the pipeline from nothing, on the grounds that a reader who has seen a
-five-stage diagram in a lecture still has no idea what a real core does with a branch.
+[Part II](#part2) starts at a machine with nothing on it and builds up, so the hardware arrives as
+something you switch on rather than something assumed; [ch25](#the-cpu) later builds the pipeline
+from nothing, on the grounds that a reader who has seen a five-stage diagram in a lecture still
+has no idea what a real core does with a branch.
 
 ### If you come from a managed language
 
@@ -134,7 +136,7 @@ carries to your machine is the method. That is what the list above is.
 | **[Part IV](#part4)** — The operating system layer | A kernel small enough to read, taken apart: traps, virtual memory, faults, drivers, locks, scheduling, files |
 | **[Part V](#part5)** — Where the cycles go | [Part IV](#part4)'s chapters asked again as questions about time, on hardware that can answer them |
 
-[ch00](#prerequisites-and-setup) sits before all of it and is setup: two targets working, and a script that
+[ch00](#prerequisites-and-setup) sits before all of it and is setup: all three targets working, and a script that
 tells you what your machine can currently run.
 
 [Part IV](#part4) reads a real kernel, and that kernel has a book of its own: *xv6: a simple,
@@ -144,26 +146,36 @@ well together. [Appendix G](#appendix-g) lines them up by topic rather than by c
 because its numbering moves between revisions. The same appendix traces one system call through
 every layer it touches.
 
-## Two machines, on purpose
+## Three targets on two machines, on purpose
 
 Almost every book on this subject picks one target and lives with its limitations. This one uses
-two, because the two halves of the question need different things.
+three, because the question has halves that need different instruments.
 
 ```{figure} chapters/_figures/prerequisites-and-setup-targets.svg
-:alt: The xv6 and host targets side by side, with what each can and cannot answer.
+:alt: The bare, xv6 and host targets side by side, with what each can and cannot answer.
 :width: 100%
 
 The division of labour. Every chapter declares which target it uses, and every figure records
 which one produced it.
 ```
 
-The first is **xv6**, the MIT teaching kernel, running under QEMU. It is a complete operating
-system small enough to read in an afternoon, and you can stop the whole machine mid-trap and look
-at anything. Parts III and IV live there.
+The first is **bare**: a RISC-V machine under QEMU with no operating system on it at all — no
+kernel, no library, no loader, nothing but the instructions you wrote. [Part II](#part2) lives
+there, and builds a trap, a page table, a system call and `fork()` one at a time, so that each is
+a thing you have made rather than a thing a kernel is doing somewhere.
 
-The second is a small Linux machine on a desk, reached over SSH — a **Raspberry Pi 5** by
-default. Every number in [Part V](#part5) is measured on it, natively. Not in an emulator, not on the
+The second is **xv6**, the MIT teaching kernel, running under the same QEMU. It is a complete
+operating system small enough to read in an afternoon, and you can stop the whole machine mid-trap
+and look at anything. [Part I](#part1) and [Part IV](#part4) live there.
+
+The third is a small Linux machine on a desk, reached over SSH — a **Raspberry Pi 5** by default.
+Every number in [Part V](#part5) is measured on it, natively. Not in an emulator, not on the
 laptop, not extrapolated from a different machine.
+
+That is three targets on **two machines**: the first two are both QEMU on the computer you are
+reading this on, and need one cross-compiler between them. Only the third has to be real.
+[Part III](#part3) is the one part that spans the split, taking a single program from source text
+to result on each side of it.
 
 The split is not a compromise; it is the argument. QEMU will happily answer a question about
 nanoseconds and the answer will be meaningless, because it models no cache, no branch predictor
@@ -263,8 +275,10 @@ in.
 
 ## What you will need
 
-A laptop for Parts I, II and III — everything there runs under emulation, free. For [Part V](#part5), a small
-Linux machine whose `perf` can count and sample; a Raspberry Pi 5 is the reference, and one you
+A laptop for [Part I](#part1), [Part II](#part2) and [Part IV](#part4), and for all of
+[Part III](#part3) except the numbers it takes on real hardware — everything there runs under
+emulation, free. For [Part V](#part5), a small Linux machine whose `perf` can count and sample; a
+Raspberry Pi 5 is the reference, and one you
 already own may well do. [ch00](#prerequisites-and-setup) is the setup, and a script that tells you which
 targets your machine can currently run and whether its counters are real.
 

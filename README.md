@@ -27,10 +27,11 @@ of it. Chapters 1–21 are stubs carrying their target, their question and the m
 - **[ORIGINALITY.md](ORIGINALITY.md)** — per chapter, how it differs from the works nearest it.
 - **[ERRATA.md](ERRATA.md)** — corrections, and the gaps that are known rather than accidental.
 
-## Two targets
+## Three targets
 
 | Target | What | For |
 |---|---|---|
+| **`bare`** | A RISC-V machine under `qemu-system-riscv64` with no kernel, library or loader on it | What the *hardware* does: reset, traps, privilege, page tables, harts. Part II builds each primitive on it before any kernel is read. Never timed. |
 | **`xv6`** | The MIT teaching kernel under `qemu-system-riscv64` | What a program *does*: system calls, page tables, scheduling, on-disk state. Runs anywhere. |
 | **`host`** | Linux on real hardware with working `perf` counters — a Raspberry Pi 5 by default; see [`hardware/`](hardware/) | What a program *costs*: cycles, cache misses, mispredictions, cores interfering. |
 
@@ -55,7 +56,8 @@ fourteen chapters. Part V needs a small Linux machine that can count and sample:
 rather than a RISC-V one, and how to check the one you have. `verify-setup.py` is what decides,
 not a spec sheet.
 
-**The two targets do not share an instruction set, and that is deliberate.** The kernel small
+**The emulated targets and the real one do not share an instruction set, and that is
+deliberate.** The kernel small
 enough to read in an afternoon is a RISC-V kernel; the hardware whose counters work is an ARM
 one. `hardware/README.md` shows the evidence. Reading disassembly is confined to ch10–ch12
 (RISC-V) and ch24, ch25 and ch29 (AArch64), with Appendix F translating between them; the rest is

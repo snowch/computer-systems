@@ -19,6 +19,7 @@ from bench.outline import (
     CHAPTERS,
     PART_PAGES,
     PARTS,
+    TARGET_MACHINE,
     Appendix,
     Chapter,
     Part,
@@ -351,6 +352,14 @@ TOTAL_CLAIMS = (
     (re.compile(r"All (\S+) chapters are written"), ("chapters",)),
     (re.compile(r"(\S+) of the (\S+) chapters are written"), ("written", "chapters")),
     (re.compile(r"(\S+) of the (\S+) appendices"), ("written_appendices", "appendices")),
+    # Added when Part II's `bare` target went unmentioned on the page whose job is to say what
+    # the book runs on. The preface said "two" for as long as there had been three.
+    (re.compile(r"## (\S+) targets on (\S+) machines"), ("targets", "machines")),
+    (
+        re.compile(r"picks one target and lives with its limitations\. This one uses\s+(\S+?),"),
+        ("targets",),
+    ),
+    (re.compile(r"is setup: all (\S+) targets working"), ("targets",)),
 )
 
 
@@ -375,12 +384,16 @@ def test_the_prefaces_counts_agree_with_the_outline():
         "written_appendices": len(
             [a for a in APPENDICES if "[DRAFT]" not in (ROOT / a.path).read_text()]
         ),
+        # "both" is a way of saying two of the others, not a target of its own.
+        "targets": len(TARGET_MACHINE),
+        "machines": len(set(TARGET_MACHINE.values())),
     }
 
-    wrong, matched = [], 0
+    wrong, matched, seen = [], 0, set()
     for pattern, names in TOTAL_CLAIMS:
         for found in pattern.finditer(text):
             matched += 1
+            seen.update(names)
             for word, name in zip(found.groups(), names, strict=True):
                 value = NUMBER_WORDS.get(word.lower())
                 if value is None:
@@ -392,6 +405,15 @@ def test_the_prefaces_counts_agree_with_the_outline():
     assert matched, (
         "the preface no longer states how many chapters, parts or appendices the book has in any "
         "form this check recognises — reword it back, or teach TOTAL_CLAIMS the new shape"
+    )
+    # `matched` alone is too weak for these two. A claim whose wording drifts stops matching its
+    # pattern and is then checked by nothing, silently — which is how "two targets" survived the
+    # arrival of a third. Naming them here means rewording the heading fails loudly instead.
+    missing = {"targets", "machines"} - seen
+    assert not missing, (
+        f"the preface no longer states how many {' or '.join(sorted(missing))} the book has in a "
+        f"form this check recognises — the count that went stale once already, so reword it back "
+        f"or teach TOTAL_CLAIMS the new shape"
     )
     assert not wrong, "\n".join(wrong)
 

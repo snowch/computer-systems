@@ -14,13 +14,25 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-#: The two execution targets, and what it means for a chapter to declare one.
+#: The three execution targets, and what it means for a chapter to declare one.
 TARGET_MEANING = {
     "xv6": "runs on the xv6 teaching kernel under QEMU; answers questions about structure",
     "host": "runs natively on real hardware; the only place a timing may be measured",
     "bare": "runs under qemu-system-riscv64 with no operating system at all; answers questions "
     "about what the hardware does, and like `xv6` is never timed",
-    "both": "uses both targets, and says which one every example and figure came from",
+    "both": "uses the `xv6` and `host` targets together, and says which one every example "
+    "and figure came from",
+}
+
+#: Which machine each target needs. Three targets, but only two machines: `bare` and `xv6` are
+#: both QEMU on whatever you are working on, so they share a cross compiler and a single set of
+#: checks in `scripts/verify-setup.py`. Only `host` has to be real hardware. The preface states
+#: both counts and `tests/test_book.py` derives them from here, because the first of them was
+#: wrong on that page for as long as Part II had existed.
+TARGET_MACHINE = {
+    "bare": "the computer you are working on, under QEMU",
+    "xv6": "the computer you are working on, under QEMU",
+    "host": "a Linux board with working performance counters",
 }
 
 

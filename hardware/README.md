@@ -33,7 +33,9 @@ the kind of decision a book should show its working for.
 
 ## Why not RISC-V, when Parts III and IV are RISC-V?
 
-The book's two targets no longer share an instruction set. That looks like an inconsistency, so
+The two targets a reader compares directly — `xv6` and `host` — no longer share an instruction
+set. (`bare` is RISC-V, like `xv6`, so the clash is the emulated pair against the real one.) That
+looks like an inconsistency, so
 here is the evidence that produced it.
 
 Part V needs `perf` to do two different things: **count** events over a run (`perf stat`) and
