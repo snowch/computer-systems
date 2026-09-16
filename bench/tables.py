@@ -718,6 +718,19 @@ def bias_table(name: str) -> str:
     return render_table(["What was changed", "Fastest", "Median"], rows)
 
 
+def interference_table(name: str) -> str:
+    """The same workload, radio off and radio on. The row that matters is the first: it does not move."""
+    summary = load_result(name)["summary"]
+    quiet, radio, runs = summary["quiet"], summary["radio"], summary["runs_per_condition"]
+    rows = [
+        ["Fastest sample", f"{quiet['floor_ns']} ns", f"{radio['floor_ns']} ns"],
+        ["Best run's mean", f"{quiet['best_mean_ns']} ns", f"{radio['best_mean_ns']} ns"],
+        ["Worst run's mean", f"{quiet['worst_mean_ns']} ns", f"{radio['worst_mean_ns']} ns"],
+        [f"Runs disturbed (of {runs})", str(quiet["disturbed_runs"]), str(radio["disturbed_runs"])],
+    ]
+    return render_table(["", "Radio off", "Radio on"], rows)
+
+
 def hierarchy_levels_table(name: str) -> str:
     """Latency against working-set size. The steps are the levels, and they were not looked up."""
     rows = [

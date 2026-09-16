@@ -363,6 +363,10 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.bias_table,
         result="measuring-host",
     ),
+    "measuring-interference": Table(
+        render=tables.interference_table,
+        result="interference-host",
+    ),
     # -- ch22 ---------------------------------------------------------------------------
     "the-memory-hierarchy-levels": Table(
         render=tables.hierarchy_levels_table,
