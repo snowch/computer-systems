@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "67b354cb24f95452",
+  "code_fingerprint": "4c9f9a19e3f96bed",
   "code_sources": [
     "bench/run_loopcost.py",
     "sysfs/bench/loopcost.c",
@@ -12,7 +12,7 @@
     "note": "nanoseconds per element, divided here so a sub-nanosecond cost is not floored away",
     "workload": "sysfs/bench/loopcost.c"
   },
-  "generated_at": "2026-09-16T12:42:54+00:00",
+  "generated_at": "2026-09-16T16:30:49+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "aarch64",
@@ -60,7 +60,7 @@
       "hoisted": 1.67,
       "plain": 1.67,
       "reduced": 1.67,
-      "unrolled": 1.72
+      "unrolled": 1.71
     }
   },
   "target": "host",

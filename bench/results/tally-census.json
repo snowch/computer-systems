@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "bab0a869ca603a7e",
+  "code_fingerprint": "5b66faf4cc779cc6",
   "code_sources": [
     "bench/run_profile.py",
     "sysfs/tools/tally.c",
@@ -10,7 +10,7 @@
     "note": "counts only \u2014 every figure here is a property of the program and its sizes",
     "why": "the profile itself belongs to make bench-board, and this is what it is compared against"
   },
-  "generated_at": "2026-09-15T15:09:46+00:00",
+  "generated_at": "2026-09-16T16:30:49+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "aarch64",
@@ -20,21 +20,27 @@
   },
   "name": "tally-census",
   "recorded_on": {
-    "arch": "x86_64",
+    "arch": "aarch64",
     "cpu": {
-      "bogomips": "4200.00",
-      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
     },
     "cpus_online": "0-3",
-    "kernel": "Linux 6.18.44-fc-v33",
-    "kind": "other",
-    "os": "Ubuntu 24.04.4 LTS",
-    "python": "3.11.15"
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
   },
   "summary": {
     "agree": true,
     "buckets": 128,
-    "built_for": "cross-aarch64-qemu",
+    "built_for": "native-aarch64",
     "checksum": 549736005553,
     "checksum_partitioned": 549736005553,
     "decode_taken": 1044530,
@@ -51,8 +57,8 @@
   },
   "target": "host",
   "toolchain": {
-    "cc": "aarch64-linux-gnu-gcc",
+    "cc": "gcc",
     "execution": "run for its counts; user-mode QEMU is enough for those and never for a duration",
-    "flags": "-O2 -g -Wall -Wextra -static"
+    "flags": "-O2 -g -Wall -Wextra"
   }
 }

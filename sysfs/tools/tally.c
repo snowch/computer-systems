@@ -1,4 +1,4 @@
-/* tally — the program chapter 20 profiles, and the census that predicts what it will find.
+/* tally — the program the profiling chapter profiles, and the census that predicts what it will find.
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
@@ -9,7 +9,7 @@
  *
  * Every figure in the census is a property of the program and its sizes, so it is the same on any
  * machine and CI can regenerate it. That is the point of it being here: the census is a
- * *prediction*, written down before the profile exists, and ch27 is about the difference.
+ * *prediction*, written down before the profile exists, and the profiling chapter is about the difference.
  */
 
 #include <stdio.h>
@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
   sysfs_tally_fill(SEED, raw, RECORDS);
   uint64_t taken = sysfs_tally_decode(raw, RECORDS, keys, ENTRIES);
 
-  /* One arrangement at a time, for ch27's before-and-after profiles. A process that ran both
+  /* One arrangement at a time, for the profiling chapter's before-and-after profiles. A process that ran both
    * would give one profile covering both, which is a fair description of neither. */
   if (strcmp(mode, "scatter") == 0 || strcmp(mode, "partitioned") == 0) {
     uint64_t sum = 0;

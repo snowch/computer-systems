@@ -1,4 +1,4 @@
-/* bridgecost — what chapter 15's two routes actually cost, on the machine being measured.
+/* bridgecost — what the two routes actually cost, on the machine being measured.
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *

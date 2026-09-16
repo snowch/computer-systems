@@ -148,6 +148,13 @@ append is not a mode the write asks for; it is a consequence of where the positi
 
 ## What we measured
 
+Run it yourself before reading the table — the numbers below are what you should
+see, and a figure you have reproduced is worth more than one you have been shown:
+
+```bash
+./run descriptors
+```
+
 ```{include} _generated/a-small-integer-that-means-a-device-descriptors.md
 ```
 

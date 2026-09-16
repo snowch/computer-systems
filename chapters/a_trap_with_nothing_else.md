@@ -145,6 +145,13 @@ The program sets a register, traps, and reads the register back afterwards.
 
 ## What we measured
 
+Run it yourself before reading the table — the numbers below are what you should
+see, and a figure you have reproduced is worth more than one you have been shown:
+
+```bash
+./run trap
+```
+
 ```{include} _generated/a-trap-with-nothing-else-trap.md
 ```
 
