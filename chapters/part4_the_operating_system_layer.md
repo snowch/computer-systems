@@ -11,8 +11,8 @@ short_title: "Introduction"
 
 | | |
 |---|---|
-| **Chapters** | [ch15](#traps-and-system-calls)–[ch22](#the-same-program-on-both-targets) |
-| **Target** | `xv6` — the teaching kernel under QEMU, with [ch22](#the-same-program-on-both-targets) crossing to `host` |
+| **Chapters** | [ch16](#traps-and-system-calls)–[ch23](#the-same-program-on-both-targets) |
+| **Target** | `xv6` — the teaching kernel under QEMU, with [ch23](#the-same-program-on-both-targets) crossing to `host` |
 | **Assumes** | [Part II](#part2), [Part III](#part3) |
 :::
 
@@ -24,7 +24,7 @@ A complete operating system, small enough to read, taken apart one mechanism at 
 with nothing else running. This part puts it back, and the entanglement turns out to be most of
 what an operating system *is*. A trap handler that also has to find the right process, on the right
 hart, without losing an interrupt, while another hart is in the same code, is not a harder version
-of [ch05](#a-trap-with-nothing-else)'s handler. It is a different subject, and it is this one.
+of [ch06](#a-trap-with-nothing-else)'s handler. It is a different subject, and it is this one.
 
 The kernel is xv6, because it is short enough to read in full and you can stop the entire machine
 in the middle of a trap and look at anything. That matters more than modernity here. A production
@@ -43,16 +43,16 @@ under emulation is a fact about the emulator, and a chapter that produced one wo
 teaching you to trust the wrong instrument.
 
 Linux, except by contrast. xv6 is a teaching kernel and some of its choices are simplifications
-rather than designs; the chapters say which, and [ch28](#the-os-layers-cost) puts the same operations to a
+rather than designs; the chapters say which, and [ch29](#the-os-layers-cost) puts the same operations to a
 production kernel. Left out entirely: networking, a scheduler with a policy worth arguing about,
 and the parts of a file system that exist because disks are large rather than because crashes
 happen.
 
 ## Where to start
 
-[ch15](#traps-and-system-calls), in order. Each chapter names the one before it as its prerequisite and means it.
+[ch16](#traps-and-system-calls), in order. Each chapter names the one before it as its prerequisite and means it.
 
-[ch22](#the-same-program-on-both-targets) is the exception and can be read early if you want to know where the book is going.
+[ch23](#the-same-program-on-both-targets) is the exception and can be read early if you want to know where the book is going.
 It runs one program on both targets and is the hinge into [Part V](#part5) — the chapter that
 stops being about how a thing works and starts being about how you would find out what it costs.
 

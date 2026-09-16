@@ -1,10 +1,10 @@
 ---
 title: "Interrupts and Drivers"
-short_title: "18 · Interrupts and Drivers"
+short_title: "19 · Interrupts and Drivers"
 ---
 
 (interrupts-and-drivers)=
-# 18 · Interrupts and Drivers
+# 19 · Interrupts and Drivers
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "18 · Interrupts and Drivers"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch17](#page-faults-as-a-feature) |
+| **Prerequisites** | [ch18](#page-faults-as-a-feature) |
 | **What it measures** | What a fixed amount of I/O costs in interrupts, for the device where that question has an answer: `bench/results/interrupts-xv6.json` |
 :::
 
@@ -20,7 +20,7 @@ short_title: "18 · Interrupts and Drivers"
 
 How does a device get the CPU's attention, and what does the CPU do about it?
 
-[ch17](#page-faults-as-a-feature) was about the CPU interrupting itself. A page fault happens *because of* the
+[ch18](#page-faults-as-a-feature) was about the CPU interrupting itself. A page fault happens *because of* the
 instruction that is running: it is caused by that instruction, it is reported at that instruction,
 and returning re-runs it. Everything about it is attached to the program it happened to.
 
@@ -37,14 +37,14 @@ finding out whether you can count the consequences.
 ### Getting attention costs someone else's time
 
 The machine has one path in. A device raises a line, the interrupt controller decides which
-device is allowed to speak, and the processor takes exactly the trap path [ch15](#traps-and-system-calls) counted —
+device is allowed to speak, and the processor takes exactly the trap path [ch16](#traps-and-system-calls) counted —
 the same thirty-odd instructions of saving, the same page-table switch, the same restoration on
 the way out.
 
 None of that work is the device's. It is charged to whichever process was running, which had
 nothing to do with the I/O and is not consulted. A process that performs no I/O at all still pays
 for every interrupt that arrives while it holds a core, and it pays in exactly the currency
-[ch15](#traps-and-system-calls) measured.
+[ch16](#traps-and-system-calls) measured.
 
 So the obvious question is how many of these there are. That question turns out to have an answer
 for one kind of device and not for the other, and finding that out is the useful part of this
@@ -112,7 +112,7 @@ for more.** That is not a unit of anything. How many times a transmitter announc
 during a burst of output depends on how the output and the announcements interleave, which depends
 on timing, and timing inside an emulator is a property of the laptop.
 
-This is [ch15](#traps-and-system-calls)'s rule arriving from a new direction. There the uncountable thing was the
+This is [ch16](#traps-and-system-calls)'s rule arriving from a new direction. There the uncountable thing was the
 timer, and the reason was obviously about elapsed time. Here two devices are doing what looks like
 the same job, and only one of them is countable — which is a much better demonstration that the
 question is about what an event *means* and not about which peripheral raised it.
@@ -139,7 +139,7 @@ have one.
 **So this chapter can show you the structure and cannot show you the reason for it.** The split
 into two halves is visible in the code, the interrupt that would do the waking is counted, and the
 thing that makes any of it necessary — a device that makes a program wait — is absent from the
-machine the chapter runs on. [ch28](#the-os-layers-cost) is on hardware where it is not.
+machine the chapter runs on. [ch29](#the-os-layers-cost) is on hardware where it is not.
 
 ### What the image has to do with it
 
@@ -159,18 +159,18 @@ regenerates the measurement on every push, so a change is reported rather than a
 
 Interrupts raised by the disk for a fixed number of block operations, and what the console driver
 did with a fixed number of characters. The two counts the census prints and this book does not
-record are named in the result itself rather than quietly dropped, and problem 18.3 asks the reader
+record are named in the result itself rather than quietly dropped, and problem 19.3 asks the reader
 to work out which they are before being told.
 
 ## What this cannot tell you
 
 **What an interrupt costs.** No duration appears above. The cost of an interrupt is the trap path
 plus the handler plus whatever the interruption does to the caches and the pipeline of the
-innocent process that was running — and this target models none of the last part. [ch28](#the-os-layers-cost)
+innocent process that was running — and this target models none of the last part. [ch29](#the-os-layers-cost)
 prices it.
 
 **How often the timer really fires.** The census counts timer interrupts and the book does not
-print the number, for [ch15](#traps-and-system-calls)'s reason. It is worth knowing that this count is *steady* here
+print the number, for [ch16](#traps-and-system-calls)'s reason. It is worth knowing that this count is *steady* here
 over repeated runs and still must not be published: steady on one machine for one short workload
 is not the same as determined by the workload, and the difference is exactly the mistake this book
 is trying not to make.
@@ -182,14 +182,14 @@ path do something has to run this on hardware, which is [Part V](#part5).
 **Anything about interrupt latency, priority or affinity.** The PLIC can be told which core should
 take which interrupt and at what priority; xv6 uses almost none of that, and none of it shows up in
 a count. On a machine where a device interrupt can land on the core running your benchmark, those
-settings are the difference between a measurement and a puzzle, and [ch29](#whole-machine-profiling) has to care.
+settings are the difference between a measurement and a puzzle, and [ch30](#whole-machine-profiling) has to care.
 
 ## Problems
 
 Three. The first two are in `tests/interrupts_and_drivers/console.c`; the third is a Python stub you fill in with an
 opinion and are graded against the machine.
 
-**18.1 — How many characters does the console lose?**
+**19.1 — How many characters does the console lose?**
 Given a string of arrivals and drains, and a buffer of xv6's own size, say how many are dropped.
 
 A handler cannot block, cannot allocate and has nobody to return an error to, so a character
@@ -200,7 +200,7 @@ loses characters when you paste into it, and it is not a bug in anything.
 python3 -m pytest tests/interrupts_and_drivers/test_problem_1_lost.py
 ```
 
-**18.2 — How many interrupts will this cost?**
+**19.2 — How many interrupts will this cost?**
 Given a number of operations and how many the device reports at once, predict the count — and
 return "undecidable" for the device where the workload does not determine it.
 
@@ -211,7 +211,7 @@ worth more than any number, and it is a skill this book keeps asking for.
 python3 -m pytest tests/interrupts_and_drivers/test_problem_2_interrupts.py
 ```
 
-**18.3 — Which of these counts is a property of the workload?**
+**19.3 — Which of these counts is a property of the workload?**
 Six counters; mark each reproducible or not, before running anything.
 
 You are not being graded against what this book decided. The test boots xv6 several times and
@@ -235,6 +235,6 @@ sitting. Read `uartwrite` beside `uartintr` and find the sleep and the wakeup th
 measured zero of — the code is written for a device that makes you wait, and seeing it never wait
 is the most useful thing this target can show you about it.
 
-[ch19](#locks-and-memory-ordering) is about the problem this chapter has been carefully stepping around. A handler and
+[ch20](#locks-and-memory-ordering) is about the problem this chapter has been carefully stepping around. A handler and
 a process share a buffer; one of them can start at any instruction of the other; and the counters
 in this chapter's own patch are deliberately unlocked, which is a decision that needs defending.

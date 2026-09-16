@@ -10,7 +10,7 @@ An appendix in this book is a reference, not a chapter: no argument, no narrativ
 in it either cites a primary source or comes from a stamped result under `bench/results/`.
 
 This is a translation rather than a reference. It is written for someone who has read
-[ch13](#machine-level-code-on-riscv) and is about to read [ch25](#optimising-code), and it is organised as *you know this already,
+[ch14](#machine-level-code-on-riscv) and is about to read [ch26](#optimising-code), and it is organised as *you know this already,
 here it is again*. For anything not in the book's path, the architecture reference manual is the
 document; this page will not substitute for it and does not try.
 
@@ -19,7 +19,7 @@ document; this page will not substitute for it and does not try.
 [Part III](#part3) and [Part IV](#part4) are RISC-V because the kernel small enough to read in an afternoon is a RISC-V
 kernel. [Part V](#part5) is AArch64 because that is where the performance counters work: sampling needs a
 PMU that can raise an interrupt on counter overflow, and no affordable RISC-V core does both.
-[ch00](#prerequisites-and-setup) has the evidence and [ch27](#memory-ordering-on-real-hardware) has the return — a reader shown one weak memory
+[ch00](#prerequisites-and-setup) has the evidence and [ch28](#memory-ordering-on-real-hardware) has the return — a reader shown one weak memory
 model concludes that model *is* memory ordering.
 
 So the crossing is deliberate, and this page is the cost of it, paid in one place.
@@ -46,7 +46,7 @@ Two differences that change how listings read.
 **The `w` registers are not a convention, they are the instruction.** `add w0, w1, w2` is a
 32-bit add that zero-extends into the full register; `add x0, x1, x2` is a 64-bit add. RISC-V
 spells this with separate mnemonics (`addw` against `add`). You will see `w` registers constantly
-in [ch25](#optimising-code)'s listings wherever an `int` is involved, and the zero-extension is free rather
+in [ch26](#optimising-code)'s listings wherever an `int` is involved, and the zero-extension is free rather
 than an extra instruction.
 
 **`x31` is two registers depending on the instruction.** In most positions the encoding means
@@ -69,16 +69,16 @@ Three things to know before reading any AArch64 listing.
 **The addressing modes do arithmetic.** `[x1, x2, lsl #2]` scales an index by four and adds it, in
 the load. RISC-V would need a shift and an add first. This is why an AArch64 inner loop over an
 array is often two instructions shorter than the RISC-V one for the same C, and it is visible in
-every listing in [ch25](#optimising-code).
+every listing in [ch26](#optimising-code).
 
 **`stp` and `ldp` move two registers at once.** Almost every non-leaf function prologue you will
 see is `stp x29, x30, [sp, #-16]!` — save the frame pointer and the return address, and decrement
-the stack pointer, in one instruction. The `!` is the write-back. [ch13](#machine-level-code-on-riscv)'s RISC-V prologues
+the stack pointer, in one instruction. The `!` is the write-back. [ch14](#machine-level-code-on-riscv)'s RISC-V prologues
 take three instructions to do the same thing.
 
 **The suffix after the bracket is where the increment went.** `[x2], #16` adds sixteen to `x2`
 *after* the access; `[x2, #16]!` adds it before. Neither exists in RISC-V, and both appear in
-vectorised loops in [ch30](#vectors).
+vectorised loops in [ch31](#vectors).
 
 ## Branches and conditions
 
@@ -95,7 +95,7 @@ b.lt label
 The flags are a side effect that persists, which buys two things RISC-V has no equivalent of.
 
 **Conditional select.** `csel x0, x1, x2, lt` writes one of two registers depending on the flags,
-with no branch at all. [ch26](#the-cpu) is about what that is worth: a branch the predictor cannot
+with no branch at all. [ch27](#the-cpu) is about what that is worth: a branch the predictor cannot
 learn costs a pipeline flush every time, and a `csel` costs one instruction always.
 
 **Compare-and-branch-on-zero.** `cbz`/`cbnz` are the exception that does not use the flags, and
@@ -112,7 +112,7 @@ they are extremely common because testing against zero is extremely common.
 
 ## Atomics and ordering
 
-[ch19](#locks-and-memory-ordering) prints both of these from real disassembly and [ch27](#memory-ordering-on-real-hardware) is the chapter about
+[ch20](#locks-and-memory-ordering) prints both of these from real disassembly and [ch28](#memory-ordering-on-real-hardware) is the chapter about
 what the difference means.
 
 | | RISC-V | AArch64 |
@@ -125,20 +125,20 @@ what the difference means.
 **The asymmetry is the thing to carry away.** RISC-V puts an instruction *between* the two
 operations being ordered; AArch64 folds the ordering into one of them. A reader who learned that a
 barrier is something you put between two things will not recognise `stlr` as a barrier at all,
-which is exactly why [ch27](#memory-ordering-on-real-hardware) puts them side by side rather than teaching one.
+which is exactly why [ch28](#memory-ordering-on-real-hardware) puts them side by side rather than teaching one.
 
 Both spell the same requirement. Neither spelling is the concept.
 
 ## Vectors
 
-NEON, in one paragraph, because [ch30](#vectors) is the chapter.
+NEON, in one paragraph, because [ch31](#vectors) is the chapter.
 
 Thirty-two registers, `v0`–`v31`, 128 bits each, addressed by an *arrangement specifier* that says
 how to divide them: `v0.4s` is four 32-bit lanes, `v0.2d` is two 64-bit ones, `v0.16b` is sixteen
 bytes. The same registers are named `q0`–`q31` when the whole 128 bits are meant, and `s0`/`d0`
 when a single scalar float or double is meant.
 
-That last point is a trap [ch30](#vectors) fell into and records: an instruction naming a `v`
+That last point is a trap [ch31](#vectors) fell into and records: an instruction naming a `v`
 register is not evidence of vectorisation. This compiler builds a floating-point zero with
 `movi v0.2s, #0`, in a function whose loop it has refused to widen.
 

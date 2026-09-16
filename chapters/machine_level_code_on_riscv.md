@@ -1,10 +1,10 @@
 ---
 title: "Machine-Level Code on RISC-V"
-short_title: "13 · Machine-Level Code on RISC-V"
+short_title: "14 · Machine-Level Code on RISC-V"
 ---
 
 (machine-level-code-on-riscv)=
-# 13 · Machine-Level Code on RISC-V
+# 14 · Machine-Level Code on RISC-V
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "13 · Machine-Level Code on RISC-V"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch04](#c-for-people-who-will-read-a-kernel) |
+| **Prerequisites** | [ch05](#c-for-people-who-will-read-a-kernel) |
 | **What it measures** | Frame sizes and instruction mix for four functions at `-O0` and `-O2`: `bench/results/framesizes-riscv64.json` |
 :::
 
@@ -128,7 +128,7 @@ operations than it has instructions at `-O2`. At `-O2` it needs no frame either.
 That pair is the clearest statement available of what an optimiser is actually for. It is not
 making the arithmetic cleverer — the multiplications are the same multiplications. **It is keeping
 values in registers instead of in memory**, and the difference between those two is the subject of
-[ch24](#the-memory-hierarchy).
+[ch25](#the-memory-hierarchy).
 
 **`sysfs_calls_out` keeps a frame at `-O2`, and a small one.** It calls something, so the return
 address in `ra` is no longer safe where it is — the callee's own `jal` will overwrite it. A frame
@@ -160,12 +160,12 @@ prologue and an epilogue are a matched pair, and the number in both is the same 
 ### Control flow is a comparison and a branch
 
 There are no loops in machine code and no `if` statements. There is a comparison, and there is a
-branch that is taken or not — which is why [ch11](#what-a-computer-does-with-a-program)'s counted loop ended in a branch pointing
+branch that is taken or not — which is why [ch12](#what-a-computer-does-with-a-program)'s counted loop ended in a branch pointing
 backwards, and why a loop and an `if` look so similar once compiled.
 
 RISC-V folds the comparison and the branch into one instruction, which is a design choice rather
 than a universal: it has no condition-code register, so there is no flags state to carry between
-them. That difference resurfaces in [ch25](#optimising-code) on a machine that does have one, and it is one
+them. That difference resurfaces in [ch26](#optimising-code) on a machine that does have one, and it is one
 of the few places where the two architectures genuinely do not translate word for word.
 
 ### Stepping it in the debugger
@@ -196,17 +196,17 @@ two that call something. That is a rule you can apply to a function you have nev
 
 **Whether a frame costs anything.** A store and a load in a prologue is two memory operations, and
 what they cost depends on whether that stack line is in cache — which it almost always is, for
-reasons [ch24](#the-memory-hierarchy) explains and this chapter has no way to demonstrate.
+reasons [ch25](#the-memory-hierarchy) explains and this chapter has no way to demonstrate.
 
 **Whether `-O0` is "slower".** It is certainly more instructions and far more memory traffic, and
 those are the numbers above. Turning that into a ratio requires a clock and a machine, and this
 chapter has neither. It is a common mistake to assume the ratio follows the instruction count;
-[ch26](#the-cpu) is largely about why it does not.
+[ch27](#the-cpu) is largely about why it does not.
 
 **What the registers are called on the other machine.** Everything here is RISC-V. AArch64 divides
 its registers the same way, into caller-saved and callee-saved, and gives them entirely different
 names and a different number of argument registers. The *rule* transfers; the table does not, and
-Appendix F is the translation for the reader who meets it in [ch25](#optimising-code).
+Appendix F is the translation for the reader who meets it in [ch26](#optimising-code).
 
 **How the compiler chose.** Register allocation is an optimisation problem with a large literature
 and this chapter deliberately does not enter it. What it teaches is how to read the *result*,
@@ -216,7 +216,7 @@ which is the durable skill: allocators change, and prologues do not.
 
 Three, and the first is the hardest thing in [Part III](#part3) so far.
 
-**13.1 — Write the C that produced this.**
+**14.1 — Write the C that produced this.**
 A listing, and you write a C function that compiles to the same instructions. Not similar ones —
 the same ones, in order. The test compiles your attempt with the same toolchain and compares
 mnemonic by mnemonic, so a function that gets the right answer another way does not pass.
@@ -229,7 +229,7 @@ to make askable.
 python3 -m pytest tests/machine_level_code_on_riscv/test_problem_1_reconstruct.py
 ```
 
-**13.2 — Which of these needs a frame?**
+**14.2 — Which of these needs a frame?**
 Four functions. For each, predict whether it gets a frame at `-O2` and whether it saves the return
 address. The test compiles each one and reads the prologue, so you are predicting a compiler
 rather than reciting a rule — and the reasoning that explains the table above explains all four.
@@ -238,7 +238,7 @@ rather than reciting a rule — and the reasoning that explains the table above 
 python3 -m pytest tests/machine_level_code_on_riscv/test_problem_2_frames.py
 ```
 
-**13.3 — Who saves what?**
+**14.3 — Who saves what?**
 Name one register a function writes without saving, and one it saves before using. The test checks
 both against the actual disassembly *and* against which half of the convention each belongs to, so
 an answer that is mechanically true but comes from the wrong group fails and tells you so.
@@ -259,8 +259,8 @@ instruction listing answers "what does `sd` actually do" faster than any tutoria
 
 xv6's `kernel/swtch.S` @xv6-riscv-source is fourteen lines of assembly that saves one set of
 callee-saved registers and restores another, and it is the entire mechanism of a context switch.
-Read it now. You will not know *why* it is called or what a context is until [ch20](#scheduling-and-context-switches), but
+Read it now. You will not know *why* it is called or what a context is until [ch21](#scheduling-and-context-switches), but
 you can already read every instruction in it, which is a good way to find out that you can.
 
-[ch14](#linking-and-loading) asks where all this ends up: sections, segments, symbols, and what `exec` does with
+[ch15](#linking-and-loading) asks where all this ends up: sections, segments, symbols, and what `exec` does with
 them.

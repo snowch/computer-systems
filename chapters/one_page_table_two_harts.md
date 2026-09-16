@@ -1,10 +1,10 @@
 ---
 title: "One Page Table, Two Harts"
-short_title: "07 · One Page Table, Two Harts"
+short_title: "08 · One Page Table, Two Harts"
 ---
 
 (one-page-table-two-harts)=
-# 07 · One Page Table, Two Harts
+# 08 · One Page Table, Two Harts
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "07 · One Page Table, Two Harts"
 | | |
 |---|---|
 | **Target** | `bare` — the same machine under QEMU with no operating system on it |
-| **Prerequisites** | [ch06](#interrupts-and-privilege) |
+| **Prerequisites** | [ch07](#interrupts-and-privilege) |
 | **What it measures** | One mapping installed by hand and an address that means something else afterwards; and a counter two harts disagree about. |
 :::
 
@@ -80,7 +80,7 @@ a program that works until it does not, which is among the least pleasant kinds 
 
 And then the part that catches everyone: **machine mode ignores `satp` entirely**. Translation
 applies to supervisor and user mode; machine mode addresses are physical, always. So the program
-has to leave machine mode before any of this means anything, which is why [ch06](#interrupts-and-privilege)
+has to leave machine mode before any of this means anything, which is why [ch07](#interrupts-and-privilege)
 came first.
 
 ```{literalinclude} ../sysfs/bare/paging.c
@@ -127,8 +127,8 @@ moment at which the counter has been read but not yet written.
 The instruction fixed one thing: the read and the write of *this* counter cannot be separated. It
 says nothing about whether the other hart sees this hart's earlier writes to anything else, or in
 what order, and a program built on the assumption that it does will be wrong on real hardware in
-ways this target cannot show you. [ch19](#locks-and-memory-ordering) is where the difference gets
-its own chapter, and [ch27](#memory-ordering-on-real-hardware) is where it costs something.
+ways this target cannot show you. [ch20](#locks-and-memory-ordering) is where the difference gets
+its own chapter, and [ch28](#memory-ordering-on-real-hardware) is where it costs something.
 :::
 
 ## What we measured
@@ -156,7 +156,7 @@ convincing, while showing nothing at all.
 
 **How expensive any of this is.** A page-table walk costs something, a translation cache exists to
 avoid paying it, and two cores touching one cache line cost each other a great deal. None of that
-is visible here. [ch24](#the-memory-hierarchy) and [ch27](#memory-ordering-on-real-hardware) are
+is visible here. [ch25](#the-memory-hierarchy) and [ch28](#memory-ordering-on-real-hardware) are
 those questions on hardware, and the second one is where the atomic instruction above stops
 looking free.
 
@@ -166,12 +166,12 @@ answer is neither deterministic nor as simple as one update going missing. What 
 this chapter is the shape of the hazard, not its likelihood.
 
 **Whether one atomic is enough.** It was here, for one counter. It is not a general answer, and
-[ch19](#locks-and-memory-ordering) is where the difference between an atomic operation and a
+[ch20](#locks-and-memory-ordering) is where the difference between an atomic operation and a
 correctly ordered one gets its own chapter.
 
 ## Problems
 
-**7.1 — Map a page rather than a gigabyte.**
+**8.1 — Map a page rather than a gigabyte.**
 Change the alias to cover four kilobytes instead of a gigabyte. You will need the two levels this
 chapter skipped. The test checks that the alias still reads the same byte *and* that the entry at
 the top level is no longer a leaf.
@@ -180,7 +180,7 @@ the top level is no longer a leaf.
 python3 -m pytest tests/one_page_table_two_harts/test_problem_1_four_kilobytes.py
 ```
 
-**7.2 — Break it on purpose.**
+**8.2 — Break it on purpose.**
 Remove one of the two identity mappings and predict, before running it, exactly which instruction
 the machine fails on and with what cause. Then run it. The test compares your prediction with the
 run.
@@ -189,7 +189,7 @@ run.
 python3 -m pytest tests/one_page_table_two_harts/test_problem_2_no_identity.py
 ```
 
-**7.3 — Lose an update the other way round.**
+**8.3 — Lose an update the other way round.**
 The program loses the second hart's increment. Rearrange the handshake so it loses the first
 hart's instead, without changing the counter's final value. Say which of the three instructions
 moved. The test checks the value, the loss, and that you did not simply swap the two harts' code.
@@ -205,4 +205,4 @@ unprivileged specification @riscv-isa-unprivileged defines the atomic instructio
 on. Both are worth having open — the entry format in particular is one diagram and this chapter
 built it by hand.
 
-[ch08](#a-system-call-of-your-own) turns the boundary this chapter crossed into an interface.
+[ch09](#a-system-call-of-your-own) turns the boundary this chapter crossed into an interface.

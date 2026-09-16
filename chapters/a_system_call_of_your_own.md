@@ -1,10 +1,10 @@
 ---
 title: "A System Call of Your Own"
-short_title: "08 · A System Call of Your Own"
+short_title: "09 · A System Call of Your Own"
 ---
 
 (a-system-call-of-your-own)=
-# 08 · A System Call of Your Own
+# 09 · A System Call of Your Own
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "08 · A System Call of Your Own"
 | | |
 |---|---|
 | **Target** | `bare` — the same machine under QEMU with no operating system on it |
-| **Prerequisites** | [ch07](#one-page-table-two-harts) |
+| **Prerequisites** | [ch08](#one-page-table-two-harts) |
 | **What it measures** | A call number, arguments and a return value crossing the boundary, and the count of registers this handler has to save once the caller is a stranger. |
 :::
 
@@ -20,7 +20,7 @@ short_title: "08 · A System Call of Your Own"
 
 What has to exist before `ecall` is a system call rather than a trap?
 
-[ch05](#a-trap-with-nothing-else) already executed an `ecall` and handled it. Nothing about that
+[ch06](#a-trap-with-nothing-else) already executed an `ecall` and handled it. Nothing about that
 was a system call: no request was made, nothing was asked for, and the handler had nothing to
 decide. Four things are missing, and this chapter adds them — a number saying which call, somewhere
 to put arguments, somewhere to put a result, and a dispatch. A fifth thing turns out to be missing
@@ -45,8 +45,8 @@ That is deliberate, and it is not a simplification of the mechanism — the mech
 because `ecall` traps to the level above wherever it was executed and the level above decides what
 to do about it. What it avoids is having to build a user mode, a process and an address space
 before the boundary itself can be shown, which would put this chapter after
-[ch10](#fork-built-rather-than-read) rather than before it.
-[ch15](#traps-and-system-calls) is the same four ingredients at the level a reader expects.
+[ch11](#fork-built-rather-than-read) rather than before it.
+[ch16](#traps-and-system-calls) is the same four ingredients at the level a reader expects.
 :::
 
 ```{literalinclude} ../sysfs/bare/syscall.c
@@ -129,7 +129,7 @@ first.
 ## What this cannot tell you
 
 **What a system call costs.** Thirty-one stores and thirty-one loads is a count, not a price, and
-the price is not thirty-one times anything. [ch28](#the-os-layers-cost) measures a real one on real
+the price is not thirty-one times anything. [ch29](#the-os-layers-cost) measures a real one on real
 hardware, and the number is larger than this chapter would lead you to expect — the register saves
 are not where the time goes.
 
@@ -139,12 +139,12 @@ target cannot answer, because the answer is entirely about cost.
 
 **What happens when the caller lies.** Every argument here is a number the handler uses as a
 number. The moment an argument is a pointer, the handler is dereferencing an address chosen by
-untrusted code, and everything about that is [ch15](#traps-and-system-calls)'s problem —
-[ch10](#fork-built-rather-than-read) runs into the first half of it.
+untrusted code, and everything about that is [ch16](#traps-and-system-calls)'s problem —
+[ch11](#fork-built-rather-than-read) runs into the first half of it.
 
 ## Problems
 
-**8.1 — Add a call, and an error.**
+**9.1 — Add a call, and an error.**
 Add a call that can fail for a reason other than being unknown, and return something the caller can
 distinguish from a valid result. Say why your choice of sentinel is safe. The test exercises both
 the success and the failure and checks the two cannot be confused.
@@ -153,7 +153,7 @@ the success and the failure and checks the two cannot be confused.
 python3 -m pytest tests/a_system_call_of_your_own/test_problem_1_add_a_call.py
 ```
 
-**8.2 — Save one register fewer.**
+**9.2 — Save one register fewer.**
 Remove exactly one store and its matching load from the entry stub, and produce a program in which
 that omission is visible in the output. The test checks that the register you dropped is the one
 your program shows being corrupted.
@@ -162,7 +162,7 @@ your program shows being corrupted.
 python3 -m pytest tests/a_system_call_of_your_own/test_problem_2_one_fewer.py
 ```
 
-**8.3 — Where does the frame live?**
+**9.3 — Where does the frame live?**
 The stub puts the frame on whatever stack the caller was using. Say what goes wrong if the caller
 arrives with a stack pointer it does not own, and change the stub so the kernel uses a stack of its
 own instead. The test checks the frame is no longer on the caller's stack.
@@ -176,4 +176,4 @@ python3 -m pytest tests/a_system_call_of_your_own/test_problem_3_whose_stack.py
 The unprivileged specification @riscv-isa-unprivileged defines `ecall`; the privileged one @riscv-isa-privileged defines
 what it does at each privilege level, which is not the same thing at each.
 
-[ch09](#a-small-integer-that-means-a-device) gives this mechanism its first API worth calling.
+[ch10](#a-small-integer-that-means-a-device) gives this mechanism its first API worth calling.

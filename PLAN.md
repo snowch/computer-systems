@@ -86,7 +86,7 @@ technique — which counter, which experiment, which control.
 The `xv6`/`host` split ([§5](#5-hardware-and-execution-strategy)) is not an implementation
 detail, it is the spine. Parts III and IV build a complete and *exact* model of what a program does,
 on a machine where everything is inspectable and nothing about time is real. Part V takes that
-model to hardware and asks what each part of it costs. [ch22](#the-same-program-on-both-targets) is the hinge: the same
+model to hardware and asks what each part of it costs. [ch23](#the-same-program-on-both-targets) is the hinge: the same
 program, watched in a debugger and then profiled on the board, with the gap between the two made
 explicit.
 
@@ -106,10 +106,10 @@ which renders as an **Answers the cost of** row in its header and is checked by
 
 | Part V chapter | Costs what was explained in |
 |---|---|
-| ch24 The Memory Hierarchy | ch11 (layout and alignment), ch15 (address translation) |
-| ch25 Optimising Code | ch12 (what the compiler emitted) |
-| ch26 The CPU | ch12 (the instructions), now priced |
-| ch27 Memory Ordering on Real Hardware | ch18 (locks, fences, RVWMO) |
+| ch25 The Memory Hierarchy | ch11 (layout and alignment), ch15 (address translation) |
+| ch26 Optimising Code | ch12 (what the compiler emitted) |
+| ch27 The CPU | ch12 (the instructions), now priced |
+| ch28 Memory Ordering on Real Hardware | ch18 (locks, fences, RVWMO) |
 | ch27 The OS Layer's Cost | ch14 (traps), ch16 (faults), ch19 (switches) |
 
 Three Part V chapters are deliberately unpaired and the test knows it: ch22 teaches measurement
@@ -118,14 +118,14 @@ II never described. Anything else unpaired is an oversight.
 
 The reader therefore arrives at each Part V chapter already understanding the mechanism and
 needing only the price — and the crossing itself is rehearsed once, deliberately, in
-[ch22](#the-same-program-on-both-targets).
+[ch23](#the-same-program-on-both-targets).
 
 ### 3.4 Measurement as a skill, not a step
 
-A running thread, deliberately spread out rather than confined to [ch23](#measuring): every chapter
+A running thread, deliberately spread out rather than confined to [ch24](#measuring): every chapter
 that produces a number also says how it could be wrong. Variance, warm-up, the observer effect,
 measurement bias @mytkowicz2009wrong, the difference between a correct result and a fast one. By
-[ch29](#whole-machine-profiling) the reader should be more suspicious of a benchmark than of a bug report.
+[ch30](#whole-machine-profiling) the reader should be more suspicious of a benchmark than of a bug report.
 
 ---
 
@@ -170,12 +170,28 @@ runtime underneath. Control flow, operators and the standard library's interface
 the reader's other language.
 
 **What this part deliberately does not cover, because a later chapter measures it instead.** Type
-sizes, alignment, byte order and struct padding are [ch12](#representing-information) and are established there by
+sizes, alignment, byte order and struct padding are [ch13](#representing-information) and are established there by
 measurement rather than assertion. Bit manipulation and page-table-entry encoding are ch11 and
 ch15. The preprocessor is ch10. How a system call reaches the kernel is ch14. A part that repeated
 those would be the book disagreeing with itself, which is what ERRATA.md exists to stop.
 
-#### ch01 · Reading a Listing — target `both`
+#### ch01 · Setting Up the Board — target `host`
+
+- **Objectives.** Get the second machine working and establish that it is telling the truth. The
+  native toolchain; `perf stat` reading real counters rather than the kernel's estimate of them;
+  `perf record` collecting samples, which is a separate capability from counting and can be absent
+  on a machine that counts perfectly.
+- **Code.** None of its own. `scripts/verify-setup.py` and `make bench-board` do the work.
+- **Measurements.** The board's own account of itself — model, kernel, cores, and the two
+  capability rows — from `setup-host.json`. Pending until the board runs `make bench-board`, which
+  is the honest state: its measurement is a report about hardware that has to exist first.
+- **Problems.** Decide which `perf stat` outcomes are counts of something the hardware did; say
+  how far through the book a machine gets given what it can count and sample. Python stubs.
+- **Why separate from ch00.** The board is not needed until ch23 and the emulated targets are
+  needed immediately, so ch00 carried a note telling the reader to do half of it now and come back.
+  Two chapters in that order say it without the note.
+
+#### ch02 · Reading a Listing — target `both`
 
 - **Objectives.** Read what a compiler produced well enough to say what it did. The address column
   and why instructions are not all the same length; operands destination-first; parentheses and
@@ -194,7 +210,7 @@ those would be the book disagreeing with itself, which is what ERRATA.md exists 
   read as arithmetic. It was a collapsed note inside ch00 and then an appendix section, and in
   both places a reader arriving at `4(a0)` had to go and find it.
 
-#### ch02 · Memory Is One Array — target `xv6`
+#### ch03 · Memory Is One Array — target `xv6`
 
 - **Objectives.** Read a declaration and know what each piece of it becomes. Memory as an array of
   bytes; `&` and `*`; what a pointer's *type* is for; pointer arithmetic scaled by the element;
@@ -207,7 +223,7 @@ those would be the book disagreeing with itself, which is what ERRATA.md exists 
 - **Problems.** Read declarations and say what each names; walk a buffer with pointers rather than
   indices; round an address to a page boundary both ways.
 
-#### ch03 · C Without a Runtime — target `xv6`
+#### ch04 · C Without a Runtime — target `xv6`
 
 - **Objectives.** For the reader who already writes C, and for the reader who has just met it: what
   stops being true below the library. No heap, so objects live in fixed arrays and free lists made
@@ -221,7 +237,7 @@ those would be the book disagreeing with itself, which is what ERRATA.md exists 
   plausible kernel functions may fail and what it must return; say what a missing `volatile` costs
   in each of several loops.
 
-#### ch04 · C for People Who Will Read a Kernel — target `xv6`
+#### ch05 · C for People Who Will Read a Kernel — target `xv6`
 
 - **Objectives.** The subset of C that is really about addresses: pointers, casts, arrays versus
   pointers, structs, function pointers, `volatile`, `static`, storage duration. Enough to read
@@ -251,7 +267,7 @@ having *written* a `fork`, and can therefore see what xv6 adds to one and why.
 
 **What it costs, and what that buys.** These programs need a linker script, `-nostdlib` and inline
 assembly before Part III has explained any of them. That is deliberate: the reader writes one on
-faith here and finds out why it is shaped that way in [ch14](#linking-and-loading), which is a better order than
+faith here and finds out why it is shaped that way in [ch15](#linking-and-loading), which is a better order than
 being told first. Each chapter names the later one that settles what it borrowed.
 
 **Originality.** Building a small kernel is a well-populated genre and §5 applies with full force.
@@ -259,7 +275,7 @@ This part's sequence is derived from this book's own question rather than from a
 each chapter isolates one primitive, *counts* what it takes, and the count is then set beside
 xv6's for the same thing. No chapter here walks a reader through a finished kernel's source.
 
-#### ch05 · A Trap, With Nothing Else in the Machine — target `bare`
+#### ch06 · A Trap, With Nothing Else in the Machine — target `bare`
 
 - **Objectives.** The whole of a trap: `mtvec` says where, `mepc` says where you were, `mret` goes
   back. That a handler saving one register can be correct here, and why ch14's cannot be.
@@ -269,7 +285,7 @@ xv6's for the same thing. No chapter here walks a reader through a finished kern
 - **Problems.** Return somewhere other than the next instruction; take a fault rather than an
   `ecall`; say what happens if `mepc` is not advanced.
 
-#### ch06 · Interrupts, and Who Is Allowed To — target `bare`
+#### ch07 · Interrupts, and Who Is Allowed To — target `bare`
 
 - **Objectives.** Asynchronous against synchronous: an interrupt arrives without the program
   asking for it. The CLINT, `mie` and `mstatus`, and what a privilege level actually restricts.
@@ -279,7 +295,7 @@ xv6's for the same thing. No chapter here walks a reader through a finished kern
 - **Problems.** Predict which of several accesses trap from each mode; make the timer fire a
   known number of times.
 
-#### ch07 · One Page Table, Two Harts — target `bare`
+#### ch08 · One Page Table, Two Harts — target `bare`
 
 - **Objectives.** Translation as a mechanism rather than as policy: one mapping, installed by
   hand, and an address that means something different afterwards. Then a second hart, and the
@@ -290,7 +306,7 @@ xv6's for the same thing. No chapter here walks a reader through a finished kern
   counter drifts from the number of increments.
 - **Problems.** Map one page at two addresses; predict the drift; fix it.
 
-#### ch08 · A System Call of Your Own — target `bare`
+#### ch09 · A System Call of Your Own — target `bare`
 
 - **Objectives.** What has to exist before `ecall` is a *system call* rather than a trap: a call
   number, a place to put arguments, a place to put a result, and a dispatch. The register problem
@@ -300,7 +316,7 @@ xv6's for the same thing. No chapter here walks a reader through a finished kern
 - **Measurements.** The registers this handler saves, beside ch04's and beside ch14's.
 - **Problems.** Add a call; return an error; say what breaks if the frame is one register short.
 
-#### ch09 · A Small Integer That Means a Device — target `bare`
+#### ch10 · A Small Integer That Means a Device — target `bare`
 
 - **Objectives.** Why a program names what it reads by number. A descriptor is an index into a
   table the kernel keeps, not a pointer to the thing itself, and the indirection only becomes
@@ -318,7 +334,7 @@ xv6's for the same thing. No chapter here walks a reader through a finished kern
   that primitives arrive one at a time. Having it already, ch09 can ask what `fork` copies against
   what it shares using two concepts the reader holds separately, instead of teaching both at once.
 
-#### ch10 · fork, Built Rather Than Read — target `bare`
+#### ch11 · fork, Built Rather Than Read — target `bare`
 
 - **Objectives.** The least a machine needs before two programs run on it: a table of them, an
   address space each, and a scheduler that alternates. `fork` as the thing that produces the
@@ -333,7 +349,7 @@ xv6's for the same thing. No chapter here walks a reader through a finished kern
 Target `xv6` unless stated. The goal of Part III is an exact model of what a program is and what
 happens to it, with no hand-waving and no appeals to "roughly".
 
-#### ch11 · What a Computer Does With a Program — target `both`
+#### ch12 · What a Computer Does With a Program — target `both`
 
 - **Objectives.** One program, followed from source text to result: preprocess, compile, assemble,
   link, load, execute, exit. Which stages are compile-time and which cost anything at run time.
@@ -346,7 +362,7 @@ happens to it, with no hand-waving and no appeals to "roughly".
 - **Problems.** Given intermediates, say which stage produced which. Predict what changes in the
   binary when one source line changes.
 
-#### ch12 · Representing Information — target `xv6`
+#### ch13 · Representing Information — target `xv6`
 
 - **Objectives.** Integers and two's complement as a *representation choice* with consequences;
   bit manipulation; alignment; endianness; where undefined behaviour and overflow actually bite.
@@ -360,7 +376,7 @@ happens to it, with no hand-waving and no appeals to "roughly".
   layout of several structs; find the input that makes a plausible-looking arithmetic function
   wrong.
 
-#### ch13 · Machine-Level Code on RISC-V — target `xv6`
+#### ch14 · Machine-Level Code on RISC-V — target `xv6`
 
 - **Objectives.** Registers and their ABI roles; the calling convention; stack frames; how control
   flow compiles; reading `objdump` output and stepping real code in gdb against xv6 binaries.
@@ -370,7 +386,7 @@ happens to it, with no hand-waving and no appeals to "roughly".
 - **Problems.** Reconstruct a function's C from its disassembly; predict the frame layout; find
   the register the compiler chose not to save and say why it was allowed to.
 
-#### ch14 · Linking and Loading — target `xv6`
+#### ch15 · Linking and Loading — target `xv6`
 
 - **Objectives.** ELF: sections, segments, symbols, relocations; what a linker script decides;
   how xv6's `exec` turns a file into an address space.
@@ -385,7 +401,7 @@ happens to it, with no hand-waving and no appeals to "roughly".
 Target `xv6` throughout, with instrumentation added as patches under `xv6/patches/`. Part IV's
 goal is that no operating system service remains a black box.
 
-#### ch15 · Traps and System Calls — target `xv6`
+#### ch16 · Traps and System Calls — target `xv6`
 
 - **Objectives.** What hardware does on a trap; what `trampoline.S` and `usertrap` do; the full
   path of one system call; the *cost model* — what work a trap represents even though we cannot
@@ -396,7 +412,7 @@ goal is that no operating system service remains a black box.
 - **Problems.** Add a system call end to end; make the tracer report an argument; predict which
   registers must be saved and check against the code.
 
-#### ch16 · Virtual Memory — target `xv6`
+#### ch17 · Virtual Memory — target `xv6`
 
 - **Objectives.** Sv39; the three-level walk; the kernel address space; `walk`, `kalloc`,
   `mappages`; how a process address space is built and torn down.
@@ -407,7 +423,7 @@ goal is that no operating system service remains a black box.
 - **Problems.** Decode addresses by hand and check against the dumper; implement the walk; find
   the mapping that explains a fault.
 
-#### ch17 · Page Faults as a Feature — target `xv6`
+#### ch18 · Page Faults as a Feature — target `xv6`
 
 - **Objectives.** A fault as a mechanism rather than an error: lazy allocation, copy-on-write,
   demand paging. What each buys and what it costs in bookkeeping.
@@ -417,7 +433,7 @@ goal is that no operating system service remains a black box.
 - **Problems.** Implement COW fork against the supplied tests; find the reference-counting bug the
   tests are designed to catch.
 
-#### ch18 · Interrupts and Drivers — target `xv6`
+#### ch19 · Interrupts and Drivers — target `xv6`
 
 - **Objectives.** UART, PLIC, the timer; interrupt versus trap; top and bottom halves; why a
   driver splits its work in two.
@@ -427,7 +443,7 @@ goal is that no operating system service remains a black box.
 - **Problems.** Add a device driver for a simple virtual device; make the console lose characters
   and explain why it did.
 
-#### ch19 · Locks and Memory Ordering — target `xv6`
+#### ch20 · Locks and Memory Ordering — target `xv6`
 
 - **Objectives.** What a race actually is at the instruction level; spinlocks on `amoswap`;
   fences and what they order; sleep locks; lock ordering and deadlock.
@@ -438,7 +454,7 @@ goal is that no operating system service remains a black box.
 - **Problems.** Write a correct lock; break a program by removing a fence and explain the result;
   find the lock-order inversion the tests provoke.
 
-#### ch20 · Scheduling and Context Switches — target `xv6`
+#### ch21 · Scheduling and Context Switches — target `xv6`
 
 - **Objectives.** What `swtch` saves and what it does not; the scheduler thread; sleep and wakeup;
   what it means for a thread to "run".
@@ -447,7 +463,7 @@ goal is that no operating system service remains a black box.
 - **Problems.** Implement a different scheduling policy and show it changes the counts; explain a
   lost wakeup.
 
-#### ch21 · The File System — target `xv6`
+#### ch22 · The File System — target `xv6`
 
 - **Objectives.** The seven layers from disk blocks to the file descriptor; the write-ahead log;
   what has to be true on disk for a crash mid-write to be survivable; one `write` traced all the
@@ -458,7 +474,7 @@ goal is that no operating system service remains a black box.
 - **Problems.** Trace a `write` and account for every block; implement a file-system operation;
   find the state a crash at a specific point would leave behind.
 
-#### ch22 · The Same Program on Both Targets — target `both`
+#### ch23 · The Same Program on Both Targets — target `both`
 
 The hinge of the book.
 
@@ -483,7 +499,7 @@ The hinge of the book.
 Target `host` throughout: the reference machine, natively. Every figure in this part is measured
 on the board and stamped; nothing here may come from an emulator.
 
-#### ch23 · Measuring — target `host`
+#### ch24 · Measuring — target `host`
 
 - **Objectives.** Clocks and what they cost to read; `perf stat`; cycle counters; repetition,
   variance and what statistic to report; warm-up; the observer effect; measurement bias
@@ -504,7 +520,7 @@ on the board and stamped; nothing here may come from an emulator.
   A reader who can falsify a claim the book makes about its own tooling has the skill the chapter
   is for, and the answer is genuinely unknown to the author.
 
-#### ch24 · The Memory Hierarchy — target `host`
+#### ch25 · The Memory Hierarchy — target `host`
 
 - **Objectives.** Measure the cache hierarchy rather than look it up: sizes, line size, latency at
   each level, TLB reach. Locality and the miss-rate model.
@@ -514,7 +530,7 @@ on the board and stamped; nothing here may come from an emulator.
 - **Problems.** Derive the cache parameters from a supplied dataset; predict the miss rate of a
   loop and then measure it.
 
-#### ch25 · Optimising Code — target `host`
+#### ch26 · Optimising Code — target `host`
 
 - **Objectives.** What the compiler does and does not do; reading optimised output; loop
   transformations; when a source change is real and when it is noise.
@@ -525,7 +541,7 @@ on the board and stamped; nothing here may come from an emulator.
 - **Problems.** Predict which variants the compiler equalises; make one faster without changing
   what it computes; explain a transformation that made things worse.
 
-#### ch26 · The CPU — target `host`
+#### ch27 · The CPU — target `host`
 
 - **Objectives.** The out-of-order pipeline; branch prediction; instruction-level parallelism;
   reading the A76's PMU events and knowing which are derived rather than measured.
@@ -539,11 +555,11 @@ on the board and stamped; nothing here may come from an emulator.
 - **Problems.** Construct a workload with a target misprediction rate; explain an IPC that is
   lower than the dependency chain predicts.
 
-#### ch27 · Memory Ordering on Real Hardware — target `host`
+#### ch28 · Memory Ordering on Real Hardware — target `host`
 
 - **Objectives.** What four cores cost each other: false sharing, cache-line ping-pong, the price
   of atomics and fences — and **a second memory model**, seen next to the first.
-- **Why this is not simply "ch18 with numbers".** [ch19](#locks-and-memory-ordering) teaches RISC-V: `amoswap`, `fence`,
+- **Why this is not simply "ch18 with numbers".** [ch20](#locks-and-memory-ordering) teaches RISC-V: `amoswap`, `fence`,
   and RVWMO. This chapter is ARM: load-exclusive/store-exclusive or LSE atomics, `dmb` and its
   domains, and a differently specified model. That is a feature. A reader shown only one weak
   memory model will conclude that model *is* memory ordering; shown two, they learn that "weak
@@ -557,7 +573,7 @@ on the board and stamped; nothing here may come from an emulator.
 - **Problems.** Find and fix the false sharing in a supplied structure; predict the scaling curve
   before measuring it.
 
-#### ch28 · The OS Layer's Cost on Real Hardware — target `host`
+#### ch29 · The OS Layer's Cost on Real Hardware — target `host`
 
 - **Objectives.** What Linux charges for the services xv6 demonstrated: system call, page fault,
   context switch, `mmap`. Compared explicitly against the structural model from Part IV.
@@ -567,7 +583,7 @@ on the board and stamped; nothing here may come from an emulator.
 - **Problems.** Measure a syscall's cost correctly, avoiding the three traps the chapter has
   already sprung; explain the difference between two measurements of the same call.
 
-#### ch29 · Whole-Machine Profiling — target `host`
+#### ch30 · Whole-Machine Profiling — target `host`
 
 - **Objectives.** `perf record`, call graphs, flame graphs; sampling and its biases; the USE
   method; off-CPU time; a method for finding a bottleneck in something you did not write.
@@ -581,7 +597,7 @@ on the board and stamped; nothing here may come from an emulator.
   ([§5](#5-hardware-and-execution-strategy)). It is fully measurable on the reference machine, and
   its header warns the RISC-V reader that this is the one chapter they cannot run.
 
-#### ch30 · Vectors — target `host`
+#### ch31 · Vectors — target `host`
 
 - **Objectives.** What vectorisation is and what it buys; when the compiler will do it unasked and
   when it will not; reading vectorised output; the bound a vector unit is actually subject to.
@@ -636,7 +652,7 @@ the discipline is that neither is ever asked the other's question.
   for *correctness*. Timing tests are marked `board` and skip themselves everywhere else.
 - No chapter above `xv6` is a prerequisite for a later `xv6` chapter, so a reader without the
   board can complete Parts III and IV in full — fourteen chapters — and set the board up before
-  [ch22](#the-same-program-on-both-targets).
+  [ch23](#the-same-program-on-both-targets).
 
 **Why the targets do not share an instruction set.** Part V needs `perf` to count *and* to
 sample. Sampling requires counter-overflow interrupts — standard on ARM PMUs, and on RISC-V the
@@ -965,7 +981,7 @@ distribution's patch level moves a benchmark by a few per cent, and an unrecorde
 unexplainable a year later.
 
 `CORE_SOURCES` in `bench/stamp.py` should be treated as frozen once chapters cite results.
-[ch23](#measuring) adds the timing library to it, once, deliberately, invalidating every earlier
+[ch24](#measuring) adds the timing library to it, once, deliberately, invalidating every earlier
 `host` result. Any later change to it means regenerating everything, on the board.
 
 ---
@@ -1004,7 +1020,7 @@ Recorded so they are not relitigated.
 ## 14. Immediate next steps
 
 1. Run `make bench-board` on the reference machine, commit `bench/results/setup-host.json`, and
-   remove the `pending=` marker on `appendix-h-board` in `bench/figures.py` (M1).
+   remove the `pending=` marker on `setting-up-the-board-report` in `bench/figures.py` (M1).
 2. Generate Appendix C from the board — the `perf` events it actually has.
 3. Write ch10 with the per-chapter prompt, following
    [§12.1](#121-chapter-template) and [§12.3](#123-definition-of-done-per-chapter).

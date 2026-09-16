@@ -1,10 +1,10 @@
 ---
 title: "Page Faults as a Feature"
-short_title: "17 · Page Faults as a Feature"
+short_title: "18 · Page Faults as a Feature"
 ---
 
 (page-faults-as-a-feature)=
-# 17 · Page Faults as a Feature
+# 18 · Page Faults as a Feature
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "17 · Page Faults as a Feature"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch16](#virtual-memory) |
+| **Prerequisites** | [ch17](#virtual-memory) |
 | **What it measures** | Pages allocated and faults taken for one workload, under each of the kernel's two allocation policies: `bench/results/faults-xv6.json` |
 :::
 
@@ -20,7 +20,7 @@ short_title: "17 · Page Faults as a Feature"
 
 What can a kernel do with a fault it expected?
 
-[ch16](#virtual-memory) ended with a walk that stopped and a level to report it at. That was presented as a
+[ch17](#virtual-memory) ended with a walk that stopped and a level to report it at. That was presented as a
 diagnosis, which is how a fault is usually introduced: something went wrong, and here is where.
 But a walk stops whenever an entry is absent, and **the kernel decides which entries are absent**.
 So a kernel can arrange to be told, by hardware, at the exact moment a particular address is
@@ -43,7 +43,7 @@ when a particular byte is used, and everything in this chapter is built on that 
 
 ### The instruction runs again
 
-Here is the difference from [ch15](#traps-and-system-calls) that makes it work, and it is one line of the kernel.
+Here is the difference from [ch16](#traps-and-system-calls) that makes it work, and it is one line of the kernel.
 
 After a system call, `usertrap` advances the saved program counter past the `ecall` before
 returning, because the call has been made and the program should carry on with the next
@@ -73,7 +73,7 @@ There is a second test beside it that is easier to leave out. If the page is *al
 fault cannot be a first touch — the entry is there and valid, so the walk did not stop for lack of
 one. It stopped because a permission was refused. Allocating a fresh page for that case would map
 a blank page over one the program was in the middle of using, and the program would not crash; it
-would get the wrong answer. Problem 17.2 is about exactly these edges.
+would get the wrong answer. Problem 18.2 is about exactly these edges.
 
 ### Both policies are already here
 
@@ -116,7 +116,7 @@ barely touched; a lazy request touched in full; an eager request of the same siz
 ```
 
 Read the first four rows as one sentence. Most of what was asked for lazily was never allocated,
-and the pages that were allocated each cost one entry into the kernel — the whole of [ch15](#traps-and-system-calls)'s
+and the pages that were allocated each cost one entry into the kernel — the whole of [ch16](#traps-and-system-calls)'s
 trap path, plus a walk, plus an allocation, for every one of them.
 
 That is the exchange rate, and it is the thing usually left out. Laziness is nearly always
@@ -162,7 +162,7 @@ kernel can do but kill the process.
 
 So laziness moves a failure from a place where the program can handle it to a place where it
 cannot. That is the whole reason an operating system which overcommits memory needs a policy for
-choosing something to kill, and problem 17.3 is about being able to say precisely when each
+choosing something to kill, and problem 18.3 is about being able to say precisely when each
 version finds out.
 
 ## What we measured
@@ -178,7 +178,7 @@ for, and that the numbers describe a bug rather than a policy.
 
 **What a fault costs.** Not a single duration appears above, and it could not honestly. A fault's
 cost is the trap path, the walk, the allocation and whatever the TLB and the caches make of the
-interruption — and this target models none of the last part. [ch28](#the-os-layers-cost) prices the whole shape
+interruption — and this target models none of the last part. [ch29](#the-os-layers-cost) prices the whole shape
 on hardware. Until then, "seventeen faults" is a count of kernel entries and not a claim about
 time.
 
@@ -205,7 +205,7 @@ out of the kernel so that being right about them is separable from getting a ker
 Neither this chapter's patch nor anything in `sysfs/` answers any of them: the patch counts and
 decides nothing.
 
-**17.1 — How many faults will these accesses cause?**
+**18.1 — How many faults will these accesses cause?**
 You are given runs of bytes a program touches and asked for the number of first-touch faults.
 
 The trap is the one the whole chapter rests on: a program thinks in bytes and the machine charges
@@ -216,7 +216,7 @@ overlap, repeat and arrive in no order.
 python3 -m pytest tests/page_faults_as_a_feature/test_problem_1_faults.py
 ```
 
-**17.2 — What should the handler do about this fault?**
+**18.2 — What should the handler do about this fault?**
 Allocate, kill, or refuse to have an opinion. Nine cases, and three of them are the ones a handler
 written from the happy path gets wrong: the exact boundary, a page that is already mapped, and a
 cause that is not a page fault at all.
@@ -225,7 +225,7 @@ cause that is not a page fault at all.
 python3 -m pytest tests/page_faults_as_a_feature/test_problem_2_action.py
 ```
 
-**17.3 — When does a program that asks for too much find out?**
+**18.3 — When does a program that asks for too much find out?**
 For each policy, say where the shortage becomes visible: at the request, at the touch, or never.
 
 This is the section above, turned into a function. Getting it right means you can predict which
@@ -247,7 +247,7 @@ xv6's `vmfault` in `kernel/vm.c` @xv6-riscv-source is the handler this chapter m
 shorter than this section. Read it beside `sys_sbrk` in `kernel/sysproc.c`, which is where the two
 policies are chosen between — the whole difference is one branch.
 
-[ch18](#interrupts-and-drivers) stays with the same mechanism and changes what raises it. A page fault is the CPU
+[ch19](#interrupts-and-drivers) stays with the same mechanism and changes what raises it. A page fault is the CPU
 interrupting itself about something it was doing; a device interrupt is somebody else entirely,
 with no relationship to the instruction that happens to be running, and that difference turns out
 to matter more than it sounds.

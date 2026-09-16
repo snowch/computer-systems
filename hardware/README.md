@@ -57,7 +57,7 @@ A 2025 study measured the three RISC-V cores you can actually buy @riscv-pmu-pro
 > overflow interrupt support, severely limiting traditional performance analysis approaches."
 
 Read down that table and no column wins. The U74 counts but cannot sample and has no vectors —
-so ch28 and ch29 become unmeasurable. The C910 can sample but needs a vendor kernel and is
+so ch30 and ch31 become unmeasurable. The C910 can sample but needs a vendor kernel and is
 out-of-order. The X60 has the vectors and struggles with `cycles` and `instructions` themselves,
 exposing non-standard counters such as `u_mode_cycle` instead. Even SiFive's own flagship P550 is
 reported not to support `core_clock_cycles`. On top of that, a VisionFive 2 Ubuntu release
@@ -67,11 +67,11 @@ So staying on RISC-V would have cost **two of Part V's eight chapters**, plus a 
 plus tooling that breaks between distro releases. A Raspberry Pi costs none of those things.
 
 **What it costs instead** is instruction-set continuity between Part IV and Part V — and only
-in the Part V chapters that actually read disassembly: ch25, ch26 and ch30 — ch01 introduces
+in the Part V chapters that actually read disassembly: ch26, ch27 and ch31 — ch02 introduces
 both instruction sets. The other five are
 method, and method does not have an architecture. Appendix F is the translation, written for the
-reader who learned RISC-V in ch13 and is about to read AArch64 in ch25. A reader who learned RISC-V assembly in Part III
-and then reads AArch64 in ch25 is not being failed by the book; they are being shown that the
+reader who learned RISC-V in ch14 and is about to read AArch64 in ch26. A reader who learned RISC-V assembly in Part III
+and then reads AArch64 in ch26 is not being failed by the book; they are being shown that the
 concepts were never about RISC-V. That is worth more than the tidiness it replaces.
 
 ## What the machine has to do
@@ -84,14 +84,14 @@ concepts were never about RISC-V. That is worth more than the tidiness it replac
 | **Must** | 4 GB RAM, 4 cores | ch26 measures what cores cost each other |
 | **Nice** | NVMe or a fast SSD | Builds and ch20 are much less tedious |
 | **Nice** | A SIMD unit the compiler targets — NEON, or RVV 1.0 | ch29 measures vectorisation |
-| **Nice** | An in-order core | Not required, and the reference is out-of-order. In-order cores make ch25 and ch26 easier to read |
+| **Nice** | An in-order core | Not required, and the reference is out-of-order. In-order cores make ch27 and ch28 easier to read |
 
 ## If you already own a RISC-V board
 
 Keep it — everything before Part V is RISC-V and it is a perfectly good machine for the rest.
 For Part V
-it will run everything that counts (ch22 through ch27), and the two chapters it cannot do say so
-in their own headers: ch28 needs sampling and ch29 needs a vector unit. Your figures will differ
+it will run everything that counts (ch24 through ch29), and the two chapters it cannot do say so
+in their own headers: ch30 needs sampling and ch31 needs a vector unit. Your figures will differ
 from the committed ones either way, which is expected.
 
 ## Finding something else

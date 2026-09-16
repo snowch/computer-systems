@@ -42,7 +42,9 @@ project:
 
     - title: Getting started
       children:
+        - file: chapters/part0_getting_started.md
         - file: chapters/prerequisites_and_setup.md
+        - file: chapters/setting_up_the_board.md
 
     - title: Part I — C, and what the machine does with it
       children:

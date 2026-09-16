@@ -1,10 +1,10 @@
 ---
 title: "Traps and System Calls"
-short_title: "15 · Traps and System Calls"
+short_title: "16 · Traps and System Calls"
 ---
 
 (traps-and-system-calls)=
-# 15 · Traps and System Calls
+# 16 · Traps and System Calls
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "15 · Traps and System Calls"
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch14](#linking-and-loading) |
+| **Prerequisites** | [ch15](#linking-and-loading) |
 | **What it measures** | The length of the trap path, and what a fixed workload asks the kernel for: `bench/results/traps-xv6.json` |
 :::
 
@@ -33,7 +33,7 @@ The instruction is `ecall`, and the temptation is to read it as a function call 
 It is not, and nearly every way the two differ matters.
 
 A function call is an agreement. The caller knows it is calling, has arranged its registers
-accordingly, and the convention tells both sides who preserves what — that was [ch13](#machine-level-code-on-riscv).
+accordingly, and the convention tells both sides who preserves what — that was [ch14](#machine-level-code-on-riscv).
 **An interrupt is not an agreement.** The interrupted code did not ask, made no arrangements, and
 must find every register exactly as it left it. There is no calling convention to lean on, because
 one side of it never agreed to anything.
@@ -70,7 +70,7 @@ faults. A page table cannot be swapped from code that is only in one of the two.
 xv6 solves it the way real kernels do: one page, the **trampoline**, mapped at the same virtual
 address in every address space, kernel and user alike. The switch happens inside that page, so
 whichever table is active the instruction after the switch is at an address that is still valid.
-[ch16](#virtual-memory) is where page tables become a mechanism rather than a word; this is the one place in
+[ch17](#virtual-memory) is where page tables become a mechanism rather than a word; this is the one place in
 [Part IV](#part4) where a chapter has to promise that something later will make sense.
 
 ### How long is the path?
@@ -89,7 +89,7 @@ the interrupt state back in one instruction.
 
 **This is a count and not a cost**, and the distinction is the whole reason it appears here rather
 than in [Part V](#part5). What an instruction costs depends on a pipeline and a cache, and this target has
-neither. What is true regardless of the machine is that the path is this long. [ch28](#the-os-layers-cost) takes
+neither. What is true regardless of the machine is that the path is this long. [ch29](#the-os-layers-cost) takes
 the same shape to hardware and puts a price on it.
 
 ### Counting what actually happens
@@ -138,7 +138,7 @@ thousand — which is a much smaller claim than the one that was almost printed,
 on every machine.
 
 That is the discipline of [ch00](#prerequisites-and-setup) meeting a case where it costs something. The large number
-was easy, impressive, and meaningless. [ch28](#the-os-layers-cost) counts the lot, on a machine where elapsed
+was easy, impressive, and meaningless. [ch29](#the-os-layers-cost) counts the lot, on a machine where elapsed
 time is a fact about the machine.
 
 ### The register census, and why it is not thirty-two
@@ -162,7 +162,7 @@ it silently is exactly the failure the whole stamping scheme exists to prevent.
 **What any of this costs.** The path is eighty-odd instructions long; whether that is expensive
 depends on whether they hit in cache, whether the pipeline drains, and what the page-table switch
 does to the TLB — three questions this target has no opinion about whatsoever. It is entirely
-possible for the *shorter* of two paths to be the slower one, and [ch28](#the-os-layers-cost) is where that gets
+possible for the *shorter* of two paths to be the slower one, and [ch29](#the-os-layers-cost) is where that gets
 settled.
 
 **What a real kernel's path looks like.** xv6's is short because xv6 is small. Linux's does
@@ -170,18 +170,18 @@ considerably more on the way in — checking for signals, handling seccomp filte
 its fast paths exist precisely to avoid some of it. The shape is the same; the length is not.
 
 **Why the timer fires when it does.** The census shows timer interrupts occurred and nothing else
-about them, because their frequency here is an artefact of emulation. [ch20](#scheduling-and-context-switches) explains what
+about them, because their frequency here is an artefact of emulation. [ch21](#scheduling-and-context-switches) explains what
 the kernel does with them.
 
 **Anything about interrupts arriving during a trap.** `ecall` disables them and `usertrap` turns
 them back on deliberately, at a point chosen for a reason the code comments explain. Nested traps,
-and what happens when one arrives at the wrong moment, are [ch18](#interrupts-and-drivers)'s subject.
+and what happens when one arrives at the wrong moment, are [ch19](#interrupts-and-drivers)'s subject.
 
 ## Problems
 
 Two, and the first is the one every xv6 reader should do once.
 
-**15.1 — Add a system call, end to end.**
+**16.1 — Add a system call, end to end.**
 The census is printed on Ctrl-T, which is no use to a program. Add `trapcount()` and a user program
 that calls it.
 
@@ -198,7 +198,7 @@ zero, and it grows between two runs. A constant fails both.
 python3 -m pytest tests/traps_and_system_calls/test_problem_1_addcall.py
 ```
 
-**15.2 — Which registers must be saved, and which need not be?**
+**16.2 — Which registers must be saved, and which need not be?**
 Count them, then say which ones `uservec` leaves alone and why each is allowed. There is more than
 one reason a register can end up on that list, and this chapter has given you two of them.
 
@@ -220,5 +220,5 @@ assembly is the path this chapter counted, and `usertrap` is forty lines of C. R
 first and the C second; the order matters, because the C makes no sense until you know what state
 it has been handed.
 
-[ch16](#virtual-memory) takes the promise this chapter made — that a page table is a thing, that the
+[ch17](#virtual-memory) takes the promise this chapter made — that a page table is a thing, that the
 trampoline is mapped into two of them — and turns it into something you can print.

@@ -597,7 +597,11 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.bare_claims_table,
         result="fork-bare",
     ),
-    "appendix-h-board": Table(
+    # -- ch01 ---------------------------------------------------------------------------
+    # One table, in the chapter that establishes it. Appendix H links here rather than declaring a
+    # second figure from the same result: the renderer already carries both the identity rows and
+    # the two capability rows, so a second id would render the same bytes under another name.
+    "setting-up-the-board-report": Table(
         render=tables.board_identity_table,
         result="setup-host",
         pending=f"The board has not reported yet: {BOARD} (`bench/results/setup-host.json`).",
