@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "7a1ab114faf751df",
+  "code_fingerprint": "89eb4d7d6fbeac15",
   "code_sources": [
     "bench/run_pipelinecost.py",
     "sysfs/bench/pipelinecost.c",
@@ -12,7 +12,7 @@
     "note": "one process per point, so perf counts that point and nothing else",
     "workload": "sysfs/bench/pipelinecost.c"
   },
-  "generated_at": "2026-09-16T12:42:57+00:00",
+  "generated_at": "2026-09-16T14:55:52+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "aarch64",
@@ -54,47 +54,47 @@
   },
   "summary": {
     "branches": {
-      "derived_cost_ns": 3.259329949906056e-07,
+      "derived_cost_ns": 19.734792910529382,
       "points": [
         {
           "answer": 100000,
-          "mispredict_percent": 0.011797858430791196,
-          "misses": 7182,
+          "mispredict_percent": 0.013838809769049748,
+          "misses": 8424,
           "ns": 1.25,
           "predictable_percent": 100
         },
         {
           "answer": 100000,
-          "mispredict_percent": 3.2347277414691127,
-          "misses": 1969095,
+          "mispredict_percent": 3.2061623156383248,
+          "misses": 1951944,
           "ns": 1.95,
           "predictable_percent": 90
         },
         {
           "answer": 100000,
-          "mispredict_percent": 7.5765287276253686,
-          "misses": 4612963,
+          "mispredict_percent": 7.615505192308899,
+          "misses": 4636543,
           "ns": 2.84,
           "predictable_percent": 75
         },
         {
           "answer": 100000,
-          "mispredict_percent": 13.422154631061288,
-          "misses": 8172787,
-          "ns": 3.95,
+          "mispredict_percent": 13.377713906477627,
+          "misses": 8146595,
+          "ns": 3.94,
           "predictable_percent": 50
         },
         {
           "answer": 100000,
-          "mispredict_percent": 15.910394328093759,
-          "misses": 9688760,
-          "ns": 4.44,
+          "mispredict_percent": 16.008813052201454,
+          "misses": 9747789,
+          "ns": 4.42,
           "predictable_percent": 25
         },
         {
           "answer": 100000,
-          "mispredict_percent": 16.17251034614273,
-          "misses": 9847885,
+          "mispredict_percent": 16.159856667154642,
+          "misses": 9839898,
           "ns": 4.48,
           "predictable_percent": 0
         }
@@ -103,19 +103,19 @@
     "governor": "ondemand",
     "variants": {
       "sysfs_sum_chain1": {
-        "ipc": 2.2297221588281597,
+        "ipc": 2.2294577650896583,
         "ns": 0.71
       },
       "sysfs_sum_chain2": {
-        "ipc": 2.2496530315907597,
+        "ipc": 2.2554351755415705,
         "ns": 0.43
       },
       "sysfs_sum_chain4": {
-        "ipc": 2.6619988240884203,
-        "ns": 0.31
+        "ipc": 2.776375432347662,
+        "ns": 0.3
       },
       "sysfs_sum_chain8": {
-        "ipc": 1.8465887800447958,
+        "ipc": 1.8529238306363154,
         "ns": 0.25
       }
     }
