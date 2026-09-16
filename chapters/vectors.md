@@ -21,6 +21,10 @@ short_title: "31 · Vectors"
 
 What does vectorising actually buy, and when will the compiler do it for me?
 
+[ch30](#whole-machine-profiling) was about finding the expensive loop in a program nobody here has
+read. This is the last thing left to do to one once it has been found, and it is the narrowest
+question in the book: the unit can do four of these at once, so what became of the other three?
+
 ## The material
 
 ### Five loops, three builds
@@ -36,8 +40,8 @@ me", and it is not a subtlety: the default is no.
 At `-O3` two of them widen. At `-O3` with permission to change the answer, a third joins them. Two
 never do, at any setting.
 
-So there are three different reasons a loop is not vectorised in that table, and only one of them
-is about the optimisation level.
+So there are four different reasons a loop is not vectorised somewhere in that table, and only one
+of them is about the optimisation level.
 
 ### The one that widens
 

@@ -416,6 +416,48 @@ def test_a_directive_is_closed_by_the_fence_that_opened_it(page: str):
     assert not stack, f"{page}:{stack[-1][0]}: {stack[-1][1]} directive is never closed"
 
 
+@pytest.mark.parametrize("page", TOC_FILES, ids=TOC_FILES)
+def test_every_figure_has_a_caption(page: str):
+    """Fourteen of the book's fifteen figures say what they show. The fifteenth did not.
+
+    A caption in this book is not a label — it is the one line that says what mechanism the
+    drawing is of, which is what makes a figure worth having. ch30's sampling diagram closed its
+    directive straight after `:width:`, so it rendered as a picture with an alt attribute and
+    nothing a reader looking at it would see.
+    """
+    lines = (ROOT / page).read_text().splitlines()
+    for number, line in enumerate(lines, start=1):
+        if not line.startswith("```{figure}"):
+            continue
+        index = number  # first line after the directive, zero-based
+        while index < len(lines) and lines[index].startswith(":"):
+            index += 1
+        rest = lines[index:]
+        closing = next((i for i, text in enumerate(rest) if text.startswith("```")), len(rest))
+        assert any(text.strip() for text in rest[:closing]), (
+            f"{page}:{number}: figure has no caption — a drawing with nothing said about it is "
+            f"decoration, and this book's figures show a mechanism"
+        )
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_the_question_is_answered_by_more_than_itself(chapter: Chapter):
+    """*The question* is a question and then why it is being asked. ch31 had only the question.
+
+    Thirty-one chapters put a paragraph after the question saying what the chapter before it left
+    and why this one follows — which is what makes the sequence a book rather than a set of
+    articles. The last chapter jumped straight from its question to its material, and the reader
+    who arrived there from ch30 was told nothing about why.
+    """
+    text = (ROOT / chapter.path).read_text()
+    block = text[text.index("## The question") : text.index("## The material")]
+    paragraphs = [p for p in block.split("\n\n") if p.strip() and not p.startswith("## ")]
+    assert len(paragraphs) >= 2, (
+        f"{chapter.path} asks its question and says nothing about why — every other chapter "
+        f"follows it with what the one before left"
+    )
+
+
 #: `chapter 11` — a chapter named by a number that is not a link and has no anchor behind it.
 BARE_CHAPTER_NUMBER = re.compile(
     r"\bchapters?\s+(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|"
@@ -693,6 +735,43 @@ def test_a_generated_fragment_labels_a_chapter_link_correctly():
             if chapter is not None and chapter.label != f"ch{label}":
                 wrong.append(f"{fragment.name}: [ch{label}] points at {chapter.label}")
     assert not wrong, "a generated table names the wrong chapter: " + "; ".join(wrong)
+
+
+SECOND_INSTRUCTION_SET = re.compile(r"second instruction set in (\w+) of them")
+
+
+def test_part_five_counts_the_chapters_that_change_instruction_set():
+    """The one number on that page a reader can check, so it had better be right.
+
+    Part V justifies crossing to AArch64 by weighing two chapters that would lose their
+    measurements against the chapters that have to be read in a second instruction set. It said
+    three; four of them show AArch64 disassembly. The count is the whole of the argument's second
+    half, and it is the sort of number that goes wrong when a chapter gains a listing rather than
+    when one moves — which is why it is derived here rather than trusted.
+    """
+    from bench.figures import FIGURES
+    from bench.stamp import load_result
+
+    part = next(p for p in PART_PAGES if p.number == 5)
+    crossed = set()
+    for chapter in CHAPTERS:
+        if chapter.part != part.title:
+            continue
+        body = (ROOT / chapter.path).read_text()
+        for name in re.findall(r"\{include\}\s+_generated/([\w-]+)\.md", body):
+            figure = FIGURES.get(name)
+            results = getattr(figure, "results", None) or (getattr(figure, "result", None),)
+            if getattr(figure, "pending", None):
+                continue  # a figure the board has not produced has no result to read
+            for result in results:
+                if result and load_result(result).get("kind") == "listing":
+                    crossed.add(chapter.label)
+    said = SECOND_INSTRUCTION_SET.search((ROOT / part.path).read_text())
+    assert said, f"{part.path} no longer says how many chapters change instruction set"
+    assert NUMBER_WORDS.get(said.group(1)) == len(crossed), (
+        f"{part.path} says {said.group(1)} chapters are read in AArch64; {len(crossed)} show a "
+        f"listing: {', '.join(sorted(crossed))}"
+    )
 
 
 PART_SELF = {part.path: part.number for part in PART_PAGES}
@@ -1182,6 +1261,66 @@ def test_the_hardware_appendix_names_every_hardware_sensitive_chapter(chapter: C
     section = page[page.index("## Which chapters actually depend on the hardware") :]
     assert f"[{chapter.label}](#{chapter.anchor})" in section, (
         f"{chapter.label} assumes something about the hardware but appendix H's list omits it"
+    )
+
+
+def test_the_hardware_appendix_counts_that_list_correctly():
+    """It said five when six chapters declared an assumption, which is only half a mistake.
+
+    The table is [Part V](#part5)'s chapters and five of them is right; ch01 declares an
+    assumption too and is handled in the section below the table, deliberately, because it is the
+    chapter that goes and asks. What was wrong was the sentence, which claimed to be counting
+    chapters rather than Part V's. It says which now, and the number is checked here — a page that
+    opens by promising a complete list has to be able to keep the promise.
+    """
+    part = next(p for p in PART_PAGES if p.number == 5)
+    expected = sum(1 for c in HARDWARE_SENSITIVE if c.part == part.title)
+    page = (ROOT / CHOOSING_THE_MACHINE.path).read_text()
+    said = re.search(r"Most do not\. (\w+) chapters of", page)
+    assert said, "appendix H no longer says how many chapters depend on the hardware"
+    assert NUMBER_WORDS.get(said.group(1).lower()) == expected, (
+        f"appendix H says {said.group(1)} chapters of Part V depend on the hardware; "
+        f"bench/outline.py records {expected}"
+    )
+
+
+PYTEST_COMMAND = re.compile(r"python3 -m pytest (tests/[\w/.-]+?)(?=[\s`]|$)", re.M)
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_every_test_a_chapter_tells_you_to_run_exists(chapter: Chapter):
+    """A problem whose command names nothing is a problem the reader cannot start.
+
+    Nothing else checks these. The test directory is named from the slug and so moves with it, but
+    a file renamed inside one — `test_problem_2_frames.py` becoming something else — leaves a
+    chapter printing a command that fails with a path error, which reads to a beginner like their
+    setup being broken.
+    """
+    text = (ROOT / chapter.path).read_text()
+    missing = [path for path in PYTEST_COMMAND.findall(text) if not (ROOT / path).exists()]
+    assert not missing, f"{chapter.path} says to run {missing[0]}, which does not exist"
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_every_problem_says_how_to_run_it(chapter: Chapter):
+    """Two had no command at all and one of them had a test sitting there unused.
+
+    ch00's padding problem is graded by `test_problem_2_abi.py` and never named it, relying on a
+    catch-all three problems further down; ch26's two predictions share one stub and one command,
+    which is fine and was not said. The exception the book does allow is a problem with no test —
+    ch24's fourth has no answer for one to check against — and that has to be said out loud rather
+    than inferred from an absence.
+    """
+    text = (ROOT / chapter.path).read_text()
+    problems = re.findall(r"^\*\*(\d{1,2}\.\d) — ", text, re.M)
+    if not problems:
+        return
+    section = text[text.index("## Problems") :]
+    commands = len(set(PYTEST_COMMAND.findall(section)))
+    excused = "no test" in section or "one command" in section
+    assert commands >= len(problems) or excused, (
+        f"{chapter.path} sets {len(problems)} problems and gives {commands} commands, and does "
+        f"not say why — a problem the reader cannot start is not a problem"
     )
 
 

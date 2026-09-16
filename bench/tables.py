@@ -736,6 +736,23 @@ def hierarchy_line_table(name: str) -> str:
     return render_table(["Stride", "Nanoseconds per dependent load"], rows)
 
 
+def hierarchy_reach_table(name: str) -> str:
+    """How far the TLB reaches, in pages and in bytes.
+
+    The reach sweep was collected from the first version of the runner and rendered by nothing,
+    so ch25's section on translation included the vendor comparison instead — a table about cache
+    sizes under a heading about page tables. Both numbers come from one step in one curve: the
+    last page count whose walk was still cached.
+    """
+    derived = load_result(name)["summary"]["derived"]
+    rows = [
+        ["Pages the translation cache holds", derived["tlb_reach_pages"]],
+        ["Memory those pages reach", derived["tlb_reach_bytes"]],
+        ["Last level, for comparison", derived["l3_bytes"]],
+    ]
+    return render_table(["", "Measured"], rows)
+
+
 def hierarchy_vendor_table(name: str) -> str:
     """What the machine said, beside what the vendor said.
 

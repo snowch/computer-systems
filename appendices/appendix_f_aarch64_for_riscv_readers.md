@@ -19,7 +19,7 @@ document; this page will not substitute for it and does not try.
 [Part III](#part3) and [Part IV](#part4) are RISC-V because the kernel small enough to read in an afternoon is a RISC-V
 kernel. [Part V](#part5) is AArch64 because that is where the performance counters work: sampling needs a
 PMU that can raise an interrupt on counter overflow, and no affordable RISC-V core does both.
-[ch00](#prerequisites-and-setup) has the evidence and [ch28](#memory-ordering-on-real-hardware) has the return — a reader shown one weak memory
+[Appendix H](#appendix-h) has the evidence and [ch28](#memory-ordering-on-real-hardware) has the return — a reader shown one weak memory
 model concludes that model *is* memory ordering.
 
 So the crossing is deliberate, and this page is the cost of it, paid in one place.

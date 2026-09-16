@@ -381,6 +381,11 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         result="hierarchy-host",
         pending=f"The line size has not been measured yet: {BOARD} (`bench/results/hierarchy-host.json`).",
     ),
+    "the-memory-hierarchy-reach": Table(
+        render=tables.hierarchy_reach_table,
+        result="hierarchy-host",
+        pending=f"The translation cache has not been probed yet: {BOARD} (`bench/results/hierarchy-host.json`).",
+    ),
     "the-memory-hierarchy-vendor": Table(
         render=tables.hierarchy_vendor_table,
         result="hierarchy-host",

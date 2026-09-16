@@ -123,18 +123,18 @@ machine from the ones before it. A benchmark that runs for a minute can therefor
 "regression" in its second half that is entirely thermal — and a comparison between two
 implementations, run one after the other, can rank them by which went first.
 
-The defence is to record the clock alongside the result, which is why [ch00](#prerequisites-and-setup) insists on the
+The defence is to record the clock alongside the result, which is why [Appendix H](#appendix-h) insists on the
 active cooler and why every `host` result in this book stamps the machine's state as well as its
 number. It is also why the results are taken with the board idle and the laptop not driving it
 over a link that interrupts it, which brings up something the book has to admit.
 
 ### A claim this book has not measured
 
-[ch00](#prerequisites-and-setup) recommends wiring the board rather than using its radio, and gives a mechanism: a
+[ch01](#setting-up-the-board) recommends wiring the board rather than using its radio, and gives a mechanism: a
 wireless driver takes interrupts and runs deferred work on the cores being measured, which is
 [ch19](#interrupts-and-drivers)'s subject arriving where it is least wanted.
 
-The mechanism is real. The effect on these measurements has never been measured, and [ch00](#prerequisites-and-setup) says so.
+The mechanism is real. The effect on these measurements has never been measured, and [ch01](#setting-up-the-board) says so.
 That is an unmeasured claim about hardware behaviour in a book whose whole discipline is refusing
 them, and the honest thing to do with it is to hand it to the reader: it is the fourth problem
 below, the answer is genuinely unknown to the author, and a reader who falsifies it has exactly
@@ -203,13 +203,13 @@ python3 -m pytest tests/measuring/test_problem_3_warmup.py
 ```
 
 **24.4 — Falsify something this book says.**
-[ch00](#prerequisites-and-setup) claims that a wireless link adds interrupt and deferred work to the cores being
+[ch01](#setting-up-the-board) claims that a wireless link adds interrupt and deferred work to the cores being
 measured, and admits it has not measured the effect. Measure it: run one of this chapter's
 workloads with the board on Ethernet and on its radio, with and without traffic, and report
 whether the distributions differ in a way the method above would defend.
 
 There is no test, because there is no answer to check against. If you find the claim is
-unsupported at the scale this book's measurements work at, [ch00](#prerequisites-and-setup) is wrong and should say
+unsupported at the scale this book's measurements work at, [ch01](#setting-up-the-board) is wrong and should say
 something else — and a reader who establishes that has done the thing this chapter is for.
 
 ## Where to go next

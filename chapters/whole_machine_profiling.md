@@ -67,6 +67,9 @@ the chapter pointing confidently at the wrong phase.
 ```{figure} _figures/whole-machine-profiling-sampling.svg
 :alt: A cycle counter overflowing into an interrupt, the PC written down, and the loop where the instruction blamed is not the instruction that waited.
 :width: 100%
+
+The address written down is the one the core had reached when the interrupt arrived, and not the
+one that was waiting.
 ```
 
 Nothing watches your program. A counter in the PMU is set to a large negative number, the core

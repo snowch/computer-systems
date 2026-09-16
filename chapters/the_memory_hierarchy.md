@@ -89,14 +89,28 @@ no cache to not-be-in.
 Touch one pointer per page, so the *data* comfortably fits in the last-level cache while the
 *translations* stop fitting:
 
+```{include} _generated/the-memory-hierarchy-reach.md
+```
+
+The reach of a TLB is its entries multiplied by the page size, and the last row is there to be
+read against the first two: it is far smaller than the cache behind it. Which produces the
+counter-intuitive result that a program can fit its data in cache entirely and still be limited by
+memory, because every access first costs a page-table walk that missed. [ch17](#virtual-memory)'s
+three levels are three more memory accesses, and this is where that stops being a structural fact
+and becomes a cost.
+
+### And now, finally, the datasheet
+
+Every number above came out of a curve. Only now is it worth looking anything up.
+
 ```{include} _generated/the-memory-hierarchy-vendor.md
 ```
 
-The reach of a TLB is its entries multiplied by the page size, and it is far smaller than the
-cache behind it — which produces the counter-intuitive result that a program can fit its data in
-cache entirely and still be limited by memory, because every access first costs a page-table walk
-that missed. [ch17](#virtual-memory)'s three levels are three more memory accesses, and this is where that
-stops being a structural fact and becomes a cost.
+Two columns that ought to agree, and are allowed not to. Where they differ the measurement is what
+this book prints, for the reason the chapter opened with — the right-hand column describes a
+product line and the left-hand one describes the chip that produced it. A disagreement is not an
+error in either: it is the most interesting thing on the page, and the question to sit with is
+which column you would have believed if you had only had one of them.
 
 ### Back to the two routes
 

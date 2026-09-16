@@ -307,6 +307,10 @@ struct for whichever architecture this machine can execute, runs it, and tells y
 wrong. The tables above give you the sizes and alignments of the scalar types; the rest follows
 from one rule — and it is the same rule on both architectures, which is the point.
 
+```bash
+python3 -m pytest tests/prerequisites_and_setup/test_problem_2_abi.py
+```
+
 **0.3 — Your first xv6 program.**
 `tests/prerequisites_and_setup/ch00ping.c` is a program that prints nothing. Make `ch00ping 41` print `pong 42`. The
 arithmetic is not the exercise: the exercise is the path from a file in a test directory, through

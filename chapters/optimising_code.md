@@ -153,6 +153,9 @@ mind changes the right answer rather than making the book wrong.
 Name the variant that costs more instructions than writing the loop plainly, and say whether
 raising the level helps.
 
+These two are answered in one stub and graded by one command, because they are two readings of
+the same table:
+
 ```bash
 python3 -m pytest tests/optimising_code/test_problem_1_equalised.py
 ```

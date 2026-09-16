@@ -14,7 +14,7 @@ short_title: "27 · The CPU"
 | **Target** | `host` — the reference machine, natively |
 | **Answers the cost of** | [ch14](#machine-level-code-on-riscv) |
 | **Prerequisites** | [ch26](#optimising-code) |
-| **Assumes** | An out-of-order core (Cortex-A76) and its performance counters. An in-order core would make this easier to read; see [ch00](#prerequisites-and-setup). |
+| **Assumes** | An out-of-order core (Cortex-A76) and its performance counters. An in-order core would make this easier to read; see [Appendix H](#appendix-h). |
 | **What it measures** | What the core is given to work with: `bench/results/pipeline-shapes.json` |
 :::
 
@@ -124,8 +124,8 @@ discipline applies to every one of them.
 ## What this cannot tell you
 
 **Anything about an in-order core.** The header says this chapter assumes an out-of-order one,
-because that is what the reference machine has and because [ch00](#prerequisites-and-setup) explains at length why
-the alternative could not be used. The consolation is real: every machine a reader is likely to
+because that is what the reference machine has and because [Appendix H](#appendix-h) explains at length
+why the alternative could not be used. The consolation is real: every machine a reader is likely to
 optimise reorders, so attributing cycles on a core that reorders them is the skill that transfers.
 
 **How wide the machine is.** The accumulator experiment finds where adding chains stops helping,

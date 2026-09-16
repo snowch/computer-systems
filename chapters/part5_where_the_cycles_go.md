@@ -12,8 +12,8 @@ short_title: "Introduction"
 | | |
 |---|---|
 | **Chapters** | [ch24](#measuring)–[ch31](#vectors) |
-| **Target** | `host` — Linux on real hardware, natively ([hardware](#prerequisites-and-setup)) |
-| **Assumes** | [Part IV](#part4), and a machine of your own that meets [ch00](#prerequisites-and-setup)'s requirements |
+| **Target** | `host` — Linux on real hardware, natively ([ch01](#setting-up-the-board)) |
+| **Assumes** | [Part IV](#part4), and a machine of your own that meets [Appendix H](#appendix-h)'s requirements |
 :::
 
 ## What this part is for
@@ -73,7 +73,7 @@ The disassembly here is AArch64, not the RISC-V you learned in [Part III](#part3
 subject of this part rather than an accident of it: these chapters need performance counters that
 both *count* and *sample*, and no purchasable RISC-V core does both. Staying on one architecture
 would have cost two chapters their measurements, which is a worse trade than asking you to read a
-second instruction set in three of them.
+second instruction set in four of them.
 
 And where a thing genuinely cannot be measured on the available hardware — an absent unit, a
 counter the firmware does not expose, a second machine that does not exist — the chapter says so,
