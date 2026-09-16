@@ -1,0 +1,72 @@
+{
+  "code_fingerprint": "67b354cb24f95452",
+  "code_sources": [
+    "bench/run_loopcost.py",
+    "sysfs/bench/loopcost.c",
+    "sysfs/lib/loops.c",
+    "sysfs/include/sysfs/loops.h",
+    "sysfs/lib/timing.c",
+    "sysfs/include/sysfs/timing.h"
+  ],
+  "conditions": {
+    "note": "nanoseconds per element, divided here so a sub-nanosecond cost is not floored away",
+    "workload": "sysfs/bench/loopcost.c"
+  },
+  "generated_at": "2026-09-16T12:42:54+00:00",
+  "kind": "measurement",
+  "machine": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "measured_under": "native",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "name": "loops-host",
+  "recorded_on": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "summary": {
+    "elements": 100000,
+    "governor": "ondemand",
+    "loops": {
+      "everything": 1.72,
+      "hoisted": 1.67,
+      "plain": 1.67,
+      "reduced": 1.67,
+      "unrolled": 1.72
+    }
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "cc (Debian 14.2.0-19) 14.2.0",
+    "execution": "native on the machine being measured",
+    "flags": "-O2 -g -Wall -Wextra"
+  }
+}

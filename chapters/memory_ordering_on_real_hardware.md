@@ -32,7 +32,7 @@ the first and is the reason this book has two architectures.
 ### A cost with no data in it
 
 Two threads, two counters, no shared data and no race. One of the two arrangements below is
-several times slower than the other.
+more than twice as slow as the other.
 
 ```{include} _generated/memory-ordering-on-real-hardware-layout.md
 ```
@@ -52,6 +52,10 @@ to share anything.
 
 ```{include} _generated/memory-ordering-on-real-hardware-sharing.md
 ```
+
+The gap is widest at two threads and narrows as cores are added: more contenders do not make false
+sharing worse, which is the opposite of what a scaling curve would suggest. Two caches trading one
+line back and forth, with nothing else to overlap against, is already the expensive case.
 
 Problem 28.1 is the analysis: given where the fields are and who writes them, which pairs will
 contend. The case worth getting right is two fields on one line written by the *same* thread,

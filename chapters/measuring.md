@@ -22,7 +22,7 @@ How do I get a number I would defend, and how would I know it was wrong?
 
 [ch23](#the-same-program-on-both-targets) established that the structural model does not predict cost, and pointed at a
 machine that can answer. Before asking it anything, this chapter asks what it costs to ask — and
-then arranges, deliberately, for the same program to give three different answers.
+then changes something about the program that cannot matter, to find out whether the answer moves.
 
 ## The material
 
@@ -60,9 +60,9 @@ Run identical work, on an idle machine, two thousand times:
 ```{include} _generated/measuring-spread.md
 ```
 
-The last row is the chapter. Identical work, identical input, nothing else running — and the
-slowest run is a multiple of the fastest. Nothing was wrong with any of those measurements; they
-are all correct observations of what happened.
+The last row is the chapter. Identical work, identical input, nothing else running — and yet nine
+runs in ten agree to within a rounding error while the slowest stands far outside them. Nothing was
+wrong with any of those measurements; they are all correct observations of what happened.
 
 So "how long does it take" has no answer, and the question has to be replaced. What is reported
 instead is a distribution, which is why `sysfs_summarise` exists and why problem 24.1 asks you to
@@ -90,28 +90,34 @@ interference, it is not warm-up, and discarding everything before it throws away
 measurements in order to hide a bad one. Problem 24.3 is exactly that distinction, and the
 definition it asks you to implement has a second clause for no other reason.
 
-### The same program, three answers
+### The variable that should not matter
 
-Here is the experiment that should change how you read a benchmark.
+Here is the experiment every benchmark deserves and few get.
 
 The same work, the same input, the same binary, three times — differing only in how many bytes of
-stack were claimed before the loop ran. Not used. Claimed.
+stack were claimed before the buffer it walks was allocated. Not used. Claimed. Each run lands the
+data at a different address, and the runner records that address, so this is a real change to where
+everything sits and not a padding the compiler quietly folded away.
 
 ```{include} _generated/measuring-bias.md
 ```
 
-Nothing about the work changed. What changed is where everything landed in memory, and therefore
-which cache sets the data occupied, and therefore how often two things that are used together
-evicted each other.
+The addresses differ; the median does not move by a nanosecond. On this core, where the data sits
+does not change what reaching it costs.
 
-This is measurement bias, and Mytkowicz and colleagues @mytkowicz2009wrong showed it is large
-enough to manufacture or erase the kind of speedup papers are published about — by changing the
-size of an environment variable, which moves the stack, which does exactly what the padding above
-does. Their conclusion is the uncomfortable one: a single configuration, measured carefully, can
-give a confidently wrong answer, and no amount of repetition inside that configuration finds it.
+That is not the result the experiment is famous for. Mytkowicz and colleagues @mytkowicz2009wrong
+showed the same change — the size of an environment variable, which moves the stack, which is what
+the padding here does — large enough to manufacture or erase the kind of speedup papers are
+published about. Their machine cared. This one, measured the same way, does not: very likely a core
+with this much first-level cache, and this forgiving an attitude to unaligned access, hides what a
+2009 one could not.
 
-The defence is to vary the thing that should not matter, on purpose, and see whether your result
-survives.
+The uncomfortable part survives the null result whole, and is the reason to run the experiment at
+all. You cannot tell which machine you have by reasoning about it — Mytkowicz and colleagues could
+not, and neither could this chapter until the board answered. A single configuration, measured
+carefully, can be confidently wrong, and no amount of repetition inside it ever finds out. So the
+defence is not to conclude the effect is gone because this page did not find it. It is to vary the
+thing that should not matter, on your own machine, and see whether your result survives.
 
 ### The floor moves
 
@@ -142,12 +148,10 @@ the skill this chapter exists to teach.
 
 ## What we measured
 
-The cost and resolution of the clock; the distribution of two thousand runs of one fixed workload;
-and the same workload three times with a variable changed that cannot affect it.
-
-All three are declared pending until `make bench-board` runs on the reference machine, which is
-the only place this book takes a duration. The prose is written for the numbers rather than around
-them: landing them is one command.
+The cost and resolution of the clock; the spread of two thousand runs of one fixed workload — a
+body a rounding error wide, and a tail that is all interference; and a memory walk run three times
+with its data deliberately moved to a different address each time, which on this machine did not
+move the time at all.
 
 ## What this cannot tell you
 

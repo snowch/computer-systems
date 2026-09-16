@@ -12,9 +12,10 @@ would be a second thing to trust.
 
 The bias experiment is the one worth understanding before reading the numbers. The same work is
 done three times, differing only in how many bytes of stack were claimed first — which changes
-nothing about the computation and everything about where it lands in memory. A difference between
-those three runs is the chapter's whole point, and this runner refuses to stamp a result where
-they are identical, because identical would mean the experiment did not run.
+nothing about the computation and moves where its data lands in memory. Whether the timing follows
+is the measurement rather than the assumption: this runner checks that the data really did move —
+that the three runs landed the buffer at three different addresses — and records whatever the clock
+then said, which on the reference board is the same number three times over.
 """
 
 from __future__ import annotations
@@ -83,12 +84,23 @@ def refuse_a_result_that_did_not_measure_anything(facts: dict[str, Any]) -> None
     missing = [p for p in PADDINGS if p not in facts["bias"]]
     if missing:
         raise MeasuringError(f"the bias experiment is missing paddings {missing}")
-    medians = {facts["bias"][p]["median"] for p in PADDINGS}
-    if len(medians) == 1:
+    # The check is on placement, not on effect. The chapter's honesty rests on the padding having
+    # actually moved the data; if a compiler folded the claimed stack away, the three runs would be
+    # one run and a flat timing would prove nothing. So the three must have landed the buffer at
+    # three different addresses. Whether the *time* moved with it is then the measurement, and this
+    # runner stamps it either way — on the reference board it does not move, which is the finding.
+    bases = [facts["bias"][p].get("base") for p in PADDINGS]
+    if any(base is None for base in bases):
         raise MeasuringError(
-            "all three bias runs reported an identical median. The experiment changes only "
-            "something that cannot matter, and the chapter's point is that it did; identical "
-            "medians mean the padding was optimised away rather than that the machine is fair."
+            "the bias experiment did not report where its data landed, so a run whose timing did "
+            "not change cannot be told from a padding the compiler removed."
+        )
+    if len(set(bases)) != len(PADDINGS):
+        raise MeasuringError(
+            "two paddings placed the data at the same address, so the variable that should not "
+            "matter moved nothing. The experiment has to move the data before a flat result can "
+            "mean the machine is indifferent to where it is — check that the claimed stack was not "
+            "optimised away."
         )
 
 
@@ -124,9 +136,9 @@ SHAPE = {
     "clock": {"cost_ns": 111, "resolution_ns": 222},
     "spread": {"count": 111, "min": 111, "median": 222, "p90": 222, "max": 222, "mean": 222},
     "bias": {
-        "0": {"count": 111, "min": 111, "median": 222, "p90": 222, "max": 222, "mean": 222},
-        "64": {"count": 111, "min": 111, "median": 222, "p90": 222, "max": 222, "mean": 222},
-        "512": {"count": 111, "min": 111, "median": 222, "p90": 222, "max": 222, "mean": 222},
+        "0": {"count": 111, "min": 111, "median": 222, "p90": 222, "max": 222, "mean": 222, "base": 100},
+        "64": {"count": 111, "min": 111, "median": 222, "p90": 222, "max": 222, "mean": 222, "base": 200},
+        "512": {"count": 111, "min": 111, "median": 222, "p90": 222, "max": 222, "mean": 222, "base": 300},
     },
     "governor": "performance",
 }

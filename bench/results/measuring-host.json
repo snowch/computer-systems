@@ -1,0 +1,103 @@
+{
+  "code_fingerprint": "b4ff8659638f669a",
+  "code_sources": [
+    "bench/run_measuring.py",
+    "sysfs/bench/measuring.c",
+    "sysfs/lib/timing.c",
+    "sysfs/include/sysfs/timing.h"
+  ],
+  "conditions": {
+    "note": "three experiments, summarised in C by the same sysfs_summarise ch21 argues about",
+    "workload": "sysfs/bench/measuring.c, run once per experiment"
+  },
+  "generated_at": "2026-09-16T13:47:52+00:00",
+  "kind": "measurement",
+  "machine": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "measured_under": "native",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "name": "measuring-host",
+  "recorded_on": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "summary": {
+    "bias": {
+      "0": {
+        "base": 6916624,
+        "count": 2000,
+        "max": 275147,
+        "mean": 204998,
+        "median": 204833,
+        "min": 204814,
+        "p90": 204833
+      },
+      "512": {
+        "base": 6916128,
+        "count": 2000,
+        "max": 276611,
+        "mean": 204981,
+        "median": 204833,
+        "min": 204814,
+        "p90": 204833
+      },
+      "64": {
+        "base": 6916576,
+        "count": 2000,
+        "max": 274740,
+        "mean": 204968,
+        "median": 204833,
+        "min": 204814,
+        "p90": 204833
+      }
+    },
+    "clock": {
+      "cost_ns": 18,
+      "resolution_ns": 18
+    },
+    "governor": "ondemand",
+    "spread": {
+      "count": 2000,
+      "max": 69500,
+      "mean": 37553,
+      "median": 37518,
+      "min": 37499,
+      "p90": 37519
+    }
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "cc (Debian 14.2.0-19) 14.2.0",
+    "execution": "native on the machine being measured",
+    "flags": "-O2 -g -Wall -Wextra"
+  }
+}

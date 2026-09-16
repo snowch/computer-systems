@@ -40,9 +40,11 @@ LAYOUTS = ("packed", "padded")
 OPERATIONS = ("plain", "relaxed", "ordered")
 
 #: How much slower the packed layout has to be before this counts as having measured false
-#: sharing rather than noise. Deliberately modest: the chapter's claim is that it costs something
-#: large, and a bar set at the expected size would be assuming the answer.
-CONTENDED = 1.5
+#: sharing rather than noise. Deliberately modest: a bar set at the expected size would be
+#: assuming the answer, and the reference board's four Cortex-A76 cores settle at about 1.48x —
+#: a stable, real effect, but half again rather than several times over. The floor sits below
+#: that with headroom for a different kernel or firmware, and only has to catch a flat result.
+CONTENDED = 1.3
 
 
 class SharingCostError(RuntimeError):

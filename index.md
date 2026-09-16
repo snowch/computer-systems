@@ -33,10 +33,10 @@ usually the most useful part of the chapter.
 :::{note} Where this book is
 All thirty-two chapters are written, and seven of the eight appendices.
 
-Twenty figures are marked *pending*: they are `host` measurements that have to be taken on the
-reference machine, and until they are you will see a box saying so rather than a number. [Appendix C](#appendix-c)
-waits for the same machine — which events a board exposes is a property of its silicon, kernel and
-firmware together, and cannot be drafted from a desk.
+Zero figures are marked *pending*: the reference machine has reported, and every `host` measurement
+has been taken. [Appendix C](#appendix-c) is the one piece still waiting for it — which events a
+board exposes is a property of its silicon, kernel and firmware together, and cannot be drafted from
+a desk.
 
 **[Download the whole book as a PDF](/systems-from-scratch.pdf)** — every chapter and appendix in
 one file, built from the same source as this site, so the two cannot disagree about what a

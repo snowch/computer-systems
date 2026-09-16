@@ -1,0 +1,76 @@
+{
+  "code_fingerprint": "33c98567b73a81b1",
+  "code_sources": [
+    "bench/run_oscost.py",
+    "sysfs/bench/oscost.c",
+    "sysfs/lib/timing.c",
+    "sysfs/include/sysfs/timing.h"
+  ],
+  "conditions": {
+    "note": "the same request by two routes, one of which changes privilege level",
+    "workload": "sysfs/bench/oscost.c vdso"
+  },
+  "generated_at": "2026-09-16T12:43:04+00:00",
+  "kind": "measurement",
+  "machine": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "measured_under": "native",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "name": "vdso-host",
+  "recorded_on": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "summary": {
+    "governor": "ondemand",
+    "routes": {
+      "clock_gettime (trap)": {
+        "ns": 205.07,
+        "route": "trap"
+      },
+      "clock_gettime (vdso)": {
+        "ns": 35.01,
+        "route": "vdso"
+      },
+      "getpid (trap)": {
+        "ns": 166.31,
+        "route": "trap"
+      }
+    }
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "cc (Debian 14.2.0-19) 14.2.0",
+    "execution": "native on the machine being measured",
+    "flags": "-O2 -g -Wall -Wextra"
+  }
+}

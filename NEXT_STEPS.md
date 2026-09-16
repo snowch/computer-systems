@@ -9,7 +9,26 @@ review of all forty-seven pages (PR #25), which fixed what it found and left thr
 
 ## 1. The board — everything here needs the Pi 5
 
-This is M1, and five chapters are waiting on it. Nothing else in this file does.
+This is M1, and five chapters were waiting on it. **Done (2026-09-16):** the reference Pi 5 is set
+up, all twenty `host` figures are measured and no longer pending, and first contact with the
+hardware corrected three chapters (below). What still needs the board is **Appendix C**. The
+procedure that follows is kept as the record of how it was done and how to re-run it.
+
+### What first contact changed
+
+- **ch30 (profiling)** — `bench/board.py` called `perf record --call-graph none`, which perf 6.18
+  rejects (it takes `fp|dwarf|lbr`); changed to `--no-call-graph`. Unblocked profile and skid.
+- **ch28 (false sharing)** — the effect is a stable ~2.2× at two threads and ~1.5× at four, not the
+  "several times" the prose claimed. The prose and the runner's 1.5× floor were corrected to match,
+  and the surprise that it *shrinks* as cores are added is now in the text.
+- **ch24 (measurement bias)** — the stack-placement experiment does not reproduce on the A76: the
+  buffer genuinely moves (three different addresses) and the median does not change by a nanosecond.
+  The workload was rebuilt into a real placement test that reports where the data landed, the guard
+  now checks that placement moved rather than demanding an effect, and the chapter was reframed
+  honestly — the method transfers, the 2009 magnitude does not. ch24's spread claim ("a multiple of
+  the fastest") was also corrected to the measured tight-body-plus-interference-tail shape.
+
+### Set it up
 
 ### Set it up
 
