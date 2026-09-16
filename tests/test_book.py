@@ -39,6 +39,9 @@ CHAPTER_IDS = [chapter.label for chapter in CHAPTERS]
 #: became an appendix — it had no stamped result of its own, which makes a thin chapter and a
 #: perfectly ordinary reference.
 CHOOSING_THE_MACHINE = next(a for a in APPENDICES if a.slug == "choosing_the_machine")
+GLOSSARY = next(a for a in APPENDICES if a.slug == "glossary")
+
+by_anchor = {chapter.anchor: chapter for chapter in CHAPTERS}
 
 ROMAN_TO_NUMBER = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5}
 
@@ -304,6 +307,233 @@ def test_a_chapter_that_shows_a_program_says_how_to_run_it(chapter: Chapter):
     )
 
 
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_a_program_that_needs_an_argument_is_shown_with_one(chapter: Chapter):
+    """The check above was satisfied by a command that did nothing.
+
+    ch15 writes a reader for ELF and then said `./run elfdump`, which prints `usage: elfdump
+    <file>` and exits — the tool has nothing to read. The chapter had carried a hand-rolled `cc`
+    line naming a binary, the only one in the book, and when `./run` arrived the new command was
+    added above it rather than instead of it; the stale block kept the example working for anyone
+    who scrolled, and the check was happy because it was looking for a substring.
+
+    So the substring is not enough: a program that reads `argv[1]` has to be shown being given
+    one. That is a weaker test than running the command, and it is the strongest one available
+    without a compiler in CI.
+    """
+    from bench.programs import find
+
+    text = (ROOT / chapter.path).read_text()
+    bare_invocations = []
+    for name in _programs_quoted_by(text):
+        source = find(name).source
+        if "argv[1]" not in source.read_text():
+            continue
+        if re.search(rf"\./run {re.escape(name)}(?: --\S+)*\s*$", text, re.M):
+            bare_invocations.append(name)
+    assert not bare_invocations, (
+        f"{chapter.path} says `./run {bare_invocations[0]}` with nothing after it, and "
+        f"{bare_invocations[0]} reads argv[1] — it will print its usage and exit"
+    )
+
+
+#: A fenced block, an inline code span, and a problem's own heading — the three places an `N.M`
+#: is not prose and must not be read as one. `v0.2s` is an AArch64 lane specifier, not problem two
+#: of chapter zero.
+FENCED = re.compile(r"^```.*?^```", re.S | re.M)
+INLINE_CODE = re.compile(r"`[^`\n]*`")
+PROBLEM_HEADING = re.compile(r"^\*\*\d{1,2}\.\d+ — ", re.M)
+
+#: `17.1` written without the word in front of it. Three problems per chapter at most, so the
+#: index is 1 to 3, and the lookarounds keep version numbers and decimals out.
+WORDLESS_PROBLEM = re.compile(r"(?<![\d.])\d{1,2}\.[1-3](?![\d.])")
+
+
+@pytest.mark.parametrize("page", TOC_FILES, ids=TOC_FILES)
+def test_a_problem_reference_carries_the_word_problem(page: str):
+    """The syncer can only renumber a reference it can recognise, and it recognises the word.
+
+    ch17 pointed twice at "your own 7.1", from a chapter whose problems are numbered 17.x. There
+    is no anchor in a bare `7.1` and no word beside it, so `sync-labels.py` had nothing to match
+    and the reference sat there through three renumberings — pointing, as these always do, at a
+    real problem in a real chapter that is not the one meant.
+
+    So the rule is that the word is what makes it a reference. Write `problem 17.1` and the syncer
+    owns the number from then on; write `7.1` and nobody does.
+
+    Appendices are checked too, because appendix G was outside both this and the syncer: it said
+    `problem 2.2` beside a link to ch04, whose problems have been 4.x for three renumberings.
+    """
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "sync_labels", ROOT / "scripts" / "sync-labels.py"
+    )
+    sync_labels = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(sync_labels)
+
+    text = INLINE_CODE.sub("", FENCED.sub("", (ROOT / page).read_text()))
+    text = sync_labels.PROBLEM_REFERENCE.sub("", PROBLEM_HEADING.sub("", text))
+    loose = [
+        text[max(0, m.start() - 60) : m.end()].strip().replace("\n", " ")
+        for m in WORDLESS_PROBLEM.finditer(text)
+    ]
+    assert not loose, (
+        f"{page} points at a problem without saying so: ...{loose[0]} — "
+        f"write `problem {loose[0][-4:]}` so sync-labels.py can keep the number right"
+    )
+
+
+#: The two ways this book opens a directive, and the line that closes each.
+DIRECTIVE_OPEN = re.compile(r"^(?P<fence>`{3,}|:{3,})\{[\w-]+\}")
+FENCE_CLOSE = re.compile(r"^(?P<fence>`{3,}|:{3,})\s*$")
+
+
+@pytest.mark.parametrize("page", TOC_FILES, ids=TOC_FILES)
+def test_a_directive_is_closed_by_the_fence_that_opened_it(page: str):
+    """A build that succeeds is not the same as a page that says what it was written to say.
+
+    ch19 opened its figure with backticks and closed it with `:::`. MyST did not complain — it
+    took the colons as the end of the figure and then swallowed the `{include}` on the other side
+    of them into a *sub-figure*, rendered as a code block whose text was the directive itself. The
+    page went out with the measurement missing and the sentence "the disk count is in the table"
+    directly beneath a figure with no table in it. `--strict` saw nothing wrong, because nothing
+    was: every node resolved, every reference pointed somewhere, and the only casualty was the
+    content.
+
+    So this is a check on the markdown rather than on the build, which is the one place a mistake
+    of this kind is still visible.
+    """
+    lines = (ROOT / page).read_text().splitlines()
+    stack: list[tuple[int, str]] = []
+    for number, line in enumerate(lines, start=1):
+        if close := FENCE_CLOSE.match(line):
+            if stack and stack[-1][1][0] == close.group("fence")[0]:
+                stack.pop()
+                continue
+            assert not stack, (
+                f"{page}:{number}: {close.group('fence')} closes a directive opened at line "
+                f"{stack[-1][0]} with {stack[-1][1]} — MyST will read the rest of it as caption"
+            )
+        elif opened := DIRECTIVE_OPEN.match(line):
+            stack.append((number, opened.group("fence")))
+    assert not stack, f"{page}:{stack[-1][0]}: {stack[-1][1]} directive is never closed"
+
+
+@pytest.mark.parametrize("page", TOC_FILES, ids=TOC_FILES)
+def test_every_figure_has_a_caption(page: str):
+    """Fourteen of the book's fifteen figures say what they show. The fifteenth did not.
+
+    A caption in this book is not a label — it is the one line that says what mechanism the
+    drawing is of, which is what makes a figure worth having. ch30's sampling diagram closed its
+    directive straight after `:width:`, so it rendered as a picture with an alt attribute and
+    nothing a reader looking at it would see.
+    """
+    lines = (ROOT / page).read_text().splitlines()
+    for number, line in enumerate(lines, start=1):
+        if not line.startswith("```{figure}"):
+            continue
+        index = number  # first line after the directive, zero-based
+        while index < len(lines) and lines[index].startswith(":"):
+            index += 1
+        rest = lines[index:]
+        closing = next((i for i, text in enumerate(rest) if text.startswith("```")), len(rest))
+        assert any(text.strip() for text in rest[:closing]), (
+            f"{page}:{number}: figure has no caption — a drawing with nothing said about it is "
+            f"decoration, and this book's figures show a mechanism"
+        )
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_the_question_is_answered_by_more_than_itself(chapter: Chapter):
+    """*The question* is a question and then why it is being asked. ch31 had only the question.
+
+    Thirty-one chapters put a paragraph after the question saying what the chapter before it left
+    and why this one follows — which is what makes the sequence a book rather than a set of
+    articles. The last chapter jumped straight from its question to its material, and the reader
+    who arrived there from ch30 was told nothing about why.
+    """
+    text = (ROOT / chapter.path).read_text()
+    block = text[text.index("## The question") : text.index("## The material")]
+    paragraphs = [p for p in block.split("\n\n") if p.strip() and not p.startswith("## ")]
+    assert len(paragraphs) >= 2, (
+        f"{chapter.path} asks its question and says nothing about why — every other chapter "
+        f"follows it with what the one before left"
+    )
+
+
+PLAN_TOTALS = re.compile(
+    r"([\w-]+) chapters in ([\w-]+) parts and a front section, plus ([\w-]+) appendices"
+)
+
+
+def test_the_plan_counts_the_book_it_describes():
+    """CLAUDE.md sends a contributor to PLAN.md first, and PLAN.md described a different book.
+
+    Its outline opened "Twenty-two chapters in three parts, plus six appendices" while the outline
+    below it listed thirty-two in five, and appendices G and H were missing from the list
+    entirely — so the summary and the thing it summarised disagreed on the same page. The preface
+    has had this check for a while; the document the preface was planned in did not.
+    """
+    numbered = len([part for part in PART_PAGES if part.number >= 1])
+    said = PLAN_TOTALS.search((ROOT / "PLAN.md").read_text())
+    assert said, "PLAN.md §4 no longer opens by saying how big the book is"
+    counted = [NUMBER_WORDS.get(word.lower()) for word in said.groups()]
+    assert counted == [len(CHAPTERS), numbered, len(APPENDICES)], (
+        f"PLAN.md says {said.group(0)!r}; bench/outline.py has {len(CHAPTERS)} chapters, "
+        f"{numbered} numbered parts and {len(APPENDICES)} appendices"
+    )
+
+
+def test_the_glossary_reaches_every_part():
+    """It cited ch00, ch05 and then nothing until ch12.
+
+    Twelve chapters contributed no term, among them the whole of [Part II](#part2) — so `hart`,
+    a word the book uses on every page from ch08 onwards, was defined nowhere. A glossary
+    assembled from the chapters after they were written is the right method and it was assembled
+    from the chapters that existed at the time.
+
+    Checked by part rather than by chapter on purpose: not every chapter owes the glossary a word,
+    and every part does.
+    """
+    glossary = (ROOT / GLOSSARY.path).read_text()
+    cited = set(re.findall(r"\[ch\d+\]\(#([\w-]+)\)", glossary))
+    by_anchor = {chapter.anchor: chapter for chapter in CHAPTERS}
+    parts = {by_anchor[anchor].part for anchor in cited if anchor in by_anchor}
+    missing = sorted({chapter.part for chapter in CHAPTERS} - parts)
+    assert not missing, f"the glossary defines nothing from {', '.join(missing)}"
+
+
+#: `chapter 11` — a chapter named by a number that is not a link and has no anchor behind it.
+BARE_CHAPTER_NUMBER = re.compile(
+    r"\bchapters?\s+(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|"
+    r"thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty(?:-\w+)?|"
+    r"thirty(?:-\w+)?)\b",
+    re.IGNORECASE,
+)
+
+
+@pytest.mark.parametrize("page", TOC_FILES, ids=TOC_FILES)
+def test_no_page_names_a_chapter_by_a_bare_number(page: str):
+    """Both of these were headings, which is not a coincidence.
+
+    A cross-reference in a sentence is a link, so `sync-labels.py` keeps its number right. A
+    heading cannot comfortably hold one, so two of them were written out in words — "So was
+    chapter 11 right?" above a paragraph about ch19, and "Back to chapter 15" above a paragraph
+    about ch23. Each sat directly on top of the correctly-numbered link that contradicted it.
+
+    There is no anchor in `chapter 11` to derive anything from, so the answer is the one this
+    book's own instructions reach for in the same situation: name the thing instead. A heading
+    that says what the section is about cannot go stale.
+    """
+    body = (ROOT / page).read_text()
+    named = [m.group(0) for m in BARE_CHAPTER_NUMBER.finditer(FENCED.sub("", body))]
+    assert not named, (
+        f"{page} says {named[0]!r} — a number with no anchor behind it, which nothing can keep "
+        f"right. Link it, or name what the chapter is about"
+    )
+
+
 #: Spelled-out numbers, which is how this book writes a count in prose. Digits in prose are
 #: already policed by `scripts/verify-numbers.py`; words are the hole it cannot see through, and
 #: three real contradictions went in through it — a preface claiming four parts and twenty-four
@@ -529,6 +759,56 @@ def test_every_chapter_link_uses_the_books_own_form():
     )
 
 
+CHAPTER_LINK = re.compile(r"\[ch(\d+)\]\(#([\w-]+)\)")
+
+
+def test_a_generated_fragment_labels_a_chapter_link_correctly():
+    """`sync-labels.py` rewrites the pages a person edits, and a fragment is not one of them.
+
+    Three of ch21's and ch23's tables carried `[ch13](#traps-and-system-calls)` — typed into
+    `bench/tables.py`, printed into `chapters/_generated/`, and past every check the book has. The
+    syncer is pointed at `chapters/*.md` and a fragment lives one directory down; `--strict` only
+    asks whether the anchor resolves, and it did.
+
+    Fixing the five was a line of code; the check is here because a fragment is the one place in
+    this book where writing a number out looks safe and is not.
+    """
+    wrong = []
+    by_anchor = {chapter.anchor: chapter for chapter in CHAPTERS}
+    for fragment in sorted((ROOT / "chapters" / "_generated").glob("*.md")):
+        for label, anchor_name in CHAPTER_LINK.findall(fragment.read_text()):
+            chapter = by_anchor.get(anchor_name)
+            if chapter is not None and chapter.label != f"ch{label}":
+                wrong.append(f"{fragment.name}: [ch{label}] points at {chapter.label}")
+    assert not wrong, "a generated table names the wrong chapter: " + "; ".join(wrong)
+
+
+SECOND_INSTRUCTION_SET = re.compile(r"second instruction set in (\w+) of them")
+
+
+def test_part_five_counts_the_chapters_that_change_instruction_set():
+    """The one number on that page a reader can check, so it had better be right.
+
+    Part V justifies crossing to AArch64 by weighing two chapters that would lose their
+    measurements against the chapters that have to be read in a second instruction set. It said
+    three, and `bench/outline.py` itself had lost two of them. The count is the whole of the
+    argument's second half, and it is derived from the same field the three claim pages are
+    checked against — counting one thing two ways is how two checks come to disagree.
+    """
+    part = next(p for p in PART_PAGES if p.number == 5)
+    crossed = {
+        chapter.label
+        for chapter in CHAPTERS
+        if chapter.part == part.title and chapter.reads_disassembly == "aarch64"
+    }
+    said = SECOND_INSTRUCTION_SET.search((ROOT / part.path).read_text())
+    assert said, f"{part.path} no longer says how many chapters change instruction set"
+    assert NUMBER_WORDS.get(said.group(1)) == len(crossed), (
+        f"{part.path} says {said.group(1)} chapters are read in AArch64; bench/outline.py "
+        f"records {len(crossed)}: {', '.join(sorted(crossed))}"
+    )
+
+
 PART_SELF = {part.path: part.number for part in PART_PAGES}
 
 #: Regions a part mention is allowed to be plain text in: frontmatter, code, a heading, a MyST
@@ -661,6 +941,121 @@ def test_the_first_whole_program_is_the_first_whole_program():
 
 #: PLAN.md §12.1, as a chapter's own headings. "Header block" is the note table rather than a
 #: heading, so it is not listed; the other six are.
+#: ``| **Chapters** | [ch02](#reading-a-listing)–[ch05](#…) |`` — the header's range.
+#: `ch06` written as text rather than as `[ch06](#a-trap-with-nothing-else)`.
+@pytest.mark.parametrize("chapter", CHAPTERS[:-1], ids=CHAPTER_IDS[:-1])
+def test_a_chapter_hands_off_forwards(chapter: Chapter):
+    """*Where to go next* ends by naming what comes next, and next means later.
+
+    ch13 closed with "ch05 takes the other half of C and does the same thing to it" — a hand-off
+    written when representing information came before the addresses chapter, left pointing
+    backwards by a reorder that renumbered both correctly. The link resolved, the label was
+    right, and the word "next" was the only thing that had become false.
+
+    Only the closing paragraph is checked. A chapter is free to send a reader back for context
+    anywhere else, and they do.
+    """
+    text = (ROOT / chapter.path).read_text()
+    if "## Where to go next" not in text:
+        return
+    closing = text.split("## Where to go next")[1].strip().split("\n\n")[-1]
+    numbers = [
+        by_anchor[a].number for a in re.findall(r"\]\(#([\w-]+)\)", closing) if a in by_anchor
+    ]
+    if not numbers:
+        return
+    assert max(numbers) > chapter.number, (
+        f"{chapter.path} closes by pointing at ch{max(numbers):02d}, which is not after "
+        f"{chapter.label} — a hand-off goes forwards"
+    )
+
+
+BARE_CHAPTER = re.compile(r"(?<!\[)\bch(\d\d)\b(?!\]\()")
+
+
+@pytest.mark.parametrize("path", PROSE_FILES, ids=[str(p) for p in PROSE_FILES])
+def test_a_chapter_reference_in_prose_is_a_link(path):
+    """A bare `chNN` is a typed number, and this book derives its numbers.
+
+    `sync-labels` rewrites the label inside a link because the anchor tells it which chapter is
+    meant. A bare one carries no anchor, so nothing can correct it and nothing did: four of the
+    eight in the book pointed at chapters that had nothing to do with the sentence. ch07 credited
+    "the `mepc + 4` from ch04" — ch04 is *C Without a Runtime* — and ch11 said ch06 got away with
+    three top-level page-table entries, which is ch08's page table and ch06's trap.
+
+    Writing the reference as a link fixes it twice over: the anchor says which chapter is meant,
+    and the label is then derived from it like every other number here.
+    """
+    text = (ROOT / path).read_text()
+    body = re.sub(r"```.*?```", "", text, flags=re.S)
+    body = re.sub(r"`[^`\n]+`", "", body)
+    bare = sorted({m.group(0) for m in BARE_CHAPTER.finditer(body)})
+    assert not bare, (
+        f"{path} names a chapter without linking it: {', '.join(bare)} — write it as "
+        f"[chNN](#anchor) so the anchor says which chapter and sync-labels owns the number"
+    )
+
+
+APPENDIX_LINK = re.compile(r"\[Appendix ([A-Z])\]\(#([\w-]+)\)")
+
+
+@pytest.mark.parametrize("path", PROSE_FILES, ids=[str(p) for p in PROSE_FILES])
+def test_an_appendix_link_points_at_that_appendix(path):
+    """`sync-labels` derives a chapter link's text; nothing derived an appendix's.
+
+    ch03 said "[Appendix A](#reading-a-listing)" after the listing key moved out of appendix A and
+    became a chapter that took the anchor with it. The link resolved perfectly — to a chapter —
+    and `--strict` cannot see the difference between a link that works and one that says where it
+    goes. This is the same shape as every other finding in this book's review passes, and the only
+    one of them that is a single regular expression.
+    """
+    text = (ROOT / path).read_text()
+    wrong = [
+        f"{m.group(0)} should point at #appendix-{m.group(1).lower()}"
+        for m in APPENDIX_LINK.finditer(text)
+        if m.group(2) != f"appendix-{m.group(1).lower()}"
+    ]
+    assert not wrong, f"{path} names an appendix and links elsewhere:\n  " + "\n  ".join(wrong)
+
+    # And a bare one is a reference a reader cannot follow. Frontmatter and the page's own
+    # heading name the appendix without linking it, by necessity, so only the body is checked.
+    body = text.split("\n---\n", 2)[-1]
+    body = re.sub(r"^#.*$", "", body, flags=re.M)
+    body = APPENDIX_LINK.sub("", body)
+    bare = sorted({m.group(0) for m in re.finditer(r"\bAppendix [A-H]\b", body)})
+    assert not bare, (
+        f"{path} names an appendix without linking it: {', '.join(bare)} — everywhere else in "
+        f"the book they are links, and a reader cannot click this one"
+    )
+
+
+CHAPTERS_ROW = re.compile(r"\| \*\*Chapters\*\* \| (.+?) \|")
+
+
+@pytest.mark.parametrize("part", PART_PAGES, ids=PART_IDS)
+def test_a_part_header_names_its_own_first_and_last_chapter(part: Part):
+    """The range in the header block is the part's, and the part's boundaries move.
+
+    `sync-labels` keeps the *labels* honest, so this row reads plausibly however wrong it is: when
+    a chapter was inserted at the front of Part I, the row went on pointing at the chapter that
+    used to be first and simply relabelled it. The anchors are the part that cannot be derived
+    from the link itself, so they are what this checks.
+    """
+    text = (ROOT / part.path).read_text()
+    row = CHAPTERS_ROW.search(text)
+    assert row, f"{part.path} has no Chapters row in its header block"
+    anchors = re.findall(r"\(#([\w-]+)\)", row.group(1))
+    chapters = in_part(part)
+    assert anchors and anchors[0] == chapters[0].anchor, (
+        f"{part.path} opens its range at #{anchors[0] if anchors else '?'}, but the part starts "
+        f"at {chapters[0].label} (#{chapters[0].anchor})"
+    )
+    assert anchors[-1] == chapters[-1].anchor, (
+        f"{part.path} ends its range at #{anchors[-1]}, but the part ends at "
+        f"{chapters[-1].label} (#{chapters[-1].anchor})"
+    )
+
+
 CHAPTER_SECTIONS = (
     "## The question",
     "## The material",
@@ -904,6 +1299,66 @@ def test_the_hardware_appendix_names_every_hardware_sensitive_chapter(chapter: C
     )
 
 
+def test_the_hardware_appendix_counts_that_list_correctly():
+    """It said five when six chapters declared an assumption, which is only half a mistake.
+
+    The table is [Part V](#part5)'s chapters and five of them is right; ch01 declares an
+    assumption too and is handled in the section below the table, deliberately, because it is the
+    chapter that goes and asks. What was wrong was the sentence, which claimed to be counting
+    chapters rather than Part V's. It says which now, and the number is checked here — a page that
+    opens by promising a complete list has to be able to keep the promise.
+    """
+    part = next(p for p in PART_PAGES if p.number == 5)
+    expected = sum(1 for c in HARDWARE_SENSITIVE if c.part == part.title)
+    page = (ROOT / CHOOSING_THE_MACHINE.path).read_text()
+    said = re.search(r"Most do not\. (\w+) chapters of", page)
+    assert said, "appendix H no longer says how many chapters depend on the hardware"
+    assert NUMBER_WORDS.get(said.group(1).lower()) == expected, (
+        f"appendix H says {said.group(1)} chapters of Part V depend on the hardware; "
+        f"bench/outline.py records {expected}"
+    )
+
+
+PYTEST_COMMAND = re.compile(r"python3 -m pytest (tests/[\w/.-]+?)(?=[\s`]|$)", re.M)
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_every_test_a_chapter_tells_you_to_run_exists(chapter: Chapter):
+    """A problem whose command names nothing is a problem the reader cannot start.
+
+    Nothing else checks these. The test directory is named from the slug and so moves with it, but
+    a file renamed inside one — `test_problem_2_frames.py` becoming something else — leaves a
+    chapter printing a command that fails with a path error, which reads to a beginner like their
+    setup being broken.
+    """
+    text = (ROOT / chapter.path).read_text()
+    missing = [path for path in PYTEST_COMMAND.findall(text) if not (ROOT / path).exists()]
+    assert not missing, f"{chapter.path} says to run {missing[0]}, which does not exist"
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_every_problem_says_how_to_run_it(chapter: Chapter):
+    """Two had no command at all and one of them had a test sitting there unused.
+
+    ch00's padding problem is graded by `test_problem_2_abi.py` and never named it, relying on a
+    catch-all three problems further down; ch26's two predictions share one stub and one command,
+    which is fine and was not said. The exception the book does allow is a problem with no test —
+    ch24's fourth has no answer for one to check against — and that has to be said out loud rather
+    than inferred from an absence.
+    """
+    text = (ROOT / chapter.path).read_text()
+    problems = re.findall(r"^\*\*(\d{1,2}\.\d) — ", text, re.M)
+    if not problems:
+        return
+    section = text[text.index("## Problems") :]
+    commands = len(set(PYTEST_COMMAND.findall(section)))
+    excused = "no test" in section or "one command" in section
+    assert commands >= len(problems) or excused, (
+        f"{chapter.path} sets {len(problems)} problems and gives {commands} commands, and does "
+        f"not say why — a problem the reader cannot start is not a problem"
+    )
+
+
 def test_host_chapter_headers_do_not_name_a_specific_board():
     """The hardware requirement is a capability (ch00), so a header naming one board is wrong.
 
@@ -1063,23 +1518,22 @@ def test_pages_agree_on_which_chapters_read_disassembly(page: str):
     failure that matters. No page may name a chapter that does not read disassembly at all.
     Naming the RISC-V side as well is optional — `hardware/README.md` is about Part V only.
 
-    ch00 is excluded throughout: it *demonstrates* both rather than requiring either.
+    A chapter that prints *both* is excluded throughout — it demonstrates the pair rather than
+    costing the reader either, which is the whole reason ch02 exists and why ch20 and ch23 put the
+    two side by side. That used to be a special case for ch00 and is now the rule, because three
+    more chapters turned out to be in the same position and the special case could not see them.
     """
-    without_ch00 = lambda kind: {  # noqa: E731
-        label for label in reading_disassembly(kind) if label != "ch00"
-    }
+    demonstrates_both = {c.label for c in CHAPTERS if c.reads_disassembly == "both"}
+    required = lambda kind: set(reading_disassembly(kind)) - demonstrates_both  # noqa: E731
     text = (ROOT / page).read_text()
-    # ch00 comes off both sides, not just the outline's. It reads disassembly on both
-    # architectures and is excluded from the *cost* being claimed, so a page naming it in this
-    # paragraph — the preface points at it for exactly that reason — is telling the truth.
-    found = _labels_near(text, "disassembly") - {"ch00"}
+    found = _labels_near(text, "disassembly") - demonstrates_both
     assert found, f"{page} no longer says anything about reading disassembly"
 
-    missing = without_ch00("aarch64") - found
+    missing = required("aarch64") - found
     assert not missing, (
         f"{page} understates what the instruction-set split costs: it omits {sorted(missing)}"
     )
-    wrong = found - without_ch00("aarch64") - without_ch00("riscv")
+    wrong = found - required("aarch64") - required("riscv")
     assert not wrong, f"{page} says {sorted(wrong)} read disassembly; bench/outline.py disagrees"
 
 

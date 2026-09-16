@@ -47,7 +47,7 @@ Written as the question was asked:
 That is the amplification factor, and it is not a rounding error. Nor is it waste — every one of
 those writes is doing something, and the rest of this chapter is what.
 
-Notice the second row of the last table as well. A file with nothing whatever in it, created and
+Notice the last row of that second table as well. A file with nothing whatever in it, created and
 immediately removed, costs more disk traffic than the byte does. Most of what a file system does
 is bookkeeping, and the data is the small part.
 
@@ -132,9 +132,9 @@ in which they become true together or not at all.
 One number is nearly zero and is worth a sentence. Creating and deleting a whole file read
 **nothing** from the disk, and writing a byte read three blocks.
 
-That is [ch19](#interrupts-and-drivers)'s buffer cache. A block already in memory is not fetched, and a short
-workload touches the same handful of blocks — the superblock, the log header, the inode block,
-the bitmap — over and over. Reads are the operation a cache can eliminate entirely; writes are the
+That is the buffer cache from the list above, doing the only thing a cache does. A block already
+in memory is not fetched, and a short workload touches the same handful of blocks — the
+superblock, the log header, the inode block, the bitmap — over and over. Reads are the operation a cache can eliminate entirely; writes are the
 operation it can only delay, and a log is a design that deliberately declines to delay them very
 much.
 

@@ -264,5 +264,9 @@ machine: the hardware always does something specific, and knowing what does not 
 
 The psABI @riscv-psabi fixes the sizes and alignments this chapter's structs are laid out by.
 
-[ch05](#c-for-people-who-will-read-a-kernel) takes the other half of C — the part that is really about addresses — and does the
-same thing to it.
+[ch05](#c-for-people-who-will-read-a-kernel) did the same thing to the other half of C — the part
+that is really about addresses — and is worth rereading now that a type has been shown deciding
+what the machine does.
+
+[ch14](#machine-level-code-on-riscv) stops treating the listings as evidence for a point about C
+and starts reading them as the subject.

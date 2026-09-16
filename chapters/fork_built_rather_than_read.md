@@ -45,7 +45,7 @@ a system call; keep it a little longer and it is a saved process.
 
 ### Mapping one page rather than one gigabyte
 
-ch06 got away with three top-level leaf entries. A per-process page needs a real walk, because four
+[ch08](#one-page-table-two-harts) got away with three top-level leaf entries. A per-process page needs a real walk, because four
 kilobytes is a leaf at the bottom level, and the levels above it have to exist first:
 
 ```{literalinclude} ../sysfs/bare/fork.c

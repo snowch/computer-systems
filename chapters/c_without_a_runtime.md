@@ -67,16 +67,18 @@ bookkeeping is the trick worth meeting once. A list of free pages needs a node p
 would need memory, which is what we are trying to allocate. The kernel resolves it by writing the
 link *into the free page*, because a free page by definition holds nothing anybody wants.
 
-```c
-struct run { struct run *next; };
-r = (struct run *)pa;
-r->next = free_list;
-free_list = r;
+```{literalinclude} ../xv6/xv6-riscv/kernel/kalloc.c
+:language: c
+:start-at: struct run {
+:end-before: struct {
+:caption: xv6, `kernel/kalloc.c` — MIT licence
 ```
 
-That is [ch03](#memory-is-one-array)'s self-referential struct doing real work, and it is three
-lines of pointer arithmetic that would be undefined behaviour in an application and is the
-allocator here. [ch18](#page-faults-as-a-feature) is the chapter that measures what it costs.
+That is [ch03](#memory-is-one-array)'s self-referential struct doing real work, and the whole of
+the free list's bookkeeping. Freeing a page casts its address to a `struct run *`, writes the
+current head of `kmem.freelist` into the page's first bytes, and makes the page the new head;
+allocating takes the head and follows the link it finds there. Four lines of pointer arithmetic
+that would be undefined behaviour in an application and are the allocator here. [ch18](#page-faults-as-a-feature) is the chapter that measures what it costs.
 
 That phrase is worth being precise about, because it is not a figure of speech. C is defined in
 terms of an abstract machine in which a pointer points at an *object* — something created by a

@@ -153,7 +153,7 @@ within a gigabyte of them. Two pages of table for two pages of mapping, and ever
 system pays it.
 
 **Those two pages are the trapframe and the trampoline.** The mechanism [ch16](#traps-and-system-calls) measured in
-instructions has a second price, in a currency ch13 had no way to express: per process, two pages
+instructions has a second price, in a currency that chapter had no way to express: per process, two pages
 of table, for as long as the process exists. Neither number is a cost in the sense this book
 usually means — [ch29](#the-os-layers-cost) is where traps get priced in time — but both are real, and the
 second one is invisible unless somebody counts it.
@@ -163,13 +163,21 @@ second one is invisible unless somebody counts it.
 One more thing is worth saying about how the numbers above were obtained, because it is not the
 usual thing.
 
-The kernel counts its own tables by walking them. Separately, `sysfs/tools/sv39.c` computes how
+The kernel counts its own tables by walking them. Separately, `sysfs/lib/sv39.c` computes how
 many tables a set of mappings *requires*, from the addresses alone, with no machine involved:
 
 ```{literalinclude} ../sysfs/lib/sv39.c
 :language: c
 :start-at: uint64_t sysfs_sv39_tables
 :end-before: out[2] = 1;
+```
+
+`sysfs/tools/sv39.c` puts a command line on that, so init's two clusters can be asked about
+directly — four pages at the bottom of the address space, two at the top, and the answer this
+chapter spent a section arriving at:
+
+```bash
+./run sv39 tables 0x0:4 0x3fffffe000:2
 ```
 
 The two are arrived at from opposite ends — one by inspecting a running system, the other from a
@@ -235,12 +243,12 @@ python3 -m pytest tests/virtual_memory/test_problem_1_map.py
 ```
 
 **17.2 — Follow it.**
-Write `walk_translate`. The expected answers are the mappings the test asked your own 7.1 to make,
-so the target moves with your implementation rather than being a constant. Two things are easy to
+Write `walk_translate`. The expected answers are the mappings the test asked problem 17.1 to
+make, so the target moves with your implementation rather than being a constant. Two things are easy to
 get wrong and are checked: the offset must survive, and an address that was never mapped must
 fault rather than returning something plausible.
 
-Handle a leaf found above the bottom level even though 7.1 never creates one. The format allows
+Handle a leaf found above the bottom level even though problem 17.1 never creates one. The format allows
 it, and code that assumes otherwise is wrong in a way that will not show up until it meets a
 kernel that uses superpages.
 

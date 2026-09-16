@@ -10,7 +10,7 @@ An appendix in this book is a reference, not a chapter. This one is read once, b
 any money, and then only to settle an argument with a spec sheet.
 
 [Part V](#part5) is the only part that needs hardware of its own: it is where every number in the
-book is measured, and [ch00](#prerequisites-and-setup) is where you make it work. What follows is
+book is measured, and [ch01](#setting-up-the-board) is where you make it work. What follows is
 the decision before that — what the `host` target has to be able to do, how to check a machine you
 already own, and what changes if yours differs from the reference. The *argument* for a second
 machine at all is in the preface; this is the shopping and the checking.
@@ -62,12 +62,12 @@ cost more than legibility bought. And **every machine you are likely to care abo
 reorders**, so learning to attribute cycles on one is the skill that transfers.
 [ch27](#the-cpu) is harder for it, says so in its own header, and is more useful as a result. If you
 want the clean version too, an in-order Cortex-A53 — a Pi 3 or Pi Zero 2 W — costs very little,
-and running ch24's experiments on both is an instructive afternoon.
+and running [ch24](#measuring)'s experiments on both is an instructive afternoon.
 
 ## It is an ARM machine, and everything before Part V is RISC-V
 
 That is deliberate: `perf` has to both count *and* sample, no affordable RISC-V core does both,
-and choosing one would have cost two chapters of [Part V](#part5). The preface has the evidence; this
+and choosing one would have cost two chapters of [Part V](#part5). The [preface](#preface) has the evidence; this
 chapter is about getting the machine working.
 
 % number-ok: SoC specification from @rpi-bcm2712; every figure in this book comes from the machine itself
@@ -162,8 +162,8 @@ ratios, mechanisms and method, and those transfer.
 
 ## Which chapters actually depend on the hardware
 
-Most do not. Five do, and rather than let you discover that two hundred pages in, here they are
-up front. Each of these says the same thing in its own header, so you cannot open one without
+Most do not. Five chapters of [Part V](#part5) do, and rather than let you discover that two
+hundred pages in, here they are up front. Each of these says the same thing in its own header, so you cannot open one without
 being told.
 
 | Chapter | What it assumes | What changes on a different machine |

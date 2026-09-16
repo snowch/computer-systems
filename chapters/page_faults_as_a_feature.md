@@ -110,7 +110,9 @@ Build it into the kernel, boot, and run it:
 ```
 
 Three phases, chosen to bracket the trade rather than to demonstrate a win. A large lazy request
-barely touched; a lazy request touched in full; an eager request of the same size as the first.
+barely touched; a smaller lazy request touched in full; an eager request of the same size as the
+first. The table below has two lazy rows rather than four, because the census counts per process
+and not per call: the two lazy requests arrive in it added together.
 
 ```{include} _generated/page-faults-as-a-feature-exchange.md
 ```
@@ -179,8 +181,8 @@ for, and that the numbers describe a bug rather than a policy.
 **What a fault costs.** Not a single duration appears above, and it could not honestly. A fault's
 cost is the trap path, the walk, the allocation and whatever the TLB and the caches make of the
 interruption — and this target models none of the last part. [ch29](#the-os-layers-cost) prices the whole shape
-on hardware. Until then, "seventeen faults" is a count of kernel entries and not a claim about
-time.
+on hardware. Until then, the fault count above is a count of kernel entries and not a claim
+about time.
 
 **Whether laziness is worth it.** The table gives the exchange rate for one workload, chosen to
 show both ends. Whether trading those pages for those faults is a good deal depends on how much

@@ -20,11 +20,13 @@ short_title: "14 · Machine-Level Code on RISC-V"
 
 What did the compiler actually emit, and how do I read it?
 
-The previous three chapters have all ended by looking at disassembly without ever explaining how
-to read it. This is that chapter. By the end of it you should be able to open an unfamiliar
-function, find where its arguments went, work out how much stack it wanted and why, and walk back
-up the chain of calls that reached it — by hand, and then in a debugger, and understand that
-these are the same operation.
+[ch02](#reading-a-listing) taught you to read a line of one: which column is which, what an
+operand means, where the number in brackets comes from. This chapter is about what the lines say
+between them, which is a different skill and is the one the listings in [Part III](#part3) have
+been quietly assuming. By the end of it you should be able to open an unfamiliar function, find
+where its arguments went, work out how much stack it wanted and why, and walk back up the chain of
+calls that reached it — by hand, and then in a debugger, and understand that these are the same
+operation.
 
 ## The material
 
@@ -48,7 +50,7 @@ The consequence worth internalising is about *lifetime*, not about numbers:
   at all, because nobody has promised anything about it.
 
 The compiler makes that decision for every value in every function, and a great deal of what looks
-like arbitrary register choice in a disassembly is this rule being applied. Appendix A lists which
+like arbitrary register choice in a disassembly is this rule being applied. [Appendix A](#appendix-a) lists which
 register is in which group; the list is not worth memorising and the rule is.
 
 ### A stack frame is a linked list
@@ -177,7 +179,7 @@ which the disassembly stops being a printout:
 make xv6-gdb          # in one terminal: boots halted, waiting
 ```
 
-Appendix B has the workflow — attaching, setting a breakpoint in a user program, stepping one
+[Appendix B](#appendix-b) has the workflow — attaching, setting a breakpoint in a user program, stepping one
 instruction at a time, and printing the registers. The exercise worth doing at least once is to
 break on entry to a function, read the frame pointer, and find the return address yourself with
 `x/gx`, before typing `backtrace` and watching the debugger produce the same answer.
@@ -206,7 +208,7 @@ chapter has neither. It is a common mistake to assume the ratio follows the inst
 **What the registers are called on the other machine.** Everything here is RISC-V. AArch64 divides
 its registers the same way, into caller-saved and callee-saved, and gives them entirely different
 names and a different number of argument registers. The *rule* transfers; the table does not, and
-Appendix F is the translation for the reader who meets it in [ch26](#optimising-code).
+[Appendix F](#appendix-f) is the translation for the reader who meets it in [ch26](#optimising-code).
 
 **How the compiler chose.** Register allocation is an optimisation problem with a large literature
 and this chapter deliberately does not enter it. What it teaches is how to read the *result*,

@@ -368,6 +368,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "xv6",
         "What breaks when two harts touch the same memory, and what is the minimum fix?",
         "locks-and-memory-ordering",
+        reads_disassembly="both",
         owes="What a lock is made of, in instructions: the atomic that excludes, the fence that "
         "orders, and what turning interrupts off costs beside them.",
     ),
@@ -401,6 +402,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "What does watching a program in a debugger fail to tell me about what it costs?",
         "the-same-program-on-both-targets",
         answers=("machine-level-code-on-riscv", "traps-and-system-calls", "virtual-memory"),
+        reads_disassembly="both",
         owes="The same structural facts from both targets, and the first side-by-side timing: the "
         "board's, against QEMU's meaningless equivalent, shown deliberately.",
     ),
@@ -489,6 +491,7 @@ CHAPTERS: tuple[Chapter, ...] = (
             "page-faults-as-a-feature",
             "scheduling-and-context-switches",
         ),
+        reads_disassembly="aarch64",
         owes="The cost of a system call, a fault and a switch, each beside the cheapest available "
         "baseline; a minor fault against a major one; `vDSO` against a real trap.",
     ),
@@ -504,6 +507,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "standard, so this works on the reference machine — but most affordable RISC-V cores "
         "do not, and a reader following Part V on one will find this the chapter they "
         "cannot run.",
+        reads_disassembly="aarch64",
         owes="Profiles of the supplied program before and after, and a sampling artefact shown "
         "deliberately.",
     ),

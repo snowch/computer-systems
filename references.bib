@@ -31,7 +31,7 @@
   howpublished = {\url{https://github.com/riscv-non-isa/riscv-sbi-doc}},
   url = {https://github.com/riscv-non-isa/riscv-sbi-doc},
   note         = {The PMU extension is how Linux reaches the hardware performance counters on
-                  this board; ch00 checks that the firmware provides it.}
+                  this board; *Setting Up the Board* checks that the firmware provides it.}
 }
 
 @misc{riscv-psabi,
@@ -39,8 +39,8 @@
   author       = {{RISC-V International}},
   howpublished = {\url{https://github.com/riscv-non-isa/riscv-elf-psabi-doc}},
   url = {https://github.com/riscv-non-isa/riscv-elf-psabi-doc},
-  note         = {The calling convention, register roles and LP64D data model that ch11 reads
-                  out of real disassembly.}
+  note         = {The calling convention, register roles and LP64D data model that
+                  *Machine-Level Code on RISC-V* reads out of real disassembly.}
 }
 
 @misc{sifive-u74,
@@ -97,7 +97,7 @@
   publisher = {ACM},
   doi       = {10.1145/1508244.1508275},
   note      = {Measurement bias: link order and environment size moving results more than the
-               optimisation under study. Chapter 14's starting point.}
+               optimisation under study. *Measuring* starts from it.}
 }
 
 @misc{riscv-pmu-profiling,
@@ -118,7 +118,8 @@
   url = {https://docs.riscv.org/reference/isa/priv/sscofpmf.html},
   note         = {The counter-overflow interrupt a sampling profiler needs. Without it `perf
                   stat` counts and `perf record` cannot sample — which is the difference
-                  between ch26 and ch27 being possible on a given board.}
+                  between counting and sampling, and so between *The OS Layer's Cost* and
+                  *Whole-Machine Profiling* being possible on a given board.}
 }
 
 @misc{rpi-bcm2712,
@@ -127,7 +128,7 @@
   howpublished = {\url{https://www.raspberrypi.com/documentation/computers/processors.html}},
   url = {https://www.raspberrypi.com/documentation/computers/processors.html},
   note         = {The reference machine's SoC: quad Cortex-A76 at 2.4 GHz, 64 kB L1 instruction
-                  and data caches, 512 kB L2 per core, 2 MB shared L3. Chapter 15 measures that
+                  and data caches, 512 kB L2 per core, 2 MB shared L3. *The Memory Hierarchy* measures that
                   hierarchy rather than quoting it, and the two are compared.}
 }
 
@@ -137,8 +138,8 @@
   howpublished = {\url{https://developer.arm.com/documentation/}},
   url = {https://developer.arm.com/documentation/},
   note         = {Pipeline structure, branch prediction and the PMU event set the reference core
-                  exposes. Cited by ch24, which measures what it can and says which numbers are
-                  derived rather than counted.}
+                  exposes. Cited by *The Memory Hierarchy* and *The CPU*, which measure what they can and
+                  say which numbers are derived rather than counted.}
 }
 
 @misc{rpi-pmu-dt-6507,
@@ -150,8 +151,8 @@
   note         = {The reference machine's own performance counters, absent for a kernel release.
                   The 6.12.y device tree dropped the arm-pmu node the 6.6.y one carried, so the
                   armv8_cortex_a76 PMU never registered and perf silently saw no hardware. Cited
-                  by ch00 as the concrete case behind its instruction to verify counters on the
-                  machine rather than assume them from the board.}
+                  by *Choosing the Machine* as the concrete case behind the instruction to verify counters
+                  on the machine rather than assume them from the board.}
 }
 
 @misc{rpi-dt-bcm2712,
@@ -165,8 +166,9 @@
                   overflow interrupts, in bcm2712-ds.dtsi, reached from bcm2712-rpi-5-b.dts and
                   from both D0-stepping variants. In rpi-6.6.y the same node sits in
                   bcm2712.dtsi. Mainline's own BCM2712 tree, bcm2712-rpi-5-b.dts through
-                  bcm2712-rpi-5-b-base.dtsi to bcm2712.dtsi, carries no such node. Cited by ch00
-                  for the claim that the image decides this and the version number does not.}
+                  bcm2712-rpi-5-b-base.dtsi to bcm2712.dtsi, carries no such node. Cited by *Setting Up
+                  the Board* for the claim that the image decides this and the version number
+                  does not.}
 }
 
 @misc{iso-c17,
@@ -217,4 +219,25 @@
   howpublished = {\url{https://pubs.opengroup.org/onlinepubs/9699919799/}},
   url = {https://pubs.opengroup.org/onlinepubs/9699919799/},
   note         = {System interfaces: \texttt{dup}, \texttt{read}, \texttt{write}}
+}
+
+@misc{arm-arm,
+  title        = {Arm Architecture Reference Manual for {A-profile} Architecture},
+  author       = {{Arm Ltd}},
+  howpublished = {\url{https://developer.arm.com/documentation/ddi0487/latest/}},
+  url = {https://developer.arm.com/documentation/ddi0487/latest/},
+  note         = {The A64 instruction set, the exception model and the memory model, and the
+                  AArch64 half of every claim *AArch64 for RISC-V Readers* translates. It is the document
+                  *Memory Ordering on Real Hardware* reads beside RVWMO and *Vectors* reads for
+                  Advanced SIMD.}
+}
+
+@misc{arm-aapcs64,
+  title        = {Procedure Call Standard for the {Arm} 64-bit Architecture ({AAPCS64})},
+  author       = {{Arm Ltd}},
+  howpublished = {\url{https://github.com/ARM-software/abi-aa/blob/main/aapcs64/aapcs64.rst}},
+  url = {https://github.com/ARM-software/abi-aa/blob/main/aapcs64/aapcs64.rst},
+  note         = {AArch64's equivalent of the RISC-V psABI: which registers carry arguments,
+                  which are callee-saved, and what a frame has to look like. It decides the register roles
+                  in *AArch64 for RISC-V Readers*' first table.}
 }

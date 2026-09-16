@@ -21,6 +21,10 @@ short_title: "31 · Vectors"
 
 What does vectorising actually buy, and when will the compiler do it for me?
 
+[ch30](#whole-machine-profiling) was about finding the expensive loop in a program nobody here has
+read. This is the last thing left to do to one once it has been found, and it is the narrowest
+question in the book: the unit can do four of these at once, so what became of the other three?
+
 ## The material
 
 ### Five loops, three builds
@@ -36,8 +40,8 @@ me", and it is not a subtlety: the default is no.
 At `-O3` two of them widen. At `-O3` with permission to change the answer, a third joins them. Two
 never do, at any setting.
 
-So there are three different reasons a loop is not vectorised in that table, and only one of them
-is about the optimisation level.
+So there are four different reasons a loop is not vectorised somewhere in that table, and only one
+of them is about the optimisation level.
 
 ### The one that widens
 
@@ -107,7 +111,7 @@ Each measured speedup sits beside the most its lane count could possibly have bo
 That column is the chapter's argument. A speedup on its own invites you to be pleased with it; as
 a fraction of the bound it invites the only useful question, which is where the rest went — and
 the answer is a tail, or memory, or a loop that was never the bottleneck to begin with. Problem
-21.3 is that arithmetic, and it deliberately does not clamp: a result over the bound means
+31.3 is that arithmetic, and it deliberately does not clamp: a result over the bound means
 something other than the width changed, and the comparison has stopped being between two versions
 of one loop.
 
@@ -172,7 +176,8 @@ python3 -m pytest tests/vectors/test_problem_3_bound.py
 
 ## Where to go next
 
-The ARM architecture reference manual's Advanced SIMD chapter is the specification for what those
+The ARM architecture reference manual's Advanced SIMD chapter @arm-arm is the specification for
+what those
 instructions do, and the RISC-V vector extension @riscv-isa-unprivileged is worth reading beside
 it for the same reason [ch28](#memory-ordering-on-real-hardware) put two memory models side by side: it solves the tail
 problem in problem 31.1 by not having a compile-time width at all, and seeing one design makes the

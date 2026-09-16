@@ -550,10 +550,26 @@ def lock_primitives_table(name: str) -> str:
     )
 
 
+def chapter_link(anchor: str) -> str:
+    """A link to a chapter, labelled with the number it has today.
+
+    Typed out, these go stale the way every other number does — and worse than usual, because
+    `sync-labels.py` rewrites `chapters/*.md` and a generated fragment is not one of those. Five
+    of them said `[ch13]` over `#traps-and-system-calls` for three renumberings, in tables ch21
+    and ch23 print, and nothing could see it: the anchor resolved, so `--strict` was satisfied,
+    and the syncer was never shown the file.
+
+    So the anchor is the argument and the label is derived, which is the same rule the rest of the
+    book follows and the only one that survives a chapter moving.
+    """
+    chapter = next(c for c in CHAPTERS if c.anchor == anchor)
+    return f"[{chapter.label}](#{chapter.anchor})"
+
+
 def switch_cost_table(name: str) -> str:
     """What a context switch moves, beside what a trap moves.
 
-    The comparison is the content, so both are in one table. ch13's figure is loaded rather than
+    The comparison is the content, so both are in one table. The trap figure is loaded rather than
     repeated, so the two cannot disagree; `run_traps --check` keeps that one current.
     """
     swtch = load_result(name)["summary"]["swtch"]
@@ -561,7 +577,7 @@ def switch_cost_table(name: str) -> str:
     rows = [
         ["Registers a context switch saves", swtch["registers_saved"]],
         [
-            "Registers a trap saves ([ch13](#traps-and-system-calls))",
+            f"Registers a trap saves ({chapter_link('traps-and-system-calls')})",
             trap["uservec"]["register_stores"],
         ],
         ["Bytes a switch moves, in and out", swtch["bytes_moved"]],
@@ -720,6 +736,23 @@ def hierarchy_line_table(name: str) -> str:
     return render_table(["Stride", "Nanoseconds per dependent load"], rows)
 
 
+def hierarchy_reach_table(name: str) -> str:
+    """How far the TLB reaches, in pages and in bytes.
+
+    The reach sweep was collected from the first version of the runner and rendered by nothing,
+    so ch25's section on translation included the vendor comparison instead — a table about cache
+    sizes under a heading about page tables. Both numbers come from one step in one curve: the
+    last page count whose walk was still cached.
+    """
+    derived = load_result(name)["summary"]["derived"]
+    rows = [
+        ["Pages the translation cache holds", derived["tlb_reach_pages"]],
+        ["Memory those pages reach", derived["tlb_reach_bytes"]],
+        ["Last level, for comparison", derived["l3_bytes"]],
+    ]
+    return render_table(["", "Measured"], rows)
+
+
 def hierarchy_vendor_table(name: str) -> str:
     """What the machine said, beside what the vendor said.
 
@@ -862,22 +895,22 @@ def os_model_table(name: str) -> str:
         [
             "System call",
             f"{traps['path']['uservec']['instructions'] + traps['path']['userret']['instructions']} instructions of trap path",
-            "[ch13](#traps-and-system-calls)",
+            chapter_link("traps-and-system-calls"),
         ],
         [
             "…of which registers moved",
             f"{traps['path']['uservec']['register_stores'] + traps['path']['userret']['register_loads']}",
-            "[ch13](#traps-and-system-calls)",
+            chapter_link("traps-and-system-calls"),
         ],
         [
             "Page fault",
             f"{faults['load_faults'] + faults['store_faults']} for {faults['touched_lazy']} first touches",
-            "[ch15](#page-faults-as-a-feature)",
+            chapter_link("page-faults-as-a-feature"),
         ],
         [
             "Context switch",
             f"{switch['registers_saved']} registers, {switch['bytes_moved']} bytes",
-            "[ch18](#scheduling-and-context-switches)",
+            chapter_link("scheduling-and-context-switches"),
         ],
     ]
     return render_table(["Service", "What Part IV established", "Where"], rows)

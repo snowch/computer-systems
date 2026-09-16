@@ -65,7 +65,7 @@ be one function:
 :end-before:     if (phase == PHASE_SUPERVISOR)
 ```
 
-Note what is missing: the `mepc + 4` from ch04. An interrupt's `mepc` is wherever the program
+Note what is missing: the `mepc + 4` from [ch06](#a-trap-with-nothing-else). An interrupt's `mepc` is wherever the program
 happened to be — no instruction caused it, so there is nothing to advance past, and advancing
 would skip an instruction that had not run yet. The same register, read two different ways,
 depending on one bit.
@@ -164,7 +164,7 @@ python3 -m pytest tests/interrupts_and_privilege/test_problem_1_nested.py
 ```
 
 **7.2 — Advance `mepc` on an interrupt.**
-Make the handler treat the interrupt as ch04 treated the trap, and add four. Say exactly what goes
+Make the handler treat the interrupt as [ch06](#a-trap-with-nothing-else) treated the trap, and add four. Say exactly what goes
 wrong and produce a run where the damage is visible in the output rather than inferred.
 
 ```bash

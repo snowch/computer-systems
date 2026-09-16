@@ -29,13 +29,20 @@ from bench.board import governor, require_board, stamp_timing, timed_run
 from bench.stamp import ROOT, load_result, measurement_differences, write_result
 
 WORKLOAD = "sysfs/bench/hierarchy.c"
-FIGURE = "the-memory-hierarchy-levels, the-memory-hierarchy-line and the-memory-hierarchy-vendor"
+FIGURE = (
+    "the-memory-hierarchy-levels, the-memory-hierarchy-line, the-memory-hierarchy-reach and "
+    "the-memory-hierarchy-vendor"
+)
 
 #: How much slower one point has to be than the one before it to count as a step rather than as
 #: noise. A latency curve over a cache boundary roughly doubles; a run-to-run wobble does not
 #: come close. Stated as a constant because it is a judgement, and a judgement in a runner should
 #: be visible rather than buried in an expression.
 STEP = 1.4
+
+#: The page size the reach sweep walks, one visit per page. Sv39 and AArch64's 4 KiB granule
+#: agree on it, and `sysfs/bench/hierarchy.c` steps by exactly this much.
+PAGE_BYTES = 4096
 
 CACHE_SYSFS = Path("/sys/devices/system/cpu/cpu0/cache")
 
@@ -128,6 +135,17 @@ def derive(facts: dict[str, Any]) -> dict[str, Any]:
     for level in (1, 2, 3):
         derived.setdefault(f"l{level}_bytes", "no step found")
         derived[f"l{level}_bytes_vendor"] = vendor.get(f"l{level}_bytes", "not published")
+
+    # The reach sweep was collected from the start and derived from by nothing, so the chapter's
+    # section on translation had no figure of its own and included the vendor comparison instead.
+    # The step is the last page count that still fitted, which is what a TLB reaches.
+    reach_steps = _steps(facts["reach"], "pages")
+    derived["tlb_reach_pages"] = reach_steps[0] // 2 if reach_steps else "no step found"
+    derived["tlb_reach_bytes"] = (
+        derived["tlb_reach_pages"] * PAGE_BYTES
+        if isinstance(derived["tlb_reach_pages"], int)
+        else "no step found"
+    )
     return derived
 
 
@@ -163,6 +181,8 @@ SHAPE = {
         "l2_bytes_vendor": 222,
         "l3_bytes": 111,
         "l3_bytes_vendor": 222,
+        "tlb_reach_pages": 111,
+        "tlb_reach_bytes": 222,
     },
     "governor": "performance",
 }

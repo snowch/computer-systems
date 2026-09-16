@@ -143,9 +143,9 @@ Three, in `tests/scheduling_and_context_switches/scheduling.c`.
 Given the register's role under [ch14](#machine-level-code-on-riscv)'s convention and whether the value is still needed,
 say whether `swtch` itself has to preserve it.
 
-The whole question is that a context switch is an ordinary call, so most of the answer was settled
-seven chapters ago. Getting it right is what makes the fourteen against thirty-one above obvious
-rather than surprising.
+The whole question is that a context switch is an ordinary call, so most of the answer is already
+in the calling convention. Getting it right is what makes the fourteen against thirty-one above
+obvious rather than surprising.
 
 ```bash
 python3 -m pytest tests/scheduling_and_context_switches/test_problem_1_save.py

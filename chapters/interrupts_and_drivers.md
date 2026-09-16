@@ -83,7 +83,7 @@ The kernel counts interrupts by source, and counts two extra facts about the con
 :width: 100%
 
 Three sources. Same workload, repeated: one count came back identical every time and two did not.
-:::
+```
 
 ```{include} _generated/interrupts-and-drivers-cost.md
 ```
@@ -101,9 +101,8 @@ enough to fail the check that re-runs this measurement. The same argument that k
 interrupt count out of the table keeps that row out of it.
 
 Run the identical workload five times and the disk raises the same number of interrupts every
-time. Run it five times and the console raises a different number every time, over a spread of
-nearly a third. Nothing about the workload changed between those runs, so the console's count is
-not telling you about the workload.
+time. Run it five times and the console raises a different number every time. Nothing about the
+workload changed between those runs, so the console's count is not telling you about the workload.
 
 The reason is in what the two devices are saying. **A block device interrupts to say that a
 request is finished.** Requests are discrete, the workload decides how many there are, and each is

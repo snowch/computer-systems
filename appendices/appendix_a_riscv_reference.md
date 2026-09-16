@@ -53,10 +53,25 @@ promise binds the hardware, which is why [ch16](#traps-and-system-calls)'s trap 
 CSRs are a separate address space, read and written with their own instructions (`csrr`, `csrw`,
 `csrrw` and the immediate forms). They are not the integer registers and they are not memory.
 
-The privileged specification @riscv-isa-privileged defines several dozen. These are the ones the
-kernel in this book reads or writes, each with the chapter that meets it.
+The privileged specification @riscv-isa-privileged defines several dozen. These are the ones this
+book's code reads or writes, each with the chapter that meets it.
 
-| CSR | What it is | Where |
+They come in two sets, because this book runs at two privilege levels. [Part II](#part2) has no
+kernel under it and runs in **machine** mode, so it uses the `m` registers directly. xv6 runs in
+**supervisor** mode and uses the `s` ones, which do the same jobs one level down.
+
+| Machine-mode CSR | What it is | Where |
+|---|---|---|
+| `mtvec` | The address the hardware jumps to on a machine trap | [ch06](#a-trap-with-nothing-else) |
+| `mepc` | The address of the instruction that trapped; `mret` returns here | [ch06](#a-trap-with-nothing-else), [ch07](#interrupts-and-privilege) |
+| `mcause` | Why the trap happened, with the interrupt bit at the top | [ch06](#a-trap-with-nothing-else), [ch07](#interrupts-and-privilege) |
+| `mstatus` | Machine status: previous privilege in `MPP`, previous interrupt-enable in `MPIE` | [ch07](#interrupts-and-privilege) |
+
+**`mepc` points at the instruction, not past it.** That is the whole of [ch06](#a-trap-with-nothing-else)'s
+first problem and the reason a handler for `ecall` has to advance it and a handler for an
+interrupt must not.
+
+| Supervisor-mode CSR | What it is | Where |
 |---|---|---|
 | `stvec` | The address the hardware jumps to on a supervisor trap | [ch16](#traps-and-system-calls) |
 | `sepc` | The PC at the moment of the trap; `sret` returns here | [ch16](#traps-and-system-calls) |

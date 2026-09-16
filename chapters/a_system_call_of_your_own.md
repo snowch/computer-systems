@@ -30,7 +30,7 @@ too, and it is the expensive one.
 
 ### The caller is now a stranger
 
-ch04's handler could be careless because the compiler was not. It could see the handler and the
+[ch06](#a-trap-with-nothing-else)'s handler could be careless because the compiler was not. It could see the handler and the
 code it interrupted, knew which registers were live, and saved exactly those.
 
 That arrangement is gone. The caller runs in supervisor mode, was compiled separately as far as

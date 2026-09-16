@@ -3,7 +3,7 @@
 | What a switch costs to arrange | Count |
 |---|---|
 | Registers a context switch saves | 14 |
-| Registers a trap saves ([ch13](#traps-and-system-calls)) | 31 |
+| Registers a trap saves ([ch16](#traps-and-system-calls)) | 31 |
 | Bytes a switch moves, in and out | 224 |
 | Instructions in `swtch` | 29 |
 

@@ -21,7 +21,7 @@ short_title: "02 · Reading a Listing"
 **What is the compiler telling me, and what is it not?**
 
 Almost every chapter from here on puts a listing in front of you — the instructions a compiler
-produced from source you can read beside it. Two of them are in the next chapter. You are never
+produced from source you can read beside it. Three of them are in the next chapter. You are never
 asked to write assembly, and you are never asked to know every mnemonic; you are asked to say what
 the compiler did, which is a much smaller skill and takes one chapter to acquire.
 
@@ -114,8 +114,7 @@ object file, and wrote a stamped result. The block above is rendered from those 
 regenerates both on every push and fails if one instruction differs.
 
 It can do that because a listing depends on the compiler and not on the machine — so unlike every
-number in [Part V](#part5), this one is checked automatically, every time. Both halves of that sentence
-matter, and [ch24](#measuring) is about the half that cannot be.
+number in [Part V](#part5), this one is checked automatically, every time.
 :::
 
 ## What we measured
@@ -164,8 +163,8 @@ python3 -m pytest tests/reading_a_listing/test_problem_1_lengths.py
 ```
 
 **2.2 — Does this operand touch memory?**
-Eleven operands drawn from both instruction sets. Say which name a register and which reach
-memory. Two of them differ by one character and disagree.
+Eleven operands drawn from both instruction sets. Say which of them name a register or a literal,
+and which reach memory. One pair differs only by punctuation and disagrees.
 
 ```bash
 python3 -m pytest tests/reading_a_listing/test_problem_2_memory.py

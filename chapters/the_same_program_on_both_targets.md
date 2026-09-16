@@ -21,9 +21,9 @@ short_title: "23 · The Same Program on Both Targets"
 
 What does watching a program in a debugger fail to tell me about what it costs?
 
-Twelve chapters have built a complete structural account of a machine. You can say what a program
-compiles to, where its data sits, how its address space is built, what it costs the kernel to ask
-for anything, and how many blocks a byte reaches the disk as. All of it was obtained on a target
+Everything up to here has built a complete structural account of a machine. You can say what a
+program compiles to, where its data sits, how its address space is built, what it costs the kernel
+to ask for anything, and how many blocks a byte reaches the disk as. All of it was obtained on a target
 chosen precisely because you can stop it anywhere and look.
 
 None of it is a duration, and this chapter is where that stops being a caveat and becomes the
@@ -108,11 +108,11 @@ hardware isolates the emulation. Linux on one board against Linux on another iso
 instruction set. Nothing can be isolated by comparing the first of those with the last, and no
 amount of statistics applied afterwards recovers what the design gave away.
 
-Problems 13.1 and 13.2 are that move, mechanically, until it is automatic.
+Problems 23.1 and 23.2 are that move, mechanically, until it is automatic.
 
 ### What survives the crossing
 
-It is easy to summarise the last twelve chapters as "structure transfers and cost does not", and
+It is easy to summarise everything behind you as "structure transfers and cost does not", and
 that is wrong in both directions.
 
 **The instruction count is structural and does not transfer.** Two instruction sets do not emit
