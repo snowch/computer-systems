@@ -659,6 +659,52 @@ def test_the_first_whole_program_is_the_first_whole_program():
     )
 
 
+#: PLAN.md §12.1, as a chapter's own headings. "Header block" is the note table rather than a
+#: heading, so it is not listed; the other six are.
+CHAPTER_SECTIONS = (
+    "## The question",
+    "## The material",
+    "## What we measured",
+    "## What this cannot tell you",
+    "## Problems",
+    "## Where to go next",
+)
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_chapter_has_the_seven_part_shape(chapter: Chapter):
+    """§12.1 says seven parts in this order, every time, and nothing checked it.
+
+    The part pages have had this check since they existed. The chapters, which is where the rule
+    actually comes from, did not — so ch00 was the only chapter of thirty-two with no "## The
+    material" at all, and a chapter split out of it put that heading in and then left its three
+    body sections beside the heading rather than under it. Both read fine in isolation and both
+    break the shape the other thirty-one keep.
+    """
+    text = (ROOT / chapter.path).read_text()
+    found = [section for section in CHAPTER_SECTIONS if section in text]
+    assert found == list(CHAPTER_SECTIONS), (
+        f"{chapter.path} is missing or reorders: {[s for s in CHAPTER_SECTIONS if s not in found]}"
+    )
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_a_chapters_body_sits_under_the_material(chapter: Chapter):
+    """Everything between *The material* and *What we measured* is a subsection of it.
+
+    A `##` there is a seventh top-level section, which is the shape §12.1 forbids — and it is an
+    easy one to introduce when sections move between chapters, because promoting `###` to `##` is
+    what moving them usually needs.
+    """
+    text = (ROOT / chapter.path).read_text()
+    body = text[text.index("## The material") + 1 : text.index("## What we measured")]
+    stray = [line for line in body.split("\n") if line.startswith("## ")]
+    assert not stray, (
+        f"{chapter.path} has a top-level heading inside the body — it belongs under "
+        f"*The material*: {stray}"
+    )
+
+
 BIB_ENTRY = re.compile(r"@(\w+)\{([^,]+),(.*?)\n\}", re.S)
 
 

@@ -11,10 +11,9 @@ short_title: "00 · Prerequisites and Setup"
 
 | | |
 |---|---|
-| **Target** | `xv6` and `host` — every example says which |
+| **Target** | `xv6` — the teaching kernel under QEMU, whose toolchain `bare` shares |
 | **Prerequisites** | none |
-| **What it measures** | That both targets work, and exactly what they are: `bench/results/setup-xv6.json`, `bench/results/setup-host.json` |
-| **What it captures** | What the compiler emits for each architecture: `bench/results/shapes-riscv64.json`, `bench/results/shapes-aarch64.json` — listings, not measurements |
+| **What it measures** | That the emulated targets work, and exactly what they are: `bench/results/setup-xv6.json` |
 :::
 
 ## The question
@@ -24,10 +23,12 @@ What do I need on my desk, and how do I know it works?
 That second half is not a formality. Every later chapter rests on a claim about a machine — this
 compiler, this kernel, these counters — and a setup that is *almost* right fails three chapters
 later as something that looks like a bug in the material. So this chapter ends with a script that
-interrogates the machine you are sitting at and tells you which of the book's two targets it can
-currently run, and with two measurements that record what those targets actually are.
+interrogates the machine you are sitting at and tells you which of the book's three targets it can
+currently run, and with measurements that record what those targets actually are.
 
-## Two targets, and what the repository does about it
+## The material
+
+### Three targets, and what the repository does about it
 
 The preface makes the case for the arrangement; this is the operational version of it.
 
@@ -61,16 +62,18 @@ contains a duration at all.
 :end-before:     problems: list[str] = []
 ```
 
-## What you need
+### What you need
 
 Two machines, and only one of them has to be bought: whatever you are reading this on, which runs
 both emulated targets, and a small Linux board for `host`. The reference is a **Raspberry Pi 5**,
 and the requirement is a capability rather than a part number — `perf` has to both count and
 sample, which [Appendix H](#appendix-h) states properly, along with how to check a machine you
 already own and what changes if yours differs from the reference. Read it before you spend
-anything. The rest of this chapter assumes the board is on your desk.
+anything — and then carry on here, because nothing in this chapter needs the board.
+[ch01](#setting-up-the-board) is where it gets set up, and twenty-two chapters go by before
+anything depends on it.
 
-## Setting up the xv6 target
+### Setting up the xv6 target
 
 On the Mac, via Homebrew:
 
@@ -91,7 +94,7 @@ example in [Part V](#part5) can be compiled and **checked for correctness** away
 cannot tell you anything about time, and the repository does not let it try — but it is the
 difference between being able to work on [Part V](#part5) from a train and not.
 
-### The repository
+#### The repository
 
 ```bash
 git clone --recursive https://github.com/snowch/computer-systems.git
@@ -117,7 +120,7 @@ xv6/stage/       generated: all three, combined
 So `ls xv6/patches/` is a complete answer to "what has this book done to the kernel?", and that
 answer stays true. `xv6/README.md` has the mechanics.
 
-### Booting it
+#### Booting it
 
 ```bash
 make xv6-qemu
@@ -144,7 +147,7 @@ The same thing non-interactively, which is how the tests do it:
 python3 scripts/xv6-run.py -c ls -c sysprobe
 ```
 
-## Running the book's programs
+### Running the book's programs
 
 Every listing in this book is a real file that really compiles, and `./run` builds and runs any of
 them on whichever machine it belongs to.
@@ -167,13 +170,13 @@ advance `mepc` and watching what happens when it does not.
 which stamp a result and refuse one that has stopped demonstrating its chapter's claim; `./run`
 just builds and runs, so experimenting is free and cannot corrupt a number.
 
-## Checking the whole thing
+### Checking the whole thing
 
 ```bash
 python3 scripts/verify-setup.py
 ```
 
-It reports each target separately, because most machines can run one of them. On a laptop it
+It reports each target separately, because most machines can run two of the three. On a laptop it
 confirms the cross compiler, QEMU, the submodule and a usable debugger, then explains that the
 `host` target is read-only here and says whether a cross-built correctness path is available. On
 the machine itself it reads the device tree and `/proc/cpuinfo`, prints whatever that kernel says
@@ -185,7 +188,7 @@ front of it. A specification describes a product line; `/proc/cpuinfo` describes
 is about to produce your numbers, and when the two disagree — which happens — the book cites the
 one it measured.
 
-### The same program in both worlds
+#### The same program in both worlds
 
 Two checks remain, and they are the interesting ones. The first produces this chapter's first real
 result.
@@ -259,11 +262,11 @@ to measure. It is the whole design. The xv6 target will never produce a timing i
 because a timing produced there would be meaningless, and a meaningless number in a table is
 worse than a missing one — a missing number announces itself.
 
-The reference machine's table above is the other half of the same discipline. If it is showing a warning box
-rather than numbers, that is because the measurement has not been taken yet: nothing is estimated,
-interpolated, or carried over from a different machine. `make bench-board` refuses to run
-anywhere but the board, and `scripts/verify-numbers.py` rejects the result if it somehow arrives
-from anywhere else.
+[ch01](#setting-up-the-board)'s table is the other half of the same discipline, and if it is
+showing a warning box rather than numbers, that is because the measurement has not been taken
+yet: nothing is estimated, interpolated, or carried over from a different machine. `make
+bench-board` refuses to run anywhere but the board, and `scripts/verify-numbers.py` rejects the
+result if it somehow arrives from anywhere else.
 
 Two more limits worth naming now, since both will come up repeatedly:
 
@@ -274,7 +277,7 @@ CI, it means checked, not timed.
 
 **This machine is one data point.** Four out-of-order cores with a three-level cache is an
 ordinary shape, not a universal one. Ratios and mechanisms generalise; absolute numbers do not,
-and the five chapters whose reading depends on this particular core say so in their own headers.
+and the chapters whose reading depends on this particular core say so in their own headers.
 
 **And it is a machine that changes speed.** A Pi 5 throttles under sustained load, so a long run
 can be measuring a different clock at the end than at the start. That is not a flaw in the board —
