@@ -212,7 +212,8 @@ python3 -m pytest tests/the_os_layers_cost/test_problem_3_faults.py
 
 ## Where to go next
 
-The AArch64 exception model is specified in the ARM architecture reference manual, and reading
+The AArch64 exception model is specified in the ARM architecture reference manual @arm-arm, and
+reading
 its description of what `svc` does beside [ch16](#traps-and-system-calls)'s account of `ecall` is the fastest way to
 see which parts of a trap are architecture and which are xv6. The system-call numbering the
 listing above uses is Linux's own, in `include/uapi/asm-generic/unistd.h` in the kernel tree.

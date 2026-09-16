@@ -71,7 +71,7 @@ is a one-line wrapper. Older revisions of the commentary call it `fork`.
 | What it does | Which layer | Where that is explained |
 |---|---|---|
 | `allocproc()` finds an unused slot in the fixed process table | allocation without a heap | [ch04](#c-without-a-runtime) |
-| …and returns `0` when there is none, which becomes `-1` | failure that returns rather than raises | [ch04](#c-without-a-runtime), problem 2.2 |
+| …and returns `0` when there is none, which becomes `-1` | failure that returns rather than raises | [ch04](#c-without-a-runtime)'s problem 4.2 |
 | `uvmcopy()` walks the parent's page table and copies **every** page | address translation | [ch17](#virtual-memory) |
 | …with a `kalloc()` per page, which can also fail | the physical allocator | [ch18](#page-faults-as-a-feature) |
 | `*(np->trapframe) = *(p->trapframe)` copies the saved user registers | what a trap saves | [ch16](#traps-and-system-calls) |

@@ -131,7 +131,7 @@ measurement bias @mytkowicz2009wrong, the difference between a correct result an
 
 ## 4. Outline
 
-Twenty-two chapters in three parts, plus six appendices. The machine-readable version — number,
+Thirty-two chapters in five parts and a front section, plus eight appendices. The machine-readable version — number,
 slug, title, part, target, checkpoint tag — is `bench/outline.py`, and `tests/test_book.py`
 asserts that it, `myst.yml` and the files on disk agree, and that every chapter here declares in
 its own header the target it is given below.
@@ -624,18 +624,24 @@ on the board and stamped; nothing here may come from an emulator.
 - **E · Glossary** — terms with the chapter that defines them.
 - **F · AArch64 for RISC-V Readers** — a translation, not a reference. Registers and calling
   convention, the load/store and branch forms, atomics and fences, beside their RISC-V
-  equivalents from Part III. Written for someone who has read ch12 and is about to read ch24, and
+  equivalents from Part III. Written for someone who has read
+  [ch14](#machine-level-code-on-riscv) and is about to read [ch26](#optimising-code), and
   deliberately organised as "you know X; here it is again" rather than as an ISA summary.
+- **G · Reading xv6** — an order to read the kernel's source in, and which chapter each file
+  belongs to.
+- **H · Choosing the Machine** — what the `host` target has to be able to do, what to buy, how to
+  check a machine you already own, and which chapters change on different silicon.
 
 ---
 
 ## 5. Hardware and execution strategy
 
-The hardest practical constraint in the book and the one most likely to sink it. Two targets, and
-the discipline is that neither is ever asked the other's question.
+The hardest practical constraint in the book and the one most likely to sink it. Three targets on
+two machines, and the discipline is that none is ever asked another's question.
 
 | Target | What it is | What it answers | What it must never be asked |
 |---|---|---|---|
+| **`bare`** | a RISC-V machine under `qemu-system-riscv64` with no kernel, no library and no loader | What the hardware itself does: reset, traps, privilege levels, page tables, harts | Anything about time, for exactly the reason `xv6` may not be timed |
 | **`xv6`** | xv6-riscv under `qemu-system-riscv64`, on any machine | Structure and semantics: instruction sequences, system calls, page tables, scheduling, on-disk state | Anything about time. QEMU has no cache, no branch predictor, no store buffer, no pipeline, no memory latency |
 | **`host`** | Linux on real hardware with `perf` that can count **and sample**, native, over SSH. Reference machine: a Raspberry Pi 5 | Everything about cost: cycles, misses, mispredictions, syscall and fault costs, scaling across cores | Anything requiring a kernel you can stop mid-trap and modify freely |
 
@@ -647,12 +653,15 @@ the discipline is that neither is ever asked the other's question.
 - `make bench-board` refuses to run anywhere but the machine itself. `bench.stamp.provenance_problems`
   rejects a `host` result not measured natively on board hardware, and rejects any `xv6` result
   whose summary contains a duration.
+- `bare` and `xv6` are three targets' worth of discipline on **two machines**: both run under
+  QEMU on whatever you are working on and share one cross compiler, so `scripts/verify-setup.py`
+  checks their tooling once. Only `host` has to be real hardware.
 - **CI is an x86-64 runner and measures nothing.** It boots xv6 under QEMU for every `xv6`
   example, and cross-compiles every `host` example for AArch64 and runs it under user-mode QEMU
   for *correctness*. Timing tests are marked `board` and skip themselves everywhere else.
-- No chapter above `xv6` is a prerequisite for a later `xv6` chapter, so a reader without the
-  board can complete Parts III and IV in full — fourteen chapters — and set the board up before
-  [ch23](#the-same-program-on-both-targets).
+- No `host` chapter is a prerequisite for a later emulated one, so a reader without the board can
+  work through every chapter up to [ch23](#the-same-program-on-both-targets) and set the board up
+  before reaching it.
 
 **Why the targets do not share an instruction set.** Part V needs `perf` to count *and* to
 sample. Sampling requires counter-overflow interrupts — standard on ARM PMUs, and on RISC-V the

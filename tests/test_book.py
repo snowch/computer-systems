@@ -39,6 +39,7 @@ CHAPTER_IDS = [chapter.label for chapter in CHAPTERS]
 #: became an appendix — it had no stamped result of its own, which makes a thin chapter and a
 #: perfectly ordinary reference.
 CHOOSING_THE_MACHINE = next(a for a in APPENDICES if a.slug == "choosing_the_machine")
+GLOSSARY = next(a for a in APPENDICES if a.slug == "glossary")
 
 by_anchor = {chapter.anchor: chapter for chapter in CHAPTERS}
 
@@ -348,8 +349,8 @@ PROBLEM_HEADING = re.compile(r"^\*\*\d{1,2}\.\d+ — ", re.M)
 WORDLESS_PROBLEM = re.compile(r"(?<![\d.])\d{1,2}\.[1-3](?![\d.])")
 
 
-@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
-def test_a_problem_reference_carries_the_word_problem(chapter: Chapter):
+@pytest.mark.parametrize("page", TOC_FILES, ids=TOC_FILES)
+def test_a_problem_reference_carries_the_word_problem(page: str):
     """The syncer can only renumber a reference it can recognise, and it recognises the word.
 
     ch17 pointed twice at "your own 7.1", from a chapter whose problems are numbered 17.x. There
@@ -359,6 +360,9 @@ def test_a_problem_reference_carries_the_word_problem(chapter: Chapter):
 
     So the rule is that the word is what makes it a reference. Write `problem 17.1` and the syncer
     owns the number from then on; write `7.1` and nobody does.
+
+    Appendices are checked too, because appendix G was outside both this and the syncer: it said
+    `problem 2.2` beside a link to ch04, whose problems have been 4.x for three renumberings.
     """
     import importlib.util
 
@@ -368,14 +372,14 @@ def test_a_problem_reference_carries_the_word_problem(chapter: Chapter):
     sync_labels = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(sync_labels)
 
-    text = INLINE_CODE.sub("", FENCED.sub("", (ROOT / chapter.path).read_text()))
+    text = INLINE_CODE.sub("", FENCED.sub("", (ROOT / page).read_text()))
     text = sync_labels.PROBLEM_REFERENCE.sub("", PROBLEM_HEADING.sub("", text))
     loose = [
         text[max(0, m.start() - 60) : m.end()].strip().replace("\n", " ")
         for m in WORDLESS_PROBLEM.finditer(text)
     ]
     assert not loose, (
-        f"{chapter.path} points at a problem without saying so: ...{loose[0]} — "
+        f"{page} points at a problem without saying so: ...{loose[0]} — "
         f"write `problem {loose[0][-4:]}` so sync-labels.py can keep the number right"
     )
 
@@ -456,6 +460,48 @@ def test_the_question_is_answered_by_more_than_itself(chapter: Chapter):
         f"{chapter.path} asks its question and says nothing about why — every other chapter "
         f"follows it with what the one before left"
     )
+
+
+PLAN_TOTALS = re.compile(
+    r"([\w-]+) chapters in ([\w-]+) parts and a front section, plus ([\w-]+) appendices"
+)
+
+
+def test_the_plan_counts_the_book_it_describes():
+    """CLAUDE.md sends a contributor to PLAN.md first, and PLAN.md described a different book.
+
+    Its outline opened "Twenty-two chapters in three parts, plus six appendices" while the outline
+    below it listed thirty-two in five, and appendices G and H were missing from the list
+    entirely — so the summary and the thing it summarised disagreed on the same page. The preface
+    has had this check for a while; the document the preface was planned in did not.
+    """
+    numbered = len([part for part in PART_PAGES if part.number >= 1])
+    said = PLAN_TOTALS.search((ROOT / "PLAN.md").read_text())
+    assert said, "PLAN.md §4 no longer opens by saying how big the book is"
+    counted = [NUMBER_WORDS.get(word.lower()) for word in said.groups()]
+    assert counted == [len(CHAPTERS), numbered, len(APPENDICES)], (
+        f"PLAN.md says {said.group(0)!r}; bench/outline.py has {len(CHAPTERS)} chapters, "
+        f"{numbered} numbered parts and {len(APPENDICES)} appendices"
+    )
+
+
+def test_the_glossary_reaches_every_part():
+    """It cited ch00, ch05 and then nothing until ch12.
+
+    Twelve chapters contributed no term, among them the whole of [Part II](#part2) — so `hart`,
+    a word the book uses on every page from ch08 onwards, was defined nowhere. A glossary
+    assembled from the chapters after they were written is the right method and it was assembled
+    from the chapters that existed at the time.
+
+    Checked by part rather than by chapter on purpose: not every chapter owes the glossary a word,
+    and every part does.
+    """
+    glossary = (ROOT / GLOSSARY.path).read_text()
+    cited = set(re.findall(r"\[ch\d+\]\(#([\w-]+)\)", glossary))
+    by_anchor = {chapter.anchor: chapter for chapter in CHAPTERS}
+    parts = {by_anchor[anchor].part for anchor in cited if anchor in by_anchor}
+    missing = sorted({chapter.part for chapter in CHAPTERS} - parts)
+    assert not missing, f"the glossary defines nothing from {', '.join(missing)}"
 
 
 #: `chapter 11` — a chapter named by a number that is not a link and has no anchor behind it.
@@ -745,32 +791,21 @@ def test_part_five_counts_the_chapters_that_change_instruction_set():
 
     Part V justifies crossing to AArch64 by weighing two chapters that would lose their
     measurements against the chapters that have to be read in a second instruction set. It said
-    three; four of them show AArch64 disassembly. The count is the whole of the argument's second
-    half, and it is the sort of number that goes wrong when a chapter gains a listing rather than
-    when one moves — which is why it is derived here rather than trusted.
+    three, and `bench/outline.py` itself had lost two of them. The count is the whole of the
+    argument's second half, and it is derived from the same field the three claim pages are
+    checked against — counting one thing two ways is how two checks come to disagree.
     """
-    from bench.figures import FIGURES
-    from bench.stamp import load_result
-
     part = next(p for p in PART_PAGES if p.number == 5)
-    crossed = set()
-    for chapter in CHAPTERS:
-        if chapter.part != part.title:
-            continue
-        body = (ROOT / chapter.path).read_text()
-        for name in re.findall(r"\{include\}\s+_generated/([\w-]+)\.md", body):
-            figure = FIGURES.get(name)
-            results = getattr(figure, "results", None) or (getattr(figure, "result", None),)
-            if getattr(figure, "pending", None):
-                continue  # a figure the board has not produced has no result to read
-            for result in results:
-                if result and load_result(result).get("kind") == "listing":
-                    crossed.add(chapter.label)
+    crossed = {
+        chapter.label
+        for chapter in CHAPTERS
+        if chapter.part == part.title and chapter.reads_disassembly == "aarch64"
+    }
     said = SECOND_INSTRUCTION_SET.search((ROOT / part.path).read_text())
     assert said, f"{part.path} no longer says how many chapters change instruction set"
     assert NUMBER_WORDS.get(said.group(1)) == len(crossed), (
-        f"{part.path} says {said.group(1)} chapters are read in AArch64; {len(crossed)} show a "
-        f"listing: {', '.join(sorted(crossed))}"
+        f"{part.path} says {said.group(1)} chapters are read in AArch64; bench/outline.py "
+        f"records {len(crossed)}: {', '.join(sorted(crossed))}"
     )
 
 
@@ -1483,23 +1518,22 @@ def test_pages_agree_on_which_chapters_read_disassembly(page: str):
     failure that matters. No page may name a chapter that does not read disassembly at all.
     Naming the RISC-V side as well is optional — `hardware/README.md` is about Part V only.
 
-    ch00 is excluded throughout: it *demonstrates* both rather than requiring either.
+    A chapter that prints *both* is excluded throughout — it demonstrates the pair rather than
+    costing the reader either, which is the whole reason ch02 exists and why ch20 and ch23 put the
+    two side by side. That used to be a special case for ch00 and is now the rule, because three
+    more chapters turned out to be in the same position and the special case could not see them.
     """
-    without_ch00 = lambda kind: {  # noqa: E731
-        label for label in reading_disassembly(kind) if label != "ch00"
-    }
+    demonstrates_both = {c.label for c in CHAPTERS if c.reads_disassembly == "both"}
+    required = lambda kind: set(reading_disassembly(kind)) - demonstrates_both  # noqa: E731
     text = (ROOT / page).read_text()
-    # ch00 comes off both sides, not just the outline's. It reads disassembly on both
-    # architectures and is excluded from the *cost* being claimed, so a page naming it in this
-    # paragraph — the preface points at it for exactly that reason — is telling the truth.
-    found = _labels_near(text, "disassembly") - {"ch00"}
+    found = _labels_near(text, "disassembly") - demonstrates_both
     assert found, f"{page} no longer says anything about reading disassembly"
 
-    missing = without_ch00("aarch64") - found
+    missing = required("aarch64") - found
     assert not missing, (
         f"{page} understates what the instruction-set split costs: it omits {sorted(missing)}"
     )
-    wrong = found - without_ch00("aarch64") - without_ch00("riscv")
+    wrong = found - required("aarch64") - required("riscv")
     assert not wrong, f"{page} says {sorted(wrong)} read disassembly; bench/outline.py disagrees"
 
 

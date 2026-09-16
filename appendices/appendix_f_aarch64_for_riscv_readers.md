@@ -11,8 +11,8 @@ in it either cites a primary source or comes from a stamped result under `bench/
 
 This is a translation rather than a reference. It is written for someone who has read
 [ch14](#machine-level-code-on-riscv) and is about to read [ch26](#optimising-code), and it is organised as *you know this already,
-here it is again*. For anything not in the book's path, the architecture reference manual is the
-document; this page will not substitute for it and does not try.
+here it is again*. For anything not in the book's path, the architecture reference manual
+@arm-arm is the document; this page will not substitute for it and does not try.
 
 ## Why there are two
 
@@ -156,6 +156,7 @@ measured, and none of it is here.
 
 ## Where to go next
 
-The ARM architecture reference manual for AArch64 is the document, and its A64 instruction index
-is the part to keep open. The procedure call standard for AArch64 is the equivalent of the
-RISC-V psABI @riscv-psabi and is what decides the register roles above.
+The ARM architecture reference manual for AArch64 @arm-arm is the document, and its A64
+instruction index is the part to keep open. The procedure call standard for AArch64
+@arm-aapcs64 is the equivalent of the RISC-V psABI @riscv-psabi and is what decides the register
+roles above.

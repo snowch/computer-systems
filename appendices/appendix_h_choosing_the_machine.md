@@ -67,7 +67,7 @@ and running [ch24](#measuring)'s experiments on both is an instructive afternoon
 ## It is an ARM machine, and everything before Part V is RISC-V
 
 That is deliberate: `perf` has to both count *and* sample, no affordable RISC-V core does both,
-and choosing one would have cost two chapters of [Part V](#part5). The preface has the evidence; this
+and choosing one would have cost two chapters of [Part V](#part5). The [preface](#preface) has the evidence; this
 chapter is about getting the machine working.
 
 % number-ok: SoC specification from @rpi-bcm2712; every figure in this book comes from the machine itself

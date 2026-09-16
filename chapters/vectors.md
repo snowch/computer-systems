@@ -176,7 +176,8 @@ python3 -m pytest tests/vectors/test_problem_3_bound.py
 
 ## Where to go next
 
-The ARM architecture reference manual's Advanced SIMD chapter is the specification for what those
+The ARM architecture reference manual's Advanced SIMD chapter @arm-arm is the specification for
+what those
 instructions do, and the RISC-V vector extension @riscv-isa-unprivileged is worth reading beside
 it for the same reason [ch28](#memory-ordering-on-real-hardware) put two memory models side by side: it solves the tail
 problem in problem 31.1 by not having a compile-time width at all, and seeing one design makes the

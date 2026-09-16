@@ -20,10 +20,37 @@ These four are used throughout and mean something specific here.
 
 | Term | What it means in this book |
 |---|---|
-| **target** | One of two places code runs: `xv6` (the teaching kernel under QEMU) or `host` (Linux on real hardware, natively). Every result declares one. [ch00](#prerequisites-and-setup) |
+| **target** | One of three places code runs: `bare` (a RISC-V machine under QEMU with nothing on it), `xv6` (the teaching kernel under QEMU) or `host` (Linux on real hardware, natively). Every result declares one. [ch00](#prerequisites-and-setup) |
 | **stamped result** | A JSON file under `bench/results/` carrying what was measured, on which machine, with which toolchain, and a hash of the code that produced it. Nothing reaches a chapter any other way. [ch00](#prerequisites-and-setup) |
-| **pending figure** | A measurement the book owes but has not taken. It renders as a warning containing no numbers — never a placeholder and never an estimate. [ch00](#prerequisites-and-setup) |
-| **listing** | Disassembly captured from a compiler and stamped, so a chapter can show machine code without pasting it. Re-captured by CI on every push. [ch00](#prerequisites-and-setup) |
+| **pending figure** | A measurement the book owes but has not taken. It renders as a warning containing no numbers — never a placeholder and never an estimate. [Preface](#preface) |
+| **listing** | Disassembly captured from a compiler and stamped, so a chapter can show machine code without pasting it. Re-captured by CI on every push. [ch02](#reading-a-listing) |
+
+## [Part I](#part1) — C, and what the machine does with it
+
+| Term | Definition | Where |
+|---|---|---|
+| **disassembly** | A compiled function printed back as instructions. What the compiler produced, not what you wrote. | [ch02](#reading-a-listing) |
+| **mnemonic** | The name of an instruction, as distinct from the bytes that encode it. | [ch02](#reading-a-listing) |
+| **operand** | What an instruction acts on. In both of this book's syntaxes the destination comes first. | [ch02](#reading-a-listing) |
+| **address** | A number naming a byte. Memory is one array and an address is an index into it. | [ch03](#memory-is-one-array) |
+| **pointer** | A variable holding an address, with a type saying what to assume is there. | [ch03](#memory-is-one-array) |
+| **freestanding** | C with no library, no allocator and no start-up code underneath it — which is what a kernel is written in. | [ch04](#c-without-a-runtime) |
+| **free list** | An allocator that keeps its bookkeeping inside the memory it is not currently handing out. | [ch04](#c-without-a-runtime) |
+| **storage duration** | How long an object lives: automatic, static, or allocated. The distinction a garbage-collected language does not make you make. | [ch05](#c-for-people-who-will-read-a-kernel) |
+| **function pointer** | An address of code rather than of data, and how a kernel gets a virtual call without a class. | [ch05](#c-for-people-who-will-read-a-kernel) |
+
+## [Part II](#part2) — the machine with nothing on it
+
+| Term | Definition | Where |
+|---|---|---|
+| **trap vector** | The address the hardware jumps to when a trap happens, which software puts there before any trap can be handled. | [ch06](#a-trap-with-nothing-else), [Appendix A](#appendix-a) |
+| **trap handler** | The code at that address. On a bare machine it is a function you wrote; in a kernel it is the start of everything. | [ch06](#a-trap-with-nothing-else), [ch16](#traps-and-system-calls) |
+| **privilege level** | Which of the machine's modes is executing, and therefore what the instruction being attempted is allowed to do. | [ch07](#interrupts-and-privilege) |
+| **hart** | A RISC-V hardware thread: one instruction stream with its own registers, sharing memory with the others. | [ch08](#one-page-table-two-harts) |
+| **identity mapping** | A page table in which a virtual address translates to the same physical address, so translation can be switched on without anything moving. | [ch08](#one-page-table-two-harts) |
+| **dispatch** | Turning a number a caller supplied into the function that serves it, which is all a system-call table is. | [ch09](#a-system-call-of-your-own) |
+| **file descriptor** | A small integer that means a device, because a table in the process turns it into one. | [ch10](#a-small-integer-that-means-a-device) |
+| **process table** | The kernel's fixed array of processes, and the reason running out of them is a number rather than a shortage of memory. | [ch11](#fork-built-rather-than-read) |
 
 ## [Part III](#part3) — the machine underneath a program
 
@@ -55,7 +82,6 @@ These four are used throughout and mean something specific here.
 | **trap** | Any transfer to the kernel: a system call, a fault, or an interrupt. The hardware's mechanism is the same for all three. | [ch16](#traps-and-system-calls) |
 | **exception** | A trap caused by the instruction being executed — it could not complete. | [ch16](#traps-and-system-calls), [ch19](#interrupts-and-drivers) |
 | **interrupt** | A trap caused by something outside the program asking for attention. | [ch19](#interrupts-and-drivers) |
-| **privilege level** | Which of the machine's modes is executing. Changing it is what a trap is for. | [ch16](#traps-and-system-calls) |
 | **trampoline** | A page mapped at the same address in every address space, so the trap path survives the page table changing under it. | [ch16](#traps-and-system-calls), [ch17](#virtual-memory) |
 | **trap frame** | Where the interrupted program's registers are put, since the interrupted program agreed to no convention. | [ch16](#traps-and-system-calls) |
 | **virtual address** | An address a program uses, which means nothing without a page table. | [ch17](#virtual-memory) |
@@ -66,8 +92,6 @@ These four are used throughout and mean something specific here.
 | **page fault** | A trap raised when translation fails. Not an error — a hook, and most of what a modern kernel does with memory is built on it. | [ch18](#page-faults-as-a-feature) |
 | **lazy allocation** | Handing out address space and only finding physical pages when they are touched. | [ch18](#page-faults-as-a-feature) |
 | **copy-on-write** | Sharing a page until somebody writes to it, using the fault as the trigger. | [ch18](#page-faults-as-a-feature) |
-| **minor fault** | One the kernel satisfies without touching storage. | [ch29](#the-os-layers-cost) |
-| **major fault** | One that has to wait for storage. Orders of magnitude more expensive, and identical from the trap's point of view. | [ch29](#the-os-layers-cost) |
 | **device driver** | The code that knows a device's registers. In xv6, small enough to read in full. | [ch19](#interrupts-and-drivers) |
 | **interrupt controller** | The hardware that decides which device may interrupt which core. | [ch19](#interrupts-and-drivers) |
 | **spinlock** | A lock that waits by running. Correct when the wait is shorter than a context switch. | [ch20](#locks-and-memory-ordering) |
@@ -87,6 +111,8 @@ These four are used throughout and mean something specific here.
 | Term | Definition | Where |
 |---|---|---|
 | **monotonic clock** | One that cannot go backwards and is not adjusted to keep wall-clock time honest. The only kind to measure with. | [ch24](#measuring) |
+| **minor fault** | A page fault the kernel satisfies without touching storage. | [ch18](#page-faults-as-a-feature), [ch29](#the-os-layers-cost) |
+| **major fault** | One that has to wait for storage. Orders of magnitude more expensive, and identical from the trap's point of view. | [ch29](#the-os-layers-cost) |
 | **clock cost** | What reading the clock costs. The number that decides whether a measurement means anything. | [ch24](#measuring), [ch29](#the-os-layers-cost) |
 | **distribution** | What to report instead of a number: minimum, median, tail. A single duration is an anecdote. | [ch24](#measuring) |
 | **warm-up** | Discarding the start of a run, only when the discarded part is genuinely slower and you can say why. | [ch24](#measuring) |

@@ -129,12 +129,16 @@ def sync_problem_references(path: Path, text: str) -> str:
     after the dot is the problem's own and is never touched.
     """
     here = next((c for c in CHAPTERS if path.name == Path(c.path).name), None)
-    if here is None:
-        return text
 
     def renumber(m: re.Match[str]) -> str:
         owner, word, gap = m.group("owner"), m.group("word"), m.group("gap")
         if owner is None:
+            # An appendix has no problems of its own, so a reference with no owner named in it is
+            # a chapter's own and there is nothing here to derive it from. Appendix G carried
+            # `problem 2.2` beside a link to ch04 for three renumberings for exactly that reason;
+            # written as ch04's possessive it is maintained like every other.
+            if here is None:
+                return m.group(0)
             target, prefix = here, ""
         else:
             target = next((c for c in CHAPTERS if c.number == int(owner)), None)

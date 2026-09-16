@@ -167,7 +167,7 @@ python3 -m pytest tests/memory_ordering_on_real_hardware/test_problem_3_spelling
 
 ## Where to go next
 
-The ARM architecture reference manual's memory-model chapter and the RISC-V unprivileged
+The ARM architecture reference manual's memory-model chapter @arm-arm and the RISC-V unprivileged
 specification's RVWMO chapter @riscv-isa-unprivileged are worth reading in the same sitting, in
 either order. They describe the same kind of object with different vocabulary, and the
 correspondence is much easier to see when the two are half an hour apart than when they are years.

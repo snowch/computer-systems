@@ -338,7 +338,7 @@ separates a confident answer from a correct one.
 
 For the reference machine, Raspberry Pi's own documentation @rpi-bcm2712 gives the SoC and its
 cache hierarchy, and Arm's Cortex-A76 technical reference manual @arm-a76-trm gives the pipeline
-and the PMU events [ch27](#the-cpu) reads. The RISC-V hardware the preface argues against is
+and the PMU events [ch27](#the-cpu) reads. The RISC-V hardware the [preface](#preface) argues against is
 documented at @starfive-jh7110 and @sifive-u74 if you want to follow that thread. Either way the
 caveat stands: where a document and a measurement disagree, the book prints the measurement and
 says so.

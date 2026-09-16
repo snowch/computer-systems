@@ -3,6 +3,7 @@ title: "Systems From Scratch"
 short_title: Preface
 ---
 
+(preface)=
 # Systems From Scratch
 
 *From bits to cycles, measured on real hardware.*
@@ -190,7 +191,7 @@ laptop, not extrapolated from a different machine.
 
 That is three targets on **two machines**: the first two are both QEMU on the computer you are
 reading this on, and need one cross-compiler between them. Only the third has to be real.
-[Part III](#part3) is the one part that works on both sides of the split, and
+[Part III](#part3) works on both sides of the split, and
 [ch12](#what-a-computer-does-with-a-program) is where it crosses.
 
 The split is not a compromise; it is the argument. QEMU will happily answer a question about
@@ -249,13 +250,17 @@ commonest way to be confidently wrong about performance, and that chapter is whe
 separating them.
 
 Reading disassembly is a small part of the book, and this is the whole of what the split costs
-you. [ch02](#reading-a-listing) does both at once. After that, in Parts I and III it is
-RISC-V: [ch03](#memory-is-one-array), [ch05](#c-for-people-who-will-read-a-kernel), [ch12](#what-a-computer-does-with-a-program), [ch13](#representing-information) and
-[ch14](#machine-level-code-on-riscv). In [Part V](#part5) it is AArch64: [ch26](#optimising-code), [ch27](#the-cpu) and [ch31](#vectors).
-[ch02](#reading-a-listing) shows one small function compiled both ways, so the difference is concrete
-rather than promised, and [Appendix F](#appendix-f) is a translation between the two for the
-reader who meets the second having learned the first. Everything else is method, and method
-does not have an architecture.
+you. After that, in Parts I and III it is RISC-V: [ch03](#memory-is-one-array),
+[ch05](#c-for-people-who-will-read-a-kernel), [ch12](#what-a-computer-does-with-a-program),
+[ch13](#representing-information) and [ch14](#machine-level-code-on-riscv). In
+[Part V](#part5) it is AArch64: [ch26](#optimising-code), [ch27](#the-cpu),
+[ch29](#the-os-layers-cost), [ch30](#whole-machine-profiling) and [ch31](#vectors). Two chapters print both at once because
+the comparison is the content — [ch20](#locks-and-memory-ordering) on what an atomic looks like
+either way, and [ch23](#the-same-program-on-both-targets) on one program compiled for each.
+[ch02](#reading-a-listing) is the third, and comes first: it shows one small function both ways so
+the difference is concrete rather than promised. [Appendix F](#appendix-f) is a translation
+between the two for the reader who meets the second having learned the first. Everything else is
+method, and method does not have an architecture.
 
 ### One argument, not two tutorials
 

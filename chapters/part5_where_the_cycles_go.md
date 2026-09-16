@@ -73,7 +73,7 @@ The disassembly here is AArch64, not the RISC-V you learned in [Part III](#part3
 subject of this part rather than an accident of it: these chapters need performance counters that
 both *count* and *sample*, and no purchasable RISC-V core does both. Staying on one architecture
 would have cost two chapters their measurements, which is a worse trade than asking you to read a
-second instruction set in four of them.
+second instruction set in five of them.
 
 And where a thing genuinely cannot be measured on the available hardware — an absent unit, a
 counter the firmware does not expose, a second machine that does not exist — the chapter says so,
