@@ -99,7 +99,7 @@ file operations and its terminal there while the interface stays on your laptop.
 arrangement the rest of the book assumes: you edit on the laptop, and everything that touches a
 counter happens on the machine being measured.
 
-## The toolchain on the machine
+### The toolchain on the machine
 
 ```bash
 sudo apt update
@@ -120,7 +120,7 @@ worst of the available outcomes, because it looks like the events do not exist r
 broken tool. If nothing packaged matches, build it from the kernel source tree with
 `make -C tools/perf` against the source for your running kernel.
 
-## Proving the counters are real
+### Proving the counters are real
 
 This is the one capability [Part V](#part5) cannot work around, and it is worth being suspicious about,
 because `perf` reports a failure to reach hardware in a way that is easy to skim past.
@@ -168,7 +168,7 @@ that provides it.
 Until `perf stat` prints real counts, [Part V](#part5) cannot start, and no amount of care in the chapters
 substitutes for it.
 
-## Counting is not sampling
+### Counting is not sampling
 
 There is a second capability, and it is the reason this book's `host` target is an ARM machine.
 

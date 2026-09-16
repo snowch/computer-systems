@@ -144,10 +144,9 @@ CHAPTERS: tuple[Chapter, ...] = (
         "prerequisites_and_setup",
         "Prerequisites and Setup",
         PART_START,
-        "both",
+        "xv6",
         "What do I need on my desk, and how do I know it works?",
         "prerequisites-and-setup",
-        reads_disassembly="both",
     ),
     Chapter(
         1,

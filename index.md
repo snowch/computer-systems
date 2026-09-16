@@ -60,11 +60,13 @@ Someone who has spent years around computers and programs fluently — a scripti
 Java, or anything else with a runtime underneath it — and who has never had a reason to write C or
 read a kernel.
 
-**You do not need to know C.** [Part I](#part1) is four chapters about exactly that, and it is not a C
-tutorial: control flow, functions and operators are assumed from whatever language you already
-use. What it teaches is the part your language was built to hide — that memory is one array of
+**You do not need to know C.** Three of [Part I](#part1)'s four chapters are about exactly that,
+and none of them is a C tutorial: control flow, functions and operators are assumed from whatever
+language you already use. What it teaches is the part your language was built to hide — that memory is one array of
 bytes and everything in it has an index — and then the assumptions that stop holding when there is
-no runtime underneath you. [ch03](#memory-is-one-array) is the on-ramp; [ch04](#c-without-a-runtime) is the unlearning;
+no runtime underneath you. [ch02](#reading-a-listing) comes first and is for everyone — it teaches reading what the compiler
+produced, which every later chapter asks you to do. Then [ch03](#memory-is-one-array) is the
+on-ramp; [ch04](#c-without-a-runtime) is the unlearning;
 [ch05](#c-for-people-who-will-read-a-kernel) sorts C's constructs by a single question, *has the machine heard of this?*
 
 **You do not need OS internals.** That is [Part IV](#part4), and it is the point of using a kernel small
@@ -149,8 +151,9 @@ program is and who finishes what the compiler left undone; [ch15](#linking-and-l
 `exec`, which is where [Part IV](#part4) begins. [Part IV](#part4) puts the entanglement back, and
 it turns out to be most of what an operating system is.
 
-[ch00](#prerequisites-and-setup) sits before all of it and is setup: all three targets working, and a script that
-tells you what your machine can currently run.
+[Getting started](#part0) sits before all of it: [ch00](#prerequisites-and-setup) is the emulated
+targets and a script that says what your machine can currently run, and
+[ch01](#setting-up-the-board) is the board, whenever it arrives.
 
 [Part IV](#part4) reads a real kernel, and that kernel has a book of its own: *xv6: a simple,
 Unix-like teaching operating system* @xv6-book, written by its authors and free from MIT. The two
@@ -249,7 +252,7 @@ Reading disassembly is a small part of the book, and this is the whole of what t
 you. [ch02](#reading-a-listing) does both at once. After that, in Parts I and III it is
 RISC-V: [ch03](#memory-is-one-array), [ch05](#c-for-people-who-will-read-a-kernel), [ch12](#what-a-computer-does-with-a-program), [ch13](#representing-information) and
 [ch14](#machine-level-code-on-riscv). In [Part V](#part5) it is AArch64: [ch26](#optimising-code), [ch27](#the-cpu) and [ch31](#vectors).
-[ch00](#prerequisites-and-setup) shows one small function compiled both ways, so the difference is concrete
+[ch02](#reading-a-listing) shows one small function compiled both ways, so the difference is concrete
 rather than promised, and [Appendix F](#appendix-f) is a translation between the two for the
 reader who meets the second having learned the first. Everything else is method, and method
 does not have an architecture.
@@ -283,24 +286,24 @@ that produced the number.
 
 The consequence worth stating plainly is what happens when a machine cannot answer a question at
 all. The chapter says so, shows the reasoning it used instead, and does not quietly substitute a
-number from somewhere else. Five chapters depend on something specific about the reference
-machine, and each says so in its own header rather than letting you discover it two hundred pages
-in.
+number from somewhere else. The chapters whose reading depends on something specific about the
+reference machine say so in their own headers rather than letting you discover it two hundred
+pages in.
 
 ## What you will need
 
-A laptop for [Part I](#part1), [Part II](#part2) and [Part IV](#part4), and for all of
-[Part III](#part3) except the numbers it takes on real hardware — everything there runs under
-emulation, free. For [Part V](#part5), a small Linux machine whose `perf` can count and sample; a
-Raspberry Pi 5 is the reference, and one you already own may well do —
-[Appendix H](#appendix-h) is how to tell. [ch00](#prerequisites-and-setup) is the setup, and a
-script that says which targets your machine can currently run and whether its counters are real.
+A laptop for [ch00](#prerequisites-and-setup) and for Parts I to IV — everything there runs under
+emulation, free. A small Linux machine whose `perf` can count and sample for
+[ch01](#setting-up-the-board) and [Part V](#part5); a Raspberry Pi 5 is the reference, and one you
+already own may well do — [Appendix H](#appendix-h) is how to tell. Twenty-two chapters sit
+between needing the first and needing the second.
 
 The book does not tell you which kernel to run. Whether a machine's performance counters work is
 a property of its whole configuration — silicon, device tree, kernel, firmware — rather than of
 the board, and the reference board's own counters went missing for a kernel release. So every
-figure records the image and kernel that produced it, and chapter 0 hands you a script that asks
-your machine instead of a version number to match.
+figure records the image and kernel that produced it, and
+[ch00](#prerequisites-and-setup) hands you a script that asks your machine instead of a version
+number to match.
 
 ## Problems
 

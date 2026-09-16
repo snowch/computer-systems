@@ -26,8 +26,9 @@ covers everything up to [Part V](#part5). The board is a second machine, it is t
 timing may be measured, and nothing needs it until [ch24](#measuring).
 
 So the two chapters are in that order, and they are separate on purpose: you can finish
-[ch00](#prerequisites-and-setup) this afternoon on a laptop and reach [ch01](#setting-up-the-board)
-whenever the hardware turns up. Twenty-two chapters sit in between.
+[ch00](#prerequisites-and-setup) this afternoon on a laptop, and do
+[ch01](#setting-up-the-board) whenever the hardware turns up. It is the next chapter, but
+twenty-two chapters sit between finishing the first and *needing* the second.
 
 ## What it leaves out
 
@@ -51,7 +52,7 @@ point which targets your machines can currently run.
 ## Which machine, and what it cannot tell you
 
 Both, which is what makes this a part rather than a chapter. The emulated targets answer questions
-about what a program *does* and **nothing here or in the three parts that follow is ever timed** —
+about what a program *does* and **nothing here or in Parts I to IV is ever timed** —
 QEMU models no cache, no branch predictor and no memory latency, so a duration measured inside it
 describes the laptop and the translation strategy rather than the machine being emulated. The
 board answers questions about cost and is the only place in the book a timing may be taken.
