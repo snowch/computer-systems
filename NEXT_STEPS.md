@@ -222,28 +222,26 @@ The structural claims are fixed — the outline's opening counts, the missing ap
 the targets table that described two targets in a book that has had three since Part II. The
 per-chapter entries themselves are current and were regenerated.
 
-What is left is about ninety bare `chNN` references inside them, in the same state as the code
-comments and stale for the same reason. Some carry real errors: §4's Part I preamble says "Bit
-manipulation and page-table-entry encoding are ch11 and ch15. The preprocessor is ch10. How a
-system call reaches the kernel is ch14" — four references, all off by two or three. The Part V
-mapping table near the top lists "ch27 The CPU" and "ch27 The OS Layer's Cost" as different rows.
-
-`sync-labels.py` does scan PLAN.md, so anything rewritten as `[chNN](#anchor)` is maintained from
-then on. That is the fix: link them, having first worked out which chapter each one means.
+**Done (2026-09-16), in PR #28.** Every `chNN` in the per-chapter entries is now either a
+`[chNN](#anchor)` link — which `sync-labels.py` scans PLAN.md for and keeps correct — or a
+`#### chNN ·` heading keyed by the frozen label. The two real errors this section flagged are
+fixed: the Part I preamble now links bit manipulation to `[ch13]`, page-table encoding to `[ch17]`,
+the preprocessor to `[ch12]` and the system-call path to `[ch16]`; the Part V mapping table reads
+`[ch27] The CPU` and `[ch29] The OS Layer's Cost`, not ch27 twice. `sync-labels.py --check` passes.
 
 ---
 
 ## 4. Four citations need a browser
 
-The agent proxy blocked all four; `tests/test_book.py::test_every_reference_can_be_followed`
-checks that each entry *has* a URL, not that it resolves.
+**Done (2026-09-16).** All four fetched and confirmed to resolve to the right resource, and
+`references.bib` carries the current URL for each.
 
-| Key | URL |
-|---|---|
-| `xv6-book` | `https://pdos.csail.mit.edu/6.828/` — 6.828 is the old course number; 6.1810 may be the live one |
-| `gregg-sysperf` | `https://www.brendangregg.com/systems-performance-2nd-edition-book.html` |
-| `elf-abi` | `https://www.sco.com/developers/gabi/` — the gABI has moved before |
-| `mytkowicz2009wrong` | `doi:10.1145/1508244.1508275` |
+| Key | URL in `references.bib` | Resolves to |
+|---|---|---|
+| `xv6-book` | `https://pdos.csail.mit.edu/6.1810/` | MIT 6.1810 (the live course number; 6.828 was the old one) |
+| `gregg-sysperf` | `https://www.brendangregg.com/systems-performance-2nd-edition-book.html` | Gregg, *Systems Performance* 2nd ed. |
+| `elf-abi` | `https://www.sco.com/developers/gabi/` | System V gABI (the ELF chapters) |
+| `mytkowicz2009wrong` | `doi:10.1145/1508244.1508275` | resolves via doi.org to the ACM entry for the ASPLOS'09 paper |
 
 ---
 
