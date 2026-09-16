@@ -31,7 +31,7 @@ OBJDUMP = "riscv64-linux-gnu-objdump"
 #: stack and zeroes the bss, and a console that puts bytes in a device register.
 RUNTIME = ("start.S", "console.c")
 
-#: Programs that need ch07's system-call machinery without being about it. ch07 itself is absent
+#: Programs that need the bare-metal system-call chapter's machinery without being about it. That chapter itself is absent
 #: on purpose: its whole subject is the stub, so it writes its own out rather than calling a
 #: tidied one, and a reader comparing the two is comparing the same code twice.
 EXTRA_SOURCES: dict[str, tuple[str, ...]] = {

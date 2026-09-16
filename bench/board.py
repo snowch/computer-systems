@@ -67,10 +67,10 @@ def timed_run(
     """Build a workload against the book's clock and run it, returning what it printed.
 
     Every workload links `sysfs/lib/timing.c`, because every duration in Part V is read through
-    the one clock ch21 built and argued about. A runner that timed with its own `clock_gettime`
+    the one clock the measurement chapter built and argued about. A runner that timed with its own `clock_gettime`
     would be a second, unexamined instrument.
 
-    `extra_flags` is appended, not substituted, so ch28 can build one source twice — once as the
+    `extra_flags` is appended, not substituted, so the vectors chapter can build one source twice — once as the
     reader's own `-O2` would and once with the level that lets this compiler widen a loop — with
     everything else about the two builds identical.
     """
@@ -222,7 +222,7 @@ def require_perf_sampling(what: str) -> None:
     """Counting and sampling are different permissions and different hardware.
 
     `perf stat` needs a counter; `perf record` needs that counter to raise an interrupt when it
-    overflows, which is the capability ch27's header says most affordable RISC-V cores lack and
+    overflows, which is the capability the profiling chapter's header says most affordable RISC-V cores lack and
     ARM PMUs have as standard. A kernel can also be configured to allow one and not the other, so
     this probes sampling specifically rather than assuming that working counters imply it.
     """
@@ -241,7 +241,7 @@ def require_perf_sampling(what: str) -> None:
                 f"{what} needs perf to *sample*, and this machine would not.\n"
                 "  sudo sysctl kernel.perf_event_paranoid=1\n"
                 "If that does not help, this core's PMU may not raise an interrupt on counter "
-                "overflow, which ch27's header names as the one thing it cannot work around.\n"
+                "overflow, which the profiling chapter's header names as the one thing it cannot work around.\n"
                 f"perf said: {last[-1] if last else 'nothing'}"
             )
 
@@ -249,7 +249,7 @@ def require_perf_sampling(what: str) -> None:
 def perf_record(recording: Path, command: list[str], frequency: int = 999) -> None:
     """Sample `command` into `recording`.
 
-    The frequency is not a round number on purpose. ch27's third problem is about a fixed sampling
+    The frequency is not a round number on purpose. The profiling chapter's third problem is about a fixed sampling
     period aliasing against a loop of fixed length, and 999 rather than 1000 is the smallest
     possible acknowledgement that the problem is real — real profilers also jitter the period,
     which perf does by default.

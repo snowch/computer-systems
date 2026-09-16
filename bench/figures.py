@@ -138,7 +138,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         # RISC-V first: it is the target the reader has already booted by this point in ch00.
         results=("shapes-riscv64", "shapes-aarch64"),
     ),
-    # -- ch09 ---------------------------------------------------------------------------
+    # -- What a Computer Does With a Program---------------------------------------------------------------------------
     "what-a-computer-does-with-a-program-stages": Diagram(
         draw=toolchain_stages,
         alt="The four stages of the toolchain, what each hands on, and what each discards.",
@@ -159,7 +159,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         symbol="sysfs_sum_counted",
         results=("stages-riscv64",),
     ),
-    # -- ch10 ---------------------------------------------------------------------------
+    # -- Representing Information---------------------------------------------------------------------------
     "representing-information-padding": Diagram(
         draw=struct_padding,
         alt="Both structs drawn byte by byte, with the bytes no member uses marked.",
@@ -181,7 +181,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         symbol="sysfs_unsigned_quarter",
         results=("signedness-riscv64",),
     ),
-    # -- ch03 ---------------------------------------------------------------------------
+    # -- C for People Who Will Read a Kernel---------------------------------------------------------------------------
     "c-for-people-who-will-read-a-kernel-dispatch": Diagram(
         draw=dispatch_table,
         alt="A table of function pointers, each slot holding an address of code stored elsewhere.",
@@ -206,7 +206,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         symbol="sysfs_call_through",
         results=("addresses-riscv64",),
     ),
-    # -- ch11 ---------------------------------------------------------------------------
+    # -- Machine-Level Code on RISC-V---------------------------------------------------------------------------
     "machine-level-code-on-riscv-frame": Diagram(
         draw=stack_frame,
         alt="A stack frame with the saved frame pointer and return address slots marked.",
@@ -223,7 +223,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         symbol="sysfs_calls_out",
         results=("frames-riscv64",),
     ),
-    # -- ch12 ---------------------------------------------------------------------------
+    # -- Linking and Loading---------------------------------------------------------------------------
     "linking-and-loading-segments": Diagram(
         draw=sections_to_segments,
         alt="Eighteen ELF sections collapsing into two loadable segments.",
@@ -237,7 +237,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.elf_shape_table,
         result="elf-xv6",
     ),
-    # -- ch13 ---------------------------------------------------------------------------
+    # -- Traps and System Calls---------------------------------------------------------------------------
     "traps-and-system-calls-trap-path": Diagram(
         draw=trap_path,
         alt="One system call from ecall to sret, with the state movement at each end.",
@@ -251,7 +251,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.trap_census_table,
         result="traps-xv6",
     ),
-    # -- ch14 ---------------------------------------------------------------------------
+    # -- Virtual Memory---------------------------------------------------------------------------
     "virtual-memory-walk": Diagram(
         draw=sv39_walk,
         alt="A 64-bit virtual address split into three nine-bit indices and a twelve-bit offset.",
@@ -270,7 +270,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         alt="init's two clusters of mapped pages, and the chain of tables each one forces.",
         result="pagetable-xv6",
     ),
-    # -- ch15 ---------------------------------------------------------------------------
+    # -- Page Faults as a Feature---------------------------------------------------------------------------
     "page-faults-as-a-feature-decision": Diagram(
         draw=fault_decision,
         alt="A page fault, the one test that decides what happens, and the two outcomes.",
@@ -284,7 +284,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.fault_causes_table,
         result="faults-xv6",
     ),
-    # -- ch16 ---------------------------------------------------------------------------
+    # -- Interrupts and Drivers---------------------------------------------------------------------------
     "interrupts-and-drivers-sources": Diagram(
         draw=interrupt_sources,
         alt="Three interrupt sources, and which of them a fixed workload gives a fixed count for.",
@@ -294,7 +294,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.interrupt_cost_table,
         result="interrupts-xv6",
     ),
-    # -- ch17 ---------------------------------------------------------------------------
+    # -- Locks and Memory Ordering---------------------------------------------------------------------------
     "locks-and-memory-ordering-race": Listing(
         symbol="sysfs_bump_plain",
         results=("ordering-riscv64", "ordering-aarch64"),
@@ -315,7 +315,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.lock_primitives_table,
         result="locks-xv6",
     ),
-    # -- ch18 ---------------------------------------------------------------------------
+    # -- Scheduling and Context Switches---------------------------------------------------------------------------
     "scheduling-and-context-switches-swtch": Table(
         render=tables.switch_cost_table,
         result="switch-xv6",
@@ -324,7 +324,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.switch_census_table,
         result="switch-xv6",
     ),
-    # -- ch19 ---------------------------------------------------------------------------
+    # -- The File System---------------------------------------------------------------------------
     "the-file-system-amplification": Table(
         render=tables.block_amplification_table,
         result="blocks-xv6",
@@ -333,7 +333,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.block_cost_table,
         result="blocks-xv6",
     ),
-    # -- ch20 ---------------------------------------------------------------------------
+    # -- The Same Program on Both Targets---------------------------------------------------------------------------
     "the-same-program-on-both-targets-sequential": Listing(
         symbol="sysfs_bridge_sequential",
         results=("bridge-riscv64", "bridge-aarch64"),
@@ -350,7 +350,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.bridge_cost_table,
         result="bridge-host",
     ),
-    # -- ch21 ---------------------------------------------------------------------------
+    # -- Measuring---------------------------------------------------------------------------
     "measuring-clock": Table(
         render=tables.clock_table,
         result="measuring-host",
@@ -367,7 +367,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.interference_table,
         result="interference-host",
     ),
-    # -- ch22 ---------------------------------------------------------------------------
+    # -- The Memory Hierarchy---------------------------------------------------------------------------
     "the-memory-hierarchy-levels": Table(
         render=tables.hierarchy_levels_table,
         result="hierarchy-host",
@@ -384,7 +384,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.hierarchy_vendor_table,
         result="hierarchy-host",
     ),
-    # -- ch23 ---------------------------------------------------------------------------
+    # -- Optimising Code---------------------------------------------------------------------------
     "optimising-code-variants": Table(
         render=tables.loop_variants_table,
         result="loops-aarch64",
@@ -393,7 +393,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.loop_cost_table,
         result="loops-host",
     ),
-    # -- ch24 ---------------------------------------------------------------------------
+    # -- The CPU---------------------------------------------------------------------------
     "the-cpu-shapes": Table(
         render=tables.pipeline_shapes_table,
         result="pipeline-shapes",
@@ -406,7 +406,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.mispredict_table,
         result="pipeline-host",
     ),
-    # -- ch25 ---------------------------------------------------------------------------
+    # -- Memory Ordering on Real Hardware---------------------------------------------------------------------------
     "memory-ordering-on-real-hardware-layout": Table(
         render=tables.sharing_layout_table,
         result="sharing-layout",
@@ -419,7 +419,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.atomics_cost_table,
         result="sharing-host",
     ),
-    # -- ch26 ---------------------------------------------------------------------------
+    # -- The OS Layer's Cost on Real Hardware---------------------------------------------------------------------------
     "the-os-layers-cost-model": Table(
         render=tables.os_model_table,
         result="traps-xv6",
@@ -444,7 +444,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.vdso_table,
         result="vdso-host",
     ),
-    # -- ch27 ---------------------------------------------------------------------------
+    # -- Whole-Machine Profiling---------------------------------------------------------------------------
     "whole-machine-profiling-census": Table(
         render=tables.tally_census_table,
         result="tally-census",
@@ -467,7 +467,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.skid_table,
         result="skid-host",
     ),
-    # -- ch28 ---------------------------------------------------------------------------
+    # -- Vectors---------------------------------------------------------------------------
     "vectors-loops": Table(
         render=tables.vector_loops_table,
         result="vectors-census",
@@ -490,7 +490,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.vector_speedup_table,
         result="vectors-host",
     ),
-    # -- ch02 ---------------------------------------------------------------------------
+    # -- C Without a Runtime---------------------------------------------------------------------------
     "c-without-a-runtime-absences": Table(
         render=tables.kernel_absences_table,
         result="kernelc-xv6",
@@ -499,7 +499,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.kernel_pools_table,
         result="kernelc-xv6",
     ),
-    # -- ch01 ---------------------------------------------------------------------------
+    # -- Memory Is One Array ---------------------------------------------------------------------------
     "memory-is-one-array-firstc": Table(
         render=tables.first_program_table,
         result="firstc",
@@ -586,7 +586,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.bare_claims_table,
         result="fork-bare",
     ),
-    # -- ch01 ---------------------------------------------------------------------------
+    # -- Setting Up the Board ---------------------------------------------------------------------------
     # One table, in the chapter that establishes it. Appendix H links here rather than declaring a
     # second figure from the same result: the renderer already carries both the identity rows and
     # the two capability rows, so a second id would render the same bytes under another name.

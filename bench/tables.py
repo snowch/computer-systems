@@ -105,9 +105,9 @@ _OPTIMISATION_FLAG = re.compile(r"-O\w+|-f[\w-]+")
 def optimisation_level(result: dict[str, Any]) -> str:
     """The flags a listing was built with that decide what the compiler is allowed to emit.
 
-    The last ``-O`` wins, because that is what a command line does and because ch28 builds the
+    The last ``-O`` wins, because that is what a command line does and because the vectors chapter builds the
     same source at two levels by appending one to the other exactly as a reader would. Any ``-f``
-    flags come with it, and they have to: two of ch28's three builds are both ``-O3`` and differ
+    flags come with it, and they have to: two of the vectors chapter's three builds are both ``-O3`` and differ
     only in whether the compiler may change the program's answer, so a label naming the level
     alone would put two different listings under identical headings.
     """
@@ -124,7 +124,7 @@ def listing_label(name: str, symbol: str) -> str:
     a hand-typed one would be the first thing to go stale.
 
     The optimisation level is in the label rather than only in the conditions line underneath
-    because ch28 prints the same function twice, from two levels, and without it the two blocks
+    because the vectors chapter prints the same function twice, from two levels, and without it the two blocks
     are indistinguishable at a glance — which is the one thing the figure is for.
     """
     result = load_result(name)
@@ -803,7 +803,7 @@ def hierarchy_reach_table(name: str) -> str:
     """How far the TLB reaches, in pages and in bytes.
 
     The reach sweep was collected from the first version of the runner and rendered by nothing,
-    so ch25's section on translation included the vendor comparison instead — a table about cache
+    so the memory-hierarchy chapter's section on translation included the vendor comparison instead — a table about cache
     sizes under a heading about page tables. Both numbers come from one step in one curve: the
     last page count whose walk was still cached.
     """
@@ -1019,7 +1019,7 @@ def vdso_table(name: str) -> str:
 
 
 def tally_census_table(name: str) -> str:
-    """What the program under ch27's profiler does, counted before anybody times it.
+    """What the program under the profiling chapter's profiler does, counted before anybody times it.
 
     Written as a prediction. Everything here is a property of the program and its sizes, so it is
     the same on every machine, and the chapter's method is to commit to it and then find out
@@ -1188,7 +1188,7 @@ def kernel_pools_table(name: str) -> str:
 
 
 def first_program_table(name: str) -> str:
-    """What ch01's first complete program prints, so the chapter can quote rather than assert.
+    """What the memory-as-one-array chapter's first complete program prints, so the chapter can quote rather than assert.
 
     No address appears here. One would differ on every run; the distance between two does not,
     and the distance is what the chapter is about.

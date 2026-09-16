@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check this machine before chapter 1, and say which targets it can run.
+"""Check this machine before the board chapter, and say which targets it can run.
 
     python3 scripts/verify-setup.py
     python3 scripts/verify-setup.py --json     # the same findings, for a script
@@ -318,7 +318,7 @@ def check_sampling(report: Report) -> None:
 
     ``perf record`` needs the counters to raise an overflow interrupt, which on RISC-V means the
     Sscofpmf extension. Without it the kernel says so at boot and refuses to sample. This is not
-    a failure — most of Part V counts rather than samples — but ch27 is about sampling, so the
+    a failure — most of Part V counts rather than samples — but the profiling chapter is about sampling, so the
     reader is better told here than three hundred pages in.
     """
     probe = subprocess.run(
@@ -331,13 +331,15 @@ def check_sampling(report: Report) -> None:
     can_sample = probe.returncode == 0 and "not supported" not in text
     report.facts["perf_can_sample"] = can_sample
     if can_sample:
-        report.say(OK, "perf can sample (`perf record`) — ch27 works fully on this board")
+        report.say(
+            OK, "perf can sample (`perf record`) — the profiling chapter works fully on this board"
+        )
     else:
         report.say(
             WARN,
             "perf counts but cannot sample (`perf record`). This needs the Sscofpmf extension, "
             "which the SiFive U74 does not have. Everything in Part V that counts is fine; "
-            "ch27 says what it cannot show you.",
+            "the profiling chapter says what it cannot show you.",
         )
 
 
