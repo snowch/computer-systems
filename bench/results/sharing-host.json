@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "03fcafb4fe827b88",
+  "code_fingerprint": "895e42b6249a41a1",
   "code_sources": [
     "bench/run_sharingcost.py",
     "sysfs/bench/sharingcost.c",

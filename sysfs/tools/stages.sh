@@ -1,5 +1,5 @@
 #!/bin/sh
-# Walk one C file through the toolchain, keeping what each stage produced (ch09).
+# Walk one C file through the toolchain, keeping what each stage produced (the whole-program chapter).
 #
 # Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
 #

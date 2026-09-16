@@ -5,7 +5,7 @@ diff -urN a/kernel/bio.c b/kernel/bio.c
  
    b = bget(dev, blockno);
    if (!b->valid) {
-+    blocknote(0); // Systems From Scratch, ch19: a block the cache did not have
++    blocknote(0); // Systems From Scratch, the file system: a block the cache did not have
      virtio_disk_rw(b, 0);
      b->valid = 1;
    }
@@ -13,7 +13,7 @@ diff -urN a/kernel/bio.c b/kernel/bio.c
  {
    if (!holdingsleep(&b->lock))
      panic("bwrite");
-+  blocknote(1); // Systems From Scratch, ch19: a block on its way to the platter
++  blocknote(1); // Systems From Scratch, the file system: a block on its way to the platter
    virtio_disk_rw(b, 1);
  }
  
@@ -23,14 +23,14 @@ diff -urN a/kernel/bio.c b/kernel/bio.c
  }
 +
 +
-+// -- block census (Systems From Scratch, ch19) ----------------------------------------------
++// -- block census (Systems From Scratch, the file system) ----------------------------------------------
 +//
 +// Counts the traffic that actually reaches the device, which is not the same as the traffic a
-+// program asked for and is the whole subject of ch19. A read that the buffer cache satisfies
++// program asked for and is the whole subject of the file-system chapter. A read that the buffer cache satisfies
 +// never gets here; a block written twice in one transaction gets here once. What is left is what
 +// the disk sees.
 +//
-+// Nothing is locked, for ch17's reason and with ch17's justification: a lock on the block path
++// Nothing is locked, for the locks chapter's reason and with its justification: a lock on the block path
 +// would be work on the block path, and the figures the book publishes from this are the ones a
 +// fixed workload fixes.
 +
@@ -85,16 +85,16 @@ diff -urN a/kernel/console.c b/kernel/console.c
 --- a/kernel/console.c	2026-09-14 21:42:18.681237911 +0000
 +++ b/kernel/console.c	2026-09-14 21:42:18.708117029 +0000
 @@ -152,6 +152,12 @@
-   case C('T'): // Print the trap census (Systems From Scratch, ch13).
+   case C('T'): // Print the trap census (Systems From Scratch, traps and system calls).
      trapdump();
      break;
-+  case C('B'): // Print the block census (Systems From Scratch, ch19).
++  case C('B'): // Print the block census (Systems From Scratch, the file system).
 +    blockdump();
 +    break;
-+  case C('Z'): // Zero the block census (Systems From Scratch, ch19).
++  case C('Z'): // Zero the block census (Systems From Scratch, the file system).
 +    blockreset();
 +    break;
-   case C('X'): // Print the switch census (Systems From Scratch, ch18).
+   case C('X'): // Print the switch census (Systems From Scratch, scheduling and context switches).
      switchdump();
      break;
 diff -urN a/kernel/defs.h b/kernel/defs.h
@@ -118,7 +118,7 @@ diff -urN a/kernel/log.c b/kernel/log.c
  static void
  commit()
  {
-+  lognote(1); // Systems From Scratch, ch19
++  lognote(1); // Systems From Scratch, the file system
    if (log.lh.n > 0) {
      write_log();      // Write modified blocks from cache to log
      write_head();     // Write header to disk -- the real commit
@@ -126,7 +126,7 @@ diff -urN a/kernel/log.c b/kernel/log.c
    }
    log.lh.block[i] = b->blockno;
    if (i == log.lh.n) { // Add new block to log?
-+    // Systems From Scratch, ch19: counted here rather than on entry, because xv6 absorbs a
++    // Systems From Scratch, the file system: counted here rather than on entry, because xv6 absorbs a
 +    // repeated write to the same block and a count of calls would not be a count of blocks.
 +    // The chapter's arithmetic is about blocks, so this has to be too.
 +    lognote(0);

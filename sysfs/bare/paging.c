@@ -1,4 +1,4 @@
-/* ch06 (first half): one page table, installed by hand, and an address that means something else.
+/* The bare-metal paging chapter (first half): one page table, installed by hand, and an address that means something else.
  *
  * Three entries is the whole table. Each one covers a gigabyte, which is large enough that no
  * second or third level is needed and small enough to write out and read back. Two of them map

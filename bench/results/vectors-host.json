@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "b08512a1f9434bde",
+  "code_fingerprint": "f9fff906e3518159",
   "code_sources": [
     "bench/run_vectorcost.py",
     "sysfs/bench/vectorcost.c",

@@ -2,13 +2,13 @@ diff -urN a/kernel/console.c b/kernel/console.c
 --- a/kernel/console.c	2026-09-14 20:51:50.884494783 +0000
 +++ b/kernel/console.c	2026-09-14 20:52:27.167420450 +0000
 @@ -152,6 +152,9 @@
-   case C('T'): // Print the trap census (Systems From Scratch, ch13).
+   case C('T'): // Print the trap census (Systems From Scratch, traps and system calls).
      trapdump();
      break;
-+  case C('F'): // Print the fault census (Systems From Scratch, ch15).
++  case C('F'): // Print the fault census (Systems From Scratch, page faults).
 +    faultdump();
 +    break;
-   case C('V'): // Print the page-table census (Systems From Scratch, ch14).
+   case C('V'): // Print the page-table census (Systems From Scratch, virtual memory).
      ptdump();
      break;
 diff -urN a/kernel/defs.h b/kernel/defs.h
@@ -33,7 +33,7 @@ diff -urN a/kernel/proc.c b/kernel/proc.c
    p->sz = 0;
    p->pid = 0;
    p->name[0] = 0;
-+  memset(&p->fc, 0, sizeof(p->fc)); // Systems From Scratch, ch15
++  memset(&p->fc, 0, sizeof(p->fc)); // Systems From Scratch, page faults
    p->chan = 0;
    p->killed = 0;
    p->xstate = 0;
@@ -41,7 +41,7 @@ diff -urN a/kernel/proc.c b/kernel/proc.c
    if (p == initproc)
      panic("init exiting");
  
-+  census_latch(p); // Systems From Scratch, ch15
++  census_latch(p); // Systems From Scratch, page faults
 +
    // Close all open files.
    for (int fd = 0; fd < NOFILE; fd++) {
@@ -52,7 +52,7 @@ diff -urN a/kernel/proc.c b/kernel/proc.c
  }
 +
 +
-+// -- fault census (Systems From Scratch, ch15) ----------------------------------------------
++// -- fault census (Systems From Scratch, page faults) ----------------------------------------------
 +//
 +// Counting only. This kernel already offers both allocation policies -- sbrk's second argument
 +// picks one -- so the book has no policy to add and no business adding one. What it has is a
@@ -138,7 +138,7 @@ diff -urN a/kernel/proc.h b/kernel/proc.h
  enum procstate { UNUSED, USED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
  
  // Per-process state
-+// -- fault census (Systems From Scratch, ch15) --------------------------------------------
++// -- fault census (Systems From Scratch, page faults) --------------------------------------------
 +//
 +// Counters only. Nothing here changes a policy: this xv6 already offers both, as the second
 +// argument to sbrk, and the book's job is to say what choosing between them costs. Per process,
@@ -158,7 +158,7 @@ diff -urN a/kernel/proc.h b/kernel/proc.h
    struct file *ofile[NOFILE];  // Open files
    struct inode *cwd;           // Current directory
    char name[16];               // Process name (debugging)
-+  struct faultcensus fc;       // Systems From Scratch, ch15
++  struct faultcensus fc;       // Systems From Scratch, page faults
  };
 diff -urN a/kernel/trap.c b/kernel/trap.c
 --- a/kernel/trap.c	2026-09-14 20:51:50.890950317 +0000
@@ -169,7 +169,7 @@ diff -urN a/kernel/trap.c b/kernel/trap.c
    } else if ((r_scause() == 15 || r_scause() == 13) &&
 -             vmfault(p->pagetable, p->sz, r_stval(),
 -                     (r_scause() == 13) ? 1 : 0) != 0) {
-+             // Systems From Scratch, ch15: count the fault and hand back what vmfault decided,
++             // Systems From Scratch, page faults: count the fault and hand back what vmfault decided,
 +             // so the census sees every page fault rather than only the satisfiable ones.
 +             census_fault(r_scause(), vmfault(p->pagetable, p->sz, r_stval(),
 +                                              (r_scause() == 13) ? 1 : 0)) != 0) {
@@ -183,7 +183,7 @@ diff -urN a/kernel/vm.c b/kernel/vm.c
        return 0;
      }
      memset(mem, 0, PGSIZE);
-+    census_page(0); // Systems From Scratch, ch15: asked for, so allocated now
++    census_page(0); // Systems From Scratch, page faults: asked for, so allocated now
      if (mappages(pagetable, a, PGSIZE, (uint64)mem, PTE_R | PTE_U | xperm) !=
          0) {
        kfree(mem);
@@ -193,7 +193,7 @@ diff -urN a/kernel/vm.c b/kernel/vm.c
  
 -  if (va >= psz)
 +  if (va >= psz) {
-+    census_refused(); // Systems From Scratch, ch15: nothing here belongs to this process
++    census_refused(); // Systems From Scratch, page faults: nothing here belongs to this process
      return 0;
 +  }
    va = PGROUNDDOWN(va);
@@ -203,7 +203,7 @@ diff -urN a/kernel/vm.c b/kernel/vm.c
      kfree((void *)mem);
      return 0;
    }
-+  census_page(1); // Systems From Scratch, ch15: touched, so allocated only now
++  census_page(1); // Systems From Scratch, page faults: touched, so allocated only now
    return mem;
  }
  

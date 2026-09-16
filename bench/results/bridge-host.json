@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "59c71bd19849f760",
+  "code_fingerprint": "8afac4ee574e1013",
   "code_sources": [
     "bench/run_bridgecost.py",
     "sysfs/bench/bridgecost.c",

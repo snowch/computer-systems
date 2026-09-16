@@ -1,9 +1,9 @@
-/* bridgerun — run both halves of ch20's program on the xv6 target and report what they computed.
+/* bridgerun — run both halves of the crossing chapter's program on the xv6 target and report what they computed.
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
  * What is reported is the *answer*, not a duration. This target cannot be asked what anything
- * costs, and ch20 is the chapter that says so at length before doing it anyway on hardware.
+ * costs, and the crossing chapter says so at length before doing it anyway on hardware.
  */
 
 #include "kernel/types.h"

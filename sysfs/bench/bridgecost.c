@@ -7,7 +7,7 @@
  * follows a pointer from each to the next, so the machine cannot know where the next one is until
  * the current load has returned.
  *
- * Reports the minimum of many runs, for the reason ch21 gives: everything that can happen to a
+ * Reports the minimum of many runs, for the reason the measurement chapter gives: everything that can happen to a
  * measurement on a real machine makes it slower and nothing makes it faster.
  */
 

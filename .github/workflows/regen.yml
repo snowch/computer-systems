@@ -1,0 +1,78 @@
+name: Regenerate deterministic results
+
+# The listings and the structural xv6/bare results are compiler-output, not hardware, so they are
+# re-captured with the pinned toolchain rather than measured. After a source change to a file one of
+# them depends on (a comment, a rename), run this workflow on the branch: it rebuilds them on
+# ubuntu-24.04 — the same gcc 13.3.0 the Dockerfile pins — and commits the results back. This is the
+# amd64 half of `make docker-regen`; the host timings are never here (they are the board, ch01).
+#
+# It runs automatically on any `regen/**` branch (push there and it re-captures and commits back),
+# and can also be dispatched by hand once this file reaches the default branch. Host-target results
+# must be regenerated separately on the board.
+
+on:
+  push:
+    branches:
+      - "regen/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  regen:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          ref: ${{ github.ref_name }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install the cross toolchains
+        # The same set quality.yml installs: gcc 13.3.0 for both targets (their assemblers and cross
+        # libc arrive as recommends on a real runner), and QEMU to boot xv6 and the bare programs.
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gcc-riscv64-linux-gnu gcc-aarch64-linux-gnu \
+                                     qemu-system-misc qemu-user-static
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Re-capture every deterministic result
+        run: make regen-deterministic
+
+      - name: Render the figures they feed
+        run: python3 scripts/render-figures.py
+
+      - name: Sanity check
+        # If a listing genuinely moved (a real change, not a comment), verify still passes because the
+        # result was just rewritten; this catches a runner that failed to write at all.
+        run: python3 scripts/verify-numbers.py
+
+      - name: Commit what changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bench/results chapters/_generated chapters/_figures
+          if git diff --cached --quiet; then
+            echo "Nothing to regenerate — every deterministic result already matches its sources."
+          else
+            git commit -m "Regenerate deterministic results with the pinned toolchain
+
+          Automated re-capture on ubuntu-24.04 (gcc 13.3.0, the version the Dockerfile pins) after a
+          source change to files the listings and structural xv6/bare results depend on. Host timings
+          are not here — those are measured on the board."
+            # Explicit refspec: checkout leaves HEAD detached at the pushed SHA, so a bare `git push`
+            # has no branch to write back to. This puts the regenerated commit on the branch that
+            # triggered the run.
+            git push origin "HEAD:${{ github.ref_name }}"
+          fi

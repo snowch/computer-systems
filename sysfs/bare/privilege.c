@@ -1,6 +1,6 @@
-/* ch05: what arrives without being asked for, and what a privilege level actually refuses.
+/* The bare-metal privilege chapter: what arrives without being asked for, and what a privilege level actually refuses.
  *
- * Two things happen here that ch04's trap did not. The first arrives on its own — nothing in the
+ * Two things happen here that the bare-metal trap chapter's trap did not. The first arrives on its own — nothing in the
  * program asked for it and no instruction caused it. The second is a refusal: the same
  * instruction that worked a moment ago stops working, because the processor is in a different
  * mode and the mode is the whole of the difference.
@@ -45,7 +45,7 @@ __attribute__((interrupt("machine"), aligned(4))) static void handler(void) {
 
     if (cause & CAUSE_INTERRUPT) {
         /* An interrupt's mepc is wherever the program happened to be. There is no instruction
-         * that "caused" it, so unlike ch04's trap there is nothing to advance past. */
+         * that "caused" it, so unlike the bare-metal trap chapter's trap there is nothing to advance past. */
         interrupt_cause = cause;
         interrupt_epc = bare_csr_read(mepc);
         bare_csr_clear(mie, MIE_MTIE); /* once is the demonstration; twice is a loop */

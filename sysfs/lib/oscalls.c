@@ -13,13 +13,13 @@
 long sysfs_raw_getpid(void) {
 #if defined(__aarch64__)
   /* x8 carries the call number and x0 comes back with the result. `svc` is the instruction that
-   * changes privilege level; everything the kernel then does is chapter 6's subject. */
+   * changes privilege level; everything the kernel then does is the traps-and-system-calls chapter's subject. */
   register long number asm("x8") = SYSFS_NR_GETPID;
   register long result asm("x0");
   asm volatile("svc #0" : "=r"(result) : "r"(number) : "memory");
   return result;
 #elif defined(__riscv)
-  /* The same three ideas in the instruction set chapter 6 used: a7 carries the number, a0 comes
+  /* The same three ideas in the instruction set the traps-and-system-calls chapter used: a7 carries the number, a0 comes
    * back with the result, and `ecall` is the instruction xv6's `uservec` is waiting for. */
   register long number asm("a7") = SYSFS_NR_GETPID;
   register long result asm("a0");

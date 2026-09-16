@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
     fill((int)parameter);
     for (int i = 0; i < RUNS; i++) {
       uint64_t before = sysfs_now_ns();
-      /* The *calling* variant, deliberately. ch24 shows the compiler turning the plain one
+      /* The *calling* variant, deliberately. The CPU chapter shows the compiler turning the plain one
        * into a `cset` with no branch in it at all, and a branchless loop cannot mispredict. */
       answer = sysfs_count_over_calling(values, COUNT, THRESHOLD);
       samples[i] = sysfs_now_ns() - before;

@@ -64,7 +64,7 @@ void bare_secondary(uint64 hartid);
  * So `sp` and `ra` are put back explicitly, and everything else is declared clobbered, which
  * makes the compiler spill anything it was keeping in a register to the stack — where the stack
  * is the one this macro just restored. That is a context switch with the interesting parts taken
- * out, and ch19 is the version with them left in.
+ * out, and the scheduling chapter is the version with them left in.
  */
 extern volatile uint64 bare_resume_at;
 extern volatile uint64 bare_resume_sp;
@@ -98,7 +98,7 @@ extern volatile uint64 bare_resume_ra;
     } while (0)
 
 /* The shared system-call layer (sysfs/bare/syscalls.c), for the programs that need calls and
- * are not about calls. `bare_syscall` is what a program supplies; everything else is ch07's. */
+ * are not about calls. `bare_syscall` is what a program supplies; everything else is the bare-metal system-call chapter's. */
 #define BARE_SYS_LEAVE 0 /* return to machine mode; every program's last call */
 
 void bare_trap_entry(void);

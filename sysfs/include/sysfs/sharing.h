@@ -5,7 +5,7 @@
  * The two structures below hold the same two counters and differ only in padding. In one they are
  * adjacent and therefore on the same cache line; in the other they are a line apart.
  *
- * Nothing in the C standard, and nothing in chapter 2, distinguishes them by anything but size.
+ * Nothing in the C standard, and nothing in the memory-as-one-array chapter, distinguishes them by anything but size.
  * Two threads incrementing one counter each will find them very different, and the difference is
  * not about correctness at all — both are correct, both are race-free, and one is far slower.
  * That is false sharing: two cores fighting over a line neither of them shares any *data* on.
@@ -16,7 +16,7 @@
 
 #include <stdint.h>
 
-/* The line size this layout is built around. ch22 measures it rather than assuming it, and a
+/* The line size this layout is built around. The memory-hierarchy chapter measures it rather than assuming it, and a
  * reader whose machine differs should say so here and watch the figures move. */
 #define SYSFS_LINE_BYTES 64
 

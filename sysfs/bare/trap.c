@@ -1,4 +1,4 @@
-/* ch04: a trap, with nothing else in the machine.
+/* The bare-metal trap chapter: a trap, with nothing else in the machine.
  *
  * One handler, one deliberate trap, and every question about it answered from the machine rather
  * than from a diagram: where the processor went, which instruction it was on when it went, what
@@ -15,7 +15,7 @@ static volatile uint64 seen_epc;
 /* `interrupt("machine")` makes the compiler do two things a normal function does not: save every
  * register it touches, including the caller-saved ones an ordinary function may clobber, and end
  * with `mret` rather than `ret`. That is the whole difference between a function and a handler,
- * and ch08 is where you write it out by hand — once the caller is a stranger, the compiler can no
+ * and the bare-metal system-call chapter is where you write it out by hand — once the caller is a stranger, the compiler can no
  * longer tell which registers matter. */
 __attribute__((interrupt("machine"), aligned(4))) static void handler(void) {
     taken++;

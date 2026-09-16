@@ -1,11 +1,11 @@
-/* ch07's system-call mechanism, tidied and shared.
+/* The bare-metal system-call chapter's mechanism, tidied and shared.
  *
- * ch08 and ch09 need system calls and are not about system calls, so the entry stub ch07 spells
+ * The descriptors chapter and the fork chapter need system calls and are not about system calls, so the entry stub the bare-metal system-call chapter spells
  * out instruction by instruction lives here once. It is the same code: a full frame saved by
  * hand, a dispatch on a7, a result in a0, and mepc advanced past the `ecall`.
  *
  * What a program supplies is `bare_syscall`, and that is the whole interface — which is itself
- * the ch07 lesson stated in a build system: once the boundary exists, what crosses it is a
+ * the bare-metal system-call chapter's lesson stated in a build system: once the boundary exists, what crosses it is a
  * number and some registers, and both sides can be written without knowing the other.
  */
 #include "bare.h"

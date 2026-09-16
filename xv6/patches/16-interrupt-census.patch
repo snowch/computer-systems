@@ -2,13 +2,13 @@ diff -urN a/kernel/console.c b/kernel/console.c
 --- a/kernel/console.c	2026-09-14 21:04:56.095406285 +0000
 +++ b/kernel/console.c	2026-09-14 21:04:56.126098710 +0000
 @@ -152,6 +152,9 @@
-   case C('T'): // Print the trap census (Systems From Scratch, ch13).
+   case C('T'): // Print the trap census (Systems From Scratch, traps and system calls).
      trapdump();
      break;
-+  case C('N'): // Print the interrupt census (Systems From Scratch, ch16).
++  case C('N'): // Print the interrupt census (Systems From Scratch, interrupts and drivers).
 +    intrdump();
 +    break;
-   case C('F'): // Print the fault census (Systems From Scratch, ch15).
+   case C('F'): // Print the fault census (Systems From Scratch, page faults).
      faultdump();
      break;
 diff -urN a/kernel/defs.h b/kernel/defs.h
@@ -31,13 +31,13 @@ diff -urN a/kernel/trap.c b/kernel/trap.c
  
  extern int devintr();
  
-+// -- interrupt census (Systems From Scratch, ch16) -------------------------------------------
++// -- interrupt census (Systems From Scratch, interrupts and drivers) -------------------------------------------
 +//
 +// One counter per source, plus the two facts about the console driver that say whether its
 +// asynchronous machinery is doing anything: how many characters a writing process handed to the
 +// device itself, and how many times it had to stop and wait for the device to catch up.
 +//
-+// Not locked, for the reason ch13's census is not locked: a lock on an interrupt path changes
++// Not locked, for the reason the trap census is not locked: a lock on an interrupt path changes
 +// the thing being measured.
 +struct intrcensus {
 +  uint64 timer;
@@ -86,14 +86,14 @@ diff -urN a/kernel/trap.c b/kernel/trap.c
 +  printk("end intrcensus\n");
 +}
 +
- // -- trap census (Systems From Scratch, ch13) ---------------------------------------------
+ // -- trap census (Systems From Scratch, traps and system calls) ---------------------------------------------
  //
  // Every trap into the kernel is counted, by cause, and every system call is counted by number.
 @@ -274,10 +329,13 @@
      int irq = plic_claim();
  
      if (irq == UART0_IRQ) {
-+      intrnote(1); // Systems From Scratch, ch16
++      intrnote(1); // Systems From Scratch, interrupts and drivers
        uartintr();
      } else if (irq == VIRTIO0_IRQ) {
 +      intrnote(2);
@@ -107,7 +107,7 @@ diff -urN a/kernel/trap.c b/kernel/trap.c
      return 1;
    } else if (scause == 0x8000000000000005L) {
      // timer interrupt.
-+    intrnote(0); // Systems From Scratch, ch16
++    intrnote(0); // Systems From Scratch, interrupts and drivers
      clockintr();
      return 2;
    } else {
@@ -118,7 +118,7 @@ diff -urN a/kernel/uart.c b/kernel/uart.c
      sleep_prepare(&tx_chan);
      if (ReadReg(LSR) & LSR_TX_IDLE) {
        WriteReg(THR, buf[i]);
-+      uartnote(2, 1); // Systems From Scratch, ch16: the writer moved this one itself
++      uartnote(2, 1); // Systems From Scratch, interrupts and drivers: the writer moved this one itself
        i += 1;
      } else {
 +      uartnote(3, 1); // ... and this is the device being slower than the program
@@ -129,7 +129,7 @@ diff -urN a/kernel/uart.c b/kernel/uart.c
  
    if (ReadReg(LSR) & LSR_TX_IDLE) {
      // UART finished transmitting; wake up sending thread.
-+    uartnote(0, 1); // Systems From Scratch, ch16
++    uartnote(0, 1); // Systems From Scratch, interrupts and drivers
      wakeup(&tx_chan);
    }
  
@@ -137,7 +137,7 @@ diff -urN a/kernel/uart.c b/kernel/uart.c
      int c = uartgetc();
      if (c == -1)
        break;
-+    uartnote(1, 1); // Systems From Scratch, ch16
++    uartnote(1, 1); // Systems From Scratch, interrupts and drivers
      consoleintr(c);
    }
  }

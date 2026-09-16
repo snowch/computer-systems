@@ -2,8 +2,8 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * Chapter 6 showed what a system call is on the inside, by stopping the kernel in the middle of
- * one. This header exists so chapter 19 can show what it is on the *outside*, on a machine whose
+ * The traps-and-system-calls chapter showed what a system call is on the inside, by stopping the kernel in the middle of
+ * one. This header exists so the OS-cost chapter can show what it is on the *outside*, on a machine whose
  * kernel cannot be stopped — and the answer, once the compiler has had it, is a branch.
  *
  * Neither function is here to be fast. They are here to be disassembled.
