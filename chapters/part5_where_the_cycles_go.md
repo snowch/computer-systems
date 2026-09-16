@@ -80,7 +80,7 @@ counter the firmware does not expose, a second machine that does not exist — t
 shows the reasoning it used instead, and states what it would take to measure. It does not borrow a
 number from somewhere else.
 
-This part also does something more specific than warn that figures differ: more than once it sets
+This part also does something more specific than warning that figures differ: more than once it sets
 out to reproduce a well-known effect and finds it mostly gone. Bias from where the stack sits, the
 penalty for false sharing, the clean step that betrays a cache line — each is real, each is in the
 literature, and on this newer core each came back smaller than the folklore promises, sometimes to

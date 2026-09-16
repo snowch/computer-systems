@@ -26,7 +26,7 @@ because [ch28](#memory-ordering-on-real-hardware) wants four cores with room to 
 | **Cooling** | The official active cooler, or a case with a fan | **Not optional here.** A Pi 5 under sustained load throttles |
 | **Power** | The official 27 W USB-C supply, or one rated for the board | Underpowering a Pi produces instability that reads exactly like a kernel bug |
 | **Storage** | A microSD card that is not the cheapest on the shelf | An NVMe drive on a PCIe HAT is nicer and not required |
-| **Network** | An Ethernet cable — any working one | WiFi works. Wired keeps the radio's driver from doing interrupt work on the cores you are measuring |
+| **Network** | An Ethernet cable — any working one | Wi-Fi works. Wired keeps the radio's driver from doing interrupt work on the cores you are measuring |
 
 You also need a development machine for Parts I to IV — anything that runs Homebrew or apt and
 holds an SSH key. It never measures anything.
@@ -67,8 +67,7 @@ and running [ch24](#measuring)'s experiments on both is an instructive afternoon
 ## It is an ARM machine, and everything before Part V is RISC-V
 
 That is deliberate: `perf` has to both count *and* sample, no affordable RISC-V core does both,
-and choosing one would have cost two chapters of [Part V](#part5). The [preface](#preface) has the evidence; this
-chapter is about getting the machine working.
+and choosing one would have cost two chapters of [Part V](#part5). The [preface](#preface) has the evidence; this appendix is about choosing the machine, and [ch01](#setting-up-the-board) is where you make it work.
 
 % number-ok: SoC specification from @rpi-bcm2712; every figure in this book comes from the machine itself
 Its SoC is a BCM2712: four Arm Cortex-A76 cores at 2.4 GHz, 64 kB of L1 instruction and data
@@ -145,8 +144,8 @@ disagree about this today @rpi-dt-bcm2712. The version number is not the thing. 
 in `/boot/firmware/` is the thing, and your machine will read it out for you.
 
 So the book does the other thing. Every `host` result stamps the board, the operating system, the
-kernel and whether `perf` could count and sample, and the table at the end of this chapter is
-that stamp. It tells you what produced the book's numbers; it is not a requirement for yours.
+kernel and whether `perf` could count and sample; the reference machine's own account is printed
+in [ch01](#setting-up-the-board). It tells you what produced the book's numbers; it is not a requirement for yours.
 What is required is that `verify-setup.py` passes on the machine in front of you, which is a
 question about that machine and not about a version string.
 :::

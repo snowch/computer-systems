@@ -38,7 +38,7 @@ finding out whether you can count the consequences.
 
 The machine has one path in. A device raises a line, the interrupt controller decides which
 device is allowed to speak, and the processor takes exactly the trap path [ch16](#traps-and-system-calls) counted —
-the same thirty-odd instructions of saving, the same page-table switch, the same restoration on
+the same thirty-odd register saves, the same page-table switch, the same restoration on
 the way out.
 
 None of that work is the device's. It is charged to whichever process was running, which had

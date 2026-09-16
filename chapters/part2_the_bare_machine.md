@@ -45,7 +45,7 @@ system on it is the shortest route to believing it.
 
 So the part sits before [Part IV](#part4) rather than inside it for two reasons, not one. The
 hardware's mechanisms were never the kernel's to begin with. The software's are, and meeting them
-without a kernel is how you learn there is nothing magic in them. Having written the three-instruction trap
+without a kernel is how you learn there is nothing magic in them. Having written the trap
 handler yourself and watched it work changes what xv6's trap handling looks like: an arrangement of
 things you have built, rather than a wall of new ideas.
 

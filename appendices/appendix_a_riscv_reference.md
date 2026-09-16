@@ -81,7 +81,7 @@ interrupt must not.
 | `stval` | The faulting address, for a fault that has one | [ch18](#page-faults-as-a-feature) |
 | `satp` | The root page table and the translation mode | [ch17](#virtual-memory) |
 | `sie` / `sip` | Which interrupts are enabled, and which are pending | [ch19](#interrupts-and-drivers) |
-| `time` | The real-time counter, readable from user mode | [ch19](#interrupts-and-drivers) |
+| `time` | The real-time counter — an unprivileged CSR, read here by the supervisor-mode driver | [ch19](#interrupts-and-drivers) |
 
 **`scause`'s top bit is the one to read first.** It separates an interrupt — something outside the
 program asking for attention — from an exception, which is this instruction refusing to complete.

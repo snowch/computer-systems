@@ -111,8 +111,8 @@ Build it into the kernel, boot, and run it:
 
 Three phases, chosen to bracket the trade rather than to demonstrate a win. A large lazy request
 barely touched; a smaller lazy request touched in full; an eager request of the same size as the
-first. The table below has two lazy rows rather than four, because the census counts per process
-and not per call: the two lazy requests arrive in it added together.
+first. The two lazy requests appear in the table summed rather than separately, because the census counts per process
+and not per call.
 
 ```{include} _generated/page-faults-as-a-feature-exchange.md
 ```

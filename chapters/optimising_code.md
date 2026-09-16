@@ -117,7 +117,7 @@ compiled and counted rather than run. CI regenerates them on every push, so the 
 about what this compiler does are checked against this compiler continuously — and if a future
 version stops equalising those three, the build fails rather than the book quietly becoming wrong.
 
-The timings are pending. They need the board and they are a different question.
+The timings are a different question, and they were measured on the board.
 
 ## What this cannot tell you
 

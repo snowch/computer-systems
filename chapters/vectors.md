@@ -123,7 +123,7 @@ at `-O3`, nothing further widens under `-ffast-math`, or the loop with the depen
 vector instructions — each of which would leave the chapter asserting something its own evidence
 had stopped supporting.
 
-Pending on the board: what the widening actually bought, beside what it was allowed to buy.
+Measured on the board: what the widening actually bought, beside what it was allowed to buy.
 
 ## What this cannot tell you
 

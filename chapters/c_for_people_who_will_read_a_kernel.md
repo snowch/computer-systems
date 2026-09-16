@@ -23,7 +23,7 @@ Which parts of C are really about addresses, and how do I read them without flin
 This is not a C tutorial and it does not cover the language. It covers the subset that becomes
 visible in machine code, sorted by a single question: **has the machine heard of this?** Some of
 C's most-argued-about constructs are instructions to the compiler that leave no trace at all.
-One of them is a prohibition that survives into every single load. Telling those apart is what
+Another is a prohibition that survives into every single load. Telling those apart is what
 makes kernel source readable, because a kernel is mostly the second kind.
 
 ## The material
@@ -69,7 +69,7 @@ threading primitive — [ch20](#locks-and-memory-ordering) is emphatic about tha
 It matters when reading an address is not merely reading memory. A device register that returns
 the next byte of a serial port gives a different answer each time it is read, and a compiler that
 reads it once and reuses the value has turned your driver into a program that receives one
-character forever. [ch19](#interrupts-and-drivers) writes that driver.
+character for ever. [ch19](#interrupts-and-drivers) writes that driver.
 
 **If you arrived from Java, this is the trap.** Java's `volatile` *is* a threading primitive: it
 orders accesses between threads and the language's memory model defines what that guarantees.
@@ -127,7 +127,7 @@ symbols the helper is not among them. It has stopped existing as a separate thin
 The keyword is overloaded and the two meanings are unrelated, which is a genuine wart. On a
 function or a file-scope variable, `static` restricts *linkage* — who may refer to it. On a
 variable inside a function, it changes *storage duration* — the variable outlives the call and
-there is exactly one of it, forever, shared by every caller. A kernel uses both constantly and
+there is exactly one of it, for ever, shared by every caller. A kernel uses both constantly and
 means something different each time.
 
 ### Calling through a variable
@@ -177,7 +177,7 @@ work perfectly until the second caller arrives, which is what this chapter's sec
 
 **Allocated** — from `malloc`, or in a kernel from whatever the kernel has instead. It lives until
 somebody says otherwise, and deciding who that somebody is has consumed more engineering time
-than any other question in this chapter.
+than almost any other question this chapter raises.
 
 xv6's kernel uses all three within a few hundred lines of each other, and reading it is much
 easier once you are asking *which of these three is this* rather than *what does this pointer

@@ -23,7 +23,7 @@ What does watching a program in a debugger fail to tell me about what it costs?
 
 Everything up to here has built a complete structural account of a machine. You can say what a
 program compiles to, where its data sits, how its address space is built, what it costs the kernel
-to ask for anything, and how many blocks a byte reaches the disk as. All of it was obtained on a target
+to ask for anything, and how many blocks of disk traffic a single byte becomes. All of it was obtained on a target
 chosen precisely because you can stop it anywhere and look.
 
 None of it is a duration, and this chapter is where that stops being a caveat and becomes the
@@ -134,11 +134,10 @@ is arranged as [Part IV](#part4)'s chapters asked again.
 
 The answer both routes compute, on both targets, and the instructions each compiles to on both
 architectures — all of it reproducible, none of it a duration. The one figure this chapter is
-actually about is declared pending and renders as a warning, because the reference machine has not
-reported yet.
+actually about — the cost of the two routes — has been measured on the board.
 
-The chapter is written so that it reads correctly either way. What the earlier parts predict about
-these two functions does not depend on the measurement, and neither does the argument about
+What the earlier parts predict about
+these two functions does not depend on that measurement, and neither does the argument about
 confounds; the measurement supplies the size of the error and not its existence.
 
 ## What this cannot tell you

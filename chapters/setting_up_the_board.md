@@ -39,7 +39,7 @@ A Pi is a well-trodden path and the Raspberry Pi documentation is the authority 
 follows is the shape of the task and the parts this book depends on.
 
 **1. Write a 64-bit image.** Raspberry Pi OS (64-bit), written with Raspberry Pi Imager, which
-will also set the hostname, your SSH key and your WiFi while it writes. Use its advanced options
+will also set the hostname, your SSH key and your Wi-Fi while it writes. Use its advanced options
 — it saves the whole "find it on the network and change the default password" dance.
 
 It has to be a **64-bit** image. A 32-bit userspace on ARMv7 does not get you the ARMv8 PMU, and
@@ -165,7 +165,7 @@ machine the failure is usually further down — the counters are machine-mode CS
 the firmware's SBI PMU extension @riscv-sbi, so check for `CONFIG_RISCV_PMU_SBI` and a firmware
 that provides it.
 
-Until `perf stat` prints real counts, [Part V](#part5) cannot start, and no amount of care in the chapters
+Until `perf stat` prints real counts, [Part V](#part5) cannot start, and nothing in the later chapters
 substitutes for it.
 
 ### Counting is not sampling
@@ -274,5 +274,5 @@ python3 -m pytest tests/setting_up_the_board/test_problem_2_sampling.py
 
 [Appendix H](#appendix-h) is the requirements this chapter assumes, and `hardware/README.md` is
 the same thing as a checklist. The counter-overflow interrupt that sampling needs is the Sscofpmf
-extension @riscv-sscofpmf on RISC-V and a standard part of the PMU on Arm; the reference board's
+extension @riscv-sscofpmf on RISC-V and a standard part of the PMU on ARM; the reference board's
 SoC is documented by its vendor @rpi-bcm2712.

@@ -59,7 +59,7 @@ line back and forth, with nothing else to overlap against, is already the expens
 
 Problem 28.1 is the analysis: given where the fields are and who writes them, which pairs will
 contend. The case worth getting right is two fields on one line written by the *same* thread,
-which costs nothing, because sharing a line is not the fault.
+which costs nothing, because sharing a line is not what is at fault.
 
 ### The same need, two spellings
 
@@ -113,7 +113,7 @@ board supplies the curve; the difference is the chapter's real subject.
 ## What we measured
 
 Where the fields land, which decides whether the cores will fight, and which needs no machine.
-The fights themselves are pending on the board, along with the cost of an atomic contended and
+The fights themselves were then measured on the board, along with the cost of an atomic contended and
 uncontended.
 
 The runner refuses to stamp a layout in which the packed structure's counters have stopped sharing

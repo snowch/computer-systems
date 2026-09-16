@@ -22,8 +22,8 @@ Two machines to get working, and a script that says what each one can currently 
 
 The book uses three targets on two machines, and the two machines are not equally urgent. The
 computer you are reading this on runs `bare` and `xv6` under QEMU, needs one cross compiler, and
-covers everything up to [Part V](#part5). The board is a second machine, it is the only place a
-timing may be measured, and nothing needs it until [ch24](#measuring).
+covers everything up to [Part V](#part5). The board is a second machine — the only place a
+timing may be measured — and nothing needs it until [ch24](#measuring).
 
 So the two chapters are in that order, and they are separate on purpose: you can finish
 [ch00](#prerequisites-and-setup) this afternoon on a laptop, and do

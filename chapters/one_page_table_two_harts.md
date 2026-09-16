@@ -23,7 +23,7 @@ What does address translation do, and what does a second core break?
 Two questions, and two programs, because they are two mechanisms and a chapter that ran them
 together would be teaching neither. What joins them is that both are things the hardware does to
 memory behind the program's back — one deliberately and usefully, one as a consequence of there
-being more than one of it.
+being more than one processor.
 
 ## The material
 
@@ -44,7 +44,7 @@ can be a *leaf* — covering a whole gigabyte at once:
 :end-before: static void build_the_table
 ```
 
-Three entries is the entire table:
+The entire table is three entries:
 
 ```{literalinclude} ../sysfs/bare/paging.c
 :language: c

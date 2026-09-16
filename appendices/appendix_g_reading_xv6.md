@@ -54,10 +54,11 @@ between revisions and its topics do not.
 | File system, logging, buffer cache | [ch22](#the-file-system) | — |
 | Concurrency revisited, memory ordering | [ch20](#locks-and-memory-ordering) | [ch28](#memory-ordering-on-real-hardware) |
 
-Three rows have no price, and the reason is the same each time: the cost of an interrupt, a file
+Two of the blank rows share a reason: the cost of an interrupt, a file
 system and a driver on this machine is the cost of *this machine's* devices, and the reference
 board's storage is an SD card behind a bridge rather than anything a chapter could generalise
-from. [ch19](#interrupts-and-drivers) and [ch22](#the-file-system) say so in their own limitations sections.
+from. [ch19](#interrupts-and-drivers) and [ch22](#the-file-system) say so in their own limitations sections. The third
+blank, operating-system interfaces, has no single price because the trace below is where it is paid, a layer at a time.
 
 ## One call through every layer: `fork`
 
@@ -79,7 +80,7 @@ is a one-line wrapper. Older revisions of the commentary call it `fork`.
 | `filedup()` over the open files, and `idup()` on the working directory | reference counting | [ch22](#the-file-system) |
 | `np->state = RUNNABLE` makes it eligible to be chosen | scheduling | [ch21](#scheduling-and-context-switches) |
 
-**Why it returns twice** is the one line worth carrying away, and it is the fourth row. Nothing
+**Why it returns twice** is the one line worth carrying away, and it is the row that sets `a0` to zero. Nothing
 returns twice. The child is a copy of the parent — including the saved register set the trap path
 will restore on the way out — with a single word changed: the register the calling convention uses
 for a return value. Both processes then resume at the instruction after the `ecall`, each reading

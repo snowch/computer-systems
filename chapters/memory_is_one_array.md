@@ -182,7 +182,7 @@ That is why every kernel function that takes a buffer also takes a count. It is 
 preference; there is no alternative. [ch05](#c-for-people-who-will-read-a-kernel) shows the compiler discarding a length written
 into a parameter's brackets, and [ch13](#representing-information) has the bug it causes.
 
-A string in C is this with one extra convention: a run of bytes ending in a zero one. The zero is
+A string in C is this with one extra convention: a run of bytes ending in a zero byte. The zero is
 the length, stored at the end instead of the beginning, which makes finding the length a loop
 rather than a lookup and makes forgetting to write it a bug that reads off the end of the array.
 

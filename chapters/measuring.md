@@ -97,7 +97,7 @@ Here is the experiment every benchmark deserves and few get.
 The same work, the same input, the same binary, three times — differing only in how many bytes of
 stack were claimed before the buffer it walks was allocated. Not used. Claimed. Each run lands the
 data at a different address, and the runner records that address, so this is a real change to where
-everything sits and not a padding the compiler quietly folded away.
+everything sits and not padding the compiler quietly folded away.
 
 ```{include} _generated/measuring-bias.md
 ```
@@ -107,7 +107,7 @@ does not change what reaching it costs.
 
 That is not the result the experiment is famous for. Mytkowicz and colleagues @mytkowicz2009wrong
 showed the same change — the size of an environment variable, which moves the stack, which is what
-the padding here does — large enough to manufacture or erase the kind of speedup papers are
+the padding here does — to be large enough to manufacture or erase the kind of speedup papers are
 published about. Their machine cared. This one, measured the same way, does not: very likely a core
 with this much first-level cache, and this forgiving an attitude to unaligned access, hides what a
 2009 one could not.

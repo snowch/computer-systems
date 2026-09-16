@@ -32,10 +32,14 @@ currently run, and with measurements that record what those targets actually are
 
 The preface makes the case for the arrangement; this is the operational version of it.
 
+**`bare`** is that same `qemu-system-riscv64` with no kernel under it at all — the machine on its
+own. [Part II](#part2) builds on it directly, and it shares xv6's cross-compiler and setup, so one
+check covers both.
+
 **`xv6`** is the MIT teaching kernel under `qemu-system-riscv64`: a complete operating system in
-about nine thousand lines, which you can stop mid-trap and inspect. Parts I, III and IV live there,
-and
-so does everything the book says about *what a program does*.
+about nine thousand lines, which you can stop mid-trap and inspect. Parts I and IV live there, and
+so does everything the book says about *what a program does*; [Part III](#part3) works on both sides of the
+split, and [ch12](#what-a-computer-does-with-a-program) is where it crosses.
 
 **`host`** is a small Linux machine on the desk, reached over SSH — a Raspberry Pi 5 in this book.
 Everything about *what a program costs* is measured there, natively. [Part V](#part5) lives there.
@@ -268,7 +272,7 @@ yet: nothing is estimated, interpolated, or carried over from a different machin
 bench-board` refuses to run anywhere but the board, and `scripts/verify-numbers.py` rejects the
 result if it somehow arrives from anywhere else.
 
-Two more limits worth naming now, since both will come up repeatedly:
+Three more limits worth naming now, since all three come up repeatedly:
 
 **A correct answer is not a fast answer.** CI compiles every `host`-target example for AArch64
 and runs it under user-mode QEMU. That proves the instructions are right and the answers are

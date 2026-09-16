@@ -51,7 +51,7 @@ The conditional in the decode phase is taken almost every time. It is the most c
 in the source of that function, and [ch27](#the-cpu) already established what a branch this lopsided
 costs a predictor.
 
-And the partitioned arrangement adds substantial extra traffic over the keys in order to shrink
+And the partitioned arrangement adds substantial extra traffic in re-reading the keys in order to shrink
 the table in play at once. Whether that trade pays is not a question the census can answer. It is
 the reason there is a second arrangement at all.
 
@@ -154,7 +154,7 @@ re-runs it on every push and refuses three specific ways it could stop describin
 Alongside it, the disassembly of the scattered inner loop, which is what makes the skid discussion
 concrete rather than a warning.
 
-Pending on the board: the profiles themselves, before and after, and the instruction-level samples
+Measured on the board: the profiles themselves, before and after, and the instruction-level samples
 that show where the skid put them.
 
 ## What this cannot tell you
@@ -217,7 +217,7 @@ is worth reading once even if you never call it: the structure it takes is a lis
 decision a profiler makes on your behalf. Mytkowicz and colleagues @mytkowicz2009wrong is the
 paper to read on measurement bias — it shows profilers disagreeing with each other about the same
 program, for reasons that are nobody's bug, and it is the best available argument for the habit
-this chapter is built on of writing the prediction down first.
+of writing the prediction down first that this chapter is built on.
 
 [ch31](#vectors) is the last measurement in the book and the narrowest: one loop, one unit, and the
 question of what vectorising actually buys when it is measured against the arithmetic rather than
