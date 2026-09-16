@@ -114,6 +114,28 @@ def main() -> int:
             state = " (pending measurement)" if getattr(figure, "pending", None) else ""
             print(f"  wrote {target.relative_to(ROOT)}{state}")
 
+    # A figure that is renamed leaves its old fragment on disk, still included by whichever page
+    # referred to it, and nothing regenerates it ever again. That is worse than a missing file: a
+    # listing the book promises CI re-captures on every push becomes a frozen copy, and the build
+    # stays green because the include still resolves. Renaming two figures is exactly how this was
+    # found, and both stale copies were live on a published page.
+    expected = {
+        f"{name}.svg" if isinstance(FIGURES[name], Diagram) else f"{name}.md" for name in FIGURES
+    }
+    orphans = sorted(
+        path
+        for directory in (FRAGMENTS, DIAGRAMS)
+        for path in directory.glob("*")
+        if path.name not in expected
+    )
+    for path in orphans:
+        if args.check:
+            print(f"  ORPHAN: {path.relative_to(ROOT)} — no figure declares it")
+            stale.append(path.name)
+        else:
+            path.unlink()
+            print(f"  removed {path.relative_to(ROOT)} (no figure declares it)")
+
     if stale:
         if args.check:
             print(
