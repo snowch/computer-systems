@@ -1,10 +1,10 @@
 ---
 title: "A Small Integer That Means a Device"
-short_title: "09 · A Small Integer That Means a Device"
+short_title: "10 · A Small Integer That Means a Device"
 ---
 
 (a-small-integer-that-means-a-device)=
-# 09 · A Small Integer That Means a Device
+# 10 · A Small Integer That Means a Device
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "09 · A Small Integer That Means a Device"
 | | |
 |---|---|
 | **Target** | `bare` — the same machine under QEMU with no operating system on it |
-| **Prerequisites** | [ch08](#a-system-call-of-your-own) |
+| **Prerequisites** | [ch09](#a-system-call-of-your-own) |
 | **What it measures** | One `write` call reaching two unrelated destinations through one table, and the table itself printed before and after a descriptor is duplicated. |
 :::
 
@@ -154,17 +154,17 @@ append is not a mode the write asks for; it is a consequence of where the positi
 ## What this cannot tell you
 
 **Anything about cost.** A `write` here is a function call behind a trap. On a real system it is a
-trap, a permission check, a copy between address spaces, and possibly a device. [ch28](#the-os-layers-cost)
+trap, a permission check, a copy between address spaces, and possibly a device. [ch29](#the-os-layers-cost)
 prices the real one.
 
 **What an open file really contains.** A kind and a cursor is the smallest thing that shows the
 sharing. A real one has a mode, a reference count, a position that several processes may be
-contending over, and a pointer to something that knows how to be read. [ch21](#the-file-system) is
+contending over, and a pointer to something that knows how to be read. [ch22](#the-file-system) is
 that, in a kernel.
 
 **How the table gets entries.** There is no `open` here, because there is nothing to open: the two
 backends are set up before the program starts. Which means the most interesting question about
-descriptors — how a name becomes a number — is entirely absent, and is [ch21](#the-file-system)'s.
+descriptors — how a name becomes a number — is entirely absent, and is [ch22](#the-file-system)'s.
 
 **What the numbers 1 and 2 mean.** They mean what the two lines in `main` say they mean. On a real
 system 0, 1 and 2 are a convention held up by the program that started you, not by the kernel, and
@@ -172,7 +172,7 @@ the convention is worth exactly as much as everyone's agreement to keep it.
 
 ## Problems
 
-**9.1 — Duplicate onto a number in use.**
+**10.1 — Duplicate onto a number in use.**
 `dup` here overwrites whatever was at the target. Decide what should happen when the target is
 already open, implement it, and justify the choice. The test checks your behaviour is consistent
 and that you did not simply refuse every duplicate.
@@ -181,7 +181,7 @@ and that you did not simply refuse every duplicate.
 python3 -m pytest tests/a_small_integer_that_means_a_device/test_problem_1_onto_open.py
 ```
 
-**9.2 — Add a third backend.**
+**10.2 — Add a third backend.**
 Add a destination that discards everything written to it and reads back as nothing. Show that the
 calling code does not change. The test checks the caller is byte-identical across all three
 descriptors.
@@ -190,7 +190,7 @@ descriptors.
 python3 -m pytest tests/a_small_integer_that_means_a_device/test_problem_2_third_backend.py
 ```
 
-**9.3 — Put the cursor in the wrong place.**
+**10.3 — Put the cursor in the wrong place.**
 Move the cursor into the descriptor table and produce a program in which that change is visible in
 the output. Say in one sentence which real-world behaviour would break. The test checks the shared
 cursor claim now fails, and that your program shows it failing rather than asserting it.
@@ -206,5 +206,5 @@ RISC-V documents has heard of it. The nearest primary source is POSIX @posix-201
 `write`, and it is worth reading `dup`'s wording specifically — the standard is careful about what
 is shared in a way that only makes sense once you have built the two tables.
 
-[ch10](#fork-built-rather-than-read) makes a second process, and the first question it has to
+[ch11](#fork-built-rather-than-read) makes a second process, and the first question it has to
 answer is which of these two tables the child gets a copy of.

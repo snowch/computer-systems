@@ -163,16 +163,23 @@ the length — a short chapter still owes the reader "What this cannot tell you"
 
 ## Chapter status
 
-All thirty-one chapters are written, and seven of the eight appendices. Appendix C waits for the
+All thirty-two chapters are written, and seven of the eight appendices. Appendix C waits for the
 reference machine: which events a board exposes is a property of its silicon, kernel and firmware
 together and cannot be drafted from a desk. Nineteen figures are `pending=` for the same reason —
 they are `host` measurements and the board has not produced them yet. Regenerate a stub with
 `python3 scripts/new-chapter.py --all --force`, which refuses to touch a written chapter.
 
-**Five chapters depend on the reference machine** — ch22, ch24, ch25, ch27, ch28 — recorded as the
-`assumes` field in `bench/outline.py`. That renders an **Assumes** row in the chapter header and
-is required by `tests/test_book.py` to appear in ch00's list too. A chapter must not acquire a
-hardware dependency without one.
+**Some chapters depend on the reference machine**, recorded as the `assumes` field in
+`bench/outline.py` — the board chapter itself, and the Part V chapters whose reading changes on
+different silicon. That renders an **Assumes** row in the chapter header and is required by
+`tests/test_book.py` to appear in appendix H's list too. A chapter must not acquire a hardware
+dependency without one.
+
+Do not write the list out here. It said "five chapters — ch22, ch24, ch25, ch27, ch28" while the
+outline held six and only two of those numbers were right, which is the same failure as the
+`ch27 and ch28` above: this file is not scanned by `scripts/sync-labels.py`, so anything typed
+into it stays as typed. `python3 -c "from bench.outline import CHAPTERS; print([c.label for c in
+CHAPTERS if c.assumes])"` is the answer, always current.
 
 **A chapter's number is never an identifier.** It used to be, and moving a chapter cost a rename
 of every anchor, filename, test directory, checkpoint tag, figure id and permalink downstream of

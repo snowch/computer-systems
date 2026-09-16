@@ -84,7 +84,7 @@ go away.
 
 ## Stopping in a trap
 
-The sequence [ch15](#traps-and-system-calls) is written around:
+The sequence [ch16](#traps-and-system-calls) is written around:
 
 ```
 break usertrap
@@ -101,7 +101,7 @@ scause=0x8 sepc=0x392 stval=0
 `scause` 8 is an environment call from user mode; `sepc` is a user-mode address, which is the
 thing worth noticing — you are in the kernel, and the register holding "where we were" holds an
 address in a different address space. `stval` is zero because a system call has no faulting
-address; [ch17](#page-faults-as-a-feature) is where it stops being zero.
+address; [ch18](#page-faults-as-a-feature) is where it stops being zero.
 
 CSRs are read as gdb convenience registers with a `$` in front, exactly like the integer ones.
 Appendix A lists the ones this book uses.
@@ -112,7 +112,7 @@ $1 = 0x8000000000087fff
 ```
 
 The top nibble is the mode field: `8` is Sv39. The bottom forty-four bits are the physical page
-number of the root page table, which is where [ch16](#virtual-memory)'s walk starts.
+number of the root page table, which is where [ch17](#virtual-memory)'s walk starts.
 
 ## When the stack is nonsense
 
@@ -157,7 +157,7 @@ That address is `TRAMPOLINE` from `kernel/memlayout.h` — the last page below `
 frame in the backtrace above is the same page plus an offset, which is how you recognise it.
 
 Inside there, `bt` shows one frame and nothing else, because there is no frame: no prologue has
-run, `sp` still belongs to the interrupted program, and the calling convention [ch13](#machine-level-code-on-riscv)
+run, `sp` still belongs to the interrupted program, and the calling convention [ch14](#machine-level-code-on-riscv)
 describes is not in force. **What to use instead**: `x/i $pc` to see where you are,
 `info registers` to see the state, and the source of `trampoline.S` open beside it. Single-step
 with `stepi`, never `step`, since there is no line table to step through.
@@ -218,7 +218,7 @@ the debugger, and this is the `xv6` target, where a duration means nothing anywa
 
 **What the hardware would have done.** QEMU implements the architecture, not a pipeline. Stepping
 through `uservec` shows you the instructions in order; a real core does not execute them in that
-order, and [ch26](#the-cpu) is the chapter about the difference.
+order, and [ch27](#the-cpu) is the chapter about the difference.
 
 **Whether your change is correct.** A debugger shows one run. The problems in this book are tests
 for the same reason: a run you watched go right is much weaker evidence than a check that fails

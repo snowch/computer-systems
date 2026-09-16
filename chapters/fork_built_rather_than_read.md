@@ -1,10 +1,10 @@
 ---
 title: "fork, Built Rather Than Read"
-short_title: "10 · fork, Built Rather Than Read"
+short_title: "11 · fork, Built Rather Than Read"
 ---
 
 (fork-built-rather-than-read)=
-# 10 · fork, Built Rather Than Read
+# 11 · fork, Built Rather Than Read
 
 :::{note} Chapter header
 :class: dropdown
@@ -12,7 +12,7 @@ short_title: "10 · fork, Built Rather Than Read"
 | | |
 |---|---|
 | **Target** | `bare` — the same machine under QEMU with no operating system on it |
-| **Prerequisites** | [ch09](#a-small-integer-that-means-a-device) |
+| **Prerequisites** | [ch10](#a-small-integer-that-means-a-device) |
 | **What it measures** | Two address spaces from one, a return value that differs between them, and the count of pages copied — beside what xv6 copies for the same call. |
 :::
 
@@ -25,8 +25,8 @@ is not a riddle, and the reason it looks like one is that it is normally met fro
 the inside it is a short function, and the two returns stop being mysterious the moment you can see
 what a return actually is.
 
-Everything this chapter needs already exists. [ch07](#one-page-table-two-harts) built an address
-space; [ch08](#a-system-call-of-your-own) saved a caller's registers into a frame. A process is
+Everything this chapter needs already exists. [ch08](#one-page-table-two-harts) built an address
+space; [ch09](#a-system-call-of-your-own) saved a caller's registers into a frame. A process is
 those two things kept together, and `fork` is a copy.
 
 ## The material
@@ -40,7 +40,7 @@ those two things kept together, and `fork` is a copy.
 ```
 
 A saved register set, a place it was, and an address space. That is the whole of it — and the first
-field is [ch08](#a-system-call-of-your-own)'s trap frame, unchanged. The frame was built to survive
+field is [ch09](#a-system-call-of-your-own)'s trap frame, unchanged. The frame was built to survive
 a system call; keep it a little longer and it is a saved process.
 
 ### Mapping one page rather than one gigabyte
@@ -82,7 +82,7 @@ one word, produce two returns with different answers.
 Note what else is copied and what is not. The page is copied — a fresh page and a byte-for-byte
 duplicate, so the child begins with everything the parent had and can then diverge. This is the
 eager version, and it is what xv6's `uvmcopy` does too: a fresh page and a copy, per page, at the
-moment of the call. [ch17](#page-faults-as-a-feature) is where that stops being necessary.
+moment of the call. [ch18](#page-faults-as-a-feature) is where that stops being necessary.
 
 ### Putting a process back on the processor
 
@@ -104,7 +104,7 @@ The scheduler is four lines, and calling it a scheduler is generous:
 ```
 
 Install the next process's address space, load its registers, `mret`. There is no policy, no
-priority and no preemption — it runs the other one when the first gives up. [ch20](#scheduling-and-context-switches)
+priority and no preemption — it runs the other one when the first gives up. [ch21](#scheduling-and-context-switches)
 is where the interesting parts go back in.
 
 ### The kernel cannot simply dereference what it is given
@@ -117,7 +117,7 @@ One detail here is a genuine trap, and it cost a confusing hour:
 :end-before:     default:
 ```
 
-The handler runs in machine mode, and [ch07](#one-page-table-two-harts) established that machine
+The handler runs in machine mode, and [ch08](#one-page-table-two-harts) established that machine
 mode ignores `satp`. So an address the caller supplies is not an address the handler can use — and
 on this board the particular number involved lands in a PCI window that answers every read with
 ones, so the failure is not even a fault. It is a plausible-looking wrong answer.
@@ -145,12 +145,12 @@ program is small, not because the strategy differs.
 
 **What `fork` costs.** Copying a page has a price, copying a thousand has a much larger one, and
 the entire reason real kernels stopped doing this eagerly is a number this target cannot produce.
-[ch28](#the-os-layers-cost) measures a real `fork`, and the gap between an eager copy and what
+[ch29](#the-os-layers-cost) measures a real `fork`, and the gap between an eager copy and what
 Linux actually does is most of the answer.
 
 **What the child should inherit.** The child here gets the address space and nothing else, because
 there is nothing else. A real `fork` has to decide about descriptors, the working directory,
-signal handlers, resource limits and more — and [ch09](#a-small-integer-that-means-a-device) built
+signal handlers, resource limits and more — and [ch10](#a-small-integer-that-means-a-device) built
 the two tables that make the descriptor half of that question askable: the table is copied, the
 open files it refers to are shared.
 
@@ -164,7 +164,7 @@ face.
 
 ## Problems
 
-**10.1 — Make the child run first.**
+**11.1 — Make the child run first.**
 The parent continues and the child waits. Swap it, so the child runs to completion before the
 parent resumes, without changing what either prints. The test checks the order and that both still
 report correctly.
@@ -173,7 +173,7 @@ report correctly.
 python3 -m pytest tests/fork_built_rather_than_read/test_problem_1_child_first.py
 ```
 
-**10.2 — Run out of processes.**
+**11.2 — Run out of processes.**
 Call `fork` until the table is full. Decide what it returns then, implement it, and show the caller
 handling it. The test checks the failure is distinguishable from a successful `fork` and that the
 machine survives it.
@@ -182,7 +182,7 @@ machine survives it.
 python3 -m pytest tests/fork_built_rather_than_read/test_problem_2_full_table.py
 ```
 
-**10.3 — Count what a lazy fork would save.**
+**11.3 — Count what a lazy fork would save.**
 Do not implement copy-on-write. Instead, say exactly which of this program's steps it would remove,
 what it would add, and what new trap the handler would have to deal with. The test asks for the
 cause code of that trap and for which page-table bit changes, both of which you have met.
@@ -194,7 +194,7 @@ python3 -m pytest tests/fork_built_rather_than_read/test_problem_3_lazy.py
 ## Where to go next
 
 The privileged specification @riscv-isa-privileged has the page-table entry bits this program sets by hand,
-including the one problem 10.3 asks about.
+including the one problem 11.3 asks about.
 
 This is the end of [Part II](#part2). [Part III](#part3) steps back to ask what a program *is*
 before [Part IV](#part4) reads a kernel — and that kernel's `fork` will look like a longer version

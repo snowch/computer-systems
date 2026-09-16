@@ -43,21 +43,21 @@ between revisions and its topics do not.
 
 | When the commentary is on | This book is in | And the price is in |
 |---|---|---|
-| Operating system interfaces — processes, `fork`, `exec`, files | [ch03](#c-without-a-runtime) for the memory model it implies; the trace below | — |
-| Operating system organization, isolation, privilege | [ch15](#traps-and-system-calls) | [ch28](#the-os-layers-cost) |
-| Page tables and Sv39 | [ch16](#virtual-memory) | [ch24](#the-memory-hierarchy) address translation, [ch28](#the-os-layers-cost) faults |
-| Traps, system calls, and the trap path | [ch15](#traps-and-system-calls) | [ch28](#the-os-layers-cost) |
-| Page faults and what can be built on them | [ch17](#page-faults-as-a-feature) | [ch28](#the-os-layers-cost) |
-| Interrupts and device drivers | [ch18](#interrupts-and-drivers) | — |
-| Locking | [ch19](#locks-and-memory-ordering) | [ch27](#memory-ordering-on-real-hardware) |
-| Scheduling and context switching | [ch20](#scheduling-and-context-switches) | [ch28](#the-os-layers-cost) |
-| File system, logging, buffer cache | [ch21](#the-file-system) | — |
-| Concurrency revisited, memory ordering | [ch19](#locks-and-memory-ordering) | [ch27](#memory-ordering-on-real-hardware) |
+| Operating system interfaces — processes, `fork`, `exec`, files | [ch04](#c-without-a-runtime) for the memory model it implies; the trace below | — |
+| Operating system organization, isolation, privilege | [ch16](#traps-and-system-calls) | [ch29](#the-os-layers-cost) |
+| Page tables and Sv39 | [ch17](#virtual-memory) | [ch25](#the-memory-hierarchy) address translation, [ch29](#the-os-layers-cost) faults |
+| Traps, system calls, and the trap path | [ch16](#traps-and-system-calls) | [ch29](#the-os-layers-cost) |
+| Page faults and what can be built on them | [ch18](#page-faults-as-a-feature) | [ch29](#the-os-layers-cost) |
+| Interrupts and device drivers | [ch19](#interrupts-and-drivers) | — |
+| Locking | [ch20](#locks-and-memory-ordering) | [ch28](#memory-ordering-on-real-hardware) |
+| Scheduling and context switching | [ch21](#scheduling-and-context-switches) | [ch29](#the-os-layers-cost) |
+| File system, logging, buffer cache | [ch22](#the-file-system) | — |
+| Concurrency revisited, memory ordering | [ch20](#locks-and-memory-ordering) | [ch28](#memory-ordering-on-real-hardware) |
 
 Three rows have no price, and the reason is the same each time: the cost of an interrupt, a file
 system and a driver on this machine is the cost of *this machine's* devices, and the reference
 board's storage is an SD card behind a bridge rather than anything a chapter could generalise
-from. [ch18](#interrupts-and-drivers) and [ch21](#the-file-system) say so in their own limitations sections.
+from. [ch19](#interrupts-and-drivers) and [ch22](#the-file-system) say so in their own limitations sections.
 
 ## One call through every layer: `fork`
 
@@ -70,30 +70,30 @@ is a one-line wrapper. Older revisions of the commentary call it `fork`.
 
 | What it does | Which layer | Where that is explained |
 |---|---|---|
-| `allocproc()` finds an unused slot in the fixed process table | allocation without a heap | [ch03](#c-without-a-runtime) |
-| …and returns `0` when there is none, which becomes `-1` | failure that returns rather than raises | [ch03](#c-without-a-runtime), problem 2.2 |
-| `uvmcopy()` walks the parent's page table and copies **every** page | address translation | [ch16](#virtual-memory) |
-| …with a `kalloc()` per page, which can also fail | the physical allocator | [ch17](#page-faults-as-a-feature) |
-| `*(np->trapframe) = *(p->trapframe)` copies the saved user registers | what a trap saves | [ch15](#traps-and-system-calls) |
-| `np->trapframe->a0 = 0` | the calling convention | [ch13](#machine-level-code-on-riscv), [ch15](#traps-and-system-calls) |
-| `filedup()` over the open files, and `idup()` on the working directory | reference counting | [ch21](#the-file-system) |
-| `np->state = RUNNABLE` makes it eligible to be chosen | scheduling | [ch20](#scheduling-and-context-switches) |
+| `allocproc()` finds an unused slot in the fixed process table | allocation without a heap | [ch04](#c-without-a-runtime) |
+| …and returns `0` when there is none, which becomes `-1` | failure that returns rather than raises | [ch04](#c-without-a-runtime), problem 2.2 |
+| `uvmcopy()` walks the parent's page table and copies **every** page | address translation | [ch17](#virtual-memory) |
+| …with a `kalloc()` per page, which can also fail | the physical allocator | [ch18](#page-faults-as-a-feature) |
+| `*(np->trapframe) = *(p->trapframe)` copies the saved user registers | what a trap saves | [ch16](#traps-and-system-calls) |
+| `np->trapframe->a0 = 0` | the calling convention | [ch14](#machine-level-code-on-riscv), [ch16](#traps-and-system-calls) |
+| `filedup()` over the open files, and `idup()` on the working directory | reference counting | [ch22](#the-file-system) |
+| `np->state = RUNNABLE` makes it eligible to be chosen | scheduling | [ch21](#scheduling-and-context-switches) |
 
 **Why it returns twice** is the one line worth carrying away, and it is the fourth row. Nothing
 returns twice. The child is a copy of the parent — including the saved register set the trap path
 will restore on the way out — with a single word changed: the register the calling convention uses
 for a return value. Both processes then resume at the instruction after the `ecall`, each reading
-its own `a0`. [ch15](#traps-and-system-calls) is where that saved register set is counted.
+its own `a0`. [ch16](#traps-and-system-calls) is where that saved register set is counted.
 
 **`uvmcopy` copies eagerly**, and the pinned tree is explicit about it: a `kalloc` and a `memmove`
 of a whole page, per page, with no sharing. That is a deliberate simplification and it is what
-makes [ch17](#page-faults-as-a-feature)'s copy-on-write material a change rather than an explanation — the mechanism
+makes [ch18](#page-faults-as-a-feature)'s copy-on-write material a change rather than an explanation — the mechanism
 is absent here, so the chapter has somewhere to put it. A production kernel shares the pages and
-marks them read-only, and [ch28](#the-os-layers-cost) is where the difference in cost is measured.
+marks them read-only, and [ch29](#the-os-layers-cost) is where the difference in cost is measured.
 
 **The failure paths are the chapter's second problem, in the source.** `kfork` can fail in two
 places — no free slot, or no free page — and both return `-1` after undoing what they had done. A
-caller that does not look at the result has written the bug [ch03](#c-without-a-runtime) is about.
+caller that does not look at the result has written the bug [ch04](#c-without-a-runtime) is about.
 
 ## What this cannot tell you
 

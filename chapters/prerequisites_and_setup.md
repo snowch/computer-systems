@@ -61,12 +61,6 @@ contains a duration at all.
 :end-before:     problems: list[str] = []
 ```
 
-:::{note} You can start with one target
-The emulated targets run on any laptop and cover Parts I to IV. If the Pi has
-not arrived yet, set up the xv6 half now and come back to the rest before [ch22](#the-same-program-on-both-targets). Nothing
-in Parts I to IV depends on hardware you do not have.
-:::
-
 ## What you need
 
 Two machines, and only one of them has to be bought: whatever you are reading this on, which runs
@@ -75,196 +69,6 @@ and the requirement is a capability rather than a part number — `perf` has to 
 sample, which [Appendix H](#appendix-h) states properly, along with how to check a machine you
 already own and what changes if yours differs from the reference. Read it before you spend
 anything. The rest of this chapter assumes the board is on your desk.
-
-## Setting up the machine
-
-A Pi is a well-trodden path and the Raspberry Pi documentation is the authority on it. What
-follows is the shape of the task and the parts this book depends on.
-
-**1. Write a 64-bit image.** Raspberry Pi OS (64-bit), written with Raspberry Pi Imager, which
-will also set the hostname, your SSH key and your WiFi while it writes. Use its advanced options
-— it saves the whole "find it on the network and change the default password" dance.
-
-It has to be a **64-bit** image. A 32-bit userspace on ARMv7 does not get you the ARMv8 PMU, and
-you would spend an afternoon finding that out.
-
-It also has to be an image whose **device tree describes the PMU**, and that is a real choice
-rather than a formality. The counters are in every Pi 5's silicon; whether Linux is told about
-them depends on the `.dtb` your image ships. Reading the sources @rpi-dt-bcm2712: the Raspberry Pi
-kernel carries an `arm-pmu` node for the Cortex-A76, with one overflow interrupt per core, and
-every Pi 5 variant inherits it. Mainline Linux's own BCM2712 tree carries no such node at all.
-
-So prefer an image built on the Raspberry Pi kernel, which is what Raspberry Pi OS and the
-Raspberry Pi builds of other distributions use. A general-purpose distribution running a mainline
-kernel with mainline device trees on the same board may have no hardware PMU exposed to it
-whatever — not because the chip lacks one, but because nothing told the kernel it was there. One
-command settles it either way, and it is the next section.
-
-**2. Boot it, wired if you can.** Not because the link speed matters — nothing in [Part V](#part5) touches
-the network, so bandwidth, latency and the grade of cable are all irrelevant to every number in
-this book. What a radio does is make the machine do work you did not ask for: its driver takes
-interrupts and runs softirqs on the same cores your benchmark is running on, and a lossy link adds
-`sshd` wakeups on top. [ch27](#memory-ordering-on-real-hardware) and [ch28](#the-os-layers-cost), which measure small per-operation costs,
-are where that is most likely to show.
-
-Most likely, and not measured. This book has not put a number on it, which means you should treat
-the advice as hygiene rather than as a result — and [ch23](#measuring) will hand you the tools to
-settle it yourself, because "the same benchmark, one thing changed that should not matter" is
-exactly that chapter's subject. Run it both ways and find out whether you can tell.
-
-Only the machine being measured needs the cable. Your laptop can stay on Wi-Fi: its radio
-interrupts its own cores, not the ones running the benchmark. So for most people this costs a
-cable to the nearest router or switch port and nothing else — the machine gets an address and a
-route without being asked, and both ends are on the same network, so everything below works.
-
-If no router port is within reach, a cable straight into a laptop's Ethernet port — a dock's,
-usually, or a cheap USB-C adapter — works too, and is arguably quieter, since nothing else on a
-two-host link is broadcasting at it. But that link has
-no DHCP server and no route out, so the machine comes up with a link-local address and no
-internet, and the first `apt install` fails in a way that looks like a broken image. Turn on your
-laptop's internet sharing (macOS: Settings → General → Sharing → Internet Sharing, from Wi-Fi to
-the Ethernet adapter; Linux: set the connection to *Shared to other computers*) and both problems
-go away at once — it hands out the lease and routes the traffic. `.local` names resolve over a
-direct cable either way, so step 3 works unchanged.
-
-**3. Give it a name.** In `~/.ssh/config` on your laptop:
-
-```
-Host bench
-    HostName raspberrypi.local
-    User pi
-    ServerAliveInterval 30
-```
-
-Now `ssh bench` works, `make bench-board` over SSH works, and VS Code's Remote-SSH extension can
-open it as a workspace — *Remote-SSH: Connect to Host…*, pick `bench`, and the editor runs its
-file operations and its terminal there while the interface stays on your laptop. That is the
-arrangement the rest of the book assumes: you edit on the laptop, and everything that touches a
-counter happens on the machine being measured.
-
-### The toolchain on the machine
-
-```bash
-sudo apt update
-sudo apt install -y build-essential gdb git python3 python3-pip
-```
-
-`perf` is the awkward one. It ships as part of the kernel's own tooling, so the package that
-provides it is tied to the running kernel. On Raspberry Pi OS:
-
-```bash
-sudo apt install -y linux-perf
-perf --version
-```
-
-On Ubuntu, `linux-tools-$(uname -r)` or `linux-tools-raspi`. If the version `perf` reports does
-not match `uname -r` it will still run, and will quietly fail to open some events — which is the
-worst of the available outcomes, because it looks like the events do not exist rather than like a
-broken tool. If nothing packaged matches, build it from the kernel source tree with
-`make -C tools/perf` against the source for your running kernel.
-
-### Proving the counters are real
-
-This is the one capability [Part V](#part5) cannot work around, and it is worth being suspicious about,
-because `perf` reports a failure to reach hardware in a way that is easy to skim past.
-
-Ask:
-
-```bash
-perf stat -e cycles,instructions -- true
-```
-
-A working setup prints two counts. A broken one prints `<not supported>`, which means the event
-never reached hardware — and if you are not reading carefully, a line saying `<not supported>` in
-a column of numbers looks like a number. Worse, some configurations report a count of zero rather
-than an error, and a zero is a number that will happily propagate into a table.
-
-`bench/run_setup.py` therefore treats "counted" and "counted something greater than zero" as
-different questions:
-
-```{literalinclude} ../bench/run_setup.py
-:language: python
-:start-at: def perf_capability
-:end-before:     if not shutil.which("perf")
-```
-
-If nothing is counted, the usual cause on ARM is the missing device-tree node described above.
-Ask the kernel directly:
-
-```bash
-dmesg | grep -i perfevents
-ls /sys/bus/event_source/devices/
-```
-
-A machine whose PMU registered says so at boot, naming the driver it bound:
-
-```text
-hw perfevents: enabled with armv8_cortex_a76 PMU driver, 7 counters available
-```
-
-and `/sys/bus/event_source/devices/` contains a matching entry. No such line, or no such entry,
-and no amount of care in `perf`'s arguments will help: there is nothing underneath it. On a RISC-V
-machine the failure is usually further down — the counters are machine-mode CSRs reached through
-the firmware's SBI PMU extension @riscv-sbi, so check for `CONFIG_RISCV_PMU_SBI` and a firmware
-that provides it.
-
-Until `perf stat` prints real counts, [Part V](#part5) cannot start, and no amount of care in the chapters
-substitutes for it.
-
-### Counting is not sampling
-
-There is a second capability, and it is the reason this book's `host` target is an ARM machine.
-
-`perf stat` **counts**: it totals events over a whole run. `perf record` **samples**: it
-interrupts the program thousands of times a second to ask where it is, and builds a picture of
-where the time went from those interruptions. Sampling needs the counters to raise an interrupt
-when they overflow, and that is a separate hardware feature from counting.
-
-Test it with a program that is actually running. This matters more than it looks:
-
-```bash
-perf record -F 999 -e cycles -o /tmp/perf.data -- sleep 2    # proves nothing
-perf report --stats -i /tmp/perf.data | grep SAMPLE
-```
-
-A sleeping process is off the CPU, so it retires no instructions and burns no cycles, and a
-perfectly working PMU returns almost nothing. The command succeeds, the sample count is near
-zero, and you have learned nothing about the machine. Give it something to sample instead:
-
-```bash
-perf record -F 999 -e cycles -o /tmp/perf.data -- \
-    python3 -c 'x = 0
-for _ in range(4_000_000): x += 1'
-perf report --stats -i /tmp/perf.data | grep SAMPLE
-```
-
-Now the sample count is the answer, and `bench/run_setup.py` asks exactly this question the same
-way — because the first version of it ran `perf record -- true`, believed the zero exit status,
-and would have declared a board capable of something it had never been asked to do:
-
-```{literalinclude} ../bench/run_setup.py
-:language: python
-:start-at: def perf_can_sample
-:end-before:     if not shutil.which("perf")
-```
-
-An exit status is not evidence. It is the same mistake as believing a counter that reads zero,
-and it is worth meeting twice in one chapter.
-
-On ARM, overflow interrupts are a standard PMU feature. On RISC-V they are the **Sscofpmf**
-extension @riscv-sscofpmf, and a kernel on a core without it says so at boot and then declines:
-
-```text
-riscv-pmu-sbi: Perf sampling/filtering is not supported as sscof extension is not available
-```
-
-[ch29](#whole-machine-profiling) is entirely about sampling, so on a machine that cannot do it that chapter has
-nothing to measure. `verify-setup.py` reports the two capabilities separately, precisely so you
-find out now rather than three hundred pages in.
-
-The distinction generalises well beyond RISC-V, which is why it is worth learning here: a
-profiler that samples is answering a different question, with different failure modes, from a
-counter that totals. [ch23](#measuring) takes that apart properly and [ch29](#whole-machine-profiling) depends on it.
 
 ## Setting up the xv6 target
 
@@ -414,75 +218,6 @@ make bench-xv6                                   # boots xv6, runs the probe, st
 python3 -m pytest tests/test_xv6.py -q           # asserts the two targets agree
 ```
 
-### The same function in two instruction sets
-
-The probe compares two C *implementations*. The other half of the comparison is what the two
-machines are actually told to do, and it is worth seeing once, now, while the question is still
-"does my setup work" rather than "why is this slow".
-
-Here is a function with no cleverness in it at all:
-
-```{literalinclude} ../sysfs/lib/shapes.c
-:language: c
-:start-at: /* Two conditionals and three exits
-:end-before: /* A loop with a carried dependency
-```
-
-Compiled for each of the book's two architectures, at the same optimisation level, by the same
-version of the same compiler — the conditions line under each listing says exactly which:
-
-```{include} _generated/prerequisites-and-setup-clamp.md
-```
-
-Two things about that shape will mislead you if you skim, and they are worth having now: the
-**operands are destination first**, so `mv a1,a0` copies `a0` into `a1`; and **parentheses mean
-memory, with the number in front a byte offset**, so `4(a0)` is the memory four bytes past the
-address in `a0`. [Appendix A](#reading-a-listing) is the rest of the key — the address column, the
-mnemonics, the registers — and [Appendix F](#appendix-f) is the same page for AArch64. The italic
-line under every listing is provenance: which compiler, which flags, which result file, so that a
-listing you find surprising can be regenerated rather than argued about.
-
-Read the second comparison in each. AArch64 settles it with `csel` — compute both candidates,
-select one, never branch. RV64GC cannot: there is no conditional select in `rv64gc`
-@riscv-isa-unprivileged, which is what xv6 and every RISC-V example here are built for, so the same
-decision has to be a branch and the function comes out with three separate exits.
-
-That is a real difference and you should resist the obvious conclusion about it. Nothing above
-says which is faster. A predicted branch is nearly free and an unpredictable one is not; `csel`
-pays a fixed price either way and creates a dependency the branch does not have. Which wins
-depends on the data, and finding out takes a machine — [ch25](#optimising-code) and [ch26](#the-cpu) are where
-that happens. Here it is enough to have seen that the choice exists.
-
-Two smaller things in the same listings, both worth checking yourself:
-
-```bash
-make bench-listings                                   # leaves both object files in sysfs/build/
-riscv64-linux-gnu-readelf -rW sysfs/build/shapes-riscv64.o
-aarch64-linux-gnu-readelf -rW sysfs/build/shapes-aarch64.o
-```
-
-The RISC-V listing has `.L4` and `.L6` sitting *inside* the function, and the first command says
-why: there is a relocation for every branch in it, naming those labels. The assembler did not
-settle its own branch distances, because the linker is still allowed to shorten instructions —
-RISC-V calls that relaxation @riscv-psabi — and a distance settled before that would be wrong
-afterwards. The AArch64 object has no relocations in its text at all; its assembler knew the
-answers and the labels were discarded. The same job, divided differently between the assembler and
-the linker.
-
-The second thing is `sext.w`, which RISC-V emits on each path and AArch64 does not emit anywhere:
-one keeps a 32-bit `int` in a 64-bit register and has to say so, the other has a 32-bit view of the
-register and uses it. Neither is in the C. Both are the kind of thing [ch13](#machine-level-code-on-riscv) is for.
-
-:::{note} None of that was typed
-`bench/run_disasm.py` compiled `sysfs/lib/shapes.c` for each architecture, ran `objdump` on the
-object file, and wrote a stamped result. The block above is rendered from those results, and CI
-regenerates both on every push and fails if one instruction differs.
-
-It can do that because a listing depends on the compiler and not on the machine — so unlike every
-number in [Part V](#part5), this one is checked automatically, every time. Both halves of that sentence
-matter, and [ch23](#measuring) is about the half that cannot be.
-:::
-
 ## What we measured
 
 The xv6 target, described by a boot rather than by a claim:
@@ -499,7 +234,7 @@ This is the **LP64** data model: `long` and pointers are 64-bit, `int` stays 32-
 scalar type's alignment equals its size. RISC-V spells its variant LP64D, for the
 double-precision float ABI @riscv-psabi; AArch64 arrives at the same layout by its own route. If
 you have only ever worked on 64-bit Linux this will look like the way things are. It is a choice
-the ABI made — twice, independently — and [ch12](#representing-information) takes it apart.
+the ABI made — twice, independently — and [ch13](#representing-information) takes it apart.
 
 The third table is the one worth staring at. Two structs, the same three members, different
 declaration order:
@@ -510,7 +245,7 @@ declaration order:
 The compiler did not reorder them — C forbids it — so writing them in the order that happened to
 occur to you cost bytes that hold nothing at all. On one struct that is an oddity. Across an array
 of a few million of them it is the difference between fitting in cache and not, which is
-[ch24](#the-memory-hierarchy)'s subject and the first place this chapter's dry table turns into a number of
+[ch25](#the-memory-hierarchy)'s subject and the first place this chapter's dry table turns into a number of
 nanoseconds.
 
 ## What this cannot tell you
@@ -545,7 +280,7 @@ and the five chapters whose reading depends on this particular core say so in th
 can be measuring a different clock at the end than at the start. That is not a flaw in the board —
 it is what most real hardware does, including the laptop you are reading this on, and a book that
 measured on a machine which never throttled would be teaching you to ignore something that
-matters. [ch23](#measuring) deals with it properly.
+matters. [ch24](#measuring) deals with it properly.
 
 ## Problems
 
@@ -573,7 +308,7 @@ from one rule — and it is the same rule on both architectures, which is the po
 `tests/prerequisites_and_setup/ch00ping.c` is a program that prints nothing. Make `ch00ping 41` print `pong 42`. The
 arithmetic is not the exercise: the exercise is the path from a file in a test directory, through
 the cross compiler, into xv6's user library, onto a file system image, into QEMU, and out of a
-shell. If any link in that chain is missing you want to find out now, not in [ch15](#traps-and-system-calls).
+shell. If any link in that chain is missing you want to find out now, not in [ch16](#traps-and-system-calls).
 
 ```bash
 python3 -m pytest tests/prerequisites_and_setup -q          # all three, including the ones you have not solved
@@ -596,7 +331,7 @@ separates a confident answer from a correct one.
 
 For the reference machine, Raspberry Pi's own documentation @rpi-bcm2712 gives the SoC and its
 cache hierarchy, and Arm's Cortex-A76 technical reference manual @arm-a76-trm gives the pipeline
-and the PMU events [ch26](#the-cpu) reads. The RISC-V hardware the preface argues against is
+and the PMU events [ch27](#the-cpu) reads. The RISC-V hardware the preface argues against is
 documented at @starfive-jh7110 and @sifive-u74 if you want to follow that thread. Either way the
 caveat stands: where a document and a measurement disagree, the book prints the measurement and
 says so.
@@ -605,10 +340,10 @@ The study behind that decision is @riscv-pmu-profiling, and it is worth reading 
 touch RISC-V — it is a good example of what it looks like to establish what a machine can actually
 do, rather than what its documentation says it has.
 
-The xv6 source @xv6-riscv-source is worth browsing before [ch11](#what-a-computer-does-with-a-program), without trying to
+The xv6 source @xv6-riscv-source is worth browsing before [ch12](#what-a-computer-does-with-a-program), without trying to
 understand it. Its authors also wrote a commentary on it, which is excellent and which this book
 deliberately does not follow the structure of; if you want a second account of the same kernel
 after [Part IV](#part4), that is the one to read.
 
-[ch11](#what-a-computer-does-with-a-program) takes a single program and follows it from source text to a result on both targets,
+[ch12](#what-a-computer-does-with-a-program) takes a single program and follows it from source text to a result on both targets,
 and asks — for the first of many times — which parts of that journey cost anything.

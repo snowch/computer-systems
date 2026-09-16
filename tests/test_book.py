@@ -192,16 +192,21 @@ def test_part_page_states_the_target_rule_it_inherits(part: Part):
     )
 
 
-def test_getting_started_has_no_part_page():
-    """Deliberate, and worth a test so it is not 'fixed' later.
+def test_every_part_has_a_page():
+    """*Getting started* had no page while it held one chapter, and now it holds two.
 
-    *Getting started* holds one chapter and the preface already says what it is for. A page whose
-    whole content would be "ch00 is next" is the filler every other rule here exists to prevent.
+    The old rule was that a page whose whole content would be "ch00 is next" is the filler every
+    other rule here exists to prevent, and that was right for one chapter. Two chapters is a
+    routing decision — the emulated targets are needed immediately and the board is not needed
+    until Part V — and routing is exactly what a part page is for.
+
+    So the check inverts rather than disappearing: every part has a page, and a page-less part
+    reappearing means someone has split or merged a part without deciding what it is.
     """
-    start = PARTS[0]
-    assert not start.page
-    assert not any(part.page is False for part in PARTS[1:]), (
-        "a second page-less part has appeared — decide whether it is really a part"
+    pageless = [part.name for part in PARTS if not part.page]
+    assert not pageless, (
+        f"a part with no page has appeared: {', '.join(pageless)} — decide whether it is really "
+        "a part, and give it a page if it is"
     )
 
 
@@ -385,7 +390,9 @@ def test_the_prefaces_counts_agree_with_the_outline():
     text = (ROOT / "index.md").read_text()
     written = len([c for c in CHAPTERS if "[DRAFT]" not in (ROOT / c.path).read_text()])
     truth = {
-        "parts": len(PART_PAGES),
+        # The numbered parts. *Getting started* has a page now that it holds two chapters,
+        # but it is front matter and there is no Part VI.
+        "parts": len([part for part in PART_PAGES if part.number >= 1]),
         "chapters": len(CHAPTERS),
         "written": written,
         "appendices": len(APPENDICES),

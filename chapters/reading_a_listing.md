@@ -1,10 +1,10 @@
 ---
 title: "Reading a Listing"
-short_title: "01 · Reading a Listing"
+short_title: "02 · Reading a Listing"
 ---
 
 (reading-a-listing)=
-# 01 · Reading a Listing
+# 02 · Reading a Listing
 
 :::{note} Chapter header
 :class: dropdown
@@ -37,7 +37,7 @@ most of the weight is also the one most likely to be read as something else.
 so a second instruction at `4:` means the first was four bytes long. You will also find
 instructions two bytes apart, because this architecture has short forms of its commonest
 instructions @riscv-isa-unprivileged and the compiler uses them unasked. Instructions here are
-*not* all the same length, and [ch05](#a-trap-with-nothing-else) turns on that fact.
+*not* all the same length, and [ch06](#a-trap-with-nothing-else) turns on that fact.
 
 **Then the mnemonic**: `blt` is branch-if-less-than, `mv` is move, `ret` is return. You are not
 expected to know these, and this book never asks you to write assembly — only to read enough of it
@@ -85,7 +85,7 @@ decision has to be a branch and the function comes out with three separate exits
 That is a real difference and you should resist the obvious conclusion about it. Nothing above
 says which is faster. A predicted branch is nearly free and an unpredictable one is not; `csel`
 pays a fixed price either way and creates a dependency the branch does not have. Which wins
-depends on the data, and finding out takes a machine — [ch25](#optimising-code) and [ch26](#the-cpu) are where
+depends on the data, and finding out takes a machine — [ch26](#optimising-code) and [ch27](#the-cpu) are where
 that happens. Here it is enough to have seen that the choice exists.
 
 Two smaller things in the same listings, both worth checking yourself:
@@ -106,7 +106,7 @@ the linker.
 
 The second thing is `sext.w`, which RISC-V emits on each path and AArch64 does not emit anywhere:
 one keeps a 32-bit `int` in a 64-bit register and has to say so, the other has a 32-bit view of the
-register and uses it. Neither is in the C. Both are the kind of thing [ch13](#machine-level-code-on-riscv) is for.
+register and uses it. Neither is in the C. Both are the kind of thing [ch14](#machine-level-code-on-riscv) is for.
 
 :::{note} None of that was typed
 `bench/run_disasm.py` compiled `sysfs/lib/shapes.c` for each architecture, ran `objdump` on the
@@ -115,7 +115,7 @@ regenerates both on every push and fails if one instruction differs.
 
 It can do that because a listing depends on the compiler and not on the machine — so unlike every
 number in [Part V](#part5), this one is checked automatically, every time. Both halves of that sentence
-matter, and [ch23](#measuring) is about the half that cannot be.
+matter, and [ch24](#measuring) is about the half that cannot be.
 :::
 
 ## What we measured
@@ -123,7 +123,7 @@ matter, and [ch23](#measuring) is about the half that cannot be.
 One function, compiled for each of the book's instruction sets by the same compiler at the same
 optimisation level. Nothing was executed and nothing was timed: a listing is a fact about a
 compiler, so it is the one kind of result in this book that CI can regenerate and check on every
-push. [ch23](#measuring) is about the kind that cannot be.
+push. [ch24](#measuring) is about the kind that cannot be.
 
 ## What this cannot tell you
 
@@ -133,7 +133,7 @@ comparison without branching and RISC-V cannot, so one is three instructions sho
 tells you nothing about time. A predicted branch is nearly free; an unpredictable one costs tens
 of cycles; `csel` pays a small fixed price and creates a dependency the branch does not have.
 Which wins depends on the data the function is given, and the only way to find out is to run both
-on hardware that can be asked. [ch25](#optimising-code) and [ch26](#the-cpu) do that.
+on hardware that can be asked. [ch26](#optimising-code) and [ch27](#the-cpu) do that.
 
 **What any of these instructions costs.** A mnemonic is a name, not a price. Nothing in a listing
 says how many cycles an instruction takes, whether its operands were in cache, or whether the core
@@ -143,18 +143,18 @@ been near one.
 **Whether the compiler was right.** It made these choices at one optimisation level, for one
 target, from one version of one compiler — all of which the conditions line records, because all
 of them change the answer. A different flag produces a different listing from identical source,
-which is [ch25](#optimising-code)'s subject.
+which is [ch26](#optimising-code)'s subject.
 
 **Anything about a program.** One function with no calls in it is the easiest possible listing.
 Real code spends its instructions on stack frames, calling conventions and address arithmetic, and
-none of that is visible here. [ch13](#machine-level-code-on-riscv) is where a listing stops being
+none of that is visible here. [ch14](#machine-level-code-on-riscv) is where a listing stops being
 a curiosity and starts being a thing you read to answer a question.
 
 ## Problems
 
 Three, in `tests/reading_a_listing/`. Each is a Python stub: this chapter comes before any C.
 
-**1.1 — How long is each instruction?**
+**2.1 — How long is each instruction?**
 Given the address column of a listing, say how many bytes each instruction occupied. RISC-V has
 short forms of its commonest instructions and the compiler uses them unasked, so the answer is not
 the same number every time.
@@ -163,7 +163,7 @@ the same number every time.
 python3 -m pytest tests/reading_a_listing/test_problem_1_lengths.py
 ```
 
-**1.2 — Does this operand touch memory?**
+**2.2 — Does this operand touch memory?**
 Eleven operands drawn from both instruction sets. Say which name a register and which reach
 memory. Two of them differ by one character and disagree.
 
@@ -171,7 +171,7 @@ memory. Two of them differ by one character and disagree.
 python3 -m pytest tests/reading_a_listing/test_problem_2_memory.py
 ```
 
-**1.3 — How wide was the element?**
+**2.3 — How wide was the element?**
 Given a load and its offset, say how many bytes wide the thing being stepped over was. This is the
 same fact the next chapter opens on, approached from the instruction rather than from the C.
 
