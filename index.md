@@ -8,40 +8,6 @@ short_title: Preface
 
 *From bits to cycles, measured on real hardware.*
 
-
-## What this book is
-
-A self-study text on computer systems and performance, in five parts and thirty-two chapters,
-built around one question and a rule about answering it.
-
-Three things make it the shape it is.
-
-**Every number in it was measured, and says where.** No figure is typed into the prose. Each one
-comes from a stamped result recording the machine, the kernel, the compiler and a hash of the code
-that produced it, and a check fails if a quoted figure stops matching the code in the repository.
-Where a measurement has not been taken, you get a box saying so rather than a plausible-looking
-placeholder.
-
-**Every problem is a test, and there is no answer key.** Each chapter ends with problems that are
-stubs under `tests/`, with a test that passes only when you have solved it. Nothing in the
-repository contains the answers — which also means there is no answer key to be wrong.
-
-**Every chapter ends by saying what it could not show you.** A section called *What this cannot
-tell you* is mandatory, and it is where the target, the tooling or the hardware ran out. It is
-usually the most useful part of the chapter.
-
-:::{note} Where this book is
-All thirty-two chapters are written, and eight of the eight appendices.
-
-Zero figures are marked *pending*: the reference machine has reported and every `host` measurement
-has been taken, and [Appendix C](#appendix-c) — the perf events this board exposes — is generated
-from it rather than drafted from a desk, which is the one thing it could never have been.
-
-**[Download the whole book as a PDF](/systems-from-scratch.pdf)** — every chapter and appendix in
-one file, built from the same source as this site, so the two cannot disagree about what a
-chapter says.
-:::
-
 ## The question this book keeps asking
 
 **Where do the cycles go, and how would I know?**
@@ -53,6 +19,23 @@ time actually went, and to know when the answer you got is wrong.
 
 So every layer here gets the same treatment: how it works, then what it costs, then how that cost
 was measured and what the measurement could not see.
+
+## What you will be able to do
+
+Concretely, and these are the things the problems make you do rather than read about:
+
+- Take a duration on a real machine and say whether it means anything — what the clock cost, how
+  many repetitions, which statistic, and what the measurement could not see.
+- Read the disassembly of a function you wrote and account for what the compiler did with it.
+- Stop a kernel in the middle of a trap and say what state is where, and why it had to be saved.
+- Find the expensive part of a program you did not write, and know when the profiler is lying to
+  you about which line it is.
+- Predict a cost from a model before measuring, then say what the gap between the two means.
+
+What you will not get is a table of costs to memorise. Every cost in this book belongs to the one
+board that produced it — not to every board of that model, and not to Arm or to computers in
+general — and the line under each figure says which machine, which compiler and what day. What
+carries to your machine is the method. That is what the list above is.
 
 ## Who it is for
 
@@ -116,22 +99,38 @@ machines. There is no overlap to speak of. The relationship is one-way — this 
 underneath, and the reason to read it first is that those tools all report quantities whose
 meaning is what this book establishes.
 
-## What you will be able to do
+## What this book is
 
-Concretely, and these are the things the problems make you do rather than read about:
+A self-study text on computer systems and performance, in five parts and thirty-two chapters,
+built around one question and a rule about answering it.
 
-- Take a duration on a real machine and say whether it means anything — what the clock cost, how
-  many repetitions, which statistic, and what the measurement could not see.
-- Read the disassembly of a function you wrote and account for what the compiler did with it.
-- Stop a kernel in the middle of a trap and say what state is where, and why it had to be saved.
-- Find the expensive part of a program you did not write, and know when the profiler is lying to
-  you about which line it is.
-- Predict a cost from a model before measuring, then say what the gap between the two means.
+Three things make it the shape it is.
 
-What you will not get is a table of costs to memorise. Every cost in this book belongs to the one
-board that produced it — not to every board of that model, and not to Arm or to computers in
-general — and the line under each figure says which machine, which compiler and what day. What
-carries to your machine is the method. That is what the list above is.
+**Every number in it was measured, and says where.** No figure is typed into the prose. Each one
+comes from a stamped result recording the machine, the kernel, the compiler and a hash of the code
+that produced it, and a check fails if a quoted figure stops matching the code in the repository.
+Where a measurement has not been taken, you get a box saying so rather than a plausible-looking
+placeholder.
+
+**Every problem is a test, and there is no answer key.** Each chapter ends with problems that are
+stubs under `tests/`, with a test that passes only when you have solved it. Nothing in the
+repository contains the answers — which also means there is no answer key to be wrong.
+
+**Every chapter ends by saying what it could not show you.** A section called *What this cannot
+tell you* is mandatory, and it is where the target, the tooling or the hardware ran out. It is
+usually the most useful part of the chapter.
+
+:::{note} Where this book is
+All thirty-two chapters are written, and eight of the eight appendices.
+
+Zero figures are marked *pending*: the reference machine has reported and every `host` measurement
+has been taken, and [Appendix C](#appendix-c) — the perf events this board exposes — is generated
+from it rather than drafted from a desk, which is the one thing it could never have been.
+
+**[Download the whole book as a PDF](/systems-from-scratch.pdf)** — every chapter and appendix in
+one file, built from the same source as this site, so the two cannot disagree about what a
+chapter says.
+:::
 
 ## How the book is arranged
 
@@ -175,19 +174,9 @@ The division of labour. Every chapter declares which target it uses, and every f
 which one produced it.
 ```
 
-The first is **bare**: a RISC-V machine under QEMU with no operating system on it at all — no
-kernel, no library, no loader, nothing but the instructions you wrote. [Part II](#part2) lives
-there, and builds a trap, a page table, a system call and `fork()` one at a time, so that each is
-a thing you have made rather than a thing a kernel is doing somewhere.
-
-The second is **xv6**, the MIT teaching kernel, running under the same QEMU. It is a complete
-operating system small enough to read in an afternoon, and you can stop the whole machine mid-trap
-and look at anything. [Part I](#part1) and [Part IV](#part4) live there.
-
-The third is a small Linux machine on a desk, reached over SSH — a **Raspberry Pi 5** by default.
-Every number in [Part V](#part5) is measured on it, natively. Not in an emulator, not on the
-laptop, not extrapolated from a different machine.
-
+The three are `bare` (a RISC-V machine under QEMU with no kernel on it at all), `xv6` (the MIT
+teaching kernel under the same QEMU), and `host` (a real Linux machine, a Raspberry Pi 5 by
+default); [ch00](#prerequisites-and-setup) sets them up and says what each can and cannot answer.
 That is three targets on **two machines**: the first two are both QEMU on the computer you are
 reading this on, and need one cross-compiler between them. Only the third has to be real.
 [Part III](#part3) works on both sides of the split, and
