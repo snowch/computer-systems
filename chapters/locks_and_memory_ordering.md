@@ -126,7 +126,7 @@ them, more instructions than `acquire` and `release` together. They exist becaus
 across an interrupt on the same hart would deadlock against its own handler, and they are the
 price of that safety rather than of the mutual exclusion.
 
-### So was chapter 11 right?
+### So were those unlocked counters right?
 
 Back to the debt.
 
@@ -188,8 +188,7 @@ it under real concurrency, because a lock is the one thing that cannot be checke
 
 **20.1 — Write a correct lock.**
 Four threads take it eight hundred thousand times between them, incrementing an ordinary
-non-atomic counter inside. If the lock works the total is exact; the empty stub loses about
-seventy per cent of them.
+non-atomic counter inside. If the lock works the total is exact; the empty stub loses most of them.
 
 You have `<stdatomic.h>` and not `pthread_mutex`. Two things to get right, and only the first is
 about exclusion: taking the lock must be one indivisible operation, and the ordering must be such

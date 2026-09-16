@@ -107,7 +107,7 @@ Each measured speedup sits beside the most its lane count could possibly have bo
 That column is the chapter's argument. A speedup on its own invites you to be pleased with it; as
 a fraction of the bound it invites the only useful question, which is where the rest went — and
 the answer is a tail, or memory, or a loop that was never the bottleneck to begin with. Problem
-21.3 is that arithmetic, and it deliberately does not clamp: a result over the bound means
+31.3 is that arithmetic, and it deliberately does not clamp: a result over the bound means
 something other than the width changed, and the comparison has stopped being between two versions
 of one loop.
 

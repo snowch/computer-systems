@@ -20,11 +20,13 @@ short_title: "14 · Machine-Level Code on RISC-V"
 
 What did the compiler actually emit, and how do I read it?
 
-The previous three chapters have all ended by looking at disassembly without ever explaining how
-to read it. This is that chapter. By the end of it you should be able to open an unfamiliar
-function, find where its arguments went, work out how much stack it wanted and why, and walk back
-up the chain of calls that reached it — by hand, and then in a debugger, and understand that
-these are the same operation.
+[ch02](#reading-a-listing) taught you to read a line of one: which column is which, what an
+operand means, where the number in brackets comes from. This chapter is about what the lines say
+between them, which is a different skill and is the one the listings in [Part III](#part3) have
+been quietly assuming. By the end of it you should be able to open an unfamiliar function, find
+where its arguments went, work out how much stack it wanted and why, and walk back up the chain of
+calls that reached it — by hand, and then in a debugger, and understand that these are the same
+operation.
 
 ## The material
 

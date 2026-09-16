@@ -38,10 +38,10 @@ fastest cure is to write a tool.
 :end-before: #define PH_TYPE
 ```
 
-Build it and run it here:
+Build it and point it at something:
 
 ```bash
-./run elfdump
+./run elfdump xv6/stage/user/_sameanswer
 ```
 
 That is most of what an ELF file is: a header with a magic number, a handful of sizes, and the
@@ -49,11 +49,6 @@ offsets of two arrays. Everything else is found by following one of those offset
 `#include <elf.h>` anywhere in `sysfs/tools/elfdump.c`, deliberately — the structures are declared
 from the specification @elf-abi, because half the point is that they are a documented layout of
 bytes rather than something only a library may know.
-
-```bash
-cc -O2 -o elfdump sysfs/tools/elfdump.c
-./elfdump xv6/stage/user/_sameanswer
-```
 
 ### Two arrays, two audiences
 

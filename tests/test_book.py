@@ -306,6 +306,146 @@ def test_a_chapter_that_shows_a_program_says_how_to_run_it(chapter: Chapter):
     )
 
 
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_a_program_that_needs_an_argument_is_shown_with_one(chapter: Chapter):
+    """The check above was satisfied by a command that did nothing.
+
+    ch15 writes a reader for ELF and then said `./run elfdump`, which prints `usage: elfdump
+    <file>` and exits — the tool has nothing to read. The chapter had carried a hand-rolled `cc`
+    line naming a binary, the only one in the book, and when `./run` arrived the new command was
+    added above it rather than instead of it; the stale block kept the example working for anyone
+    who scrolled, and the check was happy because it was looking for a substring.
+
+    So the substring is not enough: a program that reads `argv[1]` has to be shown being given
+    one. That is a weaker test than running the command, and it is the strongest one available
+    without a compiler in CI.
+    """
+    from bench.programs import find
+
+    text = (ROOT / chapter.path).read_text()
+    bare_invocations = []
+    for name in _programs_quoted_by(text):
+        source = find(name).source
+        if "argv[1]" not in source.read_text():
+            continue
+        if re.search(rf"\./run {re.escape(name)}(?: --\S+)*\s*$", text, re.M):
+            bare_invocations.append(name)
+    assert not bare_invocations, (
+        f"{chapter.path} says `./run {bare_invocations[0]}` with nothing after it, and "
+        f"{bare_invocations[0]} reads argv[1] — it will print its usage and exit"
+    )
+
+
+#: A fenced block, an inline code span, and a problem's own heading — the three places an `N.M`
+#: is not prose and must not be read as one. `v0.2s` is an AArch64 lane specifier, not problem two
+#: of chapter zero.
+FENCED = re.compile(r"^```.*?^```", re.S | re.M)
+INLINE_CODE = re.compile(r"`[^`\n]*`")
+PROBLEM_HEADING = re.compile(r"^\*\*\d{1,2}\.\d+ — ", re.M)
+
+#: `17.1` written without the word in front of it. Three problems per chapter at most, so the
+#: index is 1 to 3, and the lookarounds keep version numbers and decimals out.
+WORDLESS_PROBLEM = re.compile(r"(?<![\d.])\d{1,2}\.[1-3](?![\d.])")
+
+
+@pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
+def test_a_problem_reference_carries_the_word_problem(chapter: Chapter):
+    """The syncer can only renumber a reference it can recognise, and it recognises the word.
+
+    ch17 pointed twice at "your own 7.1", from a chapter whose problems are numbered 17.x. There
+    is no anchor in a bare `7.1` and no word beside it, so `sync-labels.py` had nothing to match
+    and the reference sat there through three renumberings — pointing, as these always do, at a
+    real problem in a real chapter that is not the one meant.
+
+    So the rule is that the word is what makes it a reference. Write `problem 17.1` and the syncer
+    owns the number from then on; write `7.1` and nobody does.
+    """
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "sync_labels", ROOT / "scripts" / "sync-labels.py"
+    )
+    sync_labels = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(sync_labels)
+
+    text = INLINE_CODE.sub("", FENCED.sub("", (ROOT / chapter.path).read_text()))
+    text = sync_labels.PROBLEM_REFERENCE.sub("", PROBLEM_HEADING.sub("", text))
+    loose = [
+        text[max(0, m.start() - 60) : m.end()].strip().replace("\n", " ")
+        for m in WORDLESS_PROBLEM.finditer(text)
+    ]
+    assert not loose, (
+        f"{chapter.path} points at a problem without saying so: ...{loose[0]} — "
+        f"write `problem {loose[0][-4:]}` so sync-labels.py can keep the number right"
+    )
+
+
+#: The two ways this book opens a directive, and the line that closes each.
+DIRECTIVE_OPEN = re.compile(r"^(?P<fence>`{3,}|:{3,})\{[\w-]+\}")
+FENCE_CLOSE = re.compile(r"^(?P<fence>`{3,}|:{3,})\s*$")
+
+
+@pytest.mark.parametrize("page", TOC_FILES, ids=TOC_FILES)
+def test_a_directive_is_closed_by_the_fence_that_opened_it(page: str):
+    """A build that succeeds is not the same as a page that says what it was written to say.
+
+    ch19 opened its figure with backticks and closed it with `:::`. MyST did not complain — it
+    took the colons as the end of the figure and then swallowed the `{include}` on the other side
+    of them into a *sub-figure*, rendered as a code block whose text was the directive itself. The
+    page went out with the measurement missing and the sentence "the disk count is in the table"
+    directly beneath a figure with no table in it. `--strict` saw nothing wrong, because nothing
+    was: every node resolved, every reference pointed somewhere, and the only casualty was the
+    content.
+
+    So this is a check on the markdown rather than on the build, which is the one place a mistake
+    of this kind is still visible.
+    """
+    lines = (ROOT / page).read_text().splitlines()
+    stack: list[tuple[int, str]] = []
+    for number, line in enumerate(lines, start=1):
+        if close := FENCE_CLOSE.match(line):
+            if stack and stack[-1][1][0] == close.group("fence")[0]:
+                stack.pop()
+                continue
+            assert not stack, (
+                f"{page}:{number}: {close.group('fence')} closes a directive opened at line "
+                f"{stack[-1][0]} with {stack[-1][1]} — MyST will read the rest of it as caption"
+            )
+        elif opened := DIRECTIVE_OPEN.match(line):
+            stack.append((number, opened.group("fence")))
+    assert not stack, f"{page}:{stack[-1][0]}: {stack[-1][1]} directive is never closed"
+
+
+#: `chapter 11` — a chapter named by a number that is not a link and has no anchor behind it.
+BARE_CHAPTER_NUMBER = re.compile(
+    r"\bchapters?\s+(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|"
+    r"thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty(?:-\w+)?|"
+    r"thirty(?:-\w+)?)\b",
+    re.IGNORECASE,
+)
+
+
+@pytest.mark.parametrize("page", TOC_FILES, ids=TOC_FILES)
+def test_no_page_names_a_chapter_by_a_bare_number(page: str):
+    """Both of these were headings, which is not a coincidence.
+
+    A cross-reference in a sentence is a link, so `sync-labels.py` keeps its number right. A
+    heading cannot comfortably hold one, so two of them were written out in words — "So was
+    chapter 11 right?" above a paragraph about ch19, and "Back to chapter 15" above a paragraph
+    about ch23. Each sat directly on top of the correctly-numbered link that contradicted it.
+
+    There is no anchor in `chapter 11` to derive anything from, so the answer is the one this
+    book's own instructions reach for in the same situation: name the thing instead. A heading
+    that says what the section is about cannot go stale.
+    """
+    body = (ROOT / page).read_text()
+    named = [m.group(0) for m in BARE_CHAPTER_NUMBER.finditer(FENCED.sub("", body))]
+    assert not named, (
+        f"{page} says {named[0]!r} — a number with no anchor behind it, which nothing can keep "
+        f"right. Link it, or name what the chapter is about"
+    )
+
+
 #: Spelled-out numbers, which is how this book writes a count in prose. Digits in prose are
 #: already policed by `scripts/verify-numbers.py`; words are the hole it cannot see through, and
 #: three real contradictions went in through it — a preface claiming four parts and twenty-four
@@ -529,6 +669,30 @@ def test_every_chapter_link_uses_the_books_own_form():
     assert not offenders, "these are outside sync-labels.py's reach and will drift: " + "; ".join(
         offenders
     )
+
+
+CHAPTER_LINK = re.compile(r"\[ch(\d+)\]\(#([\w-]+)\)")
+
+
+def test_a_generated_fragment_labels_a_chapter_link_correctly():
+    """`sync-labels.py` rewrites the pages a person edits, and a fragment is not one of them.
+
+    Three of ch21's and ch23's tables carried `[ch13](#traps-and-system-calls)` — typed into
+    `bench/tables.py`, printed into `chapters/_generated/`, and past every check the book has. The
+    syncer is pointed at `chapters/*.md` and a fragment lives one directory down; `--strict` only
+    asks whether the anchor resolves, and it did.
+
+    Fixing the five was a line of code; the check is here because a fragment is the one place in
+    this book where writing a number out looks safe and is not.
+    """
+    wrong = []
+    by_anchor = {chapter.anchor: chapter for chapter in CHAPTERS}
+    for fragment in sorted((ROOT / "chapters" / "_generated").glob("*.md")):
+        for label, anchor_name in CHAPTER_LINK.findall(fragment.read_text()):
+            chapter = by_anchor.get(anchor_name)
+            if chapter is not None and chapter.label != f"ch{label}":
+                wrong.append(f"{fragment.name}: [ch{label}] points at {chapter.label}")
+    assert not wrong, "a generated table names the wrong chapter: " + "; ".join(wrong)
 
 
 PART_SELF = {part.path: part.number for part in PART_PAGES}

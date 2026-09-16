@@ -98,11 +98,18 @@ def sync_problems(path: Path, text: str) -> str:
     return PROBLEM.sub(lambda m: f"**{chapter.number}.{m.group(1)} — ", text)
 
 
-#: `problem 11.2`, and `[ch18](#locks-and-memory-ordering)'s problem 10.2` — prose *pointing at* a
-#: problem, as opposed to the heading that defines one.
+#: `problem 11.2`, `[ch18](#locks-and-memory-ordering)'s problem 10.2`, and `problems 26.1 and
+#: 26.2` — prose *pointing at* a problem, as opposed to the heading that defines one.
+#:
+#: Every run of whitespace in here is captured rather than matched literally, and put back
+#: unchanged. The book is hard-wrapped, so a reference is as likely to straddle a line break as
+#: not, and the first version of this pattern spelled those gaps as a single space — which meant
+#: `Problem\n21.3` was not a reference as far as the syncer was concerned. It renumbered every
+#: reference that happened to fit on one line and silently skipped the ones that did not.
 PROBLEM_REFERENCE = re.compile(
-    r"(?:\[ch(?P<owner>\d+)\]\(#[\w-]+\)(?P<possessive>['\u2019]s) )?"
-    r"(?P<word>[Pp]roblem) (?P<chapter>\d+)\.(?P<index>\d+)"
+    r"(?:\[ch(?P<owner>\d+)\]\(#[\w-]+\)(?P<possessive>['\u2019]s)(?P<pgap>\s+))?"
+    r"(?P<word>[Pp]roblems?)(?P<gap>\s+)(?P<chapter>\d+)\.(?P<index>\d+)"
+    r"(?:(?P<join>\s+and\s+)(?P<chapter2>\d+)\.(?P<index2>\d+))?"
 )
 
 
@@ -126,16 +133,18 @@ def sync_problem_references(path: Path, text: str) -> str:
         return text
 
     def renumber(m: re.Match[str]) -> str:
-        owner, index, word = m.group("owner"), m.group("index"), m.group("word")
+        owner, word, gap = m.group("owner"), m.group("word"), m.group("gap")
         if owner is None:
-            return f"{word} {here.number}.{index}"
-        target = next((c for c in CHAPTERS if c.number == int(owner)), None)
-        if target is None:
-            return m.group(0)
-        return (
-            f"[{target.label}](#{target.anchor}){m.group('possessive')} "
-            f"{word} {target.number}.{index}"
-        )
+            target, prefix = here, ""
+        else:
+            target = next((c for c in CHAPTERS if c.number == int(owner)), None)
+            if target is None:
+                return m.group(0)
+            prefix = f"[{target.label}](#{target.anchor}){m.group('possessive')}{m.group('pgap')}"
+        rewritten = f"{prefix}{word}{gap}{target.number}.{m.group('index')}"
+        if m.group("join") is not None:
+            rewritten += f"{m.group('join')}{target.number}.{m.group('index2')}"
+        return rewritten
 
     return PROBLEM_REFERENCE.sub(renumber, text)
 

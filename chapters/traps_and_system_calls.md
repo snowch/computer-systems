@@ -34,12 +34,16 @@ It is not, and nearly every way the two differ matters.
 
 A function call is an agreement. The caller knows it is calling, has arranged its registers
 accordingly, and the convention tells both sides who preserves what — that was [ch14](#machine-level-code-on-riscv).
-**An interrupt is not an agreement.** The interrupted code did not ask, made no arrangements, and
-must find every register exactly as it left it. There is no calling convention to lean on, because
-one side of it never agreed to anything.
+
+`ecall` is the one trap a program does agree to, and it gets nothing for agreeing, because
+**it has no path of its own.** One entry point serves it, a division by zero, a page fault and a
+timer interrupt alike, and three of those four arrive without being asked for: the interrupted
+code made no arrangements and has to find every register exactly as it left it. A path that must
+satisfy the worst of its callers has no calling convention to lean on.
 
 So the trap path cannot save "the callee-saved registers". It has to save **everything**, and put
-everything back.
+everything back. The census at the end of this chapter is that claim as a table — one counter,
+entered for several unrelated reasons.
 
 ### The hardware's half
 
@@ -81,7 +85,8 @@ whichever table is active the instruction after the switch is at an address that
 That is the whole of the state movement: the way in saves thirty-one registers, the way out
 restores them, and neither is doing anything you asked for. Before `usertrap` has looked at why it
 was entered — before any argument has been examined or any work begun — the machine has executed
-over eighty instructions of pure bookkeeping.
+over forty instructions of pure bookkeeping, and it will execute nearly as many again on the way
+out, after the work is finished.
 
 `uservec` also does a handful of CSR operations, and one of them is the page-table switch.
 `userret` does fewer, because part of the return is `sret` itself putting the privilege level and
@@ -154,8 +159,13 @@ is a duration and this target could not produce one honestly.
 
 The census is reproducible because the workload is fixed and because only the deterministic half
 of it is recorded. CI re-runs it on every push and compares, which is a real check: a kernel patch
-that accidentally changed how many system calls the shell makes would move that number, and moving
-it silently is exactly the failure the whole stamping scheme exists to prevent.
+that lost some of the workload's thousand calls, or that introduced a cause this list does not
+have, would move it, and moving it silently is exactly the failure the whole stamping scheme
+exists to prevent.
+
+What the check deliberately cannot catch is a change in how often the *shell* asks the kernel for
+anything, because that was never recorded. Giving up that number is what bought the rest of the
+table its reproducibility, and the section above is the argument.
 
 ## What this cannot tell you
 

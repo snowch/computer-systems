@@ -169,8 +169,8 @@ python3 -m pytest tests/optimising_code/test_problem_3_escapes.py
 
 Read the `-O2` and `-O3` sections of your compiler's own documentation — `gcc(1)` lists exactly
 which passes each level enables, and it is a shorter and more useful document than its length
-suggests. The two entries worth finding are the ones that name the transformations problems 16.1
-and 16.2 are about.
+suggests. The two entries worth finding are the ones that name the transformations problems 26.1
+and 26.2 are about.
 
 [ch27](#the-cpu) is the chapter this one keeps deferring to. Instruction counts cannot say whether
 the longer program is the slower one, because a modern core does not execute instructions one at a
