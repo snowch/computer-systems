@@ -11,14 +11,15 @@ short_title: "Introduction"
 
 | | |
 |---|---|
-| **Chapters** | [ch03](#memory-is-one-array)–[ch05](#c-for-people-who-will-read-a-kernel) |
-| **Target** | `xv6` — the teaching kernel under QEMU |
+| **Chapters** | [ch02](#reading-a-listing)–[ch05](#c-for-people-who-will-read-a-kernel) |
+| **Target** | `xv6` — the teaching kernel under QEMU, with [ch02](#reading-a-listing) also compiling for the board's architecture |
 | **Assumes** | [ch00](#prerequisites-and-setup), and fluency in some other language |
 :::
 
 ## What this part is for
 
-Four chapters and one job: enough C to read a kernel and change it, and no more.
+Four chapters. One of them teaches reading what a compiler produced, and the other three have
+one job between them: enough C to read a kernel and change it, and no more.
 
 That "no more" is a real limit rather than modesty. C is a large language and most of it never
 appears in the code this book reads. A part that set out to cover the language would spend most of
@@ -52,21 +53,26 @@ needs, and it is reachable in three chapters, which the craft is not.
 
 ## Where to start
 
-**If you already write C**, start at [ch04](#c-without-a-runtime). ch01 is the on-ramp and you do not need it.
-ch02 is about the habits that stop working when there is no library underneath you, and it is
-written for you.
+**Everyone starts at [ch02](#reading-a-listing).** It is short, it assumes no C, and every
+chapter after it puts a listing in front of you at some point. Then the routing applies.
 
-**If you program fluently in something else and have never written C**, start at
+**If you already write C**, go on to [ch04](#c-without-a-runtime). The on-ramp before it is one
+you do not need, and ch04 is about the habits that stop working when there is no library
+underneath you — which is written for you.
+
+**If you program fluently in something else and have never written C**, go on to
 [ch03](#memory-is-one-array). You are not being taught to program.
 
-**If you have tried C before and bounced off pointers**, also start at ch01, and notice that it
-does not open with them. It opens with one complete program that prints four numbers, and the
-pointers arrive afterwards as a way of explaining numbers you have already watched appear.
+**If you have tried C before and bounced off pointers**, also [ch03](#memory-is-one-array), and
+notice that it does not open with them. It opens with one complete program that prints four
+numbers, and the pointers arrive afterwards as a way of explaining numbers you have already
+watched appear.
 
 ## Which machine, and what it cannot tell you
 
-Everything here is compiled for RISC-V and run on the xv6 kernel under QEMU, and two chapters ask
-you to read the disassembly of code you wrote.
+Everything here is compiled for RISC-V and run on the xv6 kernel under QEMU, and three of the
+four chapters ask you to read the disassembly of code you wrote — [ch02](#reading-a-listing) for
+both of the book's instruction sets, the other two for RISC-V.
 
 **Nothing in this part is timed, and nothing in it may be.** QEMU models no cache, no branch
 predictor, no store buffer and no memory latency, so a duration measured inside it is a fact about

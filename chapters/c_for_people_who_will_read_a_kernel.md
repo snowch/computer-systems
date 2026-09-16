@@ -32,9 +32,10 @@ makes kernel source readable, because a kernel is mostly the second kind.
 
 A pointer is not a mysterious thing. It is an integer that happens to be the number of a byte,
 carrying a type that says how many bytes to take from there and how to read them. That is the
-whole idea, and almost every difficulty with pointers is really a difficulty about one of three
-other questions: *where does this live*, *how long does it stay there*, and *who else can reach
-it*. This chapter is those three questions, plus the constructs C offers for answering them.
+whole idea, and almost every difficulty with pointers is really a difficulty about something
+else. [ch03](#memory-is-one-array) asked three questions of any declaration — *where does this
+live*, *how long does it stay there*, *how big is it*. A kernel needs a fourth, and this chapter
+is mostly about it: **who else can reach it**, and what the language lets you say about that.
 
 ### `volatile` — the one qualifier the machine has heard of
 
@@ -61,20 +62,21 @@ The `volatile` one:
 
 Four loads, in order, none of them removed.
 
-`volatile` does not mean *shared*, it does not mean *atomic*, and it is not a threading
-primitive — [ch20](#locks-and-memory-ordering) is emphatic about that.
+It means one thing: **every access in the source must appear in the output, and in this order.**
+That is the whole of it. It does not mean *shared*, it does not mean *atomic*, and it is not a
+threading primitive — [ch20](#locks-and-memory-ordering) is emphatic about that.
+
+It matters when reading an address is not merely reading memory. A device register that returns
+the next byte of a serial port gives a different answer each time it is read, and a compiler that
+reads it once and reuses the value has turned your driver into a program that receives one
+character forever. [ch19](#interrupts-and-drivers) writes that driver.
 
 **If you arrived from Java, this is the trap.** Java's `volatile` *is* a threading primitive: it
 orders accesses between threads and the language's memory model defines what that guarantees.
 C's does none of that. It constrains the compiler and says nothing whatever to the hardware, so
 two harts can still see these writes in an order neither of them wrote. The keyword is spelled
 the same and does a different job, and the instructions that do the other job are
-[ch20](#locks-and-memory-ordering)'s. It means one thing: **every access in the source
-must appear in the output, and in this order.** That matters when reading the address is not
-merely reading memory. A device register that returns the next byte of a serial port gives a
-different answer each time it is read, and a compiler that reads it once and reuses the value has
-turned your driver into a program that receives one character forever. [ch19](#interrupts-and-drivers) writes that
-driver.
+[ch20](#locks-and-memory-ordering)'s.
 
 This is why kernel source is full of a keyword that application code almost never needs. The
 kernel is the layer where memory is not always memory.

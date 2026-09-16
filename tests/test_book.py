@@ -661,6 +661,56 @@ def test_the_first_whole_program_is_the_first_whole_program():
 
 #: PLAN.md §12.1, as a chapter's own headings. "Header block" is the note table rather than a
 #: heading, so it is not listed; the other six are.
+#: ``| **Chapters** | [ch02](#reading-a-listing)–[ch05](#…) |`` — the header's range.
+APPENDIX_LINK = re.compile(r"\[Appendix ([A-Z])\]\(#([\w-]+)\)")
+
+
+@pytest.mark.parametrize("path", PROSE_FILES, ids=[str(p) for p in PROSE_FILES])
+def test_an_appendix_link_points_at_that_appendix(path):
+    """`sync-labels` derives a chapter link's text; nothing derived an appendix's.
+
+    ch03 said "[Appendix A](#reading-a-listing)" after the listing key moved out of appendix A and
+    became a chapter that took the anchor with it. The link resolved perfectly — to a chapter —
+    and `--strict` cannot see the difference between a link that works and one that says where it
+    goes. This is the same shape as every other finding in this book's review passes, and the only
+    one of them that is a single regular expression.
+    """
+    text = (ROOT / path).read_text()
+    wrong = [
+        f"{m.group(0)} should point at #appendix-{m.group(1).lower()}"
+        for m in APPENDIX_LINK.finditer(text)
+        if m.group(2) != f"appendix-{m.group(1).lower()}"
+    ]
+    assert not wrong, f"{path} names an appendix and links elsewhere:\n  " + "\n  ".join(wrong)
+
+
+CHAPTERS_ROW = re.compile(r"\| \*\*Chapters\*\* \| (.+?) \|")
+
+
+@pytest.mark.parametrize("part", PART_PAGES, ids=PART_IDS)
+def test_a_part_header_names_its_own_first_and_last_chapter(part: Part):
+    """The range in the header block is the part's, and the part's boundaries move.
+
+    `sync-labels` keeps the *labels* honest, so this row reads plausibly however wrong it is: when
+    a chapter was inserted at the front of Part I, the row went on pointing at the chapter that
+    used to be first and simply relabelled it. The anchors are the part that cannot be derived
+    from the link itself, so they are what this checks.
+    """
+    text = (ROOT / part.path).read_text()
+    row = CHAPTERS_ROW.search(text)
+    assert row, f"{part.path} has no Chapters row in its header block"
+    anchors = re.findall(r"\(#([\w-]+)\)", row.group(1))
+    chapters = in_part(part)
+    assert anchors and anchors[0] == chapters[0].anchor, (
+        f"{part.path} opens its range at #{anchors[0] if anchors else '?'}, but the part starts "
+        f"at {chapters[0].label} (#{chapters[0].anchor})"
+    )
+    assert anchors[-1] == chapters[-1].anchor, (
+        f"{part.path} ends its range at #{anchors[-1]}, but the part ends at "
+        f"{chapters[-1].label} (#{chapters[-1].anchor})"
+    )
+
+
 CHAPTER_SECTIONS = (
     "## The question",
     "## The material",
