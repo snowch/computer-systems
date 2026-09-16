@@ -104,7 +104,7 @@ address in a different address space. `stval` is zero because a system call has 
 address; [ch18](#page-faults-as-a-feature) is where it stops being zero.
 
 CSRs are read as gdb convenience registers with a `$` in front, exactly like the integer ones.
-Appendix A lists the ones this book uses.
+[Appendix A](#appendix-a) lists the ones this book uses.
 
 ```
 print/x $satp

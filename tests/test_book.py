@@ -40,6 +40,8 @@ CHAPTER_IDS = [chapter.label for chapter in CHAPTERS]
 #: perfectly ordinary reference.
 CHOOSING_THE_MACHINE = next(a for a in APPENDICES if a.slug == "choosing_the_machine")
 
+by_anchor = {chapter.anchor: chapter for chapter in CHAPTERS}
+
 ROMAN_TO_NUMBER = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5}
 
 #: Every page a reader reads, in reading order. Generated files are excluded: their prose comes
@@ -663,6 +665,33 @@ def test_the_first_whole_program_is_the_first_whole_program():
 #: heading, so it is not listed; the other six are.
 #: ``| **Chapters** | [ch02](#reading-a-listing)–[ch05](#…) |`` — the header's range.
 #: `ch06` written as text rather than as `[ch06](#a-trap-with-nothing-else)`.
+@pytest.mark.parametrize("chapter", CHAPTERS[:-1], ids=CHAPTER_IDS[:-1])
+def test_a_chapter_hands_off_forwards(chapter: Chapter):
+    """*Where to go next* ends by naming what comes next, and next means later.
+
+    ch13 closed with "ch05 takes the other half of C and does the same thing to it" — a hand-off
+    written when representing information came before the addresses chapter, left pointing
+    backwards by a reorder that renumbered both correctly. The link resolved, the label was
+    right, and the word "next" was the only thing that had become false.
+
+    Only the closing paragraph is checked. A chapter is free to send a reader back for context
+    anywhere else, and they do.
+    """
+    text = (ROOT / chapter.path).read_text()
+    if "## Where to go next" not in text:
+        return
+    closing = text.split("## Where to go next")[1].strip().split("\n\n")[-1]
+    numbers = [
+        by_anchor[a].number for a in re.findall(r"\]\(#([\w-]+)\)", closing) if a in by_anchor
+    ]
+    if not numbers:
+        return
+    assert max(numbers) > chapter.number, (
+        f"{chapter.path} closes by pointing at ch{max(numbers):02d}, which is not after "
+        f"{chapter.label} — a hand-off goes forwards"
+    )
+
+
 BARE_CHAPTER = re.compile(r"(?<!\[)\bch(\d\d)\b(?!\]\()")
 
 
@@ -709,6 +738,17 @@ def test_an_appendix_link_points_at_that_appendix(path):
         if m.group(2) != f"appendix-{m.group(1).lower()}"
     ]
     assert not wrong, f"{path} names an appendix and links elsewhere:\n  " + "\n  ".join(wrong)
+
+    # And a bare one is a reference a reader cannot follow. Frontmatter and the page's own
+    # heading name the appendix without linking it, by necessity, so only the body is checked.
+    body = text.split("\n---\n", 2)[-1]
+    body = re.sub(r"^#.*$", "", body, flags=re.M)
+    body = APPENDIX_LINK.sub("", body)
+    bare = sorted({m.group(0) for m in re.finditer(r"\bAppendix [A-H]\b", body)})
+    assert not bare, (
+        f"{path} names an appendix without linking it: {', '.join(bare)} — everywhere else in "
+        f"the book they are links, and a reader cannot click this one"
+    )
 
 
 CHAPTERS_ROW = re.compile(r"\| \*\*Chapters\*\* \| (.+?) \|")

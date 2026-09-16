@@ -33,7 +33,7 @@ usually the most useful part of the chapter.
 All thirty-two chapters are written, and seven of the eight appendices.
 
 Nineteen figures are marked *pending*: they are `host` measurements that have to be taken on the
-reference machine, and until they are you will see a box saying so rather than a number. Appendix C
+reference machine, and until they are you will see a box saying so rather than a number. [Appendix C](#appendix-c)
 waits for the same machine — which events a board exposes is a property of its silicon, kernel and
 firmware together, and cannot be drafted from a desk.
 
