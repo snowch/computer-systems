@@ -1,0 +1,129 @@
+{
+  "code_fingerprint": "89eb4d7d6fbeac15",
+  "code_sources": [
+    "bench/run_pipelinecost.py",
+    "sysfs/bench/pipelinecost.c",
+    "sysfs/lib/pipeline.c",
+    "sysfs/include/sysfs/pipeline.h",
+    "sysfs/lib/timing.c",
+    "sysfs/include/sysfs/timing.h"
+  ],
+  "conditions": {
+    "note": "one process per point, so perf counts that point and nothing else",
+    "workload": "sysfs/bench/pipelinecost.c"
+  },
+  "generated_at": "2026-09-16T14:55:52+00:00",
+  "kind": "measurement",
+  "machine": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "measured_under": "native",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "name": "pipeline-host",
+  "recorded_on": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "summary": {
+    "branches": {
+      "derived_cost_ns": 19.734792910529382,
+      "points": [
+        {
+          "answer": 100000,
+          "mispredict_percent": 0.013838809769049748,
+          "misses": 8424,
+          "ns": 1.25,
+          "predictable_percent": 100
+        },
+        {
+          "answer": 100000,
+          "mispredict_percent": 3.2061623156383248,
+          "misses": 1951944,
+          "ns": 1.95,
+          "predictable_percent": 90
+        },
+        {
+          "answer": 100000,
+          "mispredict_percent": 7.615505192308899,
+          "misses": 4636543,
+          "ns": 2.84,
+          "predictable_percent": 75
+        },
+        {
+          "answer": 100000,
+          "mispredict_percent": 13.377713906477627,
+          "misses": 8146595,
+          "ns": 3.94,
+          "predictable_percent": 50
+        },
+        {
+          "answer": 100000,
+          "mispredict_percent": 16.008813052201454,
+          "misses": 9747789,
+          "ns": 4.42,
+          "predictable_percent": 25
+        },
+        {
+          "answer": 100000,
+          "mispredict_percent": 16.159856667154642,
+          "misses": 9839898,
+          "ns": 4.48,
+          "predictable_percent": 0
+        }
+      ]
+    },
+    "governor": "ondemand",
+    "variants": {
+      "sysfs_sum_chain1": {
+        "ipc": 2.2294577650896583,
+        "ns": 0.71
+      },
+      "sysfs_sum_chain2": {
+        "ipc": 2.2554351755415705,
+        "ns": 0.43
+      },
+      "sysfs_sum_chain4": {
+        "ipc": 2.776375432347662,
+        "ns": 0.3
+      },
+      "sysfs_sum_chain8": {
+        "ipc": 1.8529238306363154,
+        "ns": 0.25
+      }
+    }
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "cc (Debian 14.2.0-19) 14.2.0",
+    "execution": "native on the machine being measured",
+    "flags": "-O2 -g -Wall -Wextra"
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "code_fingerprint": "be8280aa7d1be20f",
+  "code_sources": [
+    "bench/run_interference.py",
+    "sysfs/bench/measuring.c",
+    "sysfs/lib/timing.c",
+    "sysfs/include/sysfs/timing.h"
+  ],
+  "conditions": {
+    "note": "the same spread workload with the radio off and then on; restored to off after",
+    "workload": "sysfs/bench/measuring.c spread, run many times per condition"
+  },
+  "generated_at": "2026-09-16T15:16:37+00:00",
+  "kind": "measurement",
+  "machine": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "measured_under": "native",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "name": "interference-host",
+  "recorded_on": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "summary": {
+    "disturbed_threshold": 1.1,
+    "governor": "ondemand",
+    "original_radio": "disabled",
+    "quiet": {
+      "best_mean_ns": 37537,
+      "disturbed_runs": 0,
+      "floor_ns": 37499,
+      "radio": "off",
+      "worst_max_ns": 64444,
+      "worst_mean_ns": 37561
+    },
+    "radio": {
+      "best_mean_ns": 37536,
+      "disturbed_runs": 2,
+      "floor_ns": 37499,
+      "radio": "on, associated",
+      "worst_max_ns": 87462,
+      "worst_mean_ns": 52855
+    },
+    "runs_per_condition": 30
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "cc (Debian 14.2.0-19) 14.2.0",
+    "execution": "native on the machine being measured",
+    "flags": "-O2 -g -Wall -Wextra"
+  }
+}

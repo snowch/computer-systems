@@ -146,8 +146,12 @@ def capture() -> dict[str, Any]:
             "variant — or the counter is not counting."
         )
 
+    # The slope of per-element time against the per-element mispredict *rate* — one branch per
+    # element, so the fraction is mispredicts per element and the slope is nanoseconds per
+    # mispredict. Regressing against the raw miss *count* instead mixes a per-element y with a
+    # whole-run x and yields a number three-hundred-thousandths of the truth: the table read 0.0 ns.
     derived = _slope(
-        [float(p["misses"]) for p in points],
+        [p["mispredict_percent"] / 100 for p in points],
         [float(p["ns"]) for p in points],
     )
 

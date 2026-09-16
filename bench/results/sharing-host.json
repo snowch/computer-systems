@@ -1,0 +1,107 @@
+{
+  "code_fingerprint": "03fcafb4fe827b88",
+  "code_sources": [
+    "bench/run_sharingcost.py",
+    "sysfs/bench/sharingcost.c",
+    "sysfs/lib/sharing.c",
+    "sysfs/lib/ordering.c",
+    "sysfs/include/sysfs/sharing.h",
+    "sysfs/include/sysfs/ordering.h",
+    "sysfs/lib/timing.c",
+    "sysfs/include/sysfs/timing.h"
+  ],
+  "conditions": {
+    "note": "nanoseconds per increment, across all threads; the first experiment shares no data",
+    "workload": "sysfs/bench/sharingcost.c"
+  },
+  "generated_at": "2026-09-16T13:29:14+00:00",
+  "kind": "measurement",
+  "machine": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "measured_under": "native",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "name": "sharing-host",
+  "recorded_on": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "summary": {
+    "atomics": {
+      "ordered": {
+        "contended_ns": 28.34,
+        "threads": 4,
+        "uncontended_ns": 2.16
+      },
+      "plain": {
+        "contended_ns": 1.83,
+        "threads": 4,
+        "uncontended_ns": 0.58
+      },
+      "relaxed": {
+        "contended_ns": 28.3,
+        "threads": 4,
+        "uncontended_ns": 1.58
+      }
+    },
+    "governor": "ondemand",
+    "sharing": {
+      "points": [
+        {
+          "layout": "packed",
+          "ns": 2.56,
+          "threads": 2
+        },
+        {
+          "layout": "padded",
+          "ns": 1.17,
+          "threads": 2
+        },
+        {
+          "layout": "packed",
+          "ns": 1.9,
+          "threads": 4
+        },
+        {
+          "layout": "padded",
+          "ns": 1.28,
+          "threads": 4
+        }
+      ]
+    }
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "cc (Debian 14.2.0-19) 14.2.0",
+    "execution": "native on the machine being measured",
+    "flags": "-O2 -g -Wall -Wextra"
+  }
+}

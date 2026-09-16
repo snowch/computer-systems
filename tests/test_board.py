@@ -34,6 +34,8 @@ BOARD_RUNNERS = {
     "vdso-host": "bench.run_oscost",
     "profile-host": "bench.run_profilecost",
     "skid-host": "bench.run_profilecost",
+    "interference-host": "bench.run_interference",
+    "perfevents-host": "bench.run_perfevents",
 }
 
 #: Figures still waiting for a runner to be written, not just for the board to exist.

@@ -1,0 +1,243 @@
+{
+  "code_fingerprint": "443aef914a9daf98",
+  "code_sources": [
+    "bench/run_hierarchy.py",
+    "sysfs/bench/hierarchy.c",
+    "sysfs/lib/timing.c",
+    "sysfs/include/sysfs/timing.h"
+  ],
+  "conditions": {
+    "note": "dependent-load chases, so each figure is a latency rather than a throughput",
+    "workload": "sysfs/bench/hierarchy.c, run once per sweep"
+  },
+  "generated_at": "2026-09-16T12:42:53+00:00",
+  "kind": "measurement",
+  "machine": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "measured_under": "native",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "name": "hierarchy-host",
+  "recorded_on": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "summary": {
+    "clock": {
+      "cost_ns": 18
+    },
+    "derived": {
+      "l1_bytes": 65536,
+      "l1_bytes_vendor": 65536,
+      "l2_bytes": 2097152,
+      "l2_bytes_vendor": 524288,
+      "l3_bytes": "no step found",
+      "l3_bytes_vendor": 2097152,
+      "line_bytes": 16,
+      "line_bytes_vendor": 64,
+      "tlb_reach_bytes": 2097152,
+      "tlb_reach_pages": 512
+    },
+    "governor": "ondemand",
+    "reach": [
+      {
+        "ns": 1,
+        "pages": 4
+      },
+      {
+        "ns": 1,
+        "pages": 8
+      },
+      {
+        "ns": 1,
+        "pages": 16
+      },
+      {
+        "ns": 1,
+        "pages": 32
+      },
+      {
+        "ns": 1,
+        "pages": 64
+      },
+      {
+        "ns": 1,
+        "pages": 128
+      },
+      {
+        "ns": 1,
+        "pages": 256
+      },
+      {
+        "ns": 1,
+        "pages": 512
+      },
+      {
+        "ns": 17,
+        "pages": 1024
+      },
+      {
+        "ns": 20,
+        "pages": 2048
+      },
+      {
+        "ns": 20,
+        "pages": 4096
+      },
+      {
+        "ns": 30,
+        "pages": 8192
+      },
+      {
+        "ns": 111,
+        "pages": 16384
+      }
+    ],
+    "sizes": [
+      {
+        "bytes": 1024,
+        "ns": 1
+      },
+      {
+        "bytes": 2048,
+        "ns": 1
+      },
+      {
+        "bytes": 4096,
+        "ns": 1
+      },
+      {
+        "bytes": 8192,
+        "ns": 1
+      },
+      {
+        "bytes": 16384,
+        "ns": 1
+      },
+      {
+        "bytes": 32768,
+        "ns": 1
+      },
+      {
+        "bytes": 65536,
+        "ns": 1
+      },
+      {
+        "bytes": 131072,
+        "ns": 3
+      },
+      {
+        "bytes": 262144,
+        "ns": 3
+      },
+      {
+        "bytes": 524288,
+        "ns": 3
+      },
+      {
+        "bytes": 1048576,
+        "ns": 3
+      },
+      {
+        "bytes": 2097152,
+        "ns": 3
+      },
+      {
+        "bytes": 4194304,
+        "ns": 6
+      },
+      {
+        "bytes": 8388608,
+        "ns": 6
+      },
+      {
+        "bytes": 16777216,
+        "ns": 6
+      },
+      {
+        "bytes": 33554432,
+        "ns": 6
+      },
+      {
+        "bytes": 67108864,
+        "ns": 6
+      }
+    ],
+    "stride": [
+      {
+        "bytes": 8,
+        "ns": 1
+      },
+      {
+        "bytes": 16,
+        "ns": 1
+      },
+      {
+        "bytes": 32,
+        "ns": 2
+      },
+      {
+        "bytes": 64,
+        "ns": 3
+      },
+      {
+        "bytes": 128,
+        "ns": 5
+      },
+      {
+        "bytes": 256,
+        "ns": 6
+      },
+      {
+        "bytes": 512,
+        "ns": 20
+      },
+      {
+        "bytes": 1024,
+        "ns": 72
+      },
+      {
+        "bytes": 2048,
+        "ns": 26
+      },
+      {
+        "bytes": 4096,
+        "ns": 20
+      }
+    ]
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "cc (Debian 14.2.0-19) 14.2.0",
+    "execution": "native on the machine being measured",
+    "flags": "-O2 -g -Wall -Wextra"
+  }
+}

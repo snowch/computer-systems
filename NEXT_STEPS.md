@@ -9,7 +9,27 @@ review of all forty-seven pages (PR #25), which fixed what it found and left thr
 
 ## 1. The board — everything here needs the Pi 5
 
-This is M1, and five chapters are waiting on it. Nothing else in this file does.
+This is M1, and it is **done (2026-09-16)**: the reference Pi 5 is set up, all twenty `host` figures
+are measured and no longer pending, Appendix C is generated from the board, and the Wi-Fi
+interference claim ch01 flagged is now measured in ch24. First contact with the hardware corrected
+several chapters (below). Nothing here still needs the board. The procedure that follows is kept as
+the record of how it was done and how to re-run it.
+
+### What first contact changed
+
+- **ch30 (profiling)** — `bench/board.py` called `perf record --call-graph none`, which perf 6.18
+  rejects (it takes `fp|dwarf|lbr`); changed to `--no-call-graph`. Unblocked profile and skid.
+- **ch28 (false sharing)** — the effect is a stable ~2.2× at two threads and ~1.5× at four, not the
+  "several times" the prose claimed. The prose and the runner's 1.5× floor were corrected to match,
+  and the surprise that it *shrinks* as cores are added is now in the text.
+- **ch24 (measurement bias)** — the stack-placement experiment does not reproduce on the A76: the
+  buffer genuinely moves (three different addresses) and the median does not change by a nanosecond.
+  The workload was rebuilt into a real placement test that reports where the data landed, the guard
+  now checks that placement moved rather than demanding an effect, and the chapter was reframed
+  honestly — the method transfers, the 2009 magnitude does not. ch24's spread claim ("a multiple of
+  the fastest") was also corrected to the measured tight-body-plus-interference-tail shape.
+
+### Set it up
 
 ### Set it up
 
@@ -63,13 +83,14 @@ Every runner has a `--check` mode that re-runs and compares without writing. Use
 committing: a figure that moves between two runs of the same workload is telling you about the
 machine's state rather than about the workload, which is ch24's whole subject.
 
-### Then Appendix C
+### Appendix C — done
 
-[appendices/appendix_c_perf_events.md](appendices/appendix_c_perf_events.md) is the one appendix
-that cannot be drafted from a desk: which events a machine exposes is a property of its silicon,
-its kernel and its firmware together. Generate it from the board — `perf list` is the starting
-point, and the distinction the appendix has to make is which events the hardware counts and which
-`perf` computes from the ones it counts.
+[appendices/appendix_c_perf_events.md](appendices/appendix_c_perf_events.md) is written and no longer
+a stub. It is generated from the board by `bench/run_perfevents.py` (result `perfevents-host`): the
+`armv8_cortex_a76` PMU, its seven counters, forty raw events, perf's portable aliases and the kernel
+software events — and the counted-vs-computed distinction made concrete, since only seven events
+count at once before perf multiplexes and scales the rest. Meanings cite the Cortex-A76 manual; the
+inventory is the board's. That was the last piece that needed the hardware.
 
 ### Read the prose against the numbers when they land
 

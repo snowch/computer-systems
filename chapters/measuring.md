@@ -22,7 +22,7 @@ How do I get a number I would defend, and how would I know it was wrong?
 
 [ch23](#the-same-program-on-both-targets) established that the structural model does not predict cost, and pointed at a
 machine that can answer. Before asking it anything, this chapter asks what it costs to ask — and
-then arranges, deliberately, for the same program to give three different answers.
+then changes something about the program that cannot matter, to find out whether the answer moves.
 
 ## The material
 
@@ -60,9 +60,9 @@ Run identical work, on an idle machine, two thousand times:
 ```{include} _generated/measuring-spread.md
 ```
 
-The last row is the chapter. Identical work, identical input, nothing else running — and the
-slowest run is a multiple of the fastest. Nothing was wrong with any of those measurements; they
-are all correct observations of what happened.
+The last row is the chapter. Identical work, identical input, nothing else running — and yet nine
+runs in ten agree to within a rounding error while the slowest stands far outside them. Nothing was
+wrong with any of those measurements; they are all correct observations of what happened.
 
 So "how long does it take" has no answer, and the question has to be replaced. What is reported
 instead is a distribution, which is why `sysfs_summarise` exists and why problem 24.1 asks you to
@@ -90,28 +90,34 @@ interference, it is not warm-up, and discarding everything before it throws away
 measurements in order to hide a bad one. Problem 24.3 is exactly that distinction, and the
 definition it asks you to implement has a second clause for no other reason.
 
-### The same program, three answers
+### The variable that should not matter
 
-Here is the experiment that should change how you read a benchmark.
+Here is the experiment every benchmark deserves and few get.
 
 The same work, the same input, the same binary, three times — differing only in how many bytes of
-stack were claimed before the loop ran. Not used. Claimed.
+stack were claimed before the buffer it walks was allocated. Not used. Claimed. Each run lands the
+data at a different address, and the runner records that address, so this is a real change to where
+everything sits and not a padding the compiler quietly folded away.
 
 ```{include} _generated/measuring-bias.md
 ```
 
-Nothing about the work changed. What changed is where everything landed in memory, and therefore
-which cache sets the data occupied, and therefore how often two things that are used together
-evicted each other.
+The addresses differ; the median does not move by a nanosecond. On this core, where the data sits
+does not change what reaching it costs.
 
-This is measurement bias, and Mytkowicz and colleagues @mytkowicz2009wrong showed it is large
-enough to manufacture or erase the kind of speedup papers are published about — by changing the
-size of an environment variable, which moves the stack, which does exactly what the padding above
-does. Their conclusion is the uncomfortable one: a single configuration, measured carefully, can
-give a confidently wrong answer, and no amount of repetition inside that configuration finds it.
+That is not the result the experiment is famous for. Mytkowicz and colleagues @mytkowicz2009wrong
+showed the same change — the size of an environment variable, which moves the stack, which is what
+the padding here does — large enough to manufacture or erase the kind of speedup papers are
+published about. Their machine cared. This one, measured the same way, does not: very likely a core
+with this much first-level cache, and this forgiving an attitude to unaligned access, hides what a
+2009 one could not.
 
-The defence is to vary the thing that should not matter, on purpose, and see whether your result
-survives.
+The uncomfortable part survives the null result whole, and is the reason to run the experiment at
+all. You cannot tell which machine you have by reasoning about it — Mytkowicz and colleagues could
+not, and neither could this chapter until the board answered. A single configuration, measured
+carefully, can be confidently wrong, and no amount of repetition inside it ever finds out. So the
+defence is not to conclude the effect is gone because this page did not find it. It is to vary the
+thing that should not matter, on your own machine, and see whether your result survives.
 
 ### The floor moves
 
@@ -128,26 +134,43 @@ active cooler and why every `host` result in this book stamps the machine's stat
 number. It is also why the results are taken with the board idle and the laptop not driving it
 over a link that interrupts it, which brings up something the book has to admit.
 
-### A claim this book has not measured
+### The measurement environment is the measurement
 
 [ch01](#setting-up-the-board) recommends wiring the board rather than using its radio, and gives a mechanism: a
 wireless driver takes interrupts and runs deferred work on the cores being measured, which is
 [ch19](#interrupts-and-drivers)'s subject arriving where it is least wanted.
 
-The mechanism is real. The effect on these measurements has never been measured, and [ch01](#setting-up-the-board) says so.
-That is an unmeasured claim about hardware behaviour in a book whose whole discipline is refusing
-them, and the honest thing to do with it is to hand it to the reader: it is the fourth problem
-below, the answer is genuinely unknown to the author, and a reader who falsifies it has exactly
-the skill this chapter exists to teach.
+So: the same fixed workload, run many times over with the radio off and again with it on — the only
+thing changed being a variable that has nothing to do with the code.
+
+```{include} _generated/measuring-interference.md
+```
+
+Read the first row before any other. The fastest sample is identical to the nanosecond, radio or
+not, because interference can only ever add time: the fastest run is the one it missed. That is the
+argument for the minimum happening rather than being asserted — everything the radio does makes a
+measurement slower, so the mean carries the interference and the floor carries the work.
+
+The rest of the table is the warning. A clean run with the radio on is indistinguishable from one
+with it off, so a single measurement gives you none: the radio's background work arrives in bursts,
+and only a run that catches one is wrecked — its mean dragged well above the floor while its
+neighbours look fine. Which run you happened to take decides your answer, and nothing inside that
+run tells you which kind you got. It is the warm-up problem inverted: not a slow prefix you can cut,
+but slow samples scattered through a run that averages out clean until it does not.
+
+Wiring the board does not make it faster. It makes the number mean something, by removing a source
+of slow samples the work has no say in. The radio is one such source; a busy neighbour, a background
+build, a cron job at the wrong minute are others, and the defence is the same — measure on a machine
+you have made quiet, and record what quiet meant. Problem 24.4 is to reproduce this on your own
+board, where the numbers will differ and the shape should not.
 
 ## What we measured
 
-The cost and resolution of the clock; the distribution of two thousand runs of one fixed workload;
-and the same workload three times with a variable changed that cannot affect it.
-
-All three are declared pending until `make bench-board` runs on the reference machine, which is
-the only place this book takes a duration. The prose is written for the numbers rather than around
-them: landing them is one command.
+The cost and resolution of the clock; the spread of two thousand runs of one fixed workload — a
+body a rounding error wide, and a tail that is all interference; a memory walk run three times with
+its data deliberately moved to a different address each time, which on this machine did not move the
+time at all; and that same workload with the radio off and on, which moved the mean and left the
+floor exactly where it was.
 
 ## What this cannot tell you
 
@@ -173,7 +196,7 @@ forgotten, which is a benchmark that measures an empty loop and reports an enorm
 ## Problems
 
 Four. The first three are in `tests/measuring/measuring.c` and are graded against definitions the tests
-compute for themselves. The fourth has no test and no known answer.
+compute for themselves. The fourth has no test: its answer is a property of your machine, not this one's.
 
 **24.1 — Report the distribution.**
 Minimum, median, 90th percentile and mean, to the definitions in the stub. The even-length case is
@@ -202,15 +225,16 @@ good measurement before it.
 python3 -m pytest tests/measuring/test_problem_3_warmup.py
 ```
 
-**24.4 — Falsify something this book says.**
-[ch01](#setting-up-the-board) claims that a wireless link adds interrupt and deferred work to the cores being
-measured, and admits it has not measured the effect. Measure it: run one of this chapter's
-workloads with the board on Ethernet and on its radio, with and without traffic, and report
-whether the distributions differ in a way the method above would defend.
+**24.4 — Reproduce the interference on your own machine.**
+The table above is this board's. `python3 -m bench.run_interference` runs the same experiment — it
+toggles the radio for you and restores it — so run it on yours and report the three things the
+method should let you defend: that the floor did not move, that the mean did, and how often a run
+was disturbed. That last figure travels least of anything in this chapter, because it depends on
+your radio, your kernel and whatever else the machine was doing, and that is the point.
 
-There is no test, because there is no answer to check against. If you find the claim is
-unsupported at the scale this book's measurements work at, [ch01](#setting-up-the-board) is wrong and should say
-something else — and a reader who establishes that has done the thing this chapter is for.
+There is no test, because the answer is a property of your machine rather than a fact to check
+against. If the floor *does* move on yours, something more interesting than the radio is loose, and
+finding out what is the skill this chapter exists to teach.
 
 ## Where to go next
 

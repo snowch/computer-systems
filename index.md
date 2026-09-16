@@ -31,12 +31,11 @@ tell you* is mandatory, and it is where the target, the tooling or the hardware 
 usually the most useful part of the chapter.
 
 :::{note} Where this book is
-All thirty-two chapters are written, and seven of the eight appendices.
+All thirty-two chapters are written, and eight of the eight appendices.
 
-Twenty figures are marked *pending*: they are `host` measurements that have to be taken on the
-reference machine, and until they are you will see a box saying so rather than a number. [Appendix C](#appendix-c)
-waits for the same machine — which events a board exposes is a property of its silicon, kernel and
-firmware together, and cannot be drafted from a desk.
+Zero figures are marked *pending*: the reference machine has reported and every `host` measurement
+has been taken, and [Appendix C](#appendix-c) — the perf events this board exposes — is generated
+from it rather than drafted from a desk, which is the one thing it could never have been.
 
 **[Download the whole book as a PDF](/systems-from-scratch.pdf)** — every chapter and appendix in
 one file, built from the same source as this site, so the two cannot disagree about what a

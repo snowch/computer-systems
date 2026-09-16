@@ -349,47 +349,40 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "the-same-program-on-both-targets-cost": Table(
         render=tables.bridge_cost_table,
         result="bridge-host",
-        pending=(
-            "The two routes have not been timed on the reference machine yet: "
-            f"{BOARD} (`bench/results/bridge-host.json`)."
-        ),
     ),
     # -- ch21 ---------------------------------------------------------------------------
     "measuring-clock": Table(
         render=tables.clock_table,
         result="measuring-host",
-        pending=f"The instrument has not been measured yet: {BOARD} (`bench/results/measuring-host.json`).",
     ),
     "measuring-spread": Table(
         render=tables.spread_table,
         result="measuring-host",
-        pending=f"The distribution has not been taken yet: {BOARD} (`bench/results/measuring-host.json`).",
     ),
     "measuring-bias": Table(
         render=tables.bias_table,
         result="measuring-host",
-        pending=f"The bias experiment has not been run yet: {BOARD} (`bench/results/measuring-host.json`).",
+    ),
+    "measuring-interference": Table(
+        render=tables.interference_table,
+        result="interference-host",
     ),
     # -- ch22 ---------------------------------------------------------------------------
     "the-memory-hierarchy-levels": Table(
         render=tables.hierarchy_levels_table,
         result="hierarchy-host",
-        pending=f"The hierarchy has not been probed yet: {BOARD} (`bench/results/hierarchy-host.json`).",
     ),
     "the-memory-hierarchy-line": Table(
         render=tables.hierarchy_line_table,
         result="hierarchy-host",
-        pending=f"The line size has not been measured yet: {BOARD} (`bench/results/hierarchy-host.json`).",
     ),
     "the-memory-hierarchy-reach": Table(
         render=tables.hierarchy_reach_table,
         result="hierarchy-host",
-        pending=f"The translation cache has not been probed yet: {BOARD} (`bench/results/hierarchy-host.json`).",
     ),
     "the-memory-hierarchy-vendor": Table(
         render=tables.hierarchy_vendor_table,
         result="hierarchy-host",
-        pending=f"Nothing has been measured to compare the datasheet with yet: {BOARD} (`bench/results/hierarchy-host.json`).",
     ),
     # -- ch23 ---------------------------------------------------------------------------
     "optimising-code-variants": Table(
@@ -399,7 +392,6 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "optimising-code-cost": Table(
         render=tables.loop_cost_table,
         result="loops-host",
-        pending=f"The surviving variants have not been timed yet: {BOARD} (`bench/results/loops-host.json`).",
     ),
     # -- ch24 ---------------------------------------------------------------------------
     "the-cpu-shapes": Table(
@@ -409,12 +401,10 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "the-cpu-ilp": Table(
         render=tables.pipeline_cost_table,
         result="pipeline-host",
-        pending=f"The chains have not been timed yet: {BOARD} (`bench/results/pipeline-host.json`).",
     ),
     "the-cpu-branches": Table(
         render=tables.mispredict_table,
         result="pipeline-host",
-        pending=f"The predictor has not been measured yet: {BOARD} (`bench/results/pipeline-host.json`).",
     ),
     # -- ch25 ---------------------------------------------------------------------------
     "memory-ordering-on-real-hardware-layout": Table(
@@ -424,12 +414,10 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "memory-ordering-on-real-hardware-sharing": Table(
         render=tables.sharing_cost_table,
         result="sharing-host",
-        pending=f"The cores have not been made to fight yet: {BOARD} (`bench/results/sharing-host.json`).",
     ),
     "memory-ordering-on-real-hardware-atomics": Table(
         render=tables.atomics_cost_table,
         result="sharing-host",
-        pending=f"The atomics have not been timed yet: {BOARD} (`bench/results/sharing-host.json`).",
     ),
     # -- ch26 ---------------------------------------------------------------------------
     "the-os-layers-cost-model": Table(
@@ -447,26 +435,14 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "the-os-layers-cost-cost": Table(
         render=tables.os_cost_table,
         result="oscost-host",
-        pending=(
-            "Linux has not been asked what it charges yet: "
-            f"{BOARD} (`bench/results/oscost-host.json`)."
-        ),
     ),
     "the-os-layers-cost-faults": Table(
         render=tables.fault_cost_table,
         result="faultcost-host",
-        pending=(
-            "A minor fault and a major one have not been timed against each other yet: "
-            f"{BOARD} (`bench/results/faultcost-host.json`)."
-        ),
     ),
     "the-os-layers-cost-vdso": Table(
         render=tables.vdso_table,
         result="vdso-host",
-        pending=(
-            "The call that traps and the call that does not have not been put side by side yet: "
-            f"{BOARD} (`bench/results/vdso-host.json`)."
-        ),
     ),
     # -- ch27 ---------------------------------------------------------------------------
     "whole-machine-profiling-census": Table(
@@ -486,15 +462,10 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "whole-machine-profiling-profile": Table(
         render=tables.profile_table,
         result="profile-host",
-        pending=(f"Nothing has been profiled yet: {BOARD} (`bench/results/profile-host.json`)."),
     ),
     "whole-machine-profiling-skid": Table(
         render=tables.skid_table,
         result="skid-host",
-        pending=(
-            "The samples have not been read instruction by instruction yet: "
-            f"{BOARD} (`bench/results/skid-host.json`)."
-        ),
     ),
     # -- ch28 ---------------------------------------------------------------------------
     "vectors-loops": Table(
@@ -518,10 +489,6 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "vectors-speedup": Table(
         render=tables.vector_speedup_table,
         result="vectors-host",
-        pending=(
-            "The loops have not been run yet, so there is nothing to put beside the bound: "
-            f"{BOARD} (`bench/results/vectors-host.json`)."
-        ),
     ),
     # -- ch02 ---------------------------------------------------------------------------
     "c-without-a-runtime-absences": Table(
@@ -548,6 +515,23 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "memory-is-one-array-reach": Listing(
         symbol="sysfs_reach_through",
         results=("declarations-riscv64",),
+    ),
+    # -- appendix C ---------------------------------------------------------------------
+    "appendix-c-summary": Table(
+        render=tables.perf_summary_table,
+        result="perfevents-host",
+    ),
+    "appendix-c-raw": Table(
+        render=tables.perf_raw_events,
+        result="perfevents-host",
+    ),
+    "appendix-c-generic": Table(
+        render=tables.perf_generic_events,
+        result="perfevents-host",
+    ),
+    "appendix-c-software": Table(
+        render=tables.perf_software_events,
+        result="perfevents-host",
     ),
     # -- appendix D ---------------------------------------------------------------------
     "appendix-d-map": Table(
@@ -609,7 +593,6 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "setting-up-the-board-report": Table(
         render=tables.board_identity_table,
         result="setup-host",
-        pending=f"The board has not reported yet: {BOARD} (`bench/results/setup-host.json`).",
     ),
 }
 

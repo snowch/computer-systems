@@ -80,6 +80,15 @@ counter the firmware does not expose, a second machine that does not exist — t
 shows the reasoning it used instead, and states what it would take to measure. It does not borrow a
 number from somewhere else.
 
+This part also does something more specific than warn that figures differ: more than once it sets
+out to reproduce a well-known effect and finds it mostly gone. Bias from where the stack sits, the
+penalty for false sharing, the clean step that betrays a cache line — each is real, each is in the
+literature, and on this newer core each came back smaller than the folklore promises, sometimes to
+nothing. That is not the measurement failing. A modern core spends its transistors hiding exactly
+these effects, so the older the demonstration the likelier the silicon has closed it, and the number
+you inherited was taken on a machine that no longer exists. It is stated once here because you will
+meet it in three chapters, and the answer is the same each time: measure yours.
+
 ## Where this leaves you
 
 Able to take a machine you have never seen, a program you did not write, and a claim about why it

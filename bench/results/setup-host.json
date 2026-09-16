@@ -1,0 +1,141 @@
+{
+  "code_fingerprint": "b73da3110d10f090",
+  "code_sources": [
+    "bench/run_setup.py",
+    "sysfs/tools/sysprobe.c",
+    "sysfs/include/sysfs/probe.h"
+  ],
+  "conditions": {
+    "note": "identity and capability, measured natively on the board"
+  },
+  "generated_at": "2026-09-16T12:40:15+00:00",
+  "kind": "measurement",
+  "machine": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "measured_under": "native",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "name": "setup-host",
+  "recorded_on": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "summary": {
+    "endian": "little",
+    "layouts": [
+      {
+        "align": 4,
+        "name": "declaration_order",
+        "padding": 6,
+        "size": 12
+      },
+      {
+        "align": 4,
+        "name": "size_order",
+        "padding": 2,
+        "size": 8
+      }
+    ],
+    "native_cc": "gcc (Debian 14.2.0-19) 14.2.0",
+    "native_flags": "-O2 -g -Wall -Wextra",
+    "offsets": {
+      "declaration_order.last": 8,
+      "declaration_order.middle": 4,
+      "size_order.first": 4,
+      "size_order.last": 5
+    },
+    "perf_can_sample": true,
+    "perf_counters_readable": true,
+    "perf_counts": {
+      "cycles": 614693,
+      "instructions": 404619
+    },
+    "perf_cycles_event": "cycles",
+    "perf_hardware_events": [
+      "branch-misses",
+      "bus-cycles",
+      "cache-misses",
+      "cache-references",
+      "instructions"
+    ],
+    "perf_note": null,
+    "perf_samples": 411,
+    "types": [
+      {
+        "align": 1,
+        "name": "char",
+        "size": 1
+      },
+      {
+        "align": 2,
+        "name": "short",
+        "size": 2
+      },
+      {
+        "align": 4,
+        "name": "int",
+        "size": 4
+      },
+      {
+        "align": 8,
+        "name": "long",
+        "size": 8
+      },
+      {
+        "align": 8,
+        "name": "long_long",
+        "size": 8
+      },
+      {
+        "align": 8,
+        "name": "pointer",
+        "size": 8
+      },
+      {
+        "align": 4,
+        "name": "float",
+        "size": 4
+      },
+      {
+        "align": 8,
+        "name": "double",
+        "size": 8
+      }
+    ],
+    "world": "host"
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "gcc (Debian 14.2.0-19) 14.2.0",
+    "execution": "native-aarch64",
+    "flags": "-O2 -g -Wall -Wextra"
+  }
+}

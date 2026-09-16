@@ -1,0 +1,82 @@
+{
+  "code_fingerprint": "33c98567b73a81b1",
+  "code_sources": [
+    "bench/run_oscost.py",
+    "sysfs/bench/oscost.c",
+    "sysfs/lib/timing.c",
+    "sysfs/include/sysfs/timing.h"
+  ],
+  "conditions": {
+    "note": "each service beside an unflattering baseline; the ratio is what survives a change of machine",
+    "workload": "sysfs/bench/oscost.c services"
+  },
+  "generated_at": "2026-09-16T12:43:04+00:00",
+  "kind": "measurement",
+  "machine": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "measured_under": "native",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "name": "oscost-host",
+  "recorded_on": {
+    "arch": "aarch64",
+    "cpu": {
+      "bogomips": "108.00",
+      "cpu architecture": "8",
+      "cpu implementer": "0x41",
+      "cpu part": "0xd0b",
+      "cpu revision": "1",
+      "cpu variant": "0x4",
+      "features": "fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp"
+    },
+    "cpus_online": "0-3",
+    "kernel": "Linux 6.18.50+rpt-rpi-2712",
+    "kind": "board",
+    "model": "Raspberry Pi 5 Model B Rev 1.1",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "python": "3.13.5"
+  },
+  "summary": {
+    "governor": "ondemand",
+    "services": {
+      "fault": {
+        "baseline": "a touch of a page already mapped",
+        "baseline_ns": 21.0,
+        "ns": 636.0,
+        "ratio": 30.3
+      },
+      "switch": {
+        "baseline": "the same round trip without leaving the thread",
+        "baseline_ns": 269.0,
+        "ns": 2233.0,
+        "ratio": 8.3
+      },
+      "syscall": {
+        "baseline": "an empty function call",
+        "baseline_ns": 0.42,
+        "ns": 166.31,
+        "ratio": 396.0
+      }
+    }
+  },
+  "target": "host",
+  "toolchain": {
+    "cc": "cc (Debian 14.2.0-19) 14.2.0",
+    "execution": "native on the machine being measured",
+    "flags": "-O2 -g -Wall -Wextra"
+  }
+}
