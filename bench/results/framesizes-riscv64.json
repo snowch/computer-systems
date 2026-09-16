@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "6de236a71bd9ae24",
+  "code_fingerprint": "b3c4bd83cdf549f2",
   "code_sources": [
     "bench/run_frames.py",
     "bench/disasm.py",
@@ -10,7 +10,7 @@
     "frame_bytes": "read from the prologue's own `addi sp,sp,-N`; 0 means no frame",
     "note": "counts of instructions and stack bytes; nothing was executed or timed"
   },
-  "generated_at": "2026-09-15T15:09:45+00:00",
+  "generated_at": "2026-09-16T18:31:58+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "riscv64",
@@ -22,14 +22,14 @@
   "recorded_on": {
     "arch": "x86_64",
     "cpu": {
-      "bogomips": "4200.00",
-      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+      "bogomips": "5200.00",
+      "model name": "Intel(R) Xeon(R) 6973P-C"
     },
     "cpus_online": "0-3",
-    "kernel": "Linux 6.18.44-fc-v33",
+    "kernel": "Linux 6.17.0-1022-azure",
     "kind": "other",
-    "os": "Ubuntu 24.04.4 LTS",
-    "python": "3.11.15"
+    "os": "Ubuntu 24.04.5 LTS",
+    "python": "3.11.16"
   },
   "summary": {
     "functions": [

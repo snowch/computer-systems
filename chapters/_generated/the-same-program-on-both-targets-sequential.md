@@ -22,7 +22,7 @@
   6e:	ret
 ```
 
-*Conditions: target `xv6` · riscv64 cross compiler, any machine — nothing here was executed · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c` · 2026-09-15 · Source: `bench/results/bridge-riscv64.json`, code hash `57d489986aacc3df`.*
+*Conditions: target `xv6` · riscv64 cross compiler, any machine — nothing here was executed · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c` · 2026-09-16 · Source: `bench/results/bridge-riscv64.json`, code hash `5c206edc7fc56195`.*
 
 **`sysfs_bridge_sequential` compiled for aarch64 at `-O2`** — the `host` target's instruction set, 13 instructions.
 
@@ -43,4 +43,4 @@
   c0:	ret
 ```
 
-*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -c` · 2026-09-15 · Source: `bench/results/bridge-aarch64.json`, code hash `931227cf51da6bfb`.*
+*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -c` · 2026-09-16 · Source: `bench/results/bridge-aarch64.json`, code hash `a4e4781449273f07`.*

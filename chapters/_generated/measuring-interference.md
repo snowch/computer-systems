@@ -7,4 +7,4 @@
 | Worst run's mean | 37561 ns | 52855 ns |
 | Runs disturbed (of 30) | 0 | 2 |
 
-*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/interference-host.json`, code hash `be8280aa7d1be20f`.*
+*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/interference-host.json`, code hash `a61f28e7ddabdbc2`.*

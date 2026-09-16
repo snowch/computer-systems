@@ -9,4 +9,4 @@
    8:	ret
 ```
 
-*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -c` · 2026-09-15 · Source: `bench/results/oscalls-aarch64.json`, code hash `7afb09a31ebaa239`.*
+*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -c` · 2026-09-16 · Source: `bench/results/oscalls-aarch64.json`, code hash `c96fafb73e6d2363`.*

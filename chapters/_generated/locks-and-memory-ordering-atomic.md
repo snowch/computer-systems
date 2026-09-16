@@ -9,7 +9,7 @@
    e:	ret
 ```
 
-*Conditions: target `xv6` · riscv64 cross compiler, any machine — nothing here was executed · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c` · 2026-09-15 · Source: `bench/results/ordering-riscv64.json`, code hash `ca4a581d71356e7a`.*
+*Conditions: target `xv6` · riscv64 cross compiler, any machine — nothing here was executed · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c` · 2026-09-16 · Source: `bench/results/ordering-riscv64.json`, code hash `38c62f7c3dc06b35`.*
 
 **`sysfs_bump_relaxed` compiled for aarch64 at `-O2`** — the `host` target's instruction set, 7 instructions.
 
@@ -24,4 +24,4 @@
   28:	ret
 ```
 
-*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -c` · 2026-09-15 · Source: `bench/results/ordering-aarch64.json`, code hash `7f13621c298f9b63`.*
+*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -c` · 2026-09-16 · Source: `bench/results/ordering-aarch64.json`, code hash `0d1953fc0cc57e43`.*

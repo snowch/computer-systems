@@ -6,4 +6,4 @@
 | `switch` | 2233.0 ns | the same round trip without leaving the thread | ×8.3 |
 | `syscall` | 166.31 ns | an empty function call | ×396.0 |
 
-*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/oscost-host.json`, code hash `33c98567b73a81b1`.*
+*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/oscost-host.json`, code hash `57ccbc7b83141b44`.*

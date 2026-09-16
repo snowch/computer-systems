@@ -51,4 +51,4 @@
  140:	ret
 ```
 
-*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -c` · 2026-09-15 · Source: `bench/results/profiling-aarch64.json`, code hash `735410ab10228181`.*
+*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -c` · 2026-09-16 · Source: `bench/results/profiling-aarch64.json`, code hash `ddc61f26d4b78ef5`.*

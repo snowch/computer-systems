@@ -20,4 +20,4 @@
 | 32768 KiB | 6 ns |
 | 65536 KiB | 6 ns |
 
-*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/hierarchy-host.json`, code hash `443aef914a9daf98`.*
+*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/hierarchy-host.json`, code hash `5c56c53693903430`.*

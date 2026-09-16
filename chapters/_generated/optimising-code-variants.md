@@ -9,4 +9,4 @@
 | `unrolled` | 92 | 38 | 54 |
 | **distinct programs** | 4 | 3 | 3 |
 
-*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -g -Wall -Wextra at each of -O0 -O2 -O3` · 2026-09-15 · Source: `bench/results/loops-aarch64.json`, code hash `3de1816a548d9056`.*
+*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -g -Wall -Wextra at each of -O0 -O2 -O3` · 2026-09-16 · Source: `bench/results/loops-aarch64.json`, code hash `c3d0d07e7cc964ff`.*
