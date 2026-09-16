@@ -31,3 +31,4 @@ xv6/stage/
 bench/results/*.local.json
 
 .DS_Store
+core
