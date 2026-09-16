@@ -1,8 +1,8 @@
-"""Problem 1 of ch05 — interrupt an interrupt.
+"""Problem 1 of the privilege chapter — interrupt an interrupt.
 
 Arrange for the timer to fire while the handler is still running, and make it actually happen.
 
-Predict the default behaviour first — it is not what you would guess from ch05's program alone,
+Predict the default behaviour first — it is not what you would guess from the privilege chapter's program alone,
 and the reason is one bit that the processor changes on your behalf when it takes a trap.
 
 Put your program in `answer_nested.c` beside this file. It must print

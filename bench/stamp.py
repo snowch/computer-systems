@@ -105,14 +105,14 @@ REQUIRED_STAMPS = (
 #: time a docstring changed. ``measure.py`` *is* in it, because it decides how many repetitions a
 #: figure is made of and which statistic is reported, and both change the answer.
 #:
-#: Chapter 14 adds the timing library (``sysfs/lib/timing.c`` and its header) to this tuple when
+#: The measurement chapter adds the timing library (``sysfs/lib/timing.c`` and its header) to this tuple when
 #: it writes one. That single edit invalidates every ``host`` result in the book, which is the
 #: intended behaviour and the reason it happens once, in the chapter that introduces the clock.
 CORE_SOURCES: tuple[str, ...] = ("bench/measure.py",)
 
 #: Sources that are core to *one target only*, keyed by target.
 #:
-#: ch21 adds the book's clock, through which every duration in Part V is read — so a change to
+#: The measurement chapter adds the book's clock, through which every duration in Part V is read — so a change to
 #: it changes what every `host` figure means, and belongs in those figures' fingerprints. It does
 #: not belong in an xv6 result's: a page-table census does not depend on how the book tells the
 #: time, and putting it in CORE_SOURCES made every structural result in Parts III and IV churn the

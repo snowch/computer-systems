@@ -1,6 +1,6 @@
 """Problem 9.3 — which of these counts is a property of the workload?
 
-Chapter 9 records two of the numbers the kernel's census prints and declines the rest. Decide for
+The drivers chapter records two of the numbers the kernel's census prints and declines the rest. Decide for
 yourself, before running anything, which is which.
 
 For each counter below, set `True` if running the identical workload again must give the identical

@@ -1,6 +1,6 @@
-"""Problem 3 of ch07 — where does the frame live?
+"""Problem 3 of the system-call chapter — where does the frame live?
 
-ch07's stub pushes the frame onto whatever stack the caller was using. Say what goes wrong when
+The system-call chapter's stub pushes the frame onto whatever stack the caller was using. Say what goes wrong when
 the caller arrives with a stack pointer it does not own, then change the stub so the frame goes on
 a stack belonging to the handler instead.
 

@@ -1,7 +1,7 @@
 /* Problem 2.1 — two operations this book's library does not contain.
  *
  * Fill in both. Neither is in sysfs/lib/bits.c, so there is nothing to copy; the properties the
- * test checks are in the Problems section of chapter 2, and they are the definition.
+ * test checks are in the Problems section of the representation chapter, and they are the definition.
  *
  * Build and check with:  python3 -m pytest tests/representing_information/test_problem_1_bitops.py
  */
@@ -12,8 +12,8 @@
 
 /* The same bytes in the opposite order: the lowest byte becomes the highest.
  *
- * Not the same as reversing the bits — the bits inside each byte keep their order. Chapter 2's
- * section on byte order says why a machine ever needs this. */
+ * Not the same as reversing the bits — the bits inside each byte keep their order. The representation
+ * chapter's section on byte order says why a machine ever needs this. */
 unsigned long reader_swap_bytes(unsigned long word) {
   (void)word;
   return 0; /* Problem 2.1 */

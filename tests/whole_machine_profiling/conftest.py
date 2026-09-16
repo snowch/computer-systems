@@ -1,4 +1,4 @@
-"""The reader's profile reader, built once for chapter 20's three problems."""
+"""The reader's profile reader, built once for the profiling chapter's three problems."""
 
 from __future__ import annotations
 

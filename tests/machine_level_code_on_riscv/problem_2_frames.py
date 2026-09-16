@@ -1,10 +1,10 @@
-"""Problem 2 of chapter 4 — which of these needs a stack frame?
+"""Problem 2 of the machine-code chapter — which of these needs a stack frame?
 
 Four functions. For each, say whether the compiler gives it a stack frame at `-O2`, and if so
 whether it has to save the return address.
 
 The test compiles each one and reads the answer out of the prologue, so you are predicting what a
-compiler does rather than reciting a rule. Chapter 4's table shows the same measurement for four
+compiler does rather than reciting a rule. The machine-code chapter's table shows the same measurement for four
 different functions, and the reasoning that explains that table explains this one.
 """
 

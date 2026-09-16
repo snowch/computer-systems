@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "bab0a869ca603a7e",
+  "code_fingerprint": "5b66faf4cc779cc6",
   "code_sources": [
     "bench/run_profile.py",
     "sysfs/tools/tally.c",

@@ -1,4 +1,4 @@
-"""The reader's sharing model, built once for chapter 18's three problems."""
+"""The reader's sharing model, built once for the real-hardware ordering chapter's three problems."""
 
 from __future__ import annotations
 

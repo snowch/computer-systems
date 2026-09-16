@@ -556,7 +556,7 @@ def struct_padding(result: str) -> str:
 def dispatch_table() -> str:
     """An array of function pointers, and what an indirect call actually does.
 
-    The pattern ch03 exists to teach and ch16 relies on: a kernel that must do *something*
+    The pattern the kernel-C chapter exists to teach and the interrupts-and-drivers chapter relies on: a kernel that must do *something*
     different for each of several devices does not write a switch, it writes a table and indexes
     it. Drawn because the mechanism is two dereferences — one to fetch the address, one to jump to
     it — and a sentence describing that is worth much less than a picture of it.
@@ -618,8 +618,8 @@ def dispatch_table() -> str:
         width - 2 * margin,
         [
             "A direct call names its target inside the instruction; the CPU knows where it is going",
-            "before it fetches the operand. An indirect call does not, and ch24 measures what the",
-            "branch predictor makes of that difference.",
+            "before it fetches the operand. An indirect call does not, and the CPU chapter measures",
+            "what the branch predictor makes of that difference.",
         ],
     )
     return _svg(
@@ -697,7 +697,7 @@ def stack_frame() -> str:
 def sections_to_segments(result: str) -> str:
     """Eighteen sections become two segments, and one of them is partly not in the file.
 
-    The figure ch12 is for. Sections are the linker's view and segments are the loader's, the same
+    The figure the linking-and-loading chapter is for. Sections are the linker's view and segments are the loader's, the same
     bytes described twice for two audiences, and the collapse from one to the other is where a
     reader stops thinking of an executable as a list of named parts and starts thinking of it as
     an address space. Everything here is read from the stamped result.
@@ -872,8 +872,8 @@ def trap_path(result: str) -> str:
         width - 2 * margin,
         [
             "Counted, not timed. This target cannot say what an instruction costs, and a count is",
-            "what remains true anyway: the path is this long whatever machine runs it. ch26 prices",
-            "the same shape on hardware.",
+            "what remains true anyway: the path is this long whatever machine runs it. The OS-cost",
+            "chapter prices the same shape on hardware.",
         ],
     )
     return _svg(width, int(foot + 48), body, "The path of one system call into the kernel and back")
@@ -1318,8 +1318,8 @@ DIAGRAMS = {
 def bare_trap(result: str) -> str:
     """What the hardware does at a trap, and what it leaves for the handler.
 
-    ch14 draws the same path with a kernel around it. This one is deliberately barer, because the
-    point of ch04 is that the mechanism is separable from the kernel: three registers change, the
+    The traps-and-system-calls chapter draws the same path with a kernel around it. This one is deliberately barer, because the
+    point of the bare-metal trap chapter is that the mechanism is separable from the kernel: three registers change, the
     program counter moves, and *nothing else happens*. Everything a reader associates with a trap
     — a saved frame, a process, a dispatch — is software somebody wrote, and none of it is here.
 
@@ -1403,8 +1403,8 @@ def bare_trap(result: str) -> str:
 def gigapage_alias(result: str) -> str:
     """Three entries, and the one of them that makes two addresses name one byte.
 
-    Deliberately not the address split — ch15 draws that, and this chapter does not walk an
-    address at all. A top-level entry may be a leaf covering a whole gigabyte, so ch06's table has
+    Deliberately not the address split — the virtual-memory chapter draws that, and this chapter does not walk an
+    address at all. A top-level entry may be a leaf covering a whole gigabyte, so the bare-metal paging chapter's table has
     no second level and no third, and what there is to see is the mapping rather than the
     traversal: two of the entries send a gigabyte to itself, and the third sends a different
     gigabyte to the same place.

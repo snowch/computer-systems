@@ -20,10 +20,10 @@
 | `d80:    cbz     x19, db0 <sysfs_tally_scatter+0x6c>` | +15 | 0.0% |
 | `d84:    mov     x5, #0x0                        // #0` | +16 | 0.0% |
 | `d88:    ldr     w4, [x20, x5, lsl #2]` | +17 | 0.0% |
-| `d8c:    add     x5, x5, #0x1` | +18 | 0.18% |
+| `d8c:    add     x5, x5, #0x1` | +18 | 0.36% |
 | `d90:    lsl     x4, x4, #2` | +19 | 0.0% |
 | `d94:    ldr     w6, [x7, x4]` | +20 | 0.0% |
-| `d98:    add     w6, w6, #0x1` | +21 | 94.75% |
+| `d98:    add     w6, w6, #0x1` | +21 | 92.71% |
 | `d9c:    str     w6, [x7, x4]` | +22 | 0.0% |
 | `da0:    cmp     x19, x5` | +23 | 0.0% |
 | `da4:    b.hi    d88 <sysfs_tally_scatter+0x44>  // b.pmore` | +24 | 0.0% |
@@ -34,10 +34,10 @@
 | `db8:    mov     x1, #0x1                        // #1` | +29 | 0.0% |
 | `dbc:    nop` | +30 | 0.0% |
 | `dc0:    ldr     w3, [x7, x1, lsl #2]` | +31 | 0.0% |
-| `dc4:    cmp     x21, x1` | +32 | 4.32% |
-| `dc8:    umaddl  x0, w3, w1, x0` | +33 | 0.0% |
+| `dc4:    cmp     x21, x1` | +32 | 6.39% |
+| `dc8:    umaddl  x0, w3, w1, x0` | +33 | 0.18% |
 | `dcc:    add     x1, x1, #0x1` | +34 | 0.0% |
-| `dd0:    b.ne    dc0 <sysfs_tally_scatter+0x7c>  // b.any` | +35 | 0.74% |
+| `dd0:    b.ne    dc0 <sysfs_tally_scatter+0x7c>  // b.any` | +35 | 0.36% |
 | `dd4:    ldp     x19, x20, [sp, #16]` | +36 | 0.0% |
 | `dd8:    ldp     x21, x22, [sp, #32]` | +37 | 0.0% |
 | `ddc:    ldp     x29, x30, [sp], #48` | +38 | 0.0% |
@@ -49,4 +49,4 @@
 | `df4:    ldp     x29, x30, [sp], #48` | +44 | 0.0% |
 | `df8:    ret` | +45 | 0.0% |
 
-*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/skid-host.json`, code hash `50c358f27997a366`.*
+*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/skid-host.json`, code hash `3a450078d08a5bce`.*

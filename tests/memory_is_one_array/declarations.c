@@ -31,7 +31,7 @@
  *
  * Read from the name outwards, taking whatever binds tightest first: `[]` and `()` bind tighter
  * than `*`, and parentheses override that. The two that differ only by a pair of brackets are the
- * reason this problem exists — one of them is how every driver in ch16 is reached.
+ * reason this problem exists — one of them is how every driver in the drivers chapter is reached.
  */
 #define D_VALUE 0
 #define D_POINTER 1

@@ -1,6 +1,6 @@
-"""Problem 1 of ch04 — why four, and when is it not?
+"""Problem 1 of the trap chapter — why four, and when is it not?
 
-ch04's handler adds four to `mepc` before returning. Say what that four actually is, and then
+The trap chapter's handler adds four to `mepc` before returning. Say what that four actually is, and then
 give a case in this instruction set where adding four would resume in the wrong place.
 
 The second half is the point. RISC-V is not a fixed-width instruction set in the way the first

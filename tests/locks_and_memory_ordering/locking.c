@@ -3,7 +3,7 @@
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
  * None of these is in the repository. `sysfs/lib/ordering.c` shows what five kinds of increment
- * compile to and contains no lock; the kernel's own spinlock is xv6's, is discussed in chapter 10,
+ * compile to and contains no lock; the kernel's own spinlock is xv6's, is discussed in the locks chapter,
  * and is deliberately not the shape you are asked for here.
  *
  *   python3 -m pytest tests/locks_and_memory_ordering
@@ -26,7 +26,7 @@
  * Two things to get right, and only the first is about mutual exclusion:
  *
  *   - taking the lock must be one indivisible operation, because a read followed by a write is
- *     two things and something can happen in between — chapter 10 prints what that looks like;
+ *     two things and something can happen in between — the locks chapter prints what that looks like;
  *   - the ordering must be such that work done inside the critical section is visible to the next
  *     thread in. A correct exchange with the wrong memory order is a lock that protects nothing
  *     on a weakly ordered machine, and passes every test on a strongly ordered one.
@@ -112,7 +112,7 @@ int locking_order_conflicts(const char *first_path, const char *second_path) {
 static struct locking_lock the_lock;
 
 /* volatile so that the compiler emits the load, the add and the store rather than proving to
- * itself that it can do the whole loop in a register. That sequence is what chapter 10 is about,
+ * itself that it can do the whole loop in a register. That sequence is what the locks chapter is about,
  * and a critical section optimised out of existence protects nothing and proves nothing. */
 static volatile long guarded;
 

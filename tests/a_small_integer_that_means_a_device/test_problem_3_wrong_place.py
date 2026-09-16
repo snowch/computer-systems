@@ -1,4 +1,4 @@
-"""Checks Problem 8.3 against ch08's own committed figure, so the regression is measured."""
+"""Checks Problem 8.3 against the device-descriptor chapter's own committed figure, so the regression is measured."""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ def test_the_sharing_really_stops(tmp_path):
 
     assert "cursor_after_dup_write" in fields, "the program did not report a position"
     assert fields["cursor_after_dup_write"] != correct, (
-        "the position still ends where ch08's does, so the two descriptors are still sharing one"
+        "the position still ends where the device-descriptor chapter's does, so the two descriptors are still sharing one"
     )
     assert fields.get("dup_shares_the_open_file") == 0, (
         "the program still claims the duplicate shares an open file"

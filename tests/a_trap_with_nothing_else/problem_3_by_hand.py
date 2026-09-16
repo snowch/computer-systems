@@ -1,6 +1,6 @@
-"""Problem 3 of ch04 — take the compiler's help away.
+"""Problem 3 of the trap chapter — take the compiler's help away.
 
-ch04's handler is declared `interrupt("machine")`, and the compiler therefore saves the registers
+The trap chapter's handler is declared `interrupt("machine")`, and the compiler therefore saves the registers
 it uses and ends the function with `mret` instead of `ret`. Write one that does neither: an
 ordinary function, with the saving and the return done by you.
 

@@ -44,7 +44,7 @@ echo "== a fresh xv6 boot still gives the answers the book publishes =="
 # submodule or adding a kernel patch can change what the kernel reports while every fingerprint
 # still matches, and the book goes on publishing a number nothing produces any more.
 #
-# ch13 did exactly that: its census patch grew the kernel and its workload added a user program,
+# the traps-and-system-calls chapter did exactly that: its census patch grew the kernel and its workload added a user program,
 # and the committed setup result described the kernel of five chapters earlier. This check lived
 # only in .github/workflows/quality.yml at the time, so six commits passed `make check` locally
 # while CI was red. That is the whole argument for this script being the single source of truth:
@@ -61,17 +61,17 @@ echo "== disassembly listings still match the compiler =="
 # simply wrong. Both are fixed by `make bench-listings && make figures`.
 python3 -m bench.run_disasm --check
 
-echo "== the toolchain still produces the files ch09 counts =="
+echo "== the toolchain still produces the files the program-end-to-end chapter counts =="
 # Same argument as the listings above: sizes and symbol counts are compiler output, not machine
 # measurements, so CI can re-derive them rather than trust the committed copy. This one also
 # builds xv6, because one of the numbers is the size of the same program linked by xv6's own
-# user library — the comparison ch09 closes on.
+# user library — the comparison the program-end-to-end chapter closes on.
 python3 -m bench.run_stages --check
 python3 -m bench.run_frames --check
 python3 -m bench.run_elf --check
 
 echo "== the trap census still says what the book prints =="
-# Boots the patched kernel and re-runs ch13's workload. Only the deterministic half of the census
+# Boots the patched kernel and re-runs the traps-and-system-calls chapter's workload. Only the deterministic half of the census
 # is recorded, so this is a real check rather than a coin toss: a patch that changed how many
 # system calls the shell makes would move the number, and moving it silently is the failure the
 # whole stamping scheme exists to prevent.
@@ -82,19 +82,19 @@ echo "== the page tables still have the shape the book prints =="
 # the run, so this is a real check: a kernel patch that changed the layout, or a submodule bump
 # that moved a mapping, would show up here as a shape the chapter no longer describes.
 #
-# It also re-runs ch14's cross-check — the Sv39 model derives the table count from the addresses,
+# It also re-runs the virtual-memory chapter's cross-check — the Sv39 model derives the table count from the addresses,
 # the kernel counts by walking — and refuses to stamp or pass if the two stop agreeing.
 python3 -m bench.run_pagetable --check
 
 echo "== the fault census still costs what the book prints =="
-# ch15's exchange rate: pages allocated and faults taken, under each of the kernel's two
+# the page-faults chapter's exchange rate: pages allocated and faults taken, under each of the kernel's two
 # allocation policies. The workload fixes every quantity and prints them, and the runner refuses
 # a census that disagrees with the program, one latched from a different process, or one in which
 # the handler declined a fault.
 python3 -m bench.run_faults --check
 
 echo "== the interrupt census still says what the book prints =="
-# ch16's disk figure depends on the filesystem image as well as on the code, and nothing else in
+# the interrupts-and-drivers chapter's disk figure depends on the filesystem image as well as on the code, and nothing else in
 # the stamping scheme covers fs.img — so this check is the only thing that would notice a later
 # chapter adding an xv6 program and moving the number. The console counts this deliberately does
 # not record are the ones that vary; see the runner's docstring.
@@ -111,37 +111,37 @@ python3 -m bench.run_switch --check
 echo "== one byte still costs the disk what the book prints =="
 python3 -m bench.run_blocks --check
 
-echo "== both targets still agree about ch20's program =="
+echo "== both targets still agree about the two-routes chapter's program =="
 python3 -m bench.run_bridge --check
 
-echo "== the compiler still makes the same of ch23's five loops =="
+echo "== the compiler still makes the same of the optimisation chapter's five loops =="
 python3 -m bench.run_loops --check
 
-echo "== the compiler still leaves ch24 a branch to measure =="
+echo "== the compiler still leaves the pipeline chapter a branch to measure =="
 python3 -m bench.run_pipeline --check
 
-echo "== ch25's counters still land where the book says =="
+echo "== the false-sharing chapter's counters still land where the book says =="
 python3 -m bench.run_sharing --check
 
-echo "== ch27's program still has the shape the chapter profiles =="
+echo "== the profiling chapter's program still has the shape it profiles =="
 python3 -m bench.run_profile --check
 
-echo "== ch01's first program still says what the chapter quotes =="
+echo "== the memory-as-one-array chapter's first program still says what it quotes =="
 python3 -m bench.run_firstc --check
 
-echo "== the kernel still lacks what ch02 says it lacks =="
+echo "== the kernel still lacks what the freestanding-C chapter says it lacks =="
 python3 -m bench.run_kernelc --check
 
 echo "== Part II's programs still do what their chapters say =="
 # These boot for real, on a machine with no operating system on it, and each one is refused
 # unless it still demonstrates its chapter's claim. A program that merely boots and exits proves
-# nothing: ch04's trap could resume without having been taken, ch06's harts could lose nothing.
+# nothing: the bare-metal trap chapter's trap could resume without having been taken, the bare-metal paging chapter's harts could lose nothing.
 python3 -m bench.run_bare --check
 
 echo "== appendix D still describes the kernel tree that is checked out =="
 python3 -m bench.run_filemap --check
 
-echo "== the compiler still refuses ch28's three loops =="
+echo "== the compiler still refuses the vectors chapter's three loops =="
 python3 -m bench.run_vectors --check
 
 echo "== figures and tables up to date =="

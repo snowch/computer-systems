@@ -1,6 +1,6 @@
-"""Problem 1 of ch08 — duplicate onto a number in use.
+"""Problem 1 of the device-descriptor chapter — duplicate onto a number in use.
 
-ch08's `dup` overwrites whatever was at the target slot without a word. Decide what *should*
+The device-descriptor chapter's `dup` overwrites whatever was at the target slot without a word. Decide what *should*
 happen when the target is already open, implement it, and justify the choice.
 
 There is more than one defensible answer. Refusing every duplicate is not one of them.

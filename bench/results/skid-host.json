@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "50c358f27997a366",
+  "code_fingerprint": "3a450078d08a5bce",
   "code_sources": [
     "bench/run_profilecost.py",
     "sysfs/tools/tally.c",
@@ -12,7 +12,7 @@
     "note": "where the samples fell, uncorrected; the gap to the stalling instruction is the chapter's subject",
     "workload": "sysfs/tools/tally.c scatter, annotated"
   },
-  "generated_at": "2026-09-16T12:45:27+00:00",
+  "generated_at": "2026-09-16T16:30:51+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "aarch64",
@@ -147,7 +147,7 @@
       },
       {
         "offset": 18,
-        "samples_pct": 0.18,
+        "samples_pct": 0.36,
         "text": "d8c:    add     x5, x5, #0x1"
       },
       {
@@ -162,7 +162,7 @@
       },
       {
         "offset": 21,
-        "samples_pct": 94.75,
+        "samples_pct": 92.71,
         "text": "d98:    add     w6, w6, #0x1"
       },
       {
@@ -217,12 +217,12 @@
       },
       {
         "offset": 32,
-        "samples_pct": 4.32,
+        "samples_pct": 6.39,
         "text": "dc4:    cmp     x21, x1"
       },
       {
         "offset": 33,
-        "samples_pct": 0.0,
+        "samples_pct": 0.18,
         "text": "dc8:    umaddl  x0, w3, w1, x0"
       },
       {
@@ -232,7 +232,7 @@
       },
       {
         "offset": 35,
-        "samples_pct": 0.74,
+        "samples_pct": 0.36,
         "text": "dd0:    b.ne    dc0 <sysfs_tally_scatter+0x7c>  // b.any"
       },
       {

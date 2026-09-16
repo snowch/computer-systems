@@ -1,4 +1,4 @@
-"""Problem 2 of ch07 — save one register fewer.
+"""Problem 2 of the system-call chapter — save one register fewer.
 
 Remove exactly one store and its matching load from the entry stub, and write a program in which
 that omission is visible in the output rather than merely possible.

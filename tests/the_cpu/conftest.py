@@ -1,4 +1,4 @@
-"""The reader's predictor model, built once for chapter 17's problems."""
+"""The reader's predictor model, built once for the CPU chapter's problems."""
 
 from __future__ import annotations
 

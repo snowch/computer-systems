@@ -90,7 +90,7 @@ int crossing_pair_for(char claim, char from, char *other) {
  *   't'  how long it takes
  *
  * Return 1 if observing it on one of this book's targets tells you the value on the other, and 0
- * if it does not. Assume the same source compiled for both, as chapter 13's program is.
+ * if it does not. Assume the same source compiled for both, as the crossing chapter's program is.
  *
  * Two of these are less obvious than they look, and are worth thinking about rather than sorting
  * into "structure" and "cost".

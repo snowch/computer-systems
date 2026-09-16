@@ -1,6 +1,6 @@
-"""Problem 3 of ch06 — lose an update the other way round.
+"""Problem 3 of the page-table chapter — lose an update the other way round.
 
-ch06's program loses the second hart's increment: hart 0 reads, hart 1 does its whole increment
+The page-table chapter's program loses the second hart's increment: hart 0 reads, hart 1 does its whole increment
 in the gap, hart 0 writes over it. Rearrange the handshake so hart *0* is the one whose work
 disappears instead, without changing what the counter ends up holding.
 

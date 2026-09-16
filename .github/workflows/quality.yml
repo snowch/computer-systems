@@ -7,7 +7,11 @@ on:
 
 jobs:
   quality:
-    runs-on: ubuntu-latest
+    # Pinned, not `ubuntu-latest`: the disassembly listings are captured with this runner's gcc
+    # (13.3.0 on 24.04), and `Dockerfile` pins the same version so a listing regenerated locally
+    # matches what CI checks. When `ubuntu-latest` rolls to a newer gcc, that is a deliberate
+    # re-capture — bump this and the Dockerfile together, and commit the moved listings on their own.
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4

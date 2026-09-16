@@ -2,8 +2,8 @@
 
 | Symbol | Before | After |
 |---|---|---|
-| `sysfs_tally_scatter` | 98.86% | 0.0% |
-| `0x00000000000a4358` | 1.09% | 4.27% |
-| `sysfs_tally_partitioned` | 0.0% | 95.66% |
+| `sysfs_tally_scatter` | 99.08% | 0.0% |
+| `0x00000000000a4358` | 0.89% | 6.39% |
+| `sysfs_tally_partitioned` | 0.0% | 93.55% |
 
-*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/profile-host.json`, code hash `50c358f27997a366`.*
+*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/profile-host.json`, code hash `3a450078d08a5bce`.*

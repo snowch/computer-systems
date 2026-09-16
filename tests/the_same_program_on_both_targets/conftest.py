@@ -1,4 +1,4 @@
-"""The reader's crossing model, built once for chapter 13's three problems."""
+"""The reader's crossing model, built once for the crossing chapter's three problems."""
 
 from __future__ import annotations
 

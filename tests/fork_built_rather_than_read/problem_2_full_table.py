@@ -1,6 +1,6 @@
-"""Problem 2 of ch09 — run out of processes.
+"""Problem 2 of the fork chapter — run out of processes.
 
-ch09's table has room for two and `fork` is called once, so the question of what happens when
+The fork chapter's table has room for two and `fork` is called once, so the question of what happens when
 there is no room never arises. Make it arise: call `fork` until the table is full, decide what it
 should return then, and show the caller handling it.
 

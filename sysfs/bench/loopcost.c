@@ -1,4 +1,4 @@
-/* loopcost — what chapter 18's five hand-optimisations cost, on the machine being measured.
+/* loopcost — what the five hand-optimisations cost, on the machine being measured.
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *

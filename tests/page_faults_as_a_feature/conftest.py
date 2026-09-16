@@ -1,4 +1,4 @@
-"""The reader's fault-policy code, built once for chapter 8's three problems."""
+"""The reader's fault-policy code, built once for the page-faults chapter's three problems."""
 
 from __future__ import annotations
 

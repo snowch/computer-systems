@@ -6,7 +6,7 @@ processor could mispredict — and then be graded against what this book's compi
 
     python3 -m pytest tests/the_cpu/test_problem_1_branchy.py
 
-If you get this wrong, you are in good company: this book's own chapter 17 was written on the
+If you get this wrong, you are in good company: this book's own CPU chapter was written on the
 assumption that the first one would, and the measurement said otherwise.
 """
 

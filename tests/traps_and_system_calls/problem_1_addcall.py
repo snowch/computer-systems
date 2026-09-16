@@ -1,4 +1,4 @@
-"""Problem 1 of chapter 6 — add a system call, end to end.
+"""Problem 1 of the traps-and-system-calls chapter — add a system call, end to end.
 
 The kernel counts traps and prints the census on Ctrl-T. That is fine for a person at a console
 and no use at all to a program, which cannot press Ctrl-T. Give it a system call.
@@ -12,7 +12,7 @@ declaration the user program compiles against, the stub that issues `ecall`, and
 function itself are in five different places, and leaving any one of them out produces a failure
 that does not mention the others.
 
-Your work goes in `xv6/patches/` as a patch of your own — chapter 6 explains the mechanism, and
+Your work goes in `xv6/patches/` as a patch of your own — the traps-and-system-calls chapter explains the mechanism, and
 `xv6/patches/13-trap-census.patch` is a worked example of the shape.
 """
 

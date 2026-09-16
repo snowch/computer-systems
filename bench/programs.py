@@ -116,7 +116,7 @@ PROGRAMS: tuple[Program, ...] = discover()
 
 
 #: Two targets can hold a program of the same name — `sameanswer` and `sysprobe` exist for both
-#: `host` and `xv6`, which is the point of ch21. Looking one up by name alone is therefore
+#: `host` and `xv6`, which is the point of the two-routes chapter. Looking one up by name alone is therefore
 #: ambiguous, and the lookup says so rather than picking.
 def find(name: str, target: str | None = None) -> Program:
     matches = [p for p in PROGRAMS if p.name == name and (target is None or p.target == target)]

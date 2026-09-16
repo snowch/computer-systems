@@ -6,6 +6,6 @@
 | `hoisted` | 1.67 ns per element |
 | `plain` | 1.67 ns per element |
 | `reduced` | 1.67 ns per element |
-| `unrolled` | 1.72 ns per element |
+| `unrolled` | 1.71 ns per element |
 
-*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/loops-host.json`, code hash `67b354cb24f95452`.*
+*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/loops-host.json`, code hash `4c9f9a19e3f96bed`.*

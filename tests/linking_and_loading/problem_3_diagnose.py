@@ -1,4 +1,4 @@
-"""Problem 3 of chapter 5 — read the error, name the cause.
+"""Problem 3 of the linking chapter — read the error, name the cause.
 
 Four link failures, each given as the message a linker actually printed. For each, say what went
 wrong, choosing from the causes below.

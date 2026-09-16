@@ -65,6 +65,49 @@ bench-bare:  ## Re-run every bare-metal program (runs anywhere QEMU and the cros
 bench-listings:  ## Re-capture every disassembly listing (needs both cross compilers)
 	$(PYTHON) -m bench.run_disasm
 
+# -- the pinned toolchain (deterministic results) ---------------------------------------
+#
+# Everything that is *not* a host timing — the listings, and the structural xv6 and bare results —
+# is decided by the compiler version, not by hardware, so it must be reproduced with the exact gcc
+# the committed results were captured with (13.3.0, Ubuntu 24.04). `Dockerfile` pins it. Host
+# timings are never in here: they are `bench-board`, on real silicon.
+
+IMAGE ?= sfs-toolchain
+
+.PHONY: docker-image
+docker-image:  ## Build the pinned-toolchain image (gcc 13.3.0, both cross targets, QEMU)
+	docker build --platform linux/amd64 -t $(IMAGE) .
+
+.PHONY: regen-deterministic
+regen-deterministic:  ## Re-capture every non-host result with the pinned toolchain (run in the image)
+	$(PYTHON) -m bench.run_setup --target xv6
+	$(PYTHON) -m bench.run_disasm
+	$(PYTHON) -m bench.run_stages
+	$(PYTHON) -m bench.run_frames
+	$(PYTHON) -m bench.run_elf
+	$(PYTHON) -m bench.run_traps
+	$(PYTHON) -m bench.run_pagetable
+	$(PYTHON) -m bench.run_faults
+	$(PYTHON) -m bench.run_interrupts
+	$(PYTHON) -m bench.run_locks
+	$(PYTHON) -m bench.run_switch
+	$(PYTHON) -m bench.run_blocks
+	$(PYTHON) -m bench.run_bridge
+	$(PYTHON) -m bench.run_loops
+	$(PYTHON) -m bench.run_pipeline
+	$(PYTHON) -m bench.run_sharing
+	$(PYTHON) -m bench.run_profile
+	$(PYTHON) -m bench.run_firstc
+	$(PYTHON) -m bench.run_kernelc
+	$(PYTHON) -m bench.run_bare
+	$(PYTHON) -m bench.run_filemap
+	$(PYTHON) -m bench.run_vectors
+
+.PHONY: docker-regen
+docker-regen: docker-image  ## Build the image and re-capture every deterministic result inside it
+	docker run --rm --platform linux/amd64 -v "$(CURDIR):/work" -w /work $(IMAGE) \
+	  make regen-deterministic
+
 .PHONY: bench-board
 bench-board:  ## Re-run every host-target measurement. ON THE MACHINE BEING MEASURED ONLY.
 	@$(PYTHON) -c 'import sys; sys.path.insert(0, "."); from bench.stamp import classify_machine; \

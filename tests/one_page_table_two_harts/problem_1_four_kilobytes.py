@@ -1,6 +1,6 @@
-"""Problem 1 of ch06 — map a page rather than a gigabyte.
+"""Problem 1 of the page-table chapter — map a page rather than a gigabyte.
 
-ch06's table has three entries and no second level, because a top-level entry may be a leaf
+The page-table chapter's table has three entries and no second level, because a top-level entry may be a leaf
 covering a whole gigabyte. Change the alias so it covers four kilobytes instead, which means
 building the two levels the chapter skipped.
 

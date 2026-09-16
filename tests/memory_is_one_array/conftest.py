@@ -1,4 +1,4 @@
-"""The reader's exercises, built once for chapter 1's three problems."""
+"""The reader's exercises, built once for the three problems of *Memory Is One Array*."""
 
 from __future__ import annotations
 

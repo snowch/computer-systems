@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "50c358f27997a366",
+  "code_fingerprint": "3a450078d08a5bce",
   "code_sources": [
     "bench/run_profilecost.py",
     "sysfs/tools/tally.c",
@@ -12,7 +12,7 @@
     "note": "one arrangement per process, so each profile describes one of them",
     "workload": "sysfs/tools/tally.c scatter, then partitioned"
   },
-  "generated_at": "2026-09-16T12:45:27+00:00",
+  "generated_at": "2026-09-16T16:30:51+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "aarch64",
@@ -57,16 +57,16 @@
     "governor": "ondemand",
     "symbols": {
       "0x00000000000a4358": {
-        "after_pct": 4.27,
-        "before_pct": 1.09
+        "after_pct": 6.39,
+        "before_pct": 0.89
       },
       "sysfs_tally_partitioned": {
-        "after_pct": 95.66,
+        "after_pct": 93.55,
         "before_pct": 0.0
       },
       "sysfs_tally_scatter": {
         "after_pct": 0.0,
-        "before_pct": 98.86
+        "before_pct": 99.08
       }
     }
   },

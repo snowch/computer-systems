@@ -1,4 +1,4 @@
-"""The reader's locking code, built once for chapter 10's three problems."""
+"""The reader's locking code, built once for the locks chapter's three problems."""
 
 from __future__ import annotations
 

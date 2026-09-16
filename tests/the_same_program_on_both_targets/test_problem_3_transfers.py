@@ -12,7 +12,7 @@ from tests.the_same_program_on_both_targets.harness import ask
 
 CASES = {
     "a": 1,  # the answer: the whole reason the book can use two targets at all
-    "l": 1,  # layout: both targets are LP64 and ch10 measured them agreeing
+    "l": 1,  # layout: both targets are LP64 and the setup chapter measured them agreeing
     "i": 0,  # instruction count: different instruction sets emit different numbers of them
     "c": 0,  # cache misses: one of the targets has no cache
     "p": 0,  # page faults: same mechanism, different kernels, different policies

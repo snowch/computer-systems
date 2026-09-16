@@ -1,6 +1,6 @@
-"""Problem 2 of ch05 — advance `mepc` on an interrupt.
+"""Problem 2 of the privilege chapter — advance `mepc` on an interrupt.
 
-ch04's handler added four to `mepc`, correctly. Make an interrupt handler do the same, and produce
+The trap chapter's handler added four to `mepc`, correctly. Make an interrupt handler do the same, and produce
 a program in which the damage is *visible in the output* rather than inferred.
 
 The damage is not a crash, which is what makes it worth a problem.

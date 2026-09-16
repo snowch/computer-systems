@@ -1,4 +1,4 @@
-"""Problem 3 of chapter 2 — find the input that makes this wrong.
+"""Problem 3 of the representation chapter — find the input that makes this wrong.
 
 Here is a function that decides whether a read of `length` bytes starting at `start` stays inside
 a buffer of `size` bytes. It is the shape of check that appears in real code, it looks correct,
@@ -12,7 +12,7 @@ Find one triple where it answers *yes* and the read would in fact run off the en
 performs the arithmetic in a width that cannot overflow, so it knows the true answer; your job is
 to find where the function disagrees with it.
 
-Chapter 2's section on arithmetic that is not arithmetic says what goes wrong. The type is
+The representation chapter's section on arithmetic that is not arithmetic says what goes wrong. The type is
 `unsigned`, so nothing here is undefined — the machine does exactly what it was told. That is the
 uncomfortable part.
 """

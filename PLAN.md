@@ -106,14 +106,14 @@ which renders as an **Answers the cost of** row in its header and is checked by
 
 | Part V chapter | Costs what was explained in |
 |---|---|
-| ch25 The Memory Hierarchy | ch11 (layout and alignment), ch15 (address translation) |
-| ch26 Optimising Code | ch12 (what the compiler emitted) |
-| ch27 The CPU | ch12 (the instructions), now priced |
-| ch28 Memory Ordering on Real Hardware | ch18 (locks, fences, RVWMO) |
-| ch27 The OS Layer's Cost | ch14 (traps), ch16 (faults), ch19 (switches) |
+| [ch25](#the-memory-hierarchy) The Memory Hierarchy | [ch13](#representing-information) (layout and alignment), [ch17](#virtual-memory) (address translation) |
+| [ch26](#optimising-code) Optimising Code | [ch14](#machine-level-code-on-riscv) (what the compiler emitted) |
+| [ch27](#the-cpu) The CPU | [ch14](#machine-level-code-on-riscv) (the instructions), now priced |
+| [ch28](#memory-ordering-on-real-hardware) Memory Ordering on Real Hardware | [ch20](#locks-and-memory-ordering) (locks, fences, RVWMO) |
+| [ch29](#the-os-layers-cost) The OS Layer's Cost | [ch16](#traps-and-system-calls) (traps), [ch18](#page-faults-as-a-feature) (faults), [ch21](#scheduling-and-context-switches) (switches) |
 
-Three Part V chapters are deliberately unpaired and the test knows it: ch22 teaches measurement
-itself, ch28 is about the whole machine rather than one mechanism, and ch29 concerns hardware Part
+Three Part V chapters are deliberately unpaired and the test knows it: [ch24](#measuring) teaches measurement
+itself, [ch30](#whole-machine-profiling) is about the whole machine rather than one mechanism, and [ch31](#vectors) concerns hardware Part
 II never described. Anything else unpaired is an oversight.
 
 The reader therefore arrives at each Part V chapter already understanding the mechanism and
@@ -171,8 +171,8 @@ the reader's other language.
 
 **What this part deliberately does not cover, because a later chapter measures it instead.** Type
 sizes, alignment, byte order and struct padding are [ch13](#representing-information) and are established there by
-measurement rather than assertion. Bit manipulation and page-table-entry encoding are ch11 and
-ch15. The preprocessor is ch10. How a system call reaches the kernel is ch14. A part that repeated
+measurement rather than assertion. Bit manipulation and page-table-entry encoding are [ch13](#representing-information) and
+[ch17](#virtual-memory). The preprocessor is [ch12](#what-a-computer-does-with-a-program). How a system call reaches the kernel is [ch16](#traps-and-system-calls). A part that repeated
 those would be the book disagreeing with itself, which is what ERRATA.md exists to stop.
 
 #### ch01 · Setting Up the Board — target `host`
@@ -187,8 +187,8 @@ those would be the book disagreeing with itself, which is what ERRATA.md exists 
   is the honest state: its measurement is a report about hardware that has to exist first.
 - **Problems.** Decide which `perf stat` outcomes are counts of something the hardware did; say
   how far through the book a machine gets given what it can count and sample. Python stubs.
-- **Why separate from ch00.** The board is not needed until ch23 and the emulated targets are
-  needed immediately, so ch00 carried a note telling the reader to do half of it now and come back.
+- **Why separate from [ch00](#prerequisites-and-setup).** The board is not needed until [ch23](#the-same-program-on-both-targets) and the emulated targets are
+  needed immediately, so [ch00](#prerequisites-and-setup) carried a note telling the reader to do half of it now and come back.
   Two chapters in that order say it without the note.
 
 #### ch02 · Reading a Listing — target `both`
@@ -207,7 +207,7 @@ those would be the book disagreeing with itself, which is what ERRATA.md exists 
   rather than C: this chapter comes before any.
 - **Why here.** Six chapters put a listing in front of the reader, the first of them immediately
   after this one, and the notation that carries most of the weight is the one most likely to be
-  read as arithmetic. It was a collapsed note inside ch00 and then an appendix section, and in
+  read as arithmetic. It was a collapsed note inside [ch00](#prerequisites-and-setup) and then an appendix section, and in
   both places a reader arriving at `4(a0)` had to go and find it.
 
 #### ch03 · Memory Is One Array — target `xv6`
@@ -278,10 +278,10 @@ xv6's for the same thing. No chapter here walks a reader through a finished kern
 #### ch06 · A Trap, With Nothing Else in the Machine — target `bare`
 
 - **Objectives.** The whole of a trap: `mtvec` says where, `mepc` says where you were, `mret` goes
-  back. That a handler saving one register can be correct here, and why ch14's cannot be.
+  back. That a handler saving one register can be correct here, and why [ch16](#traps-and-system-calls)'s cannot be.
 - **Code.** `bare/trap.c` and its boot stub — the smallest complete program that takes a trap.
 - **Measurements.** What the program printed, and the instruction count of the handler, so the
-  contrast with ch14's trap path is a number rather than an impression.
+  contrast with [ch16](#traps-and-system-calls)'s trap path is a number rather than an impression.
 - **Problems.** Return somewhere other than the next instruction; take a fault rather than an
   `ecall`; say what happens if `mepc` is not advanced.
 
@@ -310,10 +310,10 @@ xv6's for the same thing. No chapter here walks a reader through a finished kern
 
 - **Objectives.** What has to exist before `ecall` is a *system call* rather than a trap: a call
   number, a place to put arguments, a place to put a result, and a dispatch. The register problem
-  becomes real here — ch04's handler knew its caller, and this one does not.
+  becomes real here — [ch06](#a-trap-with-nothing-else)'s handler knew its caller, and this one does not.
 - **Code.** `bare/syscall.c` — a handler that saves a full frame, dispatches on a number, and
   returns a value to the caller.
-- **Measurements.** The registers this handler saves, beside ch04's and beside ch14's.
+- **Measurements.** The registers this handler saves, beside [ch06](#a-trap-with-nothing-else)'s and beside [ch16](#traps-and-system-calls)'s.
 - **Problems.** Add a call; return an error; say what breaks if the frame is one register short.
 
 #### ch10 · A Small Integer That Means a Device — target `bare`
@@ -322,16 +322,16 @@ xv6's for the same thing. No chapter here walks a reader through a finished kern
   table the kernel keeps, not a pointer to the thing itself, and the indirection only becomes
   visible when the table can hold more than one kind of entry — so it holds two: the serial port
   and a byte array with a cursor. The same `write` reaches both, and the calling code is
-  identical. This is where ch07's mechanism gets its first API worth calling, and where Part I's
+  identical. This is where [ch09](#a-system-call-of-your-own)'s mechanism gets its first API worth calling, and where Part I's
   *everything is an index* arrives one level up.
 - **Code.** `bare/descriptors.c` — a per-process table, two backends behind one interface, and
-  `read`/`write` dispatching through it as ch07 system calls.
+  `read`/`write` dispatching through it as [ch09](#a-system-call-of-your-own) system calls.
 - **Measurements.** One `write` call reaching two unrelated destinations through one table; the
   table printed before and after a descriptor is duplicated.
 - **Problems.** Duplicate a descriptor onto another number; make a read past the end of the array
   report rather than lie; say what a third backend would have to provide.
-- **Why here rather than folded into ch09.** It is a separate idea and the part's whole premise is
-  that primitives arrive one at a time. Having it already, ch09 can ask what `fork` copies against
+- **Why here rather than folded into [ch09](#a-system-call-of-your-own).** It is a separate idea and the part's whole premise is
+  that primitives arrive one at a time. Having it already, [ch09](#a-system-call-of-your-own) can ask what `fork` copies against
   what it shares using two concepts the reader holds separately, instead of teaching both at once.
 
 #### ch11 · fork, Built Rather Than Read — target `bare`
@@ -515,7 +515,7 @@ on the board and stamped; nothing here may come from an emulator.
   so the reader can see the floor move.
 - **Problems.** Build a timing harness against a specification; find the bias in a supplied
   benchmark; make a wrong benchmark right; **take one piece of the book's own setup advice and
-  test it** — ch00 says to prefer Ethernet over WiFi because the radio's driver does interrupt
+  test it** — [ch00](#prerequisites-and-setup) says to prefer Ethernet over WiFi because the radio's driver does interrupt
   work on the cores being measured, and says outright that it has not measured this. Measure it.
   A reader who can falsify a claim the book makes about its own tooling has the skill the chapter
   is for, and the answer is genuinely unknown to the author.
@@ -548,7 +548,7 @@ on the board and stamped; nothing here may come from an emulator.
 - **Note.** An in-order core would make this chapter easier to read, and the book does not have
   one: the in-order RISC-V option could not sample (§5). The consolation is that every machine a
   reader is likely to optimise is out-of-order, so attributing cycles on a core that reorders them
-  is the skill that transfers. The header says so; ch00 says so at more length.
+  is the skill that transfers. The header says so; [ch00](#prerequisites-and-setup) says so at more length.
 - **Code.** `sysfs/bench/branches.c`, `sysfs/bench/ilp.c`.
 - **Measurements.** Misprediction rate versus branch predictability; IPC versus dependency chain
   length; the cost of a mispredict, derived and stated as derived.
@@ -559,7 +559,7 @@ on the board and stamped; nothing here may come from an emulator.
 
 - **Objectives.** What four cores cost each other: false sharing, cache-line ping-pong, the price
   of atomics and fences — and **a second memory model**, seen next to the first.
-- **Why this is not simply "ch18 with numbers".** [ch20](#locks-and-memory-ordering) teaches RISC-V: `amoswap`, `fence`,
+- **Why this is not simply "[ch20](#locks-and-memory-ordering) with numbers".** [ch20](#locks-and-memory-ordering) teaches RISC-V: `amoswap`, `fence`,
   and RVWMO. This chapter is ARM: load-exclusive/store-exclusive or LSE atomics, `dmb` and its
   domains, and a differently specified model. That is a feature. A reader shown only one weak
   memory model will conclude that model *is* memory ordering; shown two, they learn that "weak
@@ -669,18 +669,18 @@ Sscofpmf extension @riscv-sscofpmf, whose support is thin. A 2025 study of the t
 that are actually purchasable @riscv-pmu-profiling found none that wins: the SiFive U74 counts but
 cannot sample and has no vector unit; the T-Head C910 samples but needs a vendor kernel; the
 SpacemiT X60 has RVV 1.0 and struggles with `cycles` and `instructions` themselves. Staying on
-RISC-V would have made **two of Part V's eight chapters unmeasurable** (ch28 needs sampling, ch29
+RISC-V would have made **two of Part V's eight chapters unmeasurable** ([ch30](#whole-machine-profiling) needs sampling, [ch31](#vectors)
 needs vectors), on hardware that is hard to buy, with a toolchain that has regressed between distro
 releases.
 
-The cost is instruction-set continuity, and it falls on the three chapters that read disassembly —
-ch24, ch25, ch29. The other five are method, and method has no architecture. A reader meeting
-AArch64 in ch24 after learning RISC-V in ch12 is being shown that the concepts were never about
+The cost is instruction-set continuity, and it falls on the five chapters that read disassembly —
+[ch26](#optimising-code), [ch27](#the-cpu), [ch29](#the-os-layers-cost), [ch30](#whole-machine-profiling), [ch31](#vectors). The other three are method, and method has no architecture. A reader meeting
+AArch64 in [ch26](#optimising-code) after learning RISC-V in [ch14](#machine-level-code-on-riscv) is being shown that the concepts were never about
 RISC-V, which is worth more than the tidiness it replaces. `hardware/README.md` carries the
-evidence; ch00 makes the argument to the reader.
+evidence; [ch00](#prerequisites-and-setup) makes the argument to the reader.
 
 **Why a capability, not a part number.** The book originally named one board. Its retailer listing
-went out of stock while ch00 was being written, and the named variant proved hard to buy in the UK
+went out of stock while [ch00](#prerequisites-and-setup) was being written, and the named variant proved hard to buy in the UK
 at all. A book outlives a product listing, so `hardware/README.md` states what the machine must
 *do* and `hardware/find-a-board.txt` is a prompt the reader hands to an assistant that knows
 today's stock. Nothing rests on that recommendation being right: `scripts/verify-setup.py`
@@ -689,30 +689,30 @@ does not.
 
 **What the requirement insists on.** Counting **and** sampling — the one thing with no workaround,
 and two capabilities rather than one, since a machine can have the first without the second. Four
-cores, for ch26. Everything else is preference, including in-order execution: it makes
-microarchitecture legible, the reference machine does not have it, and ch25 says so and is more
+cores, for [ch28](#memory-ordering-on-real-hardware). Everything else is preference, including in-order execution: it makes
+microarchitecture legible, the reference machine does not have it, and [ch27](#the-cpu) says so and is more
 transferable for it, because every machine a reader wants to optimise is out-of-order.
 
 **What follows from readers having different machines.** Absolute numbers are reader-specific, so
 the prose argues in ratios, mechanisms and method, and every figure stamps the machine that
-produced it. Committed figures come from the reference machine; ch23 in particular becomes
+produced it. Committed figures come from the reference machine; [ch25](#the-memory-hierarchy) in particular becomes
 "measure *your* cache hierarchy" rather than a table to memorise, which suits the book's question
 better anyway.
 
 **Five chapters depend on the reference core, and must say so.** The dependency is recorded in
 `bench/outline.py` as a chapter's `assumes` field, which `scripts/new-chapter.py` renders as an
 **Assumes** row in the chapter header, and which `tests/test_book.py` requires to appear both
-there and in ch00's list. A reader opens one chapter, not the book, so the warning has to be
+there and in [Appendix H](#appendix-h)'s list. A reader opens one chapter, not the book, so the warning has to be
 where they land — and recording it as data rather than prose is what stops it being dropped when
 the chapter is finally drafted.
 
 | Chapter | Assumes | Effect elsewhere |
 |---|---|---|
-| ch23 | A particular cache hierarchy | Numbers change entirely; the method is the chapter |
-| ch25 | An out-of-order, 4-wide core and its PMU events | Width, predictor and event names differ; an in-order core is *easier* to read |
-| ch26 | Four cores and this interconnect's coherence | Scaling curve moves; mechanism does not |
-| ch28 | That `perf` can **sample**, not only count | Standard on mainline ARM; the chapter a RISC-V reader cannot run |
-| ch29 | A vector unit (NEON) | On a RISC-V board without RVV 1.0 it reverts to reasoning |
+| [ch25](#the-memory-hierarchy) | A particular cache hierarchy | Numbers change entirely; the method is the chapter |
+| [ch27](#the-cpu) | An out-of-order, 4-wide core and its PMU events | Width, predictor and event names differ; an in-order core is *easier* to read |
+| [ch28](#memory-ordering-on-real-hardware) | Four cores and this interconnect's coherence | Scaling curve moves; mechanism does not |
+| [ch30](#whole-machine-profiling) | That `perf` can **sample**, not only count | Standard on mainline ARM; the chapter a RISC-V reader cannot run |
+| [ch31](#vectors) | A vector unit (NEON) | On a RISC-V board without RVV 1.0 it reverts to reasoning |
 
 No other chapter may acquire a hardware dependency silently: if it needs one, it gets an
 `assumes` entry, and the tests then insist the reader is told.
@@ -729,7 +729,7 @@ The code lives in the **same repository** as the book, so a chapter and its code
 computer-systems/
 ├── sysfs/                  # the companion C library and tools, built up across the book
 │   ├── include/sysfs/      # headers, shared between the two targets
-│   ├── lib/                # shapes.c (the functions ch12 reads), bits.c (ch11), timing.c (ch22)
+│   ├── lib/                # shapes.c, bits.c, timing.c — the shared C the chapters read
 │   ├── tools/              # elfdump, framewalk, sysprobe, profile.sh
 │   └── bench/              # the host-target microbenchmarks (Part V)
 ├── bench/                  # the book's Python tooling
@@ -749,7 +749,7 @@ computer-systems/
 │   ├── patches/            # the book's kernel instrumentation, as diffs
 │   └── stage/              # generated, not in git
 ├── tests/                  # the book's own tests, plus tests/<slug>/ — the reader's problems
-├── chapters/               # ch00.md … ch29.md, plus _generated/ and _figures/
+├── chapters/               # one slug-named file per chapter, plus _generated/ and _figures/
 ├── appendices/
 └── scripts/                # verify-setup, render-figures, verify-numbers, build-pdf, ci-check
 ```
@@ -770,7 +770,7 @@ them. `tests/test_book.py` fails a chapter that uses `:lines:`. Code is never pa
 copy-pasted code goes stale within two chapters.
 
 **Machine code is the one thing that cannot be quoted from the tree**, because it does not exist
-there until a compiler has run. Chapters 4, 16 and 17 need it anyway, so `bench/disasm.py`
+there until a compiler has run. Several chapters need it anyway, so `bench/disasm.py`
 compiles a named function to an object file, disassembles it with the matching `objdump`, and
 writes the output as a stamped result — see §6.3.
 
@@ -924,12 +924,12 @@ bind both the author and any assistant, are **CLAUDE.md §5**. In summary:
 
 | Milestone | Contents | State |
 |---|---|---|
-| **M0 — scaffold** | Repository, pipeline, stamping mechanism, xv6 submodule and staging, `verify-setup.py`, ch00 complete, stubs for everything else | **done** |
+| **M0 — scaffold** | Repository, pipeline, stamping mechanism, xv6 submodule and staging, `verify-setup.py`, [ch00](#prerequisites-and-setup) complete, stubs for everything else | **done** |
 | **M1 — the board** | `make bench-board` run on the reference machine; `setup-host` committed; Appendix C generated | needs the hardware |
-| **M2 — Part III** | ch10–ch13, `sysfs/lib/bits.c`, `elfdump`, `framewalk` | next |
-| **M3 — Part IV** | ch14–ch20 with kernel patches and per-chapter instrumentation | |
-| **M4 — the hinge** | ch21, both targets, first real comparison | needs M1 |
-| **M5 — Part V** | ch22–ch29, every figure measured on the board | needs M1 |
+| **M2 — Part III** | [ch12](#what-a-computer-does-with-a-program)–[ch15](#linking-and-loading), `sysfs/lib/bits.c`, `elfdump`, `framewalk` | next |
+| **M3 — Part IV** | [ch16](#traps-and-system-calls)–[ch22](#the-file-system) with kernel patches and per-chapter instrumentation | |
+| **M4 — the hinge** | [ch23](#the-same-program-on-both-targets), both targets, first real comparison | needs M1 |
+| **M5 — Part V** | [ch24](#measuring)–[ch31](#vectors), every figure measured on the board | needs M1 |
 | **M6 — v1.0** | Appendices complete, ERRATA reconciled, plagiarism check clean, PDF published | |
 
 Part V cannot start before M1, and nothing in M2 or M3 depends on it. That ordering is the point
@@ -1003,8 +1003,8 @@ Recorded so they are not relitigated.
    kernel. The split is the book's argument.
 2. **The targets do not share an instruction set, and Part V is ARM.** Decided on evidence
    ([§5](#5-hardware-and-execution-strategy)): no purchasable RISC-V core both counts and samples,
-   which would have cost ch28 and ch29. Instruction-set continuity was worth less than two
-   chapters, and only ch12, ch24 and ch25 depend on reading disassembly. Revisit if a RISC-V
+   which would have cost [ch30](#whole-machine-profiling) and [ch31](#vectors). Instruction-set continuity was worth less than two
+   chapters, and only [ch26](#optimising-code), [ch27](#the-cpu) and [ch29](#the-os-layers-cost) depend on reading disassembly. Revisit if a RISC-V
    board appears that counts, samples, has RVV 1.0 and upstream Linux support — at which point
    the reference machine can move back and only `hardware/` and five chapter headers change.
 3. **xv6 as a submodule plus patches, never a fork.** `ls xv6/patches/` must remain a complete
@@ -1031,6 +1031,6 @@ Recorded so they are not relitigated.
 1. Run `make bench-board` on the reference machine, commit `bench/results/setup-host.json`, and
    remove the `pending=` marker on `setting-up-the-board-report` in `bench/figures.py` (M1).
 2. Generate Appendix C from the board — the `perf` events it actually has.
-3. Write ch10 with the per-chapter prompt, following
+3. Write [ch12](#what-a-computer-does-with-a-program) with the per-chapter prompt, following
    [§12.1](#121-chapter-template) and [§12.3](#123-definition-of-done-per-chapter).
 4. As Part III lands, keep `ERRATA.md` honest about anything a later chapter contradicts.

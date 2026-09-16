@@ -28,7 +28,7 @@ def test_more_accumulators_always_shorten_the_path():
     The path keeps shrinking as accumulators are added, all the way to one element each — so this
     model predicts that more is always better, and on a real machine it is not. What stops it is
     not the critical path; it is that accumulators live in registers, there are a fixed number of
-    those, and past that point they spill to memory and ch22 takes over. The model is right about
+    those, and past that point they spill to memory and the memory-hierarchy chapter takes over. The model is right about
     what it models and silent about what limits it, which is worth knowing about a model.
     """
     lengths = [expected(1024, a) for a in (1, 2, 4, 8, 1024)]
