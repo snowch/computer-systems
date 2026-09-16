@@ -15,7 +15,7 @@ Regenerate it on your own board with `python3 -m bench.run_perfevents`.
 
 ## What this machine has
 
-```{include} _generated/appendix-c-summary.md
+```{include} ../chapters/_generated/appendix-c-summary.md
 ```
 
 ## Counted, and computed
@@ -37,7 +37,7 @@ counters and the same limit.
 The events the PMU counts — the raw names the kernel exposes for this core. Their meanings are the
 Cortex-A76 manual's @arm-a76-trm, and this book redraws none of them.
 
-```{include} _generated/appendix-c-raw.md
+```{include} ../chapters/_generated/appendix-c-raw.md
 ```
 
 perf also offers portable names. These are not events of their own but aliases the kernel maps onto
@@ -45,7 +45,7 @@ some of the raw events above — and the mapping is the kernel's choice, not a p
 `cache-misses` on one machine and `cache-misses` on another need not be counting the same thing. A
 portable name is a convenience, not a definition.
 
-```{include} _generated/appendix-c-generic.md
+```{include} ../chapters/_generated/appendix-c-generic.md
 ```
 
 ## The software events
@@ -56,5 +56,5 @@ migrations, the CPU clock. Mixed in are perf's own *tool* values, which count no
 computed or simply known: how many CPUs there are, how long the run took. The counted-and-computed
 line runs straight through this list too.
 
-```{include} _generated/appendix-c-software.md
+```{include} ../chapters/_generated/appendix-c-software.md
 ```
