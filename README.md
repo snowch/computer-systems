@@ -16,10 +16,13 @@ mid-trap, then measured on hardware whose performance counters actually work.
 
 ## Status
 
-**Scaffold complete; chapter 0 written.** The pipeline works end to end: both targets build and
-run, the measurement machinery stamps and verifies, the site and the PDF build, and CI checks all
-of it. Chapters 1–21 are stubs carrying their target, their question and the measurements they owe.
+**All thirty-two chapters are written, and seven of the eight appendices.** Twenty figures are
+marked *pending*: they are `host` measurements that have to be taken on the reference machine, and
+until they are you get a box saying so rather than a number. Appendix C waits for the same
+machine — which events a board exposes is a property of its silicon, kernel and firmware together.
 
+- **[NEXT_STEPS.md](NEXT_STEPS.md)** — what is left, in the order it is worth doing, with the
+  commands. Start here.
 - **[PLAN.md](PLAN.md)** — the outline, per-chapter objectives and required measurements, hardware
   strategy, and the settled decisions.
 - **[AUTHORING_GUIDE.md](AUTHORING_GUIDE.md)** — how to write a chapter here.

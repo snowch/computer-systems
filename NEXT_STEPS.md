@@ -1,0 +1,243 @@
+# Next steps
+
+What is left, in the order it is worth doing, with the commands. Written after a page-by-page
+review of all forty-seven pages (PR #25), which fixed what it found and left three jobs behind.
+
+`PLAN.md` §11 is the milestone table and stays the roadmap. This file is the working list.
+
+---
+
+## 1. The board — everything here needs the Pi 5
+
+This is M1, and five chapters are waiting on it. Nothing else in this file does.
+
+### Set it up
+
+[ch01](chapters/setting_up_the_board.md) is the procedure and
+[Appendix H](appendices/appendix_h_choosing_the_machine.md) is the shopping. The two things that
+are not optional: the active cooler, because a board that throttles mid-run is measuring two
+machines, and a wired link, because a radio's driver takes interrupts on the cores being measured.
+
+```bash
+python3 scripts/verify-setup.py        # on the board, over SSH
+```
+
+It must report `target host: ready`, and `perf` must both **count** and **sample** — those are
+separate capabilities and a machine can have the first without the second. The reference board's
+own counters went missing for a kernel release (@rpi-pmu-dt-6507), so verify rather than assume.
+
+### Take `setup-host` first
+
+```bash
+python3 -m bench.run_setup --target host
+```
+
+That one result fills `setting-up-the-board-report`, which is the only pending figure a reader
+meets before Part V. Commit it on its own — it is the board's account of itself and it is worth
+being able to point at before anything else lands.
+
+### Then the rest
+
+```bash
+make bench-board                       # refuses to run anywhere but the board
+python3 scripts/render-figures.py
+git add bench/results chapters/_generated && git commit
+```
+
+That runs ten runners and fills **twenty pending figures** across seven chapters:
+
+| Result | Runner | Fills |
+|---|---|---|
+| `setup-host` | `bench.run_setup` | ch01's report |
+| `measuring-host` | `bench.run_measuring` | ch24's clock, spread and bias |
+| `hierarchy-host` | `bench.run_hierarchy` | ch25's levels, line, reach and vendor comparison |
+| `bridge-host` | `bench.run_bridgecost` | ch23's cost |
+| `loops-host` | `bench.run_loopcost` | ch26's cost |
+| `pipeline-host` | `bench.run_pipelinecost` | ch27's ILP and branches |
+| `vectors-host` | `bench.run_vectorcost` | ch31's speedup |
+| `sharing-host` | `bench.run_sharingcost` | ch28's sharing and atomics |
+| `oscost-host`, `faultcost-host`, `vdso-host` | `bench.run_oscost` | ch29's three tables |
+| `profile-host`, `skid-host` | `bench.run_profilecost` | ch30's profiles and skid |
+
+Every runner has a `--check` mode that re-runs and compares without writing. Use it once before
+committing: a figure that moves between two runs of the same workload is telling you about the
+machine's state rather than about the workload, which is ch24's whole subject.
+
+### Then Appendix C
+
+[appendices/appendix_c_perf_events.md](appendices/appendix_c_perf_events.md) is the one appendix
+that cannot be drafted from a desk: which events a machine exposes is a property of its silicon,
+its kernel and its firmware together. Generate it from the board — `perf list` is the starting
+point, and the distinction the appendix has to make is which events the hardware counts and which
+`perf` computes from the ones it counts.
+
+### Read the prose against the numbers when they land
+
+Several chapters describe the *shape* of a result the board has not produced yet. They are written
+so they read correctly either way, but the board is the first chance to check:
+
+- ch28 says one arrangement is "several times slower than the other" — false sharing, unmeasured.
+- ch24 says "the slowest run is a multiple of the fastest".
+- ch25 says the latency curve is "flat, then steps, then flat, then steps again".
+- ch29 says the vDSO difference is large enough to matter.
+
+If a number comes back and contradicts one of those, the prose is what changes. That is invariant
+3 working as intended rather than a defect, but it needs a pass.
+
+---
+
+## 2. Chapter numbers in code comments — 535 of them, and they are stale
+
+**This does not need the board.** Every runner except the ten above works off-board; the
+listings, the bare-metal results and the xv6 censuses all regenerate under QEMU on a laptop.
+
+### What is wrong
+
+The rule in CLAUDE.md — *a chapter's number is never an identifier* — was applied to the book's
+markdown and never to its code. `scripts/sync-labels.py` scans `index.md`, `PLAN.md`,
+`ORIGINALITY.md`, `CHECKPOINTS.md`, `chapters/` and `appendices/`. It has never looked at a `.c`
+file, and a bare `chNN` in a comment has no anchor to derive a number from anyway.
+
+Every one checked so far is wrong, by a consistent offset per era:
+
+```
+!! trap.c        header says ch04   the chapter that runs it is ch06
+!! privilege.c   header says ch05   ch07
+!! paging.c      header says ch06   ch08
+!! harts.c       header says ch06   ch08
+!! syscall.c     header says ch07   ch09
+!! descriptors.c header says ch08   ch10
+!! fork.c        header says ch09   ch11
+!! elfdump.c     says "ch12 takes a binary apart"   ch15
+!! tally.c       says "the program chapter 20 profiles"   ch30
+```
+
+Two are reader-visible:
+
+- **`./run --list`** prints each program's header comment, and ch00 tells the reader to run it.
+  Five of the strings name a chapter, and all five are wrong.
+- **`case C('T'): // Print the trap census (Systems From Scratch, ch13).`** is in five patches and
+  lands in `console.c` in the kernel a reader builds. ch13 is *Representing Information*, which
+  has nothing to do with a trap census.
+
+The patch **filenames** are old chapter numbers too — `13-trap-census.patch` is ch16's,
+`14-pagetable-census.patch` is ch17's, and so on, all off by three. `xv6/patches/README.md` says
+the prefix exists "so `git apply` order matches chapter order", which a plain sequence satisfies
+without claiming anything that can go stale.
+
+### Where they are
+
+```
+  205  tests/          conftests, stubs and problem docstrings
+  149  bench/          runner docstrings and messages
+   54  xv6/patches/    comments that ship inside the kernel
+   41  scripts/        ci-check.sh section headings, mostly
+   38  sysfs/lib + include/
+   22  sysfs/bare/     every program's header
+   11  sysfs/tools/
+    8  xv6/apps/
+    7  sysfs/bench/
+  535  total, across 190 files
+```
+
+Not all of them are wrong — `tests/prerequisites_and_setup/` legitimately says ch00 — but the
+ones spot-checked outside that directory all were.
+
+### Suggested approach
+
+**Do not renumber them.** The same drift recurs at the next insertion, and there is no mechanical
+fix: the existing numbers are wrong, so rewriting `chNN` to a link would cement the errors. Each
+one has to be read.
+
+The fix CLAUDE.md applies to itself is *prefer the name*. `ch04's handler` becomes `the bare-metal
+trap chapter's handler`, or the chapter's title. A name cannot go stale and needs no syncer.
+
+Order:
+
+1. `sysfs/bare/*.c` headers and `sysfs/tools/*.c` headers — nine files, reader-visible through
+   `./run --list`. Regenerate afterwards: `python3 -m bench.run_bare` (seven results) and the
+   listing runners.
+2. `xv6/patches/*.patch` — rename the prefixes to a plain sequence `01`–`06`, fix the `ch13`
+   comment in all five (it appears as an added line in one and as context in four, so they have
+   to change together), update the `PATCH =` constants in `bench/run_*.py`, the three
+   `{literalinclude}` paths in ch16, ch18 and ch19, and `xv6/README.md`'s recipe. Then regenerate:
+   `python3 -m bench.run_traps`, `run_pagetable`, `run_faults`, `run_interrupts`, `run_switch`,
+   `run_blocks` — all six boot xv6 under QEMU and take about a minute each.
+3. `bench/`, `scripts/` and `tests/` — no fingerprints involved, so purely a reading job.
+
+Then a guard: no `chNN` under `sysfs/`, `xv6/patches/` or `xv6/apps/`. `tests/test_book.py` has
+eleven checks from the review to copy the shape from — each one names the bug it was written for
+in its docstring, which is the house style.
+
+**Watch the fingerprints.** A result names its sources and hashes them, so editing a comment in a
+file a result names invalidates it. `python3 scripts/verify-numbers.py` says which. All of the
+affected ones regenerate locally; none of them needs the board.
+
+---
+
+## 3. PLAN.md's per-chapter entries
+
+The structural claims are fixed — the outline's opening counts, the missing appendices G and H,
+the targets table that described two targets in a book that has had three since Part II. The
+per-chapter entries themselves are current and were regenerated.
+
+What is left is about ninety bare `chNN` references inside them, in the same state as the code
+comments and stale for the same reason. Some carry real errors: §4's Part I preamble says "Bit
+manipulation and page-table-entry encoding are ch11 and ch15. The preprocessor is ch10. How a
+system call reaches the kernel is ch14" — four references, all off by two or three. The Part V
+mapping table near the top lists "ch27 The CPU" and "ch27 The OS Layer's Cost" as different rows.
+
+`sync-labels.py` does scan PLAN.md, so anything rewritten as `[chNN](#anchor)` is maintained from
+then on. That is the fix: link them, having first worked out which chapter each one means.
+
+---
+
+## 4. Four citations need a browser
+
+The agent proxy blocked all four; `tests/test_book.py::test_every_reference_can_be_followed`
+checks that each entry *has* a URL, not that it resolves.
+
+| Key | URL |
+|---|---|
+| `xv6-book` | `https://pdos.csail.mit.edu/6.828/` — 6.828 is the old course number; 6.1810 may be the live one |
+| `gregg-sysperf` | `https://www.brendangregg.com/systems-performance-2nd-edition-book.html` |
+| `elf-abi` | `https://www.sco.com/developers/gabi/` — the gABI has moved before |
+| `mytkowicz2009wrong` | `doi:10.1145/1508244.1508275` |
+
+---
+
+## 5. Editorial calls that are yours, not a bug
+
+Found during the review, deliberately not changed.
+
+**Exact figures repeated from a table into prose.** Invariant 2 says no numbers typed into prose,
+and these are accurate today but would go stale silently:
+
+- ch15 — "Eighteen sections, two segments."
+- ch16 — "the way in saves thirty-one registers"
+- ch20 — "Everything else in those twenty-five instructions"
+- ch21 — "the fourteen against thirty-one above"
+
+Each is a good sentence and each duplicates a number from the table directly above it. The line
+drawn during the review was that a hedge ("eighty-odd", "thirty-odd") is the book's idiom and an
+exact repetition is the risk, but it is a judgement and all four are worth a decision.
+
+**Four of Part II's six chapters open *What we measured* with the same sentence, verbatim.** A
+refrain, but an uneven one — two chapters do not join in.
+
+**`tests/prerequisites_and_setup/ch00ping.c`** has a chapter number in a filename. It is correct
+today, which is exactly why it is easy to leave.
+
+---
+
+## Running the checks
+
+```bash
+make check                              # ./scripts/ci-check.sh — what CI runs
+python3 -m pytest tests/ -q -m "not problem"
+python3 scripts/sync-labels.py --check
+python3 scripts/verify-numbers.py
+python3 scripts/render-figures.py --check
+```
+
+`make check` was green at the end of the review.
