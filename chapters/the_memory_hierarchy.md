@@ -68,17 +68,22 @@ A second experiment, with the working set fixed and the gap between visits growi
 ```{include} _generated/the-memory-hierarchy-line.md
 ```
 
-Flat, and then it rises. While consecutive visits share a cache line, the second is nearly free —
-the first fetch brought both. Once the stride reaches a line, every visit is its own fetch.
+Flat, and then it climbs. While several visits share a cache line the later ones are nearly free —
+the first fetch brought them all — and each doubling of the stride halves how many share, so the
+cost climbs a step at a time rather than jumping once.
 
-The stride at which it rises is the line size, and it is the same number at every level. It is
-also, quietly, the answer to a question [ch13](#representing-information) raised and could not settle: alignment and
-padding matter because memory moves in lines, and a structure straddling two lines costs two
-fetches for one field.
+The naive reading is that the stride at which it first rises is the line size. On this machine that
+reading lands *below* what the vendor publishes, because the sharing thins out gradually: the curve
+is already moving before the last visit has a line to itself. That gap is the vendor table below,
+and it is the thing to sit with rather than a number to trust on sight — but what the line
+*explains* does not depend on reading it to the byte. Alignment and padding matter because memory
+moves in lines, and a structure straddling two costs two fetches for one field, which is the
+question [ch13](#representing-information) raised and could not settle.
 
-Problem 25.3 turns that into arithmetic, and the shape worth noticing is the ceiling: a loop gets
-steadily worse as its stride grows and then **stops** getting worse, because one line each is as
-bad as it gets.
+Problem 25.3 turns that into arithmetic. The shape it asks about is a ceiling: the line effect gets
+steadily worse as the stride grows and then can get no worse, because one line per visit is as few
+as they can share. The measured curve keeps climbing past that point anyway, because a second
+effect has taken over the same axis — translation running out, which the next section measures.
 
 ### Translation has a cache too, and it runs out first
 
