@@ -62,7 +62,7 @@ cost more than legibility bought. And **every machine you are likely to care abo
 reorders**, so learning to attribute cycles on one is the skill that transfers.
 [ch27](#the-cpu) is harder for it, says so in its own header, and is more useful as a result. If you
 want the clean version too, an in-order Cortex-A53 — a Pi 3 or Pi Zero 2 W — costs very little,
-and running ch24's experiments on both is an instructive afternoon.
+and running [ch24](#measuring)'s experiments on both is an instructive afternoon.
 
 ## It is an ARM machine, and everything before Part V is RISC-V
 

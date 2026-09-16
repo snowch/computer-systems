@@ -153,7 +153,7 @@ within a gigabyte of them. Two pages of table for two pages of mapping, and ever
 system pays it.
 
 **Those two pages are the trapframe and the trampoline.** The mechanism [ch16](#traps-and-system-calls) measured in
-instructions has a second price, in a currency ch13 had no way to express: per process, two pages
+instructions has a second price, in a currency that chapter had no way to express: per process, two pages
 of table, for as long as the process exists. Neither number is a cost in the sense this book
 usually means — [ch29](#the-os-layers-cost) is where traps get priced in time — but both are real, and the
 second one is invisible unless somebody counts it.

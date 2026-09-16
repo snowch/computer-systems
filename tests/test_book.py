@@ -662,6 +662,33 @@ def test_the_first_whole_program_is_the_first_whole_program():
 #: PLAN.md §12.1, as a chapter's own headings. "Header block" is the note table rather than a
 #: heading, so it is not listed; the other six are.
 #: ``| **Chapters** | [ch02](#reading-a-listing)–[ch05](#…) |`` — the header's range.
+#: `ch06` written as text rather than as `[ch06](#a-trap-with-nothing-else)`.
+BARE_CHAPTER = re.compile(r"(?<!\[)\bch(\d\d)\b(?!\]\()")
+
+
+@pytest.mark.parametrize("path", PROSE_FILES, ids=[str(p) for p in PROSE_FILES])
+def test_a_chapter_reference_in_prose_is_a_link(path):
+    """A bare `chNN` is a typed number, and this book derives its numbers.
+
+    `sync-labels` rewrites the label inside a link because the anchor tells it which chapter is
+    meant. A bare one carries no anchor, so nothing can correct it and nothing did: four of the
+    eight in the book pointed at chapters that had nothing to do with the sentence. ch07 credited
+    "the `mepc + 4` from ch04" — ch04 is *C Without a Runtime* — and ch11 said ch06 got away with
+    three top-level page-table entries, which is ch08's page table and ch06's trap.
+
+    Writing the reference as a link fixes it twice over: the anchor says which chapter is meant,
+    and the label is then derived from it like every other number here.
+    """
+    text = (ROOT / path).read_text()
+    body = re.sub(r"```.*?```", "", text, flags=re.S)
+    body = re.sub(r"`[^`\n]+`", "", body)
+    bare = sorted({m.group(0) for m in BARE_CHAPTER.finditer(body)})
+    assert not bare, (
+        f"{path} names a chapter without linking it: {', '.join(bare)} — write it as "
+        f"[chNN](#anchor) so the anchor says which chapter and sync-labels owns the number"
+    )
+
+
 APPENDIX_LINK = re.compile(r"\[Appendix ([A-Z])\]\(#([\w-]+)\)")
 
 

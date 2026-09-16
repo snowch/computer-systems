@@ -134,7 +134,7 @@ over a link that interrupts it, which brings up something the book has to admit.
 wireless driver takes interrupts and runs deferred work on the cores being measured, which is
 [ch19](#interrupts-and-drivers)'s subject arriving where it is least wanted.
 
-The mechanism is real. The effect on these measurements has never been measured, and ch00 says so.
+The mechanism is real. The effect on these measurements has never been measured, and [ch00](#prerequisites-and-setup) says so.
 That is an unmeasured claim about hardware behaviour in a book whose whole discipline is refusing
 them, and the honest thing to do with it is to hand it to the reader: it is the fourth problem
 below, the answer is genuinely unknown to the author, and a reader who falsifies it has exactly

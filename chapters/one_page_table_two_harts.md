@@ -165,9 +165,9 @@ hardware the ordering is decided by store buffers, coherence traffic and a memor
 answer is neither deterministic nor as simple as one update going missing. What transfers from
 this chapter is the shape of the hazard, not its likelihood.
 
-**Whether one atomic is enough.** It was here, for one counter. It is not a general answer, and
-[ch20](#locks-and-memory-ordering) is where the difference between an atomic operation and a
-correctly ordered one gets its own chapter.
+**Whether one atomic is enough.** It was here, for one counter. It is not a general answer: an
+operation that cannot be split is not the same as a sequence of them that cannot be reordered, and
+the second is what a lock needs.
 
 ## Problems
 
