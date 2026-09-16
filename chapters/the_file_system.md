@@ -121,11 +121,12 @@ maps names to inodes, the block allocator that finds free space, the log that ma
 updates atomic, the buffer cache that keeps blocks in memory and decides when they reach the disk,
 and the disk driver from [ch19](#interrupts-and-drivers).
 
-Four blocks were modified for one byte: the data block itself, the inode recording that the file
-is now one byte long and where that byte is, the bitmap recording that the data block is no longer
-free, and the block the buffer cache had to fetch to make the change. The traffic is not the file
-system being careless. It is a byte requiring four separate facts to be true at once, and a design
-in which they become true together or not at all.
+The log took four block-writes for one byte: the data block itself, the inode recording that the
+file is now one byte long and where that byte is, the bitmap recording that the data block is no
+longer free, and — once the program deletes the file at the end — the bitmap again, giving the
+block back. The traffic is not the file system being careless. It is a byte requiring three facts
+to be made true at once, by a design in which they become true together or not at all, and then
+undone the same way.
 
 ### The cache is why the reads are so few
 
