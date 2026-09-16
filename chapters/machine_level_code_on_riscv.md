@@ -84,7 +84,7 @@ Build it and run it here:
 ./run framewalk
 ```
 
-Run it and you get the chain:
+Check it against the expected frames:
 
 ```bash
 python3 -m pytest tests/test_framewalk.py -q
@@ -259,8 +259,8 @@ register table in it is worth having open the first few times you read a disasse
 The unprivileged specification @riscv-isa-unprivileged defines the instructions themselves. Its
 instruction listing answers "what does `sd` actually do" faster than any tutorial.
 
-xv6's `kernel/swtch.S` @xv6-riscv-source is fourteen lines of assembly that saves one set of
-callee-saved registers and restores another, and it is the entire mechanism of a context switch.
+xv6's `kernel/swtch.S` @xv6-riscv-source is about thirty lines of assembly that saves fourteen
+registers into one context and restores fourteen from another, and it is the entire mechanism of a context switch.
 Read it now. You will not know *why* it is called or what a context is until [ch21](#scheduling-and-context-switches), but
 you can already read every instruction in it, which is a good way to find out that you can.
 

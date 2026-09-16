@@ -57,8 +57,8 @@ needs, and it is reachable in three chapters, which the craft is not.
 chapter after it puts a listing in front of you at some point. Then the routing applies.
 
 **If you already write C**, go on to [ch04](#c-without-a-runtime). The on-ramp before it is one
-you do not need, and that chapter is about the habits that stop working when there is no
-library underneath you — which is written for you.
+you do not need. That chapter — the one written for you — is about the habits that stop working when there is no
+library underneath you.
 
 **If you program fluently in something else and have never written C**, go on to
 [ch03](#memory-is-one-array). You are not being taught to program.
@@ -70,7 +70,8 @@ watched appear.
 
 ## Which machine, and what it cannot tell you
 
-Everything here is compiled for RISC-V and run on the xv6 kernel under QEMU, and three of the
+Most of this part is compiled for RISC-V and run on the xv6 kernel under QEMU; [ch02](#reading-a-listing)
+also compiles for the board's architecture and runs nothing at all. Three of the
 four chapters ask you to read the disassembly of code you wrote — [ch02](#reading-a-listing) for
 both of the book's instruction sets, the other two for RISC-V.
 

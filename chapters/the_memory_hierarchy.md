@@ -74,8 +74,8 @@ cost climbs a step at a time rather than jumping once.
 
 The naive reading is that the stride at which it first rises is the line size. On this machine that
 reading lands *below* what the vendor publishes, because the sharing thins out gradually: the curve
-is already moving before the last visit has a line to itself. That gap is the vendor table below,
-and it is the thing to sit with rather than a number to trust on sight — but what the line
+is already moving before the last visit has a line to itself. That gap is what the vendor table below
+shows, and it is the thing to sit with rather than a number to trust on sight — but what the line
 *explains* does not depend on reading it to the byte. Alignment and padding matter because memory
 moves in lines, and a structure straddling two costs two fetches for one field, which is the
 question [ch13](#representing-information) raised and could not settle.
@@ -140,7 +140,7 @@ was able to do at the same time.**
 
 Latency against working-set size, latency against stride, and latency against the number of pages
 touched — each a dependent chase, each reported as a minimum over repetitions for [ch24](#measuring)'s
-reason, and each pending until the board runs them.
+reason, and each measured on the board.
 
 The comparison with the vendor's figures is deliberate and the rule is stated in advance: where
 they disagree, the measurement is what this book prints and the disagreement is what it discusses.

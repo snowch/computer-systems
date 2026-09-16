@@ -18,7 +18,7 @@ here it is again*. For anything not in the book's path, the architecture referen
 
 [Part III](#part3) and [Part IV](#part4) are RISC-V because the kernel small enough to read in an afternoon is a RISC-V
 kernel. [Part V](#part5) is AArch64 because that is where the performance counters work: sampling needs a
-PMU that can raise an interrupt on counter overflow, and no affordable RISC-V core does both.
+PMU that can raise an interrupt on counter overflow, and no affordable RISC-V core can both count and sample.
 [Appendix H](#appendix-h) has the evidence and [ch28](#memory-ordering-on-real-hardware) has the return — a reader shown one weak memory
 model concludes that model *is* memory ordering.
 
@@ -92,7 +92,7 @@ cmp  x0, x1
 b.lt label
 ```
 
-The flags are a side effect that persists, which buys two things RISC-V has no equivalent of.
+The flags are a side effect that persists. One thing they buy has no RISC-V equivalent; a second common idiom sidesteps them entirely.
 
 **Conditional select.** `csel x0, x1, x2, lt` writes one of two registers depending on the flags,
 with no branch at all. [ch27](#the-cpu) is about what that is worth: a branch the predictor cannot

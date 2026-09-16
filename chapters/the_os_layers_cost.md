@@ -141,7 +141,7 @@ things with *because* of this mechanism; a clock that trapped would be an instru
 order as much of what [Part V](#part5) measures, and most of this book's timings would be impossible to
 take in the form they are taken.
 
-And it is the listing above, made expensive. Two calls, indistinguishable in C, one of which
+It is the listing above, now with a price on it: two calls, indistinguishable in C, one of which
 crosses a privilege boundary and one of which does not. You cannot read that off the page. You
 can only measure it.
 
@@ -151,9 +151,9 @@ The trap instruction and the call that hides it, compiled for the reference arch
 listing needs no board — an instruction sequence is a property of the compiler — and it is the
 one figure here that CI regenerates and diffs on every push.
 
-Everything with a duration in it is pending, and waits on the machine: what the three services
+Everything with a duration in it was measured on the machine: what the three services
 cost against their baselines, what separates a minor fault from a major one, and what the vDSO
-saves. The counts they will be compared against are already in the book, taken in [Part IV](#part4), which
+saves. The counts they are compared against are already in the book, taken in [Part IV](#part4), which
 is the point of having spent it counting.
 
 ## What this cannot tell you
@@ -174,7 +174,7 @@ takes one, on one kernel, and records which — it does not survey them, and a r
 comparison has to take it themselves.
 
 **What xv6 charges.** [Part IV](#part4)'s counts stay counts. There is no version of this chapter that
-prices the kernel the reader can stop mid-trap, because the machine it runs on is a program, and
+prices the kernel that the reader can stop mid-trap, because the machine it runs on is a program, and
 that is the trade the two targets were chosen to make.
 
 **Whether the model explains the cost.** The bound in problem 29.2 says what the call cannot beat.

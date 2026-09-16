@@ -83,7 +83,7 @@ These four are used throughout and mean something specific here.
 | **exception** | A trap caused by the instruction being executed — it could not complete. | [ch16](#traps-and-system-calls), [ch19](#interrupts-and-drivers) |
 | **interrupt** | A trap caused by something outside the program asking for attention. | [ch19](#interrupts-and-drivers) |
 | **trampoline** | A page mapped at the same address in every address space, so the trap path survives the page table changing under it. | [ch16](#traps-and-system-calls), [ch17](#virtual-memory) |
-| **trap frame** | Where the interrupted program's registers are put, since the interrupted program agreed to no convention. | [ch16](#traps-and-system-calls) |
+| **trap frame** | Where the interrupted program's registers are put, since it agreed to no convention about which to preserve. | [ch16](#traps-and-system-calls) |
 | **virtual address** | An address a program uses, which means nothing without a page table. | [ch17](#virtual-memory) |
 | **page table** | The tree the hardware walks to turn a virtual address into a physical one. | [ch17](#virtual-memory) |
 | **Sv39** | RISC-V's three-level paging scheme: three nine-bit indices and a twelve-bit offset. | [ch17](#virtual-memory), [Appendix A](#appendix-a) |

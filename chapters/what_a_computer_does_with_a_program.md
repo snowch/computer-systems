@@ -191,7 +191,7 @@ question properly, and [ch26](#optimising-code) answers it.
 
 **Nothing here is a cost.** The sizes above are how much space a compiler used, and space is not
 time: a smaller binary is not automatically a faster one, and a function that compiles to two
-instructions is not automatically cheaper than one that compiles to ten. [ch25](#the-memory-hierarchy) shows a
+instructions is not automatically cheaper than one that compiles to ten. [ch27](#the-cpu) shows a
 case where more instructions run faster, for reasons entirely outside the instruction count.
 
 **It is one compiler, at one optimisation level.** Everything in this chapter is what `gcc` at

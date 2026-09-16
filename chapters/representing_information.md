@@ -169,14 +169,14 @@ One thing in that file is not about bits at all:
 :end-before: int sysfs_is_aligned
 ```
 
-The overflow check runs *before* the shift. Afterwards there is nothing left to notice by — the
+The overflow check runs *before* the shift. Afterwards there is nothing left to notice it by — the
 bit has gone, and the value is zero, and zero is indistinguishable from a legitimate answer. That
 ordering is the whole of the lesson in [ch24](#measuring) about checking for a condition while the
 evidence still exists, arriving several chapters early because arithmetic is where it bites first.
 
 ## What we measured
 
-The C implementation both targets present — sizes, alignments and byte order — is
+The C implementation xv6 and host both present — sizes, alignments and byte order — is
 [ch00](#prerequisites-and-setup)'s table, measured by booting the kernel and asking it. It is not repeated here,
 because a figure printed twice is a figure that can disagree with itself.
 
@@ -211,7 +211,7 @@ a decision rather than an oversight: xv6 does not save floating-point registers 
 switch, so a user program that uses them is quietly wrong the moment it is descheduled. That is a
 perfectly reasonable thing for a teaching kernel to decide — it makes [ch21](#scheduling-and-context-switches)'s context
 switch small enough to read in one sitting — and it means floating point arrives in [Part V](#part5),
-on a machine whose kernel does save them.
+on a machine whose kernel does save those registers.
 
 ## Problems
 

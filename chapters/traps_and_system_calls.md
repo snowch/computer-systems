@@ -36,7 +36,7 @@ A function call is an agreement. The caller knows it is calling, has arranged it
 accordingly, and the convention tells both sides who preserves what — that was [ch14](#machine-level-code-on-riscv).
 
 `ecall` is the one trap a program does agree to, and it gets nothing for agreeing, because
-**it has no path of its own.** One entry point serves it, a division by zero, a page fault and a
+**it has no path of its own.** One entry point serves it, an illegal instruction, a page fault and a
 timer interrupt alike, and three of those four arrive without being asked for: the interrupted
 code made no arrangements and has to find every register exactly as it left it. A path that must
 satisfy the worst of its callers has no calling convention to lean on.
@@ -202,7 +202,7 @@ an error that does not mention the others.
 
 The test cannot check that your number is *correct* without reimplementing your counter, so it
 checks the two things that separate a working system call from a plausible stub: the value is not
-zero, and it grows between two runs. A constant fails both.
+zero, and it grows between two runs. No constant passes both.
 
 ```bash
 python3 -m pytest tests/traps_and_system_calls/test_problem_1_addcall.py

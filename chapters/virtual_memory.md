@@ -144,7 +144,7 @@ the lot, because they are all in the same two megabytes.
 
 Go back to init's five tables and ask which mapping is responsible for which.
 
-The four pages at the bottom need a chain: root, one middle table, one last table. Three pages of
+The four pages at the bottom need a chain of two — one middle table, one last — under the shared root. Three pages of
 table for four pages of program, and every further page the program allocates is free until it
 crosses two megabytes.
 
@@ -246,7 +246,7 @@ python3 -m pytest tests/virtual_memory/test_problem_1_map.py
 Write `walk_translate`. The expected answers are the mappings the test asked problem 17.1 to
 make, so the target moves with your implementation rather than being a constant. Two things are easy to
 get wrong and are checked: the offset must survive, and an address that was never mapped must
-fault rather than returning something plausible.
+fault rather than return something plausible.
 
 Handle a leaf found above the bottom level even though problem 17.1 never creates one. The format allows
 it, and code that assumes otherwise is wrong in a way that will not show up until it meets a

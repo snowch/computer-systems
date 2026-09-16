@@ -42,7 +42,7 @@ separate table.
 ```
 
 Collapsing those two into one would be simpler and is the obvious first design. It is also wrong,
-in a way that only shows up later — and the later is this chapter's last section.
+in a way that only shows up later — and it shows up in this chapter's last section.
 
 ### Two things worth having a table for
 
@@ -143,8 +143,9 @@ bytes. Had the position lived in the descriptor instead, the duplicate would hav
 zero and written its byte over the `h` — both programs would still run, and the difference would
 surface much later as a file mysteriously overwriting itself from the beginning.
 
-**That is the whole reason a shell can append.** `>>` is two descriptors on one open file, and the
-append is not a mode the write asks for; it is a consequence of where the position already was.
+**That shared position is the whole reason a second write continues rather than overwrites.** Two
+descriptors onto one open file share one offset, so the write picks up where the last one left
+off — a consequence of where the position already was, not a mode the write asks for.
 
 ## What we measured
 

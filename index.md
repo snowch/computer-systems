@@ -268,7 +268,7 @@ Every chapter in it names the earlier chapter whose cost it measures, in its own
 
 | When [Part V](#part5) asks | You already learned the mechanism in |
 |---|---|
-| [ch25](#the-memory-hierarchy) — where is the data, and what does each step out cost? | [ch13](#representing-information) layout and alignment, [ch17](#virtual-memory) address translation |
+| [ch25](#the-memory-hierarchy) — where is the data, and what does each step outward cost? | [ch13](#representing-information) layout and alignment, [ch17](#virtual-memory) address translation |
 | [ch26](#optimising-code) — what did that cost? | [ch14](#machine-level-code-on-riscv) what the compiler emitted |
 | [ch27](#the-cpu) — what is the core doing between fetch and finish? | [ch14](#machine-level-code-on-riscv) the instructions themselves |
 | [ch28](#memory-ordering-on-real-hardware) — what do four cores cost each other? | [ch20](#locks-and-memory-ordering) locks, fences and ordering |

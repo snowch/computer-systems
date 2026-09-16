@@ -80,7 +80,7 @@ current head of `kmem.freelist` into the page's first bytes, and makes the page 
 allocating takes the head and follows the link it finds there. Four lines of pointer arithmetic
 that would be undefined behaviour in an application and are the allocator here. [ch18](#page-faults-as-a-feature) is the chapter that measures what it costs.
 
-That phrase is worth being precise about, because it is not a figure of speech. C is defined in
+*Undefined behaviour* is worth being precise about, because it is not a figure of speech. C is defined in
 terms of an abstract machine in which a pointer points at an *object* — something created by a
 declaration, or by an allocator, with a lifetime the standard describes. `pa` is none of those. It
 is an integer the linker script and the hardware agree is the address of usable memory, cast to a
@@ -113,7 +113,7 @@ for ever.
 ### Somebody else is running
 
 An application with one thread has exclusive access to its own data by default. A kernel never
-does: [ch04](#c-without-a-runtime)'s table gives this machine eight harts, every one of them able to be inside
+does: the table above gives this machine eight harts, every one of them able to be inside
 the same function as you, on data you are halfway through changing.
 
 What that costs is [ch20](#locks-and-memory-ordering)'s subject and it is not small. What matters here is the habit:
@@ -145,7 +145,7 @@ tree and they are written in exactly the style [ch03](#memory-is-one-array)'s se
 that move, no subscripts, a length passed alongside every buffer.
 
 One of them is a warning rather than a convenience. The kernel's string copy takes a size and
-always terminates; the standard one it is named after does neither reliably. When a kernel
+always terminates; the standard one it is named after takes a size but does not reliably terminate. When a kernel
 reimplements something the library already has, the reimplementation usually differs on purpose,
 and the difference is usually about a failure the library was willing to tolerate.
 

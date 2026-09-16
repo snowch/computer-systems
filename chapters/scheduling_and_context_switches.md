@@ -178,9 +178,9 @@ the invariants it requires is the densest paragraph in the kernel; read it after
 it will say something it would not have said before.
 
 `kernel/swtch.S` is the fourteen stores and fourteen loads this chapter counted, and was the
-fourteen lines [ch14](#machine-level-code-on-riscv) sent you to look at without explaining. It has not changed; you have.
+code [ch14](#machine-level-code-on-riscv) sent you to look at without explaining. It has not changed; you have.
 
-[ch22](#the-file-system) is the last of [Part IV](#part4) and the one with a disk in it. A file system has to survive
+[ch22](#the-file-system) is the last of [Part IV](#part4)'s xv6 chapters and the one with a disk in it. A file system has to survive
 being interrupted at any instruction by a power cut, which is a stronger requirement than anything
 a lock provides, and it is met by writing things down in an order chosen so that every prefix of
 the sequence is survivable.

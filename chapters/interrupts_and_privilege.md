@@ -122,7 +122,7 @@ and points `mepc` at the address the program recorded before it left:
 ```
 
 `mret` restores no registers at all, which is the detail that makes this genuinely awkward and
-which `bare_enter_supervisor()` exists to handle once rather than three times. [ch11](#fork-built-rather-than-read)
+which `bare_enter_supervisor()` exists to handle in one place. [ch11](#fork-built-rather-than-read)
 is where that stops being an inconvenience and becomes the subject.
 
 ## What we measured

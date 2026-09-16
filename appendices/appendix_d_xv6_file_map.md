@@ -10,7 +10,7 @@ An appendix in this book is a reference, not a chapter: no argument, no narrativ
 in it either cites a primary source or comes from a stamped result under `bench/results/`.
 
 This one is walked from the submodule at its pinned commit rather than written, so every line
-count here is one `wc -l` will agree with on the tree you have checked out — and a file renamed
+count here is one that `wc -l` will agree with on the tree you have checked out — and a file renamed
 upstream fails CI rather than quietly making this page wrong.
 
 ## How much kernel there is
