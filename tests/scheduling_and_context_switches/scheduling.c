@@ -16,16 +16,16 @@
 /* -- Problem 11.1 -------------------------------------------------------------------------- */
 /* Must `swtch` save this register?
  *
- * `class` is the register's role under the calling convention of chapter 4: 'a' for an argument
+ * `class` is the register's role under the calling convention of the machine-code chapter: 'a' for an argument
  * or return register, 't' for a temporary, 's' for a saved register, and 'r' for the return
  * address or the stack pointer. `live` is 1 if the switching function still needs the value after
  * the switch returns.
  *
  * Return 1 if the switch itself has to preserve it, and 0 if somebody else already has.
  *
- * The whole of this question is that a context switch is an ordinary function call. Chapter 4's
- * convention already says who keeps what across a call, and a switch inherits that agreement
- * rather than replacing it — which is why it saves less than half of what chapter 6's trap path
+ * The whole of this question is that a context switch is an ordinary function call. The machine-code
+ * chapter's convention already says who keeps what across a call, and a switch inherits that agreement
+ * rather than replacing it — which is why it saves less than half of what the traps-and-system-calls chapter's trap path
  * has to, and why "a switch is expensive" is a claim that needs a number rather than a shrug.
  */
 int sched_must_save(char class, int live) {

@@ -1,4 +1,4 @@
-"""The reader's measurement code, built once for chapter 14's three problems."""
+"""The reader's measurement code, built once for the measurement chapter's three problems."""
 
 from __future__ import annotations
 

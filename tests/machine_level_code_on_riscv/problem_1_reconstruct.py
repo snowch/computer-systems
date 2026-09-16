@@ -1,4 +1,4 @@
-"""Problem 1 of chapter 4 — write the C that produces this.
+"""Problem 1 of the machine-code chapter — write the C that produces this.
 
 Here is a function's disassembly. Write a C function that compiles to the same instructions.
 
@@ -19,7 +19,7 @@ SIGNATURE = "long reader_target(long a, long b)"
 #: Your reconstruction: the whole function, including the signature above.
 RECONSTRUCTION = """
 long reader_target(long a, long b) {
-  /* Problem 4.1 — see the Problems section of chapter 4. */
+  /* Problem 4.1 — see the Problems section of the machine-code chapter. */
   return 0;
 }
 """

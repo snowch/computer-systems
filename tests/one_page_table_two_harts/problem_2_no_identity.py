@@ -1,4 +1,4 @@
-"""Problem 2 of ch06 — break it on purpose.
+"""Problem 2 of the page-table chapter — break it on purpose.
 
 Remove one of the two identity mappings. Before running it, predict exactly which cause the
 machine reports. Then run it and find out.

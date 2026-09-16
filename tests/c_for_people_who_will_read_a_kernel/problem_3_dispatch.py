@@ -1,8 +1,8 @@
-"""Problem 3 of chapter 3 — build the table.
+"""Problem 3 of the kernel-C chapter — build the table.
 
 A kernel that must do something different for each of several devices does not write a `switch`.
-It writes a table of function pointers and indexes it, which is the pattern chapter 3's figure
-draws and the one [ch16](#interrupts-and-drivers) uses for real.
+It writes a table of function pointers and indexes it, which is the pattern the kernel-C chapter's figure
+draws and the one [the drivers chapter](#interrupts-and-drivers) uses for real.
 
 Write the table. `OPERATIONS` maps each operation name to the C expression that belongs in that
 slot, and the test builds a dispatch table from it, calls through it, and checks the answers.

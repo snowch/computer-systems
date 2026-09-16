@@ -1,4 +1,4 @@
-"""The reader's scheduling code, built once for chapter 11's three problems."""
+"""The reader's scheduling code, built once for the scheduling chapter's three problems."""
 
 from __future__ import annotations
 

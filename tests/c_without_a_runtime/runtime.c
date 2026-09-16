@@ -101,7 +101,7 @@ int r_failure_mode(char source, char returns) {
  *   not volatile, and the value is not used it need not read at all
  *
  * `reads` is at least 1. The middle case is the one that turns a driver into a program that
- * receives one character for ever, and ch03 prints the two listings side by side.
+ * receives one character for ever, and *Memory Is One Array* prints the two listings side by side.
  */
 uint64_t r_permitted_reads(uint64_t reads, int qualified, int used) {
   (void)reads;

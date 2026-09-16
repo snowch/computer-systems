@@ -1,4 +1,4 @@
-"""Problem 2 of chapter 5 — which of these links, and which does not?
+"""Problem 2 of the linking chapter — which of these links, and which does not?
 
 Five pairs of translation units. For each, say whether the linker can produce a program.
 

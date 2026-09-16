@@ -28,7 +28,7 @@
  * Notice what this model then predicts: that more accumulators are always better, right down to
  * one element each. On a real machine they are not, and what stops it is nowhere in this formula —
  * accumulators live in registers, there are a fixed number of those, and past that point they
- * spill to memory and chapter 15's subject takes over. A model that is right about what it models
+ * spill to memory and the memory-hierarchy chapter's subject takes over. A model that is right about what it models
  * and silent about what limits it is the usual kind, and knowing which is which is the skill.
  */
 uint64_t p_critical_path(uint64_t elements, uint64_t accumulators) {

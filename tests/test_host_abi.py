@@ -43,7 +43,7 @@ def test_the_data_model_is_lp64(probe: dict):
 
 
 def test_alignment_equals_size_for_the_scalar_types(probe: dict):
-    """True on this ABI, and worth asserting because chapter 2 relies on it."""
+    """True on this ABI, and worth asserting because the representation chapter relies on it."""
     for fact in probe["types"]:
         assert fact["align"] == fact["size"], fact
 

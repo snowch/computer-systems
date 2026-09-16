@@ -311,7 +311,7 @@ def test_a_chapter_that_shows_a_program_says_how_to_run_it(chapter: Chapter):
 def test_a_program_that_needs_an_argument_is_shown_with_one(chapter: Chapter):
     """The check above was satisfied by a command that did nothing.
 
-    ch15 writes a reader for ELF and then said `./run elfdump`, which prints `usage: elfdump
+    The linking chapter writes a reader for ELF and then said `./run elfdump`, which prints `usage: elfdump
     <file>` and exits — the tool has nothing to read. The chapter had carried a hand-rolled `cc`
     line naming a binary, the only one in the book, and when `./run` arrived the new command was
     added above it rather than instead of it; the stale block kept the example working for anyone
@@ -353,7 +353,7 @@ WORDLESS_PROBLEM = re.compile(r"(?<![\d.])\d{1,2}\.[1-3](?![\d.])")
 def test_a_problem_reference_carries_the_word_problem(page: str):
     """The syncer can only renumber a reference it can recognise, and it recognises the word.
 
-    ch17 pointed twice at "your own 7.1", from a chapter whose problems are numbered 17.x. There
+    The virtual-memory chapter pointed twice at "your own 7.1", from a chapter whose problems are numbered 17.x. There
     is no anchor in a bare `7.1` and no word beside it, so `sync-labels.py` had nothing to match
     and the reference sat there through three renumberings — pointing, as these always do, at a
     real problem in a real chapter that is not the one meant.
@@ -362,7 +362,7 @@ def test_a_problem_reference_carries_the_word_problem(page: str):
     owns the number from then on; write `7.1` and nobody does.
 
     Appendices are checked too, because appendix G was outside both this and the syncer: it said
-    `problem 2.2` beside a link to ch04, whose problems have been 4.x for three renumberings.
+    `problem 2.2` beside a link to *C Without a Runtime*, whose problems have been 4.x for three renumberings.
     """
     import importlib.util
 
@@ -393,7 +393,7 @@ FENCE_CLOSE = re.compile(r"^(?P<fence>`{3,}|:{3,})\s*$")
 def test_a_directive_is_closed_by_the_fence_that_opened_it(page: str):
     """A build that succeeds is not the same as a page that says what it was written to say.
 
-    ch19 opened its figure with backticks and closed it with `:::`. MyST did not complain — it
+    The drivers chapter opened its figure with backticks and closed it with `:::`. MyST did not complain — it
     took the colons as the end of the figure and then swallowed the `{include}` on the other side
     of them into a *sub-figure*, rendered as a code block whose text was the directive itself. The
     page went out with the measurement missing and the sentence "the disk count is in the table"
@@ -425,7 +425,7 @@ def test_every_figure_has_a_caption(page: str):
     """Fourteen of the book's fifteen figures say what they show. The fifteenth did not.
 
     A caption in this book is not a label — it is the one line that says what mechanism the
-    drawing is of, which is what makes a figure worth having. ch30's sampling diagram closed its
+    drawing is of, which is what makes a figure worth having. The profiling chapter's sampling diagram closed its
     directive straight after `:width:`, so it rendered as a picture with an alt attribute and
     nothing a reader looking at it would see.
     """
@@ -446,12 +446,12 @@ def test_every_figure_has_a_caption(page: str):
 
 @pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
 def test_the_question_is_answered_by_more_than_itself(chapter: Chapter):
-    """*The question* is a question and then why it is being asked. ch31 had only the question.
+    """*The question* is a question and then why it is being asked. The vectors chapter had only the question.
 
     Thirty-one chapters put a paragraph after the question saying what the chapter before it left
     and why this one follows — which is what makes the sequence a book rather than a set of
     articles. The last chapter jumped straight from its question to its material, and the reader
-    who arrived there from ch30 was told nothing about why.
+    who arrived there from the profiling chapter was told nothing about why.
     """
     text = (ROOT / chapter.path).read_text()
     block = text[text.index("## The question") : text.index("## The material")]
@@ -486,10 +486,10 @@ def test_the_plan_counts_the_book_it_describes():
 
 
 def test_the_glossary_reaches_every_part():
-    """It cited ch00, ch05 and then nothing until ch12.
+    """It cited ch00, the kernel-C chapter and then nothing until the whole-program chapter.
 
     Twelve chapters contributed no term, among them the whole of [Part II](#part2) — so `hart`,
-    a word the book uses on every page from ch08 onwards, was defined nowhere. A glossary
+    a word the book uses on every page from the harts chapter onwards, was defined nowhere. A glossary
     assembled from the chapters after they were written is the right method and it was assembled
     from the chapters that existed at the time.
 
@@ -543,8 +543,8 @@ def test_no_page_names_a_chapter_by_a_bare_number(page: str):
 
     A cross-reference in a sentence is a link, so `sync-labels.py` keeps its number right. A
     heading cannot comfortably hold one, so two of them were written out in words — "So was
-    chapter 11 right?" above a paragraph about ch19, and "Back to chapter 15" above a paragraph
-    about ch23. Each sat directly on top of the correctly-numbered link that contradicted it.
+    chapter 11 right?" above a paragraph about the drivers chapter, and "Back to chapter 15" above a paragraph
+    about the crossing chapter. Each sat directly on top of the correctly-numbered link that contradicted it.
 
     There is no anchor in `chapter 11` to derive anything from, so the answer is the one this
     book's own instructions reach for in the same situation: name the thing instead. A heading
@@ -736,7 +736,7 @@ LINKED_ANCHOR = re.compile(r"\(#([a-z0-9-]+)\)")
 def test_a_prerequisite_comes_earlier_than_the_chapter_that_needs_it(chapter: Chapter):
     """A chapter cannot require one the reader has not reached.
 
-    ch03, in Part I, declared ch11 — *Representing Information*, eight chapters later in Part III.
+    *Memory Is One Array*, in Part I, declared *Representing Information*, eight chapters later in Part III.
     Nothing caught it. The link resolved, so `--strict` was satisfied; the label was derived from
     the anchor, so it was not stale; and `answers` had a backwards check while the row a reader
     actually acts on had none. It survived two renumbers and a rewrite of the whole labelling
@@ -789,7 +789,7 @@ CHAPTER_LINK = re.compile(r"\[ch(\d+)\]\(#([\w-]+)\)")
 def test_a_generated_fragment_labels_a_chapter_link_correctly():
     """`sync-labels.py` rewrites the pages a person edits, and a fragment is not one of them.
 
-    Three of ch21's and ch23's tables carried `[ch13](#traps-and-system-calls)` — typed into
+    Three of the scheduling chapter's and the crossing chapter's tables carried `[ch13](#traps-and-system-calls)` — typed into
     `bench/tables.py`, printed into `chapters/_generated/`, and past every check the book has. The
     syncer is pointed at `chapters/*.md` and a fragment lives one directory down; `--strict` only
     asks whether the anchor resolves, and it did.
@@ -935,12 +935,12 @@ def _c_includes(path: str) -> list[tuple[str, str]]:
 
 
 def test_the_first_whole_program_is_the_first_whole_program():
-    """ch01 opens "Every piece of C you have seen in this book so far has been a fragment".
+    """*Memory Is One Array* opens "Every piece of C you have seen in this book so far has been a fragment".
 
     That is the hook of its first section and the reason the next listing lands: the reader has
     seen functions and never a program, so a `#include` and a `main` are worth naming. Only ch00
     shows C before it, and the claim holds exactly as long as every listing there stays anchored.
-    An unanchored include added to ch00 would show a whole file and make ch01 open on something
+    An unanchored include added to ch00 would show a whole file and make *Memory Is One Array* open on something
     untrue, with nothing in the build to notice — the anchors would all still resolve.
     """
     unanchored = [
@@ -949,7 +949,7 @@ def test_the_first_whole_program_is_the_first_whole_program():
         if ":start-at:" not in options
     ]
     assert not unanchored, (
-        "ch00 now shows a whole C file, so ch01's \"every piece of C so far has been a "
+        "ch00 now shows a whole C file, so *Memory Is One Array*'s \"every piece of C so far has been a "
         f'fragment" is no longer true: {", ".join(unanchored)}'
     )
 
@@ -959,7 +959,7 @@ def test_the_first_whole_program_is_the_first_whole_program():
         if ":start-at:" not in options
     ]
     assert whole, (
-        'ch01 says "here is a complete one" and no longer includes a whole C file to back it'
+        '*Memory Is One Array* says "here is a complete one" and no longer includes a whole C file to back it'
     )
 
 
@@ -1027,7 +1027,7 @@ APPENDIX_LINK = re.compile(r"\[Appendix ([A-Z])\]\(#([\w-]+)\)")
 def test_an_appendix_link_points_at_that_appendix(path):
     """`sync-labels` derives a chapter link's text; nothing derived an appendix's.
 
-    ch03 said "[Appendix A](#reading-a-listing)" after the listing key moved out of appendix A and
+    *Memory Is One Array* said "[Appendix A](#reading-a-listing)" after the listing key moved out of appendix A and
     became a chapter that took the anchor with it. The link resolved perfectly — to a chapter —
     and `--strict` cannot see the difference between a link that works and one that says where it
     goes. This is the same shape as every other finding in this book's review passes, and the only
@@ -1326,7 +1326,7 @@ def test_the_hardware_appendix_names_every_hardware_sensitive_chapter(chapter: C
 def test_the_hardware_appendix_counts_that_list_correctly():
     """It said five when six chapters declared an assumption, which is only half a mistake.
 
-    The table is [Part V](#part5)'s chapters and five of them is right; ch01 declares an
+    The table is [Part V](#part5)'s chapters and five of them is right; the board chapter declares an
     assumption too and is handled in the section below the table, deliberately, because it is the
     chapter that goes and asks. What was wrong was the sentence, which claimed to be counting
     chapters rather than Part V's. It says which now, and the number is checked here — a page that
@@ -1365,9 +1365,9 @@ def test_every_problem_says_how_to_run_it(chapter: Chapter):
     """Two had no command at all and one of them had a test sitting there unused.
 
     ch00's padding problem is graded by `test_problem_2_abi.py` and never named it, relying on a
-    catch-all three problems further down; ch26's two predictions share one stub and one command,
+    catch-all three problems further down; the optimisation chapter's two predictions share one stub and one command,
     which is fine and was not said. The exception the book does allow is a problem with no test —
-    ch24's fourth has no answer for one to check against — and that has to be said out loud rather
+    the measurement chapter's fourth has no answer for one to check against — and that has to be said out loud rather
     than inferred from an absence.
     """
     text = (ROOT / chapter.path).read_text()
@@ -1472,8 +1472,8 @@ def test_pairing_is_in_the_chapter_header(chapter: Chapter):
 def test_every_part_three_chapter_either_pairs_or_is_deliberately_standalone():
     """Part V is Part IV re-asked as cost questions, so an unpaired chapter needs a reason.
 
-    Three have one. ch21 teaches measurement itself and has no earlier counterpart; ch27 is about
-    the whole machine rather than one mechanism; ch28 is about hardware Part IV never described.
+    Three have one. *Measuring* teaches measurement itself and has no earlier counterpart; the profiling chapter is about
+    the whole machine rather than one mechanism; the vectors chapter is about hardware Part IV never described.
     Anything else unpaired is an oversight, not a decision.
 
     ``PARTS[-1]`` rather than ``PARTS[2]``: the cost part was the third of three until Part I was
@@ -1500,11 +1500,11 @@ def test_the_preface_shows_the_pairing(chapter: Chapter):
 
     It lives in the preface rather than ch00 because it is an argument about how the book is
     built, which a reader needs before deciding to read it — where ch00 is about getting two
-    machines working. ch20 is exempt: it crosses the seam rather than costing one mechanism, and
+    machines working. The crossing chapter is exempt: it crosses the seam rather than costing one mechanism, and
     the preface discusses it in prose instead.
     """
     if chapter.anchor == "the-same-program-on-both-targets":
-        pytest.skip("ch20 is the crossing itself, not a row in the table")
+        pytest.skip("the crossing chapter is the crossing itself, not a row in the table")
     preface = (ROOT / "index.md").read_text()
     section = preface[preface.index("### One argument, not two tutorials") :]
     assert chapter.label in section, (
@@ -1562,7 +1562,7 @@ def test_pages_agree_on_which_chapters_read_disassembly(page: str):
 
 
 def test_checkpoint_tags_match_the_outline():
-    """CHECKPOINTS.md and the outline had disagreed about ch28 since Part V moved to AArch64.
+    """CHECKPOINTS.md and the outline had disagreed about the real-hardware ordering chapter since Part V moved to AArch64.
 
     The chapter stopped being unmeasurable and started leaving code behind; PLAN.md was updated
     and the tag table was not. A reader following the tags would have looked for a checkpoint the
@@ -1779,7 +1779,7 @@ def test_ci_runs_nothing_a_contributor_cannot_run():
     """`make check` must be exactly what CI runs, or a check only fires after the push.
 
     It was not. `bench.run_setup --check` lived in the workflow alone, so six commits passed
-    locally while CI was red on a result ch13's kernel patch had made stale. A check a
+    locally while CI was red on a result the traps-and-system-calls chapter's kernel patch had made stale. A check a
     contributor cannot run is one that reports at the worst possible moment, and it is worth a
     test rather than a convention because the drift is invisible: both files stay valid.
 

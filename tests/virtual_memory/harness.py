@@ -1,6 +1,6 @@
 """Compile the reader's page-table code and ask it questions.
 
-Shared by all three of chapter 7's problems, which are one program: 7.1 builds a page table, 7.2
+Shared by all three of the virtual-memory chapter's problems, which are one program: 7.1 builds a page table, 7.2
 follows it, and 7.3 says where following it stops. They are graded separately but they run in the
 same arena, because a page table you cannot walk is not evidence of anything.
 """
@@ -58,7 +58,7 @@ def run_of(start: int, pages: int, physical: int) -> list[tuple[int, int]]:
 
 
 def tables_needed(build_dir: Path, runs: list[tuple[int, int]]) -> int:
-    """What chapter 7's model says these runs cost, derived from the addresses alone.
+    """What the virtual-memory chapter's model says these runs cost, derived from the addresses alone.
 
     This is the oracle for problem 7.1, and it is not a second implementation of the answer: the
     model counts page-table pages from a list of address ranges and has no idea how to build one.

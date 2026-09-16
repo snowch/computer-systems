@@ -52,7 +52,7 @@ RUNNER_NOT_WRITTEN: set[str] = set()
 def shape_for(result: str) -> dict:
     """The summary a runner declares it will write for this result.
 
-    A module may produce more than one — ch26 asks three questions of one boundary and writes
+    A module may produce more than one — the OS-cost chapter asks three questions of one boundary and writes
     three results from one workload — so a module with several declares `SHAPES` keyed by result
     name and one with a single result declares `SHAPE`.
     """

@@ -16,10 +16,12 @@ def which_stage_wrote_this(fragment: str) -> str:
     """Return the stage that produced ``fragment``.
 
     One of ``"preprocess"``, ``"compile"``, ``"assemble"`` or ``"link"`` — the four stages
-    chapter 1 walks through, named as `stages.sh` names them.
+    the whole-program chapter walks through, named as `stages.sh` names them.
 
     ``fragment`` is a few lines lifted out of one of the four files. Think about what each stage
     is allowed to know: the preprocessor has never heard of a function, the compiler has never
     heard of an address, and the assembler knows the addresses inside one file and no others.
     """
-    raise NotImplementedError("Problem 1.1 — see the Problems section of chapter 1.")
+    raise NotImplementedError(
+        "Problem 1.1 — see the Problems section of the whole-program chapter."
+    )

@@ -26,7 +26,7 @@
  *
  * The number to find is the one where this stops being worth doing. For a long loop the answer is
  * the lane count and the tail is a rounding error; for a short one the tail is the whole loop, and
- * the compiler will have emitted a great deal of code to achieve nothing. Chapter 21's own table
+ * the compiler will have emitted a great deal of code to achieve nothing. The vectors chapter's own table
  * shows one of these loops growing six times longer in exchange for being four times wider.
  */
 uint64_t v_speedup_x100(uint64_t n, uint64_t lanes) {
@@ -70,7 +70,7 @@ float v_sum_lanewise(const float *x, uint64_t n, uint64_t lanes) {
  *
  * Return the fraction of that bound achieved, as a percentage, rounded down.
  *
- * This is the number chapter 21 asks for instead of a speedup, and the reason is that a speedup
+ * This is the number the vectors chapter asks for instead of a speedup, and the reason is that a speedup
  * printed alone invites you to be pleased with it. Printed as a fraction of what the width
  * allowed, it invites the only useful question — where the rest went — and the answer is usually
  * memory, a tail, or a loop that was never the bottleneck.

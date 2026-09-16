@@ -4,7 +4,7 @@
  *
  * `sysfs/lib/sv39.c` splits an address and counts what a set of mappings would cost. It does not
  * walk a page table and it does not build one, so it will not hand you any of the three answers
- * below. Chapter 7 has the shape; the privileged specification @riscv-priv has the entry format.
+ * below. The virtual-memory chapter has the shape; the privileged specification @riscv-priv has the entry format.
  *
  *   python3 -m pytest tests/virtual_memory
  *
@@ -57,7 +57,7 @@ uint64_t *walk_page(uint64_t pa) { return (uint64_t *)(void *)(arena + pa); }
 /* Map one page: after this, translating `va` must yield `pa`.
  *
  * Allocate the interior tables you need with walk_alloc(), and no more than you need. The test
- * grades this by counting how many pages you took and comparing that with what chapter 7's own
+ * grades this by counting how many pages you took and comparing that with what the virtual-memory chapter's own
  * model derives from the addresses — so a mapper that allocates eagerly fails even if every
  * mapping it makes is correct. That is the chapter's claim turned into a check: the cost of an
  * address space follows from where its pages are.

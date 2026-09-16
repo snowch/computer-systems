@@ -1,10 +1,10 @@
-"""Problem 2 of chapter 2 — pack the struct.
+"""Problem 2 of the representation chapter — pack the struct.
 
 These five members are declared in an order that wastes space. Give the order that wastes least.
 
 The test compiles your ordering and compares its `sizeof` against the smallest any ordering of
 these members can achieve. It does not tell you what that number is, and there is no arithmetic
-to memorise: chapter 2's section on alignment gives you the two rules the compiler is obeying,
+to memorise: the representation chapter's section on alignment gives you the two rules the compiler is obeying,
 and the answer follows from them.
 
 Keep all five. You may not change a type, and you may not add anything.

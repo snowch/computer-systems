@@ -40,5 +40,5 @@ def test_each_requirement_has_the_spelling_the_book_saw_emitted(sharing):
         if answered["spelling"][f"{need}{isa}"] != expected
     }
     assert not wrong, (
-        f"the requirement is one thing and the spellings are two; ch17 printed both: {wrong}"
+        f"the requirement is one thing and the spellings are two; the real-hardware ordering chapter printed both: {wrong}"
     )

@@ -1,4 +1,4 @@
-"""Problem 3 of chapter 4 — which register did it not bother to save, and why was that allowed?
+"""Problem 3 of the machine-code chapter — which register did it not bother to save, and why was that allowed?
 
 A function that calls another function has a problem: the callee may use any register it likes,
 so anything this function still needs afterwards has to survive somehow. The calling convention
@@ -14,7 +14,7 @@ for two registers:
 Name them by their ABI names (`a0`, `t1`, `s2`, and so on) rather than by number, because the
 numbers are the part nobody remembers and the names are the part that means something.
 
-Appendix A lists the two groups. Chapter 4 explains the rule that puts a register in one or the
+Appendix A lists the two groups. The machine-code chapter explains the rule that puts a register in one or the
 other, and the rule is short enough that you should not need the list.
 """
 

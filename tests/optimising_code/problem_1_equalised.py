@@ -1,6 +1,6 @@
 """Problems 16.1 and 16.2 — predict what the compiler did, before looking.
 
-Chapter 16 compiles five hand-optimisations of one loop at three optimisation levels. Answer these
+The optimisation chapter compiles five hand-optimisations of one loop at three optimisation levels. Answer these
 from the source in `sysfs/lib/loops.c` and from what you know about compilers, and then be graded
 against what this book's own compiler actually produced.
 

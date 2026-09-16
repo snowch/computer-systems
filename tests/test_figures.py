@@ -119,7 +119,7 @@ def test_listing_shows_each_architecture_once(name: str, figure: Listing):
     """No two blocks in one figure may be indistinguishable from their labels.
 
     Originally this compared architectures alone, because comparing architectures was the only
-    reason a figure had more than one block. ch28 gave it a second: the same function compiled at
+    reason a figure had more than one block. The optimisation chapter gave it a second: the same function compiled at
     two optimisation levels, which is one architecture twice and entirely deliberate. What must
     still never happen is two blocks a reader cannot tell apart, so the key is what the label
     says — architecture and level — rather than architecture on its own.

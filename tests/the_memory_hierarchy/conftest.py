@@ -1,4 +1,4 @@
-"""The reader's hierarchy analysis, built once for chapter 15's three problems."""
+"""The reader's hierarchy analysis, built once for the memory-hierarchy chapter's three problems."""
 
 from __future__ import annotations
 

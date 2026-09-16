@@ -27,7 +27,7 @@
  * Return what the harness reports as the cost of one call, in nanoseconds, rounded down.
  * `iterations` is at least 1.
  *
- * This is the easiest of chapter 19's traps to fall into. On a machine where the thing being
+ * This is the easiest of the OS-cost chapter's traps to fall into. On a machine where the thing being
  * timed is cheap, an instrument inside the loop is added to every call and never divided by
  * anything, and what comes out is a confident measurement of `clock_gettime`.
  */
@@ -42,7 +42,7 @@ uint64_t o_reported_ns(uint64_t call_ns, uint64_t clock_ns, uint64_t iterations,
 /* -- Problem 19.2 -------------------------------------------------------------------------- */
 /* What does Part IV's model say this cannot be cheaper than?
  *
- * `instructions` is the length of the trap path chapter 6 counted. `ipc_x100` is the
+ * `instructions` is the length of the trap path the traps-and-system-calls chapter counted. `ipc_x100` is the
  * instructions-per-cycle the machine sustains on it, times a hundred, so 150 means 1.5. `mhz` is
  * the clock in megahertz.
  *
@@ -77,7 +77,7 @@ uint64_t o_lower_bound_ns(uint64_t instructions, uint64_t ipc_x100, uint64_t mhz
  *   O_FATAL   the process never asked for this address
  *
  * The distinction that matters is minor against major, and it is not a distinction about the
- * fault: both enter the kernel by chapter 6's path, and both leave it the same way. What
+ * fault: both enter the kernel by the traps-and-system-calls chapter's path, and both leave it the same way. What
  * separates them is whether the answer was already in memory, and that is worth three or four
  * orders of magnitude.
  */

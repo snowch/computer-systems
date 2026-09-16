@@ -10,7 +10,7 @@ LIMIT = 1 << UNSIGNED_BITS
 
 
 def fits_as_written(start: int, length: int, size: int) -> bool:
-    """The function exactly as chapter 2 prints it, wrapping the way `unsigned` wraps."""
+    """The function exactly as the representation chapter prints it, wrapping the way `unsigned` wraps."""
     return ((start + length) % LIMIT) <= size
 
 

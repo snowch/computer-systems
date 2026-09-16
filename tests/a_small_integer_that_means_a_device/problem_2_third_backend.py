@@ -1,4 +1,4 @@
-"""Problem 2 of ch08 — add a third backend.
+"""Problem 2 of the device-descriptor chapter — add a third backend.
 
 Add a destination that discards everything written to it and reads back as nothing, and show that
 the calling code does not change.

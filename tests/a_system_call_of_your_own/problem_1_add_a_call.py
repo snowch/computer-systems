@@ -1,6 +1,6 @@
-"""Problem 1 of ch07 — add a call, and an error.
+"""Problem 1 of the system-call chapter — add a call, and an error.
 
-ch07 has one way to fail: an unknown call number. Add a call that can fail for a different reason
+The system-call chapter has one way to fail: an unknown call number. Add a call that can fail for a different reason
 — something about its arguments rather than about its identity — and return a result the caller can
 tell apart from a valid one.
 

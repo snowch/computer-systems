@@ -1,4 +1,4 @@
-"""The reader's file-system model, built once for chapter 12's three problems."""
+"""The reader's file-system model, built once for the file-system chapter's three problems."""
 
 from __future__ import annotations
 

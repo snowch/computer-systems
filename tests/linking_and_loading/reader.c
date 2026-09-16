@@ -6,7 +6,7 @@
  * two functions below, so it will not hand you the answer.
  *
  * Both are about the same idea: an ELF file describes itself, and everything in it is found by
- * following an offset. The specification @elf-abi has the field layouts; chapter 5 has the shape.
+ * following an offset. The specification @elf-abi has the field layouts; the linking chapter has the shape.
  *
  *   python3 -m pytest tests/linking_and_loading/test_problem_1_reader.py
  */
@@ -44,7 +44,7 @@ uint64_t reader_memory_footprint(const unsigned char *elf) {
  * the address. A section covers an address if it has one — some do not — and the address falls
  * within its size.
  *
- * The indirection to get a name is the part worth working out, and chapter 5 describes it. */
+ * The indirection to get a name is the part worth working out, and the linking chapter describes it. */
 const char *reader_section_covering(const unsigned char *elf, uint64_t address) {
   (void)elf;
   (void)address;

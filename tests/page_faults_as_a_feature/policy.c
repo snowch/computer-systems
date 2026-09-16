@@ -4,7 +4,7 @@
  *
  * None of these is in the repository. `sysfs/lib/sv39.c` counts page-table pages from addresses
  * and knows nothing about policy; the kernel patch for this chapter counts and decides nothing.
- * Chapter 8 has everything you need, and the second one is the only place it is spelled out.
+ * The page-faults chapter has everything you need, and the second one is the only place it is spelled out.
  *
  *   python3 -m pytest tests/page_faults_as_a_feature
  */

@@ -1,7 +1,7 @@
 """Claims Part III makes about emitted code, asserted so a compiler changing its mind fails CI.
 
-ch09's program says the same thing on both targets and the compiler folds one route away; ch03's
-array parameter is a pointer parameter, and its volatile reads all survive.
+The whole-program chapter's program says the same thing on both targets and the compiler folds one route away;
+*Memory Is One Array*'s array parameter is a pointer parameter, and its volatile reads all survive.
 
 Two claims the chapter makes, checked rather than asserted. The first is the point of having two
 targets at all: identical source, identical output, two machines that agree about what a program
@@ -43,7 +43,7 @@ def test_the_host_build_agrees_with_itself(host_target, build_dir):
 
 @pytest.mark.xv6
 def test_both_targets_print_the_same_facts():
-    """The claim ch09 closes on. Only the first line, naming the world, may differ."""
+    """The claim the whole-program chapter closes on. Only the first line, naming the world, may differ."""
     result = xv6.boot(["sameanswer"])
     assert not result.timed_out, result.transcript[-1500:]
     assert _facts(result.output_of("sameanswer")) == EXPECTED
@@ -51,7 +51,7 @@ def test_both_targets_print_the_same_facts():
 
 @pytest.mark.hostcode
 def test_only_one_of_the_two_routes_survives_to_run_time():
-    """ch09's central contrast, asserted so that a compiler changing its mind fails the build.
+    """The whole-program chapter's central contrast, asserted so that a compiler changing its mind fails the build.
 
     The chapter prints both listings and spends a section on why they differ. If a future compiler
     folds the counted loop too — or stops folding the other — the prose around those listings is
@@ -65,10 +65,11 @@ def test_only_one_of_the_two_routes_survives_to_run_time():
         ["sysfs/lib/stages.c"], "sysfs_sum_counted", target, includes=["sysfs/include"]
     )
     assert folded.instructions < counted.instructions, (
-        "ch09 says the folded route is the shorter one:\n" + folded.text
+        "the whole-program chapter says the folded route is the shorter one:\n" + folded.text
     )
     assert "2016" in folded.text or "0x7e0" in folded.text, (
-        "ch09 says the compiler wrote the answer into the instruction stream:\n" + folded.text
+        "the whole-program chapter says the compiler wrote the answer into the instruction stream:\n"
+        + folded.text
     )
 
 
@@ -81,7 +82,7 @@ def test_the_walk_script_is_the_one_the_chapter_quotes():
 
 @pytest.mark.hostcode
 def test_an_array_parameter_compiles_to_a_pointer_parameter():
-    """ch03 claims these are identical instruction for instruction. Claims get checked.
+    """*Memory Is One Array* claims these are identical instruction for instruction. Claims get checked.
 
     The chapter prints one of the two listings and says the other is the same, which saves the
     reader a page of duplicate output and costs the book nothing — provided something asserts it.
@@ -100,14 +101,14 @@ def test_an_array_parameter_compiles_to_a_pointer_parameter():
         return [line.split(":\t", 1)[1] for line in text.splitlines() if ":\t" in line]
 
     assert body(array.text) == body(pointer.text), (
-        "ch03 says an array parameter and a pointer parameter produce the same code:\n"
+        "*Memory Is One Array* says an array parameter and a pointer parameter produce the same code:\n"
         f"{array.text}\n\n{pointer.text}"
     )
 
 
 @pytest.mark.hostcode
 def test_volatile_keeps_every_read():
-    """The other claim ch03 rests on: a plain read may be elided and a volatile one may not."""
+    """The other claim *Memory Is One Array* rests on: a plain read may be elided and a volatile one may not."""
     target = target_for("riscv64")
     plain = disassemble(
         ["sysfs/lib/addresses.c"], "sysfs_read_four", target, includes=["sysfs/include"]
@@ -115,8 +116,12 @@ def test_volatile_keeps_every_read():
     marked = disassemble(
         ["sysfs/lib/addresses.c"], "sysfs_read_four_volatile", target, includes=["sysfs/include"]
     )
-    assert plain.text.count("lw") == 1, "ch03 says the plain version reads once:\n" + plain.text
-    assert marked.text.count("lw") == 4, "ch03 says volatile keeps all four reads:\n" + marked.text
+    assert plain.text.count("lw") == 1, (
+        "*Memory Is One Array* says the plain version reads once:\n" + plain.text
+    )
+    assert marked.text.count("lw") == 4, (
+        "*Memory Is One Array* says volatile keeps all four reads:\n" + marked.text
+    )
 
 
 def test_the_walk_refuses_a_file_that_names_this_checkout():
@@ -139,7 +144,7 @@ def test_the_walk_refuses_a_file_that_names_this_checkout():
 
 @pytest.mark.skipif(shutil.which(CC) is None, reason=f"needs {CC}")
 def test_the_walk_measures_the_toolchain_and_not_the_checkout(tmp_path):
-    """ch09's stage sizes must be the same in two clones of the same commit. They were not.
+    """The whole-program chapter's stage sizes must be the same in two clones of the same commit. They were not.
 
     An absolute `-I` put this checkout's path into the preprocessor's line markers and therefore
     into stage 1's byte count, so the same tree measured 38273 bytes on a laptop and 38345 on a CI
@@ -167,13 +172,13 @@ def test_the_walk_measures_the_toolchain_and_not_the_checkout(tmp_path):
     shorter, longer = (len(str(tmp_path / name)) for name in roots)
     assert longer - shorter > 100, "the two checkouts must differ enough for a path to show up"
     assert walks[0] == walks[1], (
-        "the same commit measured differently from two directories, so ch09's stage sizes are "
+        "the same commit measured differently from two directories, so the whole-program chapter's stage sizes are "
         f"partly a statement about where the tree lives:\n{walks[0]}\n{walks[1]}"
     )
 
 
 def test_the_trap_probe_matches_the_program_it_counts():
-    """ch13's census is only reproducible while the runner and the workload agree.
+    """The traps-and-system-calls chapter's census is only reproducible while the runner and the workload agree.
 
     `trapload.c` decides how many times it calls `getpid` and `bench/run_traps.py` asserts that
     the kernel counted exactly that many. Two constants in two languages, and nothing but this

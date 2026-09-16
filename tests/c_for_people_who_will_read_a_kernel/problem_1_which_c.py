@@ -1,4 +1,4 @@
-"""Problem 1 of chapter 3 — which C produced this?
+"""Problem 1 of the kernel-C chapter — which C produced this?
 
 Four listings, four candidate functions, and the job is to say which is which.
 

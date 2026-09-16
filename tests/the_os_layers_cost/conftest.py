@@ -1,4 +1,4 @@
-"""The reader's cost model, built once for chapter 19's three problems."""
+"""The reader's cost model, built once for the OS-cost chapter's three problems."""
 
 from __future__ import annotations
 

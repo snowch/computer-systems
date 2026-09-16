@@ -1,4 +1,4 @@
-"""The reader's lane arithmetic, built once for chapter 21's three problems."""
+"""The reader's lane arithmetic, built once for the vectors chapter's three problems."""
 
 from __future__ import annotations
 

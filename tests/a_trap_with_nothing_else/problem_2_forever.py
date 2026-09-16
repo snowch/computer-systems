@@ -1,6 +1,6 @@
-"""Problem 2 of ch04 — make it loop, then explain it.
+"""Problem 2 of the trap chapter — make it loop, then explain it.
 
-Take ch04's trap program, remove the line that advances `mepc`, and put the result in
+Take the trap chapter's trap program, remove the line that advances `mepc`, and put the result in
 `answer_forever.c` beside this file. It is linked against the same runtime as the chapter's own
 programs.
 

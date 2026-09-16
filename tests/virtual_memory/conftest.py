@@ -1,4 +1,4 @@
-"""The reader's page-table program, built once for chapter 7's three problems."""
+"""The reader's page-table program, built once for the virtual-memory chapter's three problems."""
 
 from __future__ import annotations
 
