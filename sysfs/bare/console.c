@@ -2,7 +2,7 @@
  *
  * The UART is a 16550 at a fixed address. Writing a byte to its transmit register sends it;
  * reading the line-status register says whether it is ready for another. That is the whole
- * driver, and it is worth seeing at this size once, because ch17's version in the kernel is the
+ * driver, and it is worth seeing at this size once, because the interrupts-and-drivers chapter's version in the kernel is the
  * same two registers underneath a great deal of machinery about interrupts and sleeping.
  */
 #include "bare.h"
@@ -18,7 +18,7 @@ static volatile uint8 *uart = (volatile uint8 *)BARE_UART_BASE;
 void bare_putc(char c) {
     while ((uart[UART_LSR] & UART_LSR_THRE) == 0) {
         /* The device has a byte in hand. Spin: there is nothing else to do and nobody to
-         * yield to. A kernel would sleep here, which is ch17's subject. */
+         * yield to. A kernel would sleep here, which is the interrupts-and-drivers chapter's subject. */
     }
     uart[UART_THR] = (uint8)c;
 }
@@ -108,7 +108,7 @@ void bare_exit(void) {
     }
 }
 
-/* Every hart above zero parks, unless a program says otherwise. ch06 is the one that does. */
+/* Every hart above zero parks, unless a program says otherwise. The bare-metal paging chapter is the one that does. */
 __attribute__((weak)) void bare_secondary(uint64 hartid) {
     (void)hartid;
     bare_park();

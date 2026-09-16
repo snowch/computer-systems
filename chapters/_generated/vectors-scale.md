@@ -15,7 +15,7 @@
   20:	ret
 ```
 
-*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -c` · 2026-09-15 · Source: `bench/results/vectors-o2.json`, code hash `407db2eb4c8ffb60`.*
+*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -c` · 2026-09-16 · Source: `bench/results/vectors-o2.json`, code hash `10aad707be61d486`.*
 
 **`sysfs_vec_scale` compiled for aarch64 at `-O3`** — the `host` target's instruction set, 56 instructions.
 
@@ -79,4 +79,4 @@
   dc:	b	40 <sysfs_vec_scale+0x40>
 ```
 
-*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -O3 -c` · 2026-09-15 · Source: `bench/results/vectors-o3.json`, code hash `407db2eb4c8ffb60`.*
+*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -O3 -c` · 2026-09-16 · Source: `bench/results/vectors-o3.json`, code hash `10aad707be61d486`.*

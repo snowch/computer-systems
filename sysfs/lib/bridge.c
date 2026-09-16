@@ -1,4 +1,4 @@
-/* The bodies, instantiated once so that ch20 has something to disassemble.
+/* The bodies, instantiated once so that the crossing chapter has something to disassemble.
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *

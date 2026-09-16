@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "5b66faf4cc779cc6",
+  "code_fingerprint": "c03be3830259c7ce",
   "code_sources": [
     "bench/run_profile.py",
     "sysfs/tools/tally.c",
@@ -10,7 +10,7 @@
     "note": "counts only \u2014 every figure here is a property of the program and its sizes",
     "why": "the profile itself belongs to make bench-board, and this is what it is compared against"
   },
-  "generated_at": "2026-09-15T15:09:46+00:00",
+  "generated_at": "2026-09-16T18:32:08+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "aarch64",
@@ -22,14 +22,14 @@
   "recorded_on": {
     "arch": "x86_64",
     "cpu": {
-      "bogomips": "4200.00",
-      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+      "bogomips": "5200.00",
+      "model name": "Intel(R) Xeon(R) 6973P-C"
     },
     "cpus_online": "0-3",
-    "kernel": "Linux 6.18.44-fc-v33",
+    "kernel": "Linux 6.17.0-1022-azure",
     "kind": "other",
-    "os": "Ubuntu 24.04.4 LTS",
-    "python": "3.11.15"
+    "os": "Ubuntu 24.04.5 LTS",
+    "python": "3.11.16"
   },
   "summary": {
     "agree": true,

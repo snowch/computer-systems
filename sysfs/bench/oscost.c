@@ -11,7 +11,7 @@
  * not doing it.
  *
  * The raw system call is written here rather than taken from sysfs/lib/oscalls.c on purpose. That
- * file is disassembled by chapter 21 and its listings are committed; adding to it would move them
+ * file is disassembled by the OS-cost chapter and its listings are committed; adding to it would move them
  * for a reason that has nothing to do with what the chapter shows.
  */
 

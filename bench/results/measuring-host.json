@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "34368899b227c624",
+  "code_fingerprint": "ccb5f75e6a3b66a1",
   "code_sources": [
     "bench/run_measuring.py",
     "sysfs/bench/measuring.c",

@@ -7,4 +7,4 @@
 | Bytes from one `int32_t` to the next | 4 |
 | Bytes from one `int64_t` to the next | 8 |
 
-*Conditions: target `host` · aarch64 cross build, any machine — run under user-mode QEMU for counts only · aarch64-linux-gnu-gcc · `-O2 -g -Wall -Wextra -static` · 2026-09-15 · Source: `bench/results/firstc.json`, code hash `cc43dba1988792d2`.*
+*Conditions: target `host` · aarch64 cross build, any machine — run under user-mode QEMU for counts only · aarch64-linux-gnu-gcc · `-O2 -g -Wall -Wextra -static` · 2026-09-16 · Source: `bench/results/firstc.json`, code hash `934693ca233c39a1`.*

@@ -1,4 +1,4 @@
-/* ch06 (second half): what a second core breaks.
+/* The bare-metal paging chapter (second half): what a second core breaks.
  *
  * The usual demonstration starts two harts incrementing a counter as fast as they can and shows
  * that the total comes out short. That works, sometimes, and teaches the wrong lesson when it

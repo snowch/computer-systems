@@ -1,6 +1,6 @@
-/* ch07: what has to exist before `ecall` is a system call rather than a trap.
+/* The bare-metal system-call chapter: what has to exist before `ecall` is a system call rather than a trap.
  *
- * ch04's handler knew its caller: the same function, a few instructions earlier, compiled at the
+ * The bare-metal trap chapter's handler knew its caller: the same function, a few instructions earlier, compiled at the
  * same time. The compiler could therefore work out which registers mattered and save exactly
  * those. Here the caller is a stranger — it runs in a different privilege mode and the handler
  * has no idea which registers it was using — so the handler saves all of them, by hand, because
@@ -108,7 +108,7 @@ void syscall_dispatch(uint64 *frame) {
         break;
     }
 
-    /* `ecall` traps with mepc pointing at the ecall itself, exactly as ch04's did. Four bytes on
+    /* `ecall` traps with mepc pointing at the ecall itself, exactly as the bare-metal trap chapter's did. Four bytes on
      * is the instruction after it, which is where the caller expects to continue. */
     bare_csr_write(mepc, bare_csr_read(mepc) + 4);
 }

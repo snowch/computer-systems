@@ -1,4 +1,4 @@
-/* ch08: a small integer that means a device.
+/* The descriptors chapter: a small integer that means a device.
  *
  * `write(1, ...)` and `write(2, ...)` are the same instruction sequence with one register
  * different, and they end up in completely unrelated places. That is the whole of what a
@@ -37,7 +37,7 @@ struct open_file {
  * shell can point a program's output somewhere and have it append rather than overwrite.
  *
  * Putting the cursor in the descriptor instead would be simpler and would quietly make `dup` a
- * copy rather than a second name. It is the same distinction ch09's `fork` turns on: the table
+ * copy rather than a second name. It is the same distinction the fork chapter's `fork` turns on: the table
  * is copied, the things it refers to are not. */
 #define OPEN_FILES 4
 #define NO_FILE (-1)

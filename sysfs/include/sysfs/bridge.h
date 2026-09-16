@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch20 needs a program that Parts III and IV explain completely and whose cost they do not predict
+ * The crossing chapter needs a program that Parts III and IV explain completely and whose cost they do not predict
  * at all. These two functions add up exactly the same numbers and return exactly the same answer.
  * One walks an array from beginning to end; the other follows a chain through the same array,
  * visiting every element exactly once, in an order arranged so that no two consecutive visits are
@@ -21,7 +21,7 @@
 #define SYSFS_BRIDGE_H
 
 /* `next` is an index rather than a pointer so the structure has the same size and layout on both
- * targets — which is ch10's subject, and the reason this comparison is allowed to be made. */
+ * targets — which is the representing-information chapter's subject, and the reason this comparison is allowed to be made. */
 struct sysfs_cell {
   long value;
   long next;
@@ -31,7 +31,7 @@ struct sysfs_cell {
   /* A stride that visits everything. Any odd number coprime with count       \
    * closes the cycle; a little under a third keeps consecutive visits far    \
    * apart without being a power of two, which would land them on a small set \
-   * of cache sets — a distinction ch22 has the equipment to explain. */      \
+   * of cache sets — a distinction the memory-hierarchy chapter has the equipment to explain. */      \
   long sysfs_bridge_stride(long count) {                                      \
     long stride = count / 3;                                                  \
     if (stride < 1)                                                           \

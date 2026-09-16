@@ -10,4 +10,4 @@
 | …of those, pages allocated | 64 |
 | Pages `exec` allocated before `main` ran | 20 |
 
-*Conditions: target `xv6` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · xv6-riscv @ 9e3161a · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `xv6's own CFLAGS` · 2026-09-15 · Source: `bench/results/faults-xv6.json`, code hash `8f7779b7d7411af5`.*
+*Conditions: target `xv6` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · xv6-riscv @ 9e3161a · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `xv6's own CFLAGS` · 2026-09-16 · Source: `bench/results/faults-xv6.json`, code hash `924bbf8f2253b7e6`.*

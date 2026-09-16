@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * Chapter 21 asks one question: what does vectorising buy, and when will the compiler do it
+ * The vectors chapter asks one question: what does vectorising buy, and when will the compiler do it
  * without being asked? These loops exist to make both halves of that answerable by looking —
  * `bench/run_vectors.py` counts how many of each function's instructions are vector instructions,
  * which is a property of the compiler and needs no machine.

@@ -1,4 +1,4 @@
-/* ch09: fork, built rather than read.
+/* The fork chapter: fork, built rather than read.
  *
  * The least a machine needs before two programs run on it: somewhere to keep what a program is,
  * a way to give the second one its own memory, and a way to put a saved program back on the
@@ -71,7 +71,7 @@ static uint64 *take_page(void) {
 
 /* Walk to the leaf entry for one virtual address, making the levels that are missing. Three
  * levels, nine bits each, because Sv39 is thirty-nine bits of address and the bottom twelve are
- * the offset within a page. ch06 used gigabyte leaves and needed none of this. */
+ * the offset within a page. The bare-metal paging chapter used gigabyte leaves and needed none of this. */
 static uint64 *leaf_entry(uint64 *root, uint64 va) {
     uint64 *table = root;
     for (int level = 2; level > 0; level--) {

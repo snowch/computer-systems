@@ -2,13 +2,13 @@ diff -urN a/kernel/console.c b/kernel/console.c
 --- a/kernel/console.c	2026-09-14 21:36:55.748587859 +0000
 +++ b/kernel/console.c	2026-09-14 21:36:55.773357968 +0000
 @@ -152,6 +152,9 @@
-   case C('T'): // Print the trap census (Systems From Scratch, ch13).
+   case C('T'): // Print the trap census (Systems From Scratch, traps and system calls).
      trapdump();
      break;
-+  case C('X'): // Print the switch census (Systems From Scratch, ch18).
++  case C('X'): // Print the switch census (Systems From Scratch, scheduling and context switches).
 +    switchdump();
 +    break;
-   case C('N'): // Print the interrupt census (Systems From Scratch, ch16).
+   case C('N'): // Print the interrupt census (Systems From Scratch, interrupts and drivers).
      intrdump();
      break;
 diff -urN a/kernel/defs.h b/kernel/defs.h
@@ -38,7 +38,7 @@ diff -urN a/kernel/proc.c b/kernel/proc.c
      panic("sched interruptible");
  
    intena = mycpu()->intena;
-+  switchnote(p); // Systems From Scratch, ch18
++  switchnote(p); // Systems From Scratch, scheduling and context switches
    swtch(&p->context, &mycpu()->context);
    mycpu()->intena = intena;
  }
@@ -46,7 +46,7 @@ diff -urN a/kernel/proc.c b/kernel/proc.c
    struct proc *p = myproc();
    acquire(&p->lock);
    p->state = RUNNABLE;
-+  p->switchreason = 1; // Systems From Scratch, ch18: the timer took it away
++  p->switchreason = 1; // Systems From Scratch, scheduling and context switches: the timer took it away
    sched();
    release(&p->lock);
  }
@@ -54,7 +54,7 @@ diff -urN a/kernel/proc.c b/kernel/proc.c
    acquire(&p->lock);
    if (p->chan != 0) {
      p->state = SLEEPING;
-+    p->switchreason = 2; // Systems From Scratch, ch18: waiting for something
++    p->switchreason = 2; // Systems From Scratch, scheduling and context switches: waiting for something
      sched();
    }
    release(&p->lock);
@@ -64,21 +64,21 @@ diff -urN a/kernel/proc.c b/kernel/proc.c
  }
 +
 +
-+// -- switch census (Systems From Scratch, ch18) ---------------------------------------------
++// -- switch census (Systems From Scratch, scheduling and context switches) ---------------------------------------------
 +//
 +// Every switch out of a process goes through sched(), so one counter there catches all of them;
 +// what differs is why the process was there. yield() is the timer taking the CPU away, sleep() is
 +// the process giving it up to wait, and kexit() is the process not coming back.
 +//
 +// The reason lives in struct proc rather than in a static, and the first version of this patch
-+// put it in a static — which is ch17's race written by the author of ch17. Three harts reach
++// put it in a static — which is the locks chapter's race written by the author of the locks chapter. Three harts reach
 +// sched() whenever they like, so a single shared slot is set by one process and read by another,
 +// and the count came out twice what the workload could possibly have caused. A per-process field
 +// costs four bytes and cannot be got wrong that way.
 +//
 +// Only the exit count is a number a workload decides. A yield count is a statement about how many
 +// timer interrupts happened, and a sleep count about whether what was waited for had already
-+// happened; bench/run_switch.py records accordingly, for ch16's reasons.
++// happened; bench/run_switch.py records accordingly, for the interrupts-and-drivers chapter's reasons.
 +
 +struct switchcensus {
 +  uint64 switches;
@@ -117,6 +117,6 @@ diff -urN a/kernel/proc.h b/kernel/proc.h
 @@ -115,4 +115,5 @@
    struct inode *cwd;           // Current directory
    char name[16];               // Process name (debugging)
-   struct faultcensus fc;       // Systems From Scratch, ch15
-+  int switchreason;            // Systems From Scratch, ch18: why this process last gave up
+   struct faultcensus fc;       // Systems From Scratch, page faults
++  int switchreason;            // Systems From Scratch, scheduling and context switches: why this process last gave up
  };

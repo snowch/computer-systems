@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch03 asks which of C's constructs the *machine* has heard of. Some are instructions to the
+ * The kernel-C chapter asks which of C's constructs the *machine* has heard of. Some are instructions to the
  * compiler and vanish (`static`, an array parameter); one is an instruction to the compiler about
  * what it may not do, and survives into every load (`volatile`); one turns a call into a
  * different instruction entirely (a function pointer). The way to tell them apart is to compile

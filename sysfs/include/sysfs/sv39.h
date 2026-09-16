@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * ch14 takes the position that translation is a lookup a reader can do by hand, and that the only
+ * The virtual-memory chapter takes the position that translation is a lookup a reader can do by hand, and that the only
  * way to believe that is to do it. Everything here is derivable from two numbers in the privileged
  * specification @riscv-priv — a 4096-byte page and an 8-byte entry — and nothing here needs a
  * machine in supervisor mode to be true.

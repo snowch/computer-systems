@@ -7,4 +7,4 @@
 | Heap functions it defines | 0 |
 | C library functions it reimplements | 13 |
 
-*Conditions: target `xv6` · the staged kernel, read rather than booted · xv6-riscv @ 9e3161a · xv6's own CFLAGS · `riscv64-linux-gnu-objdump -d; riscv64-linux-gnu-nm --defined-only` · 2026-09-15 · Source: `bench/results/kernelc-xv6.json`, code hash `7114b6b23c153c39`.*
+*Conditions: target `xv6` · the staged kernel, read rather than booted · xv6-riscv @ 9e3161a · xv6's own CFLAGS · `riscv64-linux-gnu-objdump -d; riscv64-linux-gnu-nm --defined-only` · 2026-09-16 · Source: `bench/results/kernelc-xv6.json`, code hash `7114b6b23c153c39`.*

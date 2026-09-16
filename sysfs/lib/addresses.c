@@ -1,4 +1,4 @@
-/* The pairs ch03 compiles and compares.
+/* The pairs the kernel-C chapter compiles and compares.
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *

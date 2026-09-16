@@ -5,7 +5,7 @@ diff -urN a/kernel/console.c b/kernel/console.c
    acquire(&cons.lock);
  
    switch (c) {
-+  case C('T'): // Print the trap census (Systems From Scratch, ch13).
++  case C('T'): // Print the trap census (Systems From Scratch, traps and system calls).
 +    trapdump();
 +    break;
    case C('P'): // Print process list.
@@ -41,7 +41,7 @@ diff -urN a/kernel/trap.c b/kernel/trap.c
  
  extern int devintr();
  
-+// -- trap census (Systems From Scratch, ch13) ---------------------------------------------
++// -- trap census (Systems From Scratch, traps and system calls) ---------------------------------------------
 +//
 +// Every trap into the kernel is counted, by cause, and every system call is counted by number.
 +// This exists because the book cannot time a trap on this target -- QEMU models no pipeline and
@@ -85,7 +85,7 @@ diff -urN a/kernel/trap.c b/kernel/trap.c
 +}
 +
 +// Called from syscall() once the number is known, so the census can say *which* calls a workload
-+// made rather than only how many. The per-number counts are what ch13 can reproduce exactly: a
++// made rather than only how many. The per-number counts are what the traps-and-system-calls chapter can reproduce exactly: a
 +// program that asks for one thing a thousand times is counted a thousand times, whatever the
 +// shell around it happened to do.
 +void
@@ -96,7 +96,7 @@ diff -urN a/kernel/trap.c b/kernel/trap.c
 +}
 +
 +// Printed on Ctrl-T at the console, the way Ctrl-P prints the process table. A system call would
-+// be the other way to reach it, and ch13 leaves that to the reader.
++// be the other way to reach it, and the traps-and-system-calls chapter leaves that to the reader.
 +void
 +trapdump(void)
 +{

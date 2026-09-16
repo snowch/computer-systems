@@ -7,4 +7,4 @@
 | `sum_chain4` | 0.3 ns | 2.78 |
 | `sum_chain8` | 0.25 ns | 1.85 |
 
-*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/pipeline-host.json`, code hash `89eb4d7d6fbeac15`.*
+*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/pipeline-host.json`, code hash `53ea9c154ad84ef2`.*

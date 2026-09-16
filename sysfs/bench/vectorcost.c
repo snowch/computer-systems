@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * The same five loops chapter 23 disassembles. This source is built twice, at the book's own
+ * The same five loops the vectors chapter disassembles. This source is built twice, at the book's own
  * optimisation level and at the one where this compiler starts widening, and the difference
  * between the two runs is the measurement. Nothing here knows which build it is: that is the
  * runner's business, and a workload that behaved differently depending on its flags would be

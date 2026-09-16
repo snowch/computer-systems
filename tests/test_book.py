@@ -1802,3 +1802,41 @@ def test_ci_runs_nothing_a_contributor_cannot_run():
         "these workflow steps check something scripts/ci-check.sh does not, so `make check` is "
         f"no longer what CI runs: {smuggled}"
     )
+
+
+#: The trees whose source a reader compiles or the kernel ships, so a chapter number written into a
+#: comment here is not a private note — it reaches `./run --list`, or lands in `console.c` in a
+#: kernel the reader builds. `sync-labels.py` cannot help: it scans markdown, and a bare `chNN` in
+#: a `.c` file has no anchor to derive a number from anyway.
+GUARDED_SOURCE_TREES = ("sysfs", "xv6/patches", "xv6/apps")
+CHAPTER_NUMBER_IN_CODE = re.compile(r"\bch\d{2}\b")
+
+
+def _guarded_source_files() -> list[str]:
+    suffixes = {".c", ".h", ".S", ".patch", ".md", ".mk"}
+    files: list[str] = []
+    for tree in GUARDED_SOURCE_TREES:
+        for path in sorted((ROOT / tree).rglob("*")):
+            if path.is_file() and (path.suffix in suffixes or path.name == "Makefile"):
+                files.append(path.relative_to(ROOT).as_posix())
+    return files
+
+
+@pytest.mark.parametrize("source", _guarded_source_files())
+def test_no_shipped_source_names_a_chapter_by_number(source: str):
+    """The rule CLAUDE.md applies to identifiers, extended to the code a reader sees.
+
+    Every `chNN` checked outside `tests/prerequisites_and_setup/` was wrong, by a per-era offset:
+    the trap census's marker said `ch13` — *Representing Information*, nothing to do with a trap —
+    and shipped in `console.c` in five patches; five `sysfs/bare` and `sysfs/tools` headers named a
+    chapter through `./run --list` and all five were stale. There is no anchor to renumber from and
+    no syncer that looks here, so the fix is the one the book reaches for elsewhere: name the
+    chapter, which cannot go stale. This guard keeps the three trees a reader compiles or builds
+    free of the number that started it.
+    """
+    body = (ROOT / source).read_text()
+    hits = sorted({m.group(0) for m in CHAPTER_NUMBER_IN_CODE.finditer(body)})
+    assert not hits, (
+        f"{source} names a chapter by number ({', '.join(hits)}) — a bare number with no anchor "
+        f"behind it, which nothing can keep right. Name what the chapter is about instead"
+    )

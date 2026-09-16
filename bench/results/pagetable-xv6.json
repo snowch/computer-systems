@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "d5270bba53bb9c1e",
+  "code_fingerprint": "b36f1e360f426ed5",
   "code_sources": [
     "bench/run_pagetable.py",
     "bench/xv6.py",
@@ -13,7 +13,7 @@
     "note": "structure only: page-table pages, leaf entries and where the mappings are",
     "subjects": "the kernel's own map, and init's \u2014 both fixed by the build, not the run"
   },
-  "generated_at": "2026-09-15T15:09:59+00:00",
+  "generated_at": "2026-09-16T18:32:01+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",
@@ -27,14 +27,14 @@
   "recorded_on": {
     "arch": "x86_64",
     "cpu": {
-      "bogomips": "4200.00",
-      "model name": "Intel(R) Xeon(R) Processor @ 2.10GHz"
+      "bogomips": "5200.00",
+      "model name": "Intel(R) Xeon(R) 6973P-C"
     },
     "cpus_online": "0-3",
-    "kernel": "Linux 6.18.44-fc-v33",
+    "kernel": "Linux 6.17.0-1022-azure",
     "kind": "other",
-    "os": "Ubuntu 24.04.4 LTS",
-    "python": "3.11.15"
+    "os": "Ubuntu 24.04.5 LTS",
+    "python": "3.11.16"
   },
   "summary": {
     "sv39": {

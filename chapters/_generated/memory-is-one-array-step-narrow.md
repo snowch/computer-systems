@@ -8,4 +8,4 @@
    2:	ret
 ```
 
-*Conditions: target `xv6` · riscv64 cross compiler, any machine — nothing here was executed · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c` · 2026-09-15 · Source: `bench/results/declarations-riscv64.json`, code hash `9434772f75e9f7a0`.*
+*Conditions: target `xv6` · riscv64 cross compiler, any machine — nothing here was executed · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -march=rv64gc -mabi=lp64d -c` · 2026-09-16 · Source: `bench/results/declarations-riscv64.json`, code hash `9434772f75e9f7a0`.*

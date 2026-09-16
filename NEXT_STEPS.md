@@ -112,6 +112,26 @@ If a number comes back and contradicts one of those, the prose is what changes. 
 **This does not need the board.** Every runner except the ten above works off-board; the
 listings, the bare-metal results and the xv6 censuses all regenerate under QEMU on a laptop.
 
+> **Status (2026-09-16).** The reader-facing and kernel-shipped trees are done: every `chNN` and
+> `chapter N` under `sysfs/`, `xv6/patches/` and `xv6/apps/` is now a topic name, judged by which
+> chapter owns each source (via `bench/figures.py` and the chapter `literalinclude`s), not by the
+> printed number. `tests/test_book.py::test_no_shipped_source_names_a_chapter_by_number` guards all
+> three trees so it cannot come back. The fingerprints those edits invalidated are handled two ways:
+> the 47 deterministic results (listings, bare, xv6 censuses, host listings and artefacts)
+> regenerate on `ubuntu-24.04` through `.github/workflows/regen.yml` on any `regen/**` branch; the 15
+> `host/measurement` board timings, which a comment cannot have changed, are re-stamped in place by
+> `scripts/restamp-host-fingerprints.py` (no re-measure).
+>
+> **Still to do — the part-3 reading job, no board and no toolchain needed:** the `chNN` in `bench/`
+> runner docstrings (149), `scripts/` (41, mostly `ci-check.sh` headings) and `tests/` (205 — and
+> `tests/prerequisites_and_setup/` legitimately says `ch00`, so this tree cannot take a blanket
+> guard). Editing a deterministic runner's comment re-runs cleanly through the regen workflow;
+> editing a `run_*cost.py` needs the same re-stamp the board timings got. **Optional polish:** the
+> patch **filenames** are still old chapter numbers (`13-trap-census.patch` is the traps chapter's,
+> off by three); renaming them to a plain `01`–`06` sequence also touches the `PATCH=` constants in
+> six `bench/run_*.py`, three `{literalinclude}` paths in the traps, page-faults and file-system
+> chapters, and `xv6/README.md`.
+
 ### What is wrong
 
 The rule in CLAUDE.md — *a chapter's number is never an identifier* — was applied to the book's

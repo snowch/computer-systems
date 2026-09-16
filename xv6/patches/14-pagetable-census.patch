@@ -2,10 +2,10 @@ diff -urN a/kernel/console.c b/kernel/console.c
 --- a/kernel/console.c	2026-09-14 20:30:13.840914650 +0000
 +++ b/kernel/console.c	2026-09-14 20:31:23.337664318 +0000
 @@ -152,6 +152,9 @@
-   case C('T'): // Print the trap census (Systems From Scratch, ch13).
+   case C('T'): // Print the trap census (Systems From Scratch, traps and system calls).
      trapdump();
      break;
-+  case C('V'): // Print the page-table census (Systems From Scratch, ch14).
++  case C('V'): // Print the page-table census (Systems From Scratch, virtual memory).
 +    ptdump();
 +    break;
    case C('P'): // Print process list.
@@ -40,7 +40,7 @@ diff -urN a/kernel/proc.c b/kernel/proc.c
  }
 +
 +// Print the page-table census: the kernel's own map, then one line per live process.
-+// Systems From Scratch, ch14. Runs on Ctrl-V, mirroring Ctrl-P's convention above -- and, like
++// Systems From Scratch, virtual memory. Runs on Ctrl-V, mirroring Ctrl-P's convention above -- and, like
 +// procdump, takes no lock, because a dump that can wedge the machine it is diagnosing is worse
 +// than a dump that is occasionally one process out of date.
 +void
@@ -65,10 +65,10 @@ diff -urN a/kernel/vm.c b/kernel/vm.c
    return 0;
  }
 +
-+// -- page-table census (Systems From Scratch, ch14) -----------------------------------------
++// -- page-table census (Systems From Scratch, virtual memory) -----------------------------------------
 +//
 +// A page table exists so that an address can mean something, and like any data structure it
-+// occupies memory. Nothing in xv6 counts that memory, because nothing in xv6 needs to. ch14 does,
++// occupies memory. Nothing in xv6 counts that memory, because nothing in xv6 needs to. The virtual-memory chapter does,
 +// because the book's question at every layer is what a mechanism costs -- and here the cost is
 +// not time, which QEMU cannot be asked about, but physical pages spent describing where the
 +// other physical pages are.

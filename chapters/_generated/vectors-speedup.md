@@ -8,4 +8,4 @@
 | `sysfs_vec_sum_f32` | ×1.0 | ×4.0 | 25.0% |
 | `sysfs_vec_sum_i32` | ×1.65 | ×4.0 | 41.2% |
 
-*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/vectors-host.json`, code hash `b08512a1f9434bde`.*
+*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/vectors-host.json`, code hash `f9fff906e3518159`.*

@@ -1,4 +1,4 @@
-/* bridgerun — the host-target half of ch20's crossing.
+/* bridgerun — the host-target half of the crossing chapter's program.
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *

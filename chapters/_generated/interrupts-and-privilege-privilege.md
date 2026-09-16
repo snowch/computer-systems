@@ -10,4 +10,4 @@
 | …which is *illegal instruction* | yes |
 | The handler returned us to machine mode | yes |
 
-*Conditions: target `bare` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · no firmware, no kernel · riscv64-linux-gnu-gcc · `-march=rv64g -mabi=lp64 -mcmodel=medany -ffreestanding -nostdlib -fno-pic -fno-stack-protector -fno-builtin -O1 -g -Wall -Werror` · 2026-09-15 · Source: `bench/results/privilege-bare.json`, code hash `c5eb7309ddf1dafa`.*
+*Conditions: target `bare` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · no firmware, no kernel · riscv64-linux-gnu-gcc · `-march=rv64g -mabi=lp64 -mcmodel=medany -ffreestanding -nostdlib -fno-pic -fno-stack-protector -fno-builtin -O1 -g -Wall -Werror` · 2026-09-16 · Source: `bench/results/privilege-bare.json`, code hash `bc973e98b2dc4b21`.*

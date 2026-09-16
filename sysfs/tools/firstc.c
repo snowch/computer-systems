@@ -2,7 +2,7 @@
  *
  * Copyright 2026 Chris Snow. Apache-2.0 — see LICENSE-CODE.
  *
- * Chapter 1 shows this file whole, because until now every piece of C in this book has been a
+ * The memory-as-one-array chapter shows this file whole, because until now every piece of C in this book has been a
  * fragment lifted out of somewhere larger. A reader who has never written C has never seen where
  * the pieces go.
  *
