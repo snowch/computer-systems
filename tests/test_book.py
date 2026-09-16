@@ -504,6 +504,30 @@ def test_the_glossary_reaches_every_part():
     assert not missing, f"the glossary defines nothing from {', '.join(missing)}"
 
 
+README_STATUS = re.compile(
+    r"\*\*All ([\w-]+) chapters are written, and ([\w-]+) of the ([\w-]+) appendices\.\*\* "
+    r"([\w-]+) figures"
+)
+
+
+def test_the_readme_status_agrees_with_the_outline():
+    """The repository's front page said "Scaffold complete; chapter 0 written".
+
+    It also said chapters 1-21 were stubs, in a book of thirty-two written chapters. The preface's
+    status box has been checked against the outline for a while and the README's has not, which is
+    how the page most people see first came to describe the repository as it was three parts ago.
+    """
+    said = README_STATUS.search((ROOT / "README.md").read_text())
+    assert said, "README.md no longer opens its status with a sentence this check recognises"
+    written = len([a for a in APPENDICES if "[DRAFT]" not in (ROOT / a.path).read_text()])
+    pending = len([f for f in FIGURES.values() if getattr(f, "pending", None)])
+    counted = [NUMBER_WORDS.get(word.lower()) for word in said.groups()]
+    assert counted == [len(CHAPTERS), written, len(APPENDICES), pending], (
+        f"README.md says {said.group(0)!r}; the outline has {len(CHAPTERS)} chapters, "
+        f"{written} of {len(APPENDICES)} appendices written and {pending} pending figures"
+    )
+
+
 #: `chapter 11` — a chapter named by a number that is not a link and has no anchor behind it.
 BARE_CHAPTER_NUMBER = re.compile(
     r"\bchapters?\s+(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|"

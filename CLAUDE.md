@@ -9,6 +9,8 @@ one question at every layer: **where do the cycles go, and how would I know?**
 
 Read **PLAN.md** first: outline, settled decisions, conventions. Read **AUTHORING_GUIDE.md**
 before writing or editing a chapter. `.claude/commands/chapter.md` is the per-chapter workflow.
+**NEXT_STEPS.md** is the working list of what is left, and what needs the board rather than a
+laptop.
 
 ## The three targets
 
