@@ -16,10 +16,9 @@ mid-trap, then measured on hardware whose performance counters actually work.
 
 ## Status
 
-**All thirty-two chapters are written, and seven of the eight appendices.** Zero figures are
-marked *pending*: the reference machine has reported, and every `host` measurement has been taken.
-Appendix C is the one piece still waiting for it — which events a board exposes is a property of
-its silicon, kernel and firmware together.
+**All thirty-two chapters are written, and eight of the eight appendices.** Zero figures are
+marked *pending*: the reference machine has reported and every `host` measurement has been taken,
+and Appendix C — the perf events this board exposes — is generated from it.
 
 - **[NEXT_STEPS.md](NEXT_STEPS.md)** — what is left, in the order it is worth doing, with the
   commands. Start here.

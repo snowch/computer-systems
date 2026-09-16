@@ -731,6 +731,56 @@ def interference_table(name: str) -> str:
     return render_table(["", "Radio off", "Radio on"], rows)
 
 
+def _grid(names: list[str], columns: int, header: str) -> str:
+    """A list of names as a Markdown table `columns` wide: still a table, so the pipeline's checks
+    hold, but compact rather than one row per name."""
+    rows = []
+    for start in range(0, len(names), columns):
+        chunk = [f"`{name}`" for name in names[start : start + columns]]
+        chunk += [""] * (columns - len(chunk))
+        rows.append(chunk)
+    return render_table([header, *[""] * (columns - 1)], rows)
+
+
+def perf_summary_table(name: str) -> str:
+    """What this board's PMU is, how many events it counts at once, and how many exist to count."""
+    summary = load_result(name)["summary"]
+    rows = [
+        ["PMU", f"`{summary['pmu']}`"],
+        ["Hardware counters", str(summary["counters"])],
+        [
+            "Events counted at once",
+            f"{summary['counters']} — one more makes perf multiplex, "
+            f"scaling each to {summary['scaled_enabled_pct']}% enabled",
+        ],
+        ["Raw hardware events", str(summary["raw_event_count"])],
+        [
+            "perf's portable names (hardware / cache)",
+            f"{len(summary['generic_hardware'])} / {len(summary['generic_cache'])}",
+        ],
+        ["Software events the kernel keeps", str(len(summary["software_events"]))],
+    ]
+    return render_table(["", "This board"], rows)
+
+
+def perf_raw_events(name: str) -> str:
+    """Every raw event this core's PMU exposes; the ARM manual is where each one's meaning lives."""
+    return _grid(load_result(name)["summary"]["raw_events"], 4, "Hardware event (Cortex-A76 PMU)")
+
+
+def perf_generic_events(name: str) -> str:
+    """perf's portable names — a name for a raw event, chosen by the kernel, not a portable meaning."""
+    summary = load_result(name)["summary"]
+    rows = [[f"`{name}`", "hardware"] for name in summary["generic_hardware"]]
+    rows += [[f"`{name}`", "cache"] for name in summary["generic_cache"]]
+    return render_table(["perf's portable name", "Kind"], rows)
+
+
+def perf_software_events(name: str) -> str:
+    """The events the kernel maintains itself — these count on a machine with no PMU at all."""
+    return _grid(load_result(name)["summary"]["software_events"], 3, "Software or tool event")
+
+
 def hierarchy_levels_table(name: str) -> str:
     """Latency against working-set size. The steps are the levels, and they were not looked up."""
     rows = [

@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "b4ff8659638f669a",
+  "code_fingerprint": "34368899b227c624",
   "code_sources": [
     "bench/run_measuring.py",
     "sysfs/bench/measuring.c",
@@ -10,7 +10,7 @@
     "note": "three experiments, summarised in C by the same sysfs_summarise ch21 argues about",
     "workload": "sysfs/bench/measuring.c, run once per experiment"
   },
-  "generated_at": "2026-09-16T13:47:52+00:00",
+  "generated_at": "2026-09-16T15:45:31+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "aarch64",
@@ -53,28 +53,28 @@
   "summary": {
     "bias": {
       "0": {
-        "base": 6916624,
+        "base": 12523120,
         "count": 2000,
-        "max": 275147,
-        "mean": 204998,
+        "max": 273222,
+        "mean": 205015,
         "median": 204833,
-        "min": 204814,
+        "min": 204832,
         "p90": 204833
       },
       "512": {
-        "base": 6916128,
+        "base": 12522624,
         "count": 2000,
-        "max": 276611,
-        "mean": 204981,
+        "max": 274962,
+        "mean": 204971,
         "median": 204833,
         "min": 204814,
         "p90": 204833
       },
       "64": {
-        "base": 6916576,
+        "base": 12523072,
         "count": 2000,
-        "max": 274740,
-        "mean": 204968,
+        "max": 272999,
+        "mean": 204951,
         "median": 204833,
         "min": 204814,
         "p90": 204833
@@ -87,8 +87,8 @@
     "governor": "ondemand",
     "spread": {
       "count": 2000,
-      "max": 69500,
-      "mean": 37553,
+      "max": 52889,
+      "mean": 37544,
       "median": 37518,
       "min": 37499,
       "p90": 37519

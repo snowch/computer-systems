@@ -9,10 +9,11 @@ review of all forty-seven pages (PR #25), which fixed what it found and left thr
 
 ## 1. The board — everything here needs the Pi 5
 
-This is M1, and five chapters were waiting on it. **Done (2026-09-16):** the reference Pi 5 is set
-up, all twenty `host` figures are measured and no longer pending, and first contact with the
-hardware corrected three chapters (below). What still needs the board is **Appendix C**. The
-procedure that follows is kept as the record of how it was done and how to re-run it.
+This is M1, and it is **done (2026-09-16)**: the reference Pi 5 is set up, all twenty `host` figures
+are measured and no longer pending, Appendix C is generated from the board, and the Wi-Fi
+interference claim ch01 flagged is now measured in ch24. First contact with the hardware corrected
+several chapters (below). Nothing here still needs the board. The procedure that follows is kept as
+the record of how it was done and how to re-run it.
 
 ### What first contact changed
 
@@ -82,13 +83,14 @@ Every runner has a `--check` mode that re-runs and compares without writing. Use
 committing: a figure that moves between two runs of the same workload is telling you about the
 machine's state rather than about the workload, which is ch24's whole subject.
 
-### Then Appendix C
+### Appendix C — done
 
-[appendices/appendix_c_perf_events.md](appendices/appendix_c_perf_events.md) is the one appendix
-that cannot be drafted from a desk: which events a machine exposes is a property of its silicon,
-its kernel and its firmware together. Generate it from the board — `perf list` is the starting
-point, and the distinction the appendix has to make is which events the hardware counts and which
-`perf` computes from the ones it counts.
+[appendices/appendix_c_perf_events.md](appendices/appendix_c_perf_events.md) is written and no longer
+a stub. It is generated from the board by `bench/run_perfevents.py` (result `perfevents-host`): the
+`armv8_cortex_a76` PMU, its seven counters, forty raw events, perf's portable aliases and the kernel
+software events — and the counted-vs-computed distinction made concrete, since only seven events
+count at once before perf multiplexes and scales the rest. Meanings cite the Cortex-A76 manual; the
+inventory is the board's. That was the last piece that needed the hardware.
 
 ### Read the prose against the numbers when they land
 

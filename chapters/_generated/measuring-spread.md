@@ -6,8 +6,8 @@
 | Fastest | 37499 ns |
 | Median | 37518 ns |
 | 90th percentile | 37519 ns |
-| Slowest | 69500 ns |
-| Mean | 37553 ns |
-| Slowest over fastest | 1.9x |
+| Slowest | 52889 ns |
+| Mean | 37544 ns |
+| Slowest over fastest | 1.4x |
 
-*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/measuring-host.json`, code hash `b4ff8659638f669a`.*
+*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/measuring-host.json`, code hash `34368899b227c624`.*

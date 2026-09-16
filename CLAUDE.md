@@ -165,12 +165,11 @@ the length — a short chapter still owes the reader "What this cannot tell you"
 
 ## Chapter status
 
-All thirty-two chapters are written, and seven of the eight appendices. Appendix C waits for the
-reference machine: which events a board exposes is a property of its silicon, kernel and firmware
-together and cannot be drafted from a desk. The twenty `host` figures that were `pending=` have now
-been measured on the reference board and are no longer pending; Appendix C is the one piece still
-waiting for it. Regenerate a stub with `python3 scripts/new-chapter.py --all --force`, which refuses
-to touch a written chapter.
+All thirty-two chapters are written, and all eight appendices. The twenty `host` figures that were
+`pending=` have been measured on the reference board and are no longer pending, and Appendix C —
+which perf events this board exposes, a property of its silicon, kernel and firmware together — is
+generated from the board rather than drafted from a desk. Regenerate a stub with
+`python3 scripts/new-chapter.py --all --force`, which refuses to touch a written chapter.
 
 **Some chapters depend on the reference machine**, recorded as the `assumes` field in
 `bench/outline.py` — the board chapter itself, and the Part V chapters whose reading changes on

@@ -516,6 +516,23 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         symbol="sysfs_reach_through",
         results=("declarations-riscv64",),
     ),
+    # -- appendix C ---------------------------------------------------------------------
+    "appendix-c-summary": Table(
+        render=tables.perf_summary_table,
+        result="perfevents-host",
+    ),
+    "appendix-c-raw": Table(
+        render=tables.perf_raw_events,
+        result="perfevents-host",
+    ),
+    "appendix-c-generic": Table(
+        render=tables.perf_generic_events,
+        result="perfevents-host",
+    ),
+    "appendix-c-software": Table(
+        render=tables.perf_software_events,
+        result="perfevents-host",
+    ),
     # -- appendix D ---------------------------------------------------------------------
     "appendix-d-map": Table(
         render=tables.xv6_file_map_table,

@@ -2,8 +2,8 @@
 
 | What was changed | Fastest | Median |
 |---|---|---|
-| 0 bytes of stack claimed first | 204814 ns | 204833 ns |
+| 0 bytes of stack claimed first | 204832 ns | 204833 ns |
 | 64 bytes of stack claimed first | 204814 ns | 204833 ns |
 | 512 bytes of stack claimed first | 204814 ns | 204833 ns |
 
-*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/measuring-host.json`, code hash `b4ff8659638f669a`.*
+*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/measuring-host.json`, code hash `34368899b227c624`.*
