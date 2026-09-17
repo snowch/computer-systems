@@ -34,7 +34,7 @@ These four are used throughout and mean something specific here.
 | **operand** | What an instruction acts on. In both of this book's syntaxes the destination comes first. | [ch02](#reading-a-listing) |
 | **address** | A number naming a byte. Memory is one array and an address is an index into it. | [ch03](#memory-is-one-array) |
 | **pointer** | A variable holding an address, with a type saying what to assume is there. | [ch03](#memory-is-one-array) |
-| **freestanding** | C with no library, no allocator and no start-up code underneath it — which is what a kernel is written in. | [ch04](#c-without-a-runtime) |
+| **freestanding** | The standard's word for C with no library underneath it. [ch04](#c-without-a-runtime) deliberately does not use it, on the grounds that what matters is which specific things are missing. | [ch04](#c-without-a-runtime) |
 | **free list** | An allocator that keeps its bookkeeping inside the memory it is not currently handing out. | [ch04](#c-without-a-runtime) |
 | **storage duration** | How long an object lives: automatic, static, or allocated. The distinction a garbage-collected language does not make you make. | [ch05](#c-for-people-who-will-read-a-kernel) |
 | **function pointer** | An address of code rather than of data, and how a kernel gets a virtual call without a class. | [ch05](#c-for-people-who-will-read-a-kernel) |
@@ -60,8 +60,6 @@ These four are used throughout and mean something specific here.
 | **preprocessing** | The first stage: includes pasted in, macros expanded, conditionals resolved. Its output is C. | [ch12](#what-a-computer-does-with-a-program) |
 | **relocation** | A note in an object file saying "this address is not known yet", resolved at link time. | [ch12](#what-a-computer-does-with-a-program), [ch15](#linking-and-loading) |
 | **object file** | Compiled code with unresolved references, not yet a program. | [ch12](#what-a-computer-does-with-a-program) |
-| **two's complement** | How signed integers are represented; the reason the negative range is one larger than the positive. | [ch13](#representing-information) |
-| **integer promotion** | The rule that converts narrow types to `int` before arithmetic, and the source of most signedness surprises. | [ch13](#representing-information) |
 | **padding** | Bytes a compiler inserts inside a struct so each member lands on an address it can be accessed at. | [ch13](#representing-information) |
 | **alignment** | The requirement that an object's address be a multiple of its size, or of its widest member. | [ch13](#representing-information) |
 | **undefined behaviour** | A program the standard makes no promises about, which a compiler may therefore assume never happens. | [ch13](#representing-information), [ch05](#c-for-people-who-will-read-a-kernel) |
@@ -95,7 +93,7 @@ These four are used throughout and mean something specific here.
 | **device driver** | The code that knows a device's registers. In xv6, small enough to read in full. | [ch19](#interrupts-and-drivers) |
 | **interrupt controller** | The hardware that decides which device may interrupt which core. | [ch19](#interrupts-and-drivers) |
 | **spinlock** | A lock that waits by running. Correct when the wait is shorter than a context switch. | [ch20](#locks-and-memory-ordering) |
-| **sleeplock** | A lock that waits by yielding. Correct when it is not. | [ch20](#locks-and-memory-ordering) |
+| **sleeplock** | A lock that waits by yielding. Correct when it is not. | [ch20](#locks-and-memory-ordering), [ch21](#scheduling-and-context-switches) |
 | **memory ordering** | Which of one core's writes another core may observe, and in what order. Weaker than the program order on both of this book's architectures. | [ch20](#locks-and-memory-ordering), [ch28](#memory-ordering-on-real-hardware) |
 | **barrier / fence** | An instruction, or a property of one, constraining that order. | [ch20](#locks-and-memory-ordering), [ch28](#memory-ordering-on-real-hardware) |
 | **acquire / release** | The two halves of the ordering a lock needs: nothing moves out of the critical section past either end. | [ch20](#locks-and-memory-ordering) |
@@ -123,7 +121,7 @@ These four are used throughout and mean something specific here.
 | **strength reduction** | Replacing an expensive operation with a cheaper one that computes the same thing. Usually the compiler's job. | [ch26](#optimising-code) |
 | **pipeline** | The core overlapping the stages of consecutive instructions. | [ch27](#the-cpu) |
 | **instruction-level parallelism (ILP)** | How many independent instructions are available to overlap. | [ch27](#the-cpu) |
-| **IPC** | Instructions retired per cycle. Above one on a superscalar core, and a diagnostic rather than a goal. | [ch27](#the-cpu), [ch29](#the-os-layers-cost) |
+| **IPC** | Instructions retired per cycle. Above one on a core that can finish several at once, and a diagnostic rather than a goal. | [ch27](#the-cpu), [ch29](#the-os-layers-cost) |
 | **dependence chain** | A sequence where each instruction needs the previous one's result. Its length is a floor no width removes. | [ch27](#the-cpu), [ch31](#vectors) |
 | **branch predictor** | The hardware guessing which way a branch goes, so the pipeline need not wait. | [ch27](#the-cpu) |
 | **misprediction** | A wrong guess, paid for by discarding the work done since. | [ch27](#the-cpu) |

@@ -29,7 +29,9 @@ something about the program that should make no difference, and checks whether t
 ### The instrument is part of the measurement
 
 Every duration in this book is read through one header, so that "how was this timed" has one
-answer rather than one per chapter:
+answer rather than one per chapter. It reads the *monotonic* clock — one that only ever goes
+forward and is never adjusted to keep wall-clock time honest, so a measurement cannot come out
+negative because something corrected the date halfway through:
 
 ```{literalinclude} ../sysfs/include/sysfs/timing.h
 :language: c

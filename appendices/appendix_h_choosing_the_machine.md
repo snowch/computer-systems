@@ -190,7 +190,7 @@ being told.
 | Chapter | What it assumes | What changes on a different machine |
 |---|---|---|
 | [ch25](#the-memory-hierarchy) | A particular cache hierarchy — levels, sizes, line size, TLB reach | The numbers, entirely. The method is the chapter, and measuring *your own* hierarchy is the exercise |
-| [ch27](#the-cpu) | An out-of-order, 4-wide core, and the PMU events it exposes | Width, predictor and event names all differ. On an **in-order** core these experiments get easier to read, not harder |
+| [ch27](#the-cpu) | An out-of-order core, and the PMU events it exposes | Width, predictor and event names all differ. On an **in-order** core these experiments get easier to read, not harder |
 | [ch28](#memory-ordering-on-real-hardware) | Four cores, and this interconnect's coherence behaviour | A different core count moves the scaling curve without changing the mechanism. Two cores make the chapter thin |
 | [ch30](#whole-machine-profiling) | That `perf` can **sample**, not only count | Standard on a mainline ARM kernel. Most affordable RISC-V cores cannot, so this is the chapter a RISC-V reader will find they cannot run |
 | [ch31](#vectors) | A vector unit — NEON here | On a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run |

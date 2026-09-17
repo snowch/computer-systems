@@ -74,8 +74,9 @@ every listing in [ch26](#optimising-code).
 
 **`stp` and `ldp` move two registers at once.** Almost every non-leaf function prologue you will
 see is `stp x29, x30, [sp, #-16]!` — save the frame pointer and the return address, and decrement
-the stack pointer, in one instruction. The `!` is the write-back. [ch14](#machine-level-code-on-riscv)'s RISC-V prologues
-take three instructions to do the same thing.
+the stack pointer, in one instruction. The `!` is the write-back.
+[ch14](#machine-level-code-on-riscv)'s RISC-V prologue makes the room and stores the return address
+as two separate instructions, and would need a third if it also kept a frame pointer.
 
 **The suffix after the bracket is where the increment went.** `[x2], #16` adds sixteen to `x2`
 *after* the access; `[x2, #16]!` adds it before. Neither exists in RISC-V, and both appear in

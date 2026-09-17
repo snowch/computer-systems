@@ -18,9 +18,10 @@ upstream fails CI rather than quietly making this page wrong.
 ```{include} ../chapters/_generated/appendix-d-size.md
 ```
 
-That first figure is the reason this book uses xv6 at all. A production kernel is several million
-lines and nobody reads it; this one is small enough that the files [Part IV](#part4) opens are most of it,
-and the rest is not hidden from you — it is just not what any chapter needed.
+That first figure is the reason this book uses xv6 at all. A production kernel is far too large
+for anybody to read through; this one is small enough that the files [Part IV](#part4) opens are
+most of it, as the last two rows say, and the rest is not hidden from you — it is just not what any
+chapter needed.
 
 ## Which chapter reads which file
 
@@ -28,8 +29,8 @@ and the rest is not hidden from you — it is just not what any chapter needed.
 ```
 
 Keep this open from [ch16](#traps-and-system-calls) onwards. The rows are grouped by chapter because that is how you
-will arrive here: a chapter is discussing something, and the question is which of forty-odd files
-to open beside it.
+will arrive here: a chapter is discussing something, and the question is which of the files in
+`kernel/` to open beside it.
 
 ## What is not in the table
 
