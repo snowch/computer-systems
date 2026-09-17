@@ -75,10 +75,11 @@ page a byte is. That is why a page is the unit of everything in this chapter: it
 thing the mechanism can say anything about.
 
 **The top twenty-five bits are not spare.** Sv39 translates thirty-nine bits, and the rest of the
-word must all copy bit 38 — a sign extension, exactly as in [ch13](#representing-information). An address that fails
-that rule is not an address that is out of range; it is not an address, and the hardware refuses
-it. xv6 declines to use the top half at all, capping its address space one bit below the maximum
-so that every address it ever forms has bit 38 clear and the question never arises.
+word must all copy bit 38 — a *sign extension*, the top bit copied into every bit above it, which
+is how a narrow signed number is widened. An address that fails that rule is not an address that
+is out of range; it is not an address, and the hardware refuses it. xv6 declines to use the top
+half at all, capping its address space one bit below the maximum so that every address it ever
+forms has bit 38 clear and the question never arises.
 
 ### A fault is a walk that stopped
 
@@ -87,10 +88,11 @@ the walk. An entry with valid set and none of read, write or execute points at t
 down. An entry with valid set and any of them is a leaf, and the walk is over.
 
 So **a failed translation has a location**. It is not "this address is wrong" but "the walk got
-this far and stopped", and which level it stopped at says something different each time. Stopping at the top level means nothing in that gigabyte of the address space
-exists. Stopping at the bottom means the neighbourhood is mapped and this particular page is not —
-a stack that has grown one page too far, say, rather than a wild pointer. [ch18](#page-faults-as-a-feature) is about
-what a kernel can do with that distinction; problem 17.3 is about extracting it.
+this far and stopped", and which level it stopped at says something different each time. Stopping
+at the top level means nothing in that gigabyte of the address space exists. Stopping at the
+bottom means the neighbourhood is mapped and this particular page is not — a stack that has grown
+one page too far, say, rather than a wild pointer. [ch18](#page-faults-as-a-feature) is about what
+a kernel can do with that distinction; problem 17.3 is about extracting it.
 
 ### Two clusters and five tables
 
@@ -107,9 +109,10 @@ Why six mapped pages need five pages of table.
 ```
 
 The six are not in one place. Four are at the bottom of the address space, where the linker put
-the program. Two are at the very top: the trapframe and the trampoline, which [ch16](#traps-and-system-calls) put
-there. Those two clusters are separated by almost the whole of a 512-gigabyte address space, so
-neither can reuse any of the other's tables — each forces its own chain down from the shared root.
+the program. Two are at the very top: the *trapframe* — the page the trap path saves its
+thirty-one registers into — and the trampoline, which [ch16](#traps-and-system-calls) put there.
+Those two clusters are separated by almost the whole of a 512-gigabyte address space, so neither
+can reuse any of the other's tables — each forces its own chain down from the shared root.
 
 A chain is two pages whether it ends in one mapping or five hundred.
 
@@ -191,7 +194,7 @@ time, and init's is built by `exec` from a binary whose size the linker decided.
 
 The shell's address space is deliberately not recorded. xv6's shell calls `malloc` while it parses
 a command, so its size is a fact about what it has been asked to do rather than about address
-spaces, and [ch16](#traps-and-system-calls) already spent a commit learning what happens when those two get
+spaces, and [ch16](#traps-and-system-calls) already found out what happens when those two get
 confused.
 
 ## What this cannot tell you

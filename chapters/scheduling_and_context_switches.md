@@ -40,11 +40,12 @@ and is not.
 
 **A trap is not a call and a switch is.** The interrupted program of [ch16](#traps-and-system-calls) agreed to
 nothing, so everything it might have been using has to be preserved. `swtch` is reached by an
-ordinary `jal` from `sched`, which means [ch14](#machine-level-code-on-riscv)'s calling convention has already been
-obeyed on the way in: anything the caller cared about and the convention does not protect is
-already spilled to the caller's stack. What is left for the switch to keep is exactly the
-callee-saved set, plus the return address and the stack pointer — fourteen registers, and the
-structure that holds them has fourteen fields.
+ordinary `jal` from `sched`, the function a process calls to give up the CPU, which means
+[ch14](#machine-level-code-on-riscv)'s calling convention has already been obeyed on the way in:
+anything the caller cared about and the convention does not protect is already spilled to the
+caller's stack. What is left for the switch to keep is exactly the callee-saved set, plus the
+return address and the stack pointer — fourteen registers, and the structure that holds them has
+fourteen fields.
 
 So the cost of a switch is low for the same reason the cost of a trap is high, and neither number
 is a property of how well the code was written. Both follow from the calling convention: the
@@ -69,8 +70,9 @@ costing more instructions than the lock.
 ### Why did it switch?
 
 Every switch out of a process goes through one function, so counting them is easy. Attributing
-them takes more, and the patch records which of three reasons applied: the timer took the CPU
-away, the process is waiting for something, or the process is not coming back.
+them takes more, and this chapter's kernel patch records which of three reasons applied: the
+timer took the CPU away, the process is waiting for something, or the process is not coming
+back.
 
 ```{include} _generated/scheduling-and-context-switches-census.md
 ```
@@ -85,10 +87,10 @@ for devices and it is the same argument.
 
 One observation did not make the table. In this workload the timer **never** took the CPU away
 from anything: every switch was voluntary, because every process blocked or exited before its
-slice ran out. Preemption is what a scheduler is for, and a short-lived workload of blocking
-processes never needs it. Problem 21.3 is about what a policy decides when preemption does happen;
-running the census yourself and trying to make the timer intervene is a more instructive ten
-minutes than reading about it.
+*slice* — the stretch of time the timer allows it before intervening — ran out. Preemption is
+what a scheduler is for, and a short-lived workload of blocking processes never needs it. Problem
+21.3 is about what a policy decides when preemption does happen; running the census yourself and
+trying to make the timer intervene is a more instructive ten minutes than reading about it.
 
 ### Sleeping is not a state of the CPU
 
@@ -121,10 +123,11 @@ context switch is usually not the registers at all — it is that the new thread
 caches and the TLB full of somebody else's data. [ch29](#the-os-layers-cost) is where that gets a number, and
 the number is not small.
 
-**Whether xv6's scheduler is any good.** It is a round-robin over a fixed array, chosen to be
-readable, and it is not trying to be anything else. Real schedulers care about fairness over time,
-about which core a thread last ran on, and about latency for threads that have just been woken;
-none of that is in forty lines and none of it is visible in a switch count.
+**Whether xv6's scheduler is any good.** It is a round-robin — each runnable process in turn —
+over a fixed array, chosen to be readable, and it is not trying to be anything else. Real
+schedulers care about fairness over time, about which core a thread last ran on, and about
+latency for threads that have just been woken; none of that is in a few dozen lines and none of
+it is visible in a switch count.
 
 **Anything about more threads than cores.** This workload never had enough runnable processes to
 make the scheduler choose, which is why the timer never intervened. A measurement of scheduling
@@ -132,8 +135,8 @@ needs contention for the CPU, contention is a question about time, and this chap
 whole length explaining why that question goes to [Part V](#part5).
 
 **What `sched` does about the lock, exactly.** The dance between `sched`, `scheduler` and
-`p->lock` is the subtlest twenty lines in xv6 and is worth reading with the invariants in front of
-you — they are written in the comments. This chapter has said what the switch moves; it has not
+`p->lock` is the subtlest stretch of code in xv6 and is worth reading with the invariants in front
+of you — they are written in the comments. This chapter has said what the switch moves; it has not
 tried to prove the locking correct.
 
 ## Problems
@@ -161,7 +164,8 @@ python3 -m pytest tests/scheduling_and_context_switches/test_problem_2_wakeup.py
 
 **21.3 — What order does each policy run them in?**
 Three jobs, three policies, three different answers. First-come-first-served, shortest-job-first
-and round-robin with a quantum of one, on burst lengths chosen so that no two policies agree.
+and round-robin with a quantum — a slice — of one, on burst lengths chosen so that no two
+policies agree.
 
 Producing the orders is mechanical; the value is in noticing what each one optimises and what it
 gives up, and that shortest-job-first needs to know something the kernel cannot generally find out.
@@ -173,7 +177,7 @@ python3 -m pytest tests/scheduling_and_context_switches/test_problem_3_policy.py
 ## Where to go next
 
 xv6's `kernel/proc.c` @xv6-riscv-source — `scheduler`, `sched`, `yield`, `sleep` and `wakeup` are
-about a hundred lines between them and are now readable in full. The comment above `sched` stating
+short between them and are now readable in full. The comment above `sched` stating
 the invariants it requires is the densest paragraph in the kernel; read it after problem 21.2 and
 it will say something it would not have said before.
 

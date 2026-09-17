@@ -36,10 +36,11 @@ its consequences can be counted.
 
 ### Getting attention costs someone else's time
 
-The machine has one path in. A device raises a line, the interrupt controller decides which
-device is allowed to speak, and the processor takes exactly the trap path [ch16](#traps-and-system-calls) counted —
-the same thirty-odd register saves, the same page-table switch, the same restoration on
-the way out.
+The machine has one path in. A device raises a line, the interrupt controller — on this machine
+the PLIC, the block that decides which device may interrupt which hart — picks which device is
+allowed to speak, and the processor takes exactly the trap path
+[ch16](#traps-and-system-calls) counted: the same thirty-odd register saves, the same page-table
+switch, the same restoration on the way out.
 
 None of that work is the device's. It is charged to whichever process was running, which had
 nothing to do with the I/O and is not consulted. A process that performs no I/O at all still pays
@@ -121,10 +122,10 @@ One number in the table is zero, and it says more about the emulator than about 
 
 xv6's console driver is written to be asynchronous. A process writing to the console hands a
 character to the transmitter if it is idle, and otherwise **sleeps**, to be woken by the interrupt
-that says the transmitter has caught up. That machinery — the sleep, the wait channel, the wakeup
-in the handler — is the reason the driver is split into a part that runs in the process and a part
-that runs in the interrupt, and it is the standard explanation for why device drivers have two
-halves.
+that says the transmitter has caught up. That machinery — the sleep, the *wait channel* the
+sleeper is parked on, the wakeup in the handler — is the reason the driver is split into a part
+that runs in the process and a part that runs in the interrupt, and it is the standard explanation
+for why device drivers have two halves.
 
 In this run it never once engaged. Every character was handed over by the writing process itself,
 and the count of times anybody had to stop and wait is zero.
@@ -145,13 +146,14 @@ One more dependency, because it caught this chapter out and would otherwise catc
 
 The disk figure is reproducible, but it is reproducible *for a filesystem image*. It counts the
 block operations xv6's filesystem performs, and how many those are depends on where the blocks
-are — which depends on what `mkfs` laid down, which depends on which programs this book has added
-to xv6. Add another one in a later chapter and the number moves, for a reason that has nothing to
-do with interrupts.
+are — which depends on what `mkfs`, the program that builds the image, laid down, which depends on
+which programs this book has added to xv6. Add another one in a later chapter and the number
+moves, for a reason that has nothing to do with interrupts.
 
 Nothing in the book's stamping scheme covers the filesystem image, because until now nothing had
-needed it to. The result records the image's digest so the dependency is visible, and CI
-regenerates the measurement on every push, so a change is reported rather than absorbed.
+needed it to. The result records the image's digest — a hash of its contents — so the dependency
+is visible, and CI regenerates the measurement on every push, so a change is reported rather than
+absorbed.
 
 ## What we measured
 

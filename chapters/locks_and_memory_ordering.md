@@ -72,9 +72,11 @@ still be reordered against its neighbours.
 ```
 
 That is the same increment with the strongest ordering the language offers, and it is the same
-single instruction with two letters added: `.aqrl`, acquire and release. **Ordering costs no extra
-instruction here at all** — the atomic instruction carries its own ordering, and what would be a
-separate fence on another machine is two bits of an opcode on this one.
+single instruction with two letters added: `.aqrl`, *acquire* and *release* — the two halves of
+an ordering promise, that nothing after this instruction may be moved before it and nothing
+before it may be moved after. **Ordering costs no extra instruction here at all** — the atomic
+instruction carries its own ordering, and what would be a separate fence on another machine is
+two bits of an opcode on this one.
 
 So "an atomic operation" and "an ordered operation" are different requests, and RISC-V makes the
 difference visible: the spelling changes and the instruction count does not.
@@ -123,8 +125,9 @@ section from becoming visible *after* the store that lets the next hart in.
 
 **Turning interrupts off costs more than the lock does.** `push_off` and `pop_off` are, between
 them, more instructions than `acquire` and `release` together. They exist because a lock held
-across an interrupt on the same hart would deadlock against its own handler, and they are the
-price of that safety rather than of the mutual exclusion.
+across an interrupt on the same hart would *deadlock* against its own handler — the handler
+spinning for a lock that the code it interrupted can never release — and they are the price of
+that safety rather than of the mutual exclusion.
 
 ### So were those unlocked counters right?
 
@@ -167,8 +170,9 @@ that instruction costs depends on whether the cache line is already held exclusi
 depends on what the other cores have been doing. A contended one costs however long you waited.
 Both are questions about hardware, and [ch28](#memory-ordering-on-real-hardware) asks them on a machine that can answer.
 
-**Whether the fence is doing anything here.** RVWMO permits the reorderings the fence forbids, and
-QEMU is entitled to but does not perform them: it executes each hart's instructions in order.
+**Whether the fence is doing anything here.** RVWMO — RISC-V's memory model, the rules for which
+reorderings a hart may perform — permits the reorderings the fence forbids, and QEMU is entitled
+to but does not perform them: it executes each hart's instructions in order.
 So every program in this chapter would behave identically with the fences removed, on this target,
 and would be broken on real hardware. That is an uncomfortable property of the instrument and the
 reason problem 20.2 asks about the model rather than about a run.
@@ -226,8 +230,8 @@ model in two separate chapters, which is the right way round: the atomics chapte
 `amoswap` does and the RVWMO chapter tells you what any of it means. Read the `fence` encoding and
 notice that `rw,w` is two four-bit fields — the fence you saw is one of two hundred and fifty-six.
 
-xv6's `kernel/spinlock.c` @xv6-riscv-source is sixty lines and now contains nothing you have not
-seen the machine code for. The comments around the `__sync_synchronize()` calls say what the fences
+xv6's `kernel/spinlock.c` @xv6-riscv-source is short and now contains nothing you have not seen
+the machine code for. The comments around the `__sync_synchronize()` calls say what the fences
 are for in the authors' own words, which is a useful second opinion on this chapter's.
 
 [ch21](#scheduling-and-context-switches) is the other half of what the console driver did. A process that cannot get on
