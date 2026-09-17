@@ -177,7 +177,7 @@ started with a RISC-V SBC" vendor guides and blog posts.
 
 ---
 
-## ch05 · C for People Who Will Read a Kernel
+## ch05 · Reading C as Machine Code
 
 **Closest in subject.** Every C book's chapter on pointers, and in particular *The C Programming
 Language* chapter 5, the pointer chapters of *Computer Systems: A Programmer's Perspective*, and

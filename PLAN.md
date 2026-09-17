@@ -237,7 +237,7 @@ those would be the book disagreeing with itself, which is what ERRATA.md exists 
   plausible kernel functions may fail and what it must return; say what a missing `volatile` costs
   in each of several loops.
 
-#### ch05 · C for People Who Will Read a Kernel — target `xv6`
+#### ch05 · Reading C as Machine Code — target `xv6`
 
 - **Objectives.** The subset of C that is really about addresses: pointers, casts, arrays versus
   pointers, structs, function pointers, `volatile`, `static`, storage duration. Enough to read
