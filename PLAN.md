@@ -285,7 +285,7 @@ xv6's for the same thing. No chapter here walks a reader through a finished kern
 - **Problems.** Return somewhere other than the next instruction; take a fault rather than an
   `ecall`; say what happens if `mepc` is not advanced.
 
-#### ch07 · Interrupts, and Who Is Allowed To — target `bare`
+#### ch07 · Interrupts and Privilege Levels — target `bare`
 
 - **Objectives.** Asynchronous against synchronous: an interrupt arrives without the program
   asking for it. The CLINT, `mie` and `mstatus`, and what a privilege level actually restricts.

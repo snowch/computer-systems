@@ -220,7 +220,7 @@ CHAPTERS: tuple[Chapter, ...] = (
     Chapter(
         7,
         "interrupts_and_privilege",
-        "Interrupts, and Who Is Allowed To",
+        "Interrupts and Privilege Levels",
         PART_BARE,
         "bare",
         "What arrives without being asked for, and what does a privilege level actually restrict?",

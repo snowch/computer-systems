@@ -1054,7 +1054,7 @@ Easy Pieces*; the many "bare-metal RISC-V" tutorials that walk through `mtvec` a
   from a language with exceptions will not expect.
 - The linker script, entry code and console are this book's own, written for the book.
 
-## ch07 · Interrupts, and Who Is Allowed To
+## ch07 · Interrupts and Privilege Levels
 
 **Closest in subject.** Interrupt and privilege-level material in the RISC-V privileged
 specification's own prose, the xv6 commentary's trap chapter, and bare-metal tutorials covering
