@@ -42,9 +42,10 @@ The holes are not at the end. They are wedged between members.
 
 Two rules produce every gap in that picture:
 
-1. **A member starts at a multiple of its own alignment.** A four-byte integer may begin at
-   offset zero, four, eight — not at one. Many machines load a word faster when it does not
-   straddle two of them, and some refuse outright.
+1. **A member starts at a multiple of its own alignment** — the spacing the hardware wants a
+   value of that width to sit at. A four-byte integer may begin at offset zero, four, eight — not
+   at one. Many machines load a word faster when it does not straddle two of them, and some
+   refuse outright.
 2. **A struct's size is a multiple of its own alignment**, which is the largest of its members'.
    Otherwise the second element of an array of them would start somewhere illegal.
 
@@ -120,8 +121,8 @@ Signed:
 Several instructions, and the extra ones are not arithmetic — they are a correction. An
 arithmetic right shift rounds towards negative infinity; C requires integer division to round
 towards zero @iso-c17. For positive numbers those agree. For negative ones they differ by one, so
-the compiler adds a bias before shifting, and the bias has to be computed from the sign bit
-because it only applies to negatives.
+the compiler adds a bias before shifting, and the bias has to be computed from the sign bit — the
+top bit, which says whether the value is negative — because it only applies to negatives.
 
 Nobody wrote that correction. It is the cost of a promise C made about rounding, paid on every
 signed division by a constant, by a programmer who thought they were writing a shift.
