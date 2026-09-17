@@ -1,10 +1,10 @@
 ---
-title: "C for People Who Will Read a Kernel"
-short_title: "05 · C for People Who Will Read a Kernel"
+title: "Reading C as Machine Code"
+short_title: "05 · Reading C as Machine Code"
 ---
 
 (c-for-people-who-will-read-a-kernel)=
-# 05 · C for People Who Will Read a Kernel
+# 05 · Reading C as Machine Code
 
 :::{note} Chapter header
 :class: dropdown

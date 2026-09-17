@@ -181,7 +181,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         symbol="sysfs_unsigned_quarter",
         results=("signedness-riscv64",),
     ),
-    # -- C for People Who Will Read a Kernel---------------------------------------------------------------------------
+    # -- Reading C as Machine Code---------------------------------------------------------------------------
     "c-for-people-who-will-read-a-kernel-dispatch": Diagram(
         draw=dispatch_table,
         alt="A table of function pointers, each slot holding an address of code stored elsewhere.",

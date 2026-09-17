@@ -198,7 +198,7 @@ CHAPTERS: tuple[Chapter, ...] = (
     Chapter(
         5,
         "c_for_people_who_will_read_a_kernel",
-        "C for People Who Will Read a Kernel",
+        "Reading C as Machine Code",
         PART_C,
         "xv6",
         "Which parts of C are really about addresses, and how do I read them without flinching?",
