@@ -34,12 +34,13 @@ A pointer is an integer that happens to be the number of a byte, carrying a type
 many bytes to take from there and how to read them. That is the whole idea, and almost every
 difficulty with pointers is really a difficulty about one of the questions below.
 [ch03](#memory-is-one-array) asked three questions of any declaration — *where does this live*,
-*how long does it stay there*, *how big is it*. A kernel needs a fourth, and this chapter
-is mostly about it: **who else can reach it**, and what the language lets you say about that.
+*how long does it stay there*, *how big is it*. A kernel needs a fourth, and it runs through
+this chapter: **who else can reach it**, and what the language lets you say about that.
 
 ### `volatile` — the one qualifier the machine has heard of
 
-Two functions, identical but for one word, each adding up four reads of the same address:
+Two functions, identical but for one word — a *qualifier*, one of the words C lets you attach to
+a type — each adding up four reads of the same address:
 
 ```{literalinclude} ../sysfs/lib/addresses.c
 :language: c
@@ -72,14 +73,11 @@ reads it once and reuses the value has turned your driver into a program that re
 character for ever. [ch19](#interrupts-and-drivers) writes that driver.
 
 **If you arrived from Java, this is the trap.** Java's `volatile` *is* a threading primitive: it
-orders accesses between threads and the language's memory model defines what that guarantees.
-C's does none of that. It constrains the compiler and says nothing whatever to the hardware, so
-two harts can still see these writes in an order neither of them wrote. The keyword is spelled
-the same and does a different job, and the instructions that do the other job are
+orders accesses between threads, and the language spells out what that guarantees. C's does none
+of that. It constrains the compiler and says nothing whatever to the hardware, so two harts can
+still see one another's writes in a different order from the one they were made in. The keyword
+is spelled the same and does a different job, and the instructions that do the other job are
 [ch20](#locks-and-memory-ordering)'s.
-
-This is why kernel source is full of a keyword that application code almost never needs. The
-kernel is the layer where memory is not always memory.
 
 ### An array parameter is a promise nobody keeps
 
@@ -90,9 +88,10 @@ kernel is the layer where memory is not always memory.
 ```
 
 The declaration says four. The compiler discards that: an array parameter *is* a pointer, the
-size in the brackets is documentation, and `sizeof` inside the function measures a pointer rather
-than an array. The proof is next to it in the same file — `sysfs_sum_pointer` takes a plain
-pointer, does the same work, and compiles to the same instructions:
+size in the brackets is documentation, and `sizeof` — the operator that gives a thing's size in
+bytes — measures a pointer inside the function rather than an array. The proof is next to it in
+the same file — `sysfs_sum_pointer` takes a plain pointer, does the same work, and compiles to
+the same instructions:
 
 ```{include} _generated/c-for-people-who-will-read-a-kernel-array-parameter.md
 ```
@@ -114,25 +113,27 @@ invention.
 ```
 
 `static` on a function means *nothing outside this file may name this*. That is a statement to
-the linker, and it has a consequence the compiler is quick to take advantage of: if nobody
-outside can call it, then the compiler knows every call site, and may do whatever it likes with
-them. Here is what it did:
+the *linker* — the tool that joins compiled files into one program, met properly in
+[ch15](#linking-and-loading) — and it has a consequence the compiler is quick to take advantage
+of: if nobody outside can call it, then the compiler knows every call site, and may do whatever
+it likes with them. Here is what it did:
 
 ```{include} _generated/c-for-people-who-will-read-a-kernel-private-call.md
 ```
 
-There is no call. The helper was inlined and then deleted, and if you ask the object file for its
-symbols the helper is not among them. It has stopped existing as a separate thing.
+There is no call. The helper was *inlined* — its body copied into the caller in place of a call —
+and then deleted, and if you ask the object file for its symbols the helper is not among them. It
+has stopped existing as a separate thing.
 
 The keyword is overloaded and the two meanings are unrelated, which is a genuine wart. On a
-function or a file-scope variable, `static` restricts *linkage* — who may refer to it. On a
-variable inside a function, it changes *storage duration* — the variable outlives the call and
-there is exactly one of it, for ever, shared by every caller. A kernel uses both constantly and
-means something different each time.
+function or a variable declared outside any function, `static` restricts *linkage* — who may
+refer to it. On a variable inside a function, it changes *storage duration* — the variable
+outlives the call and there is exactly one of it, for ever, shared by every caller. A kernel uses
+both constantly and means something different each time.
 
 ### Calling through a variable
 
-The last pair. Instead of naming the function, take it as an argument:
+The last function. Instead of naming the one it calls, it takes it as an argument:
 
 ```{literalinclude} ../sysfs/lib/addresses.c
 :language: c
@@ -167,13 +168,15 @@ direct one.
 
 The three storage durations are worth knowing by their consequences rather than their names.
 
-**Automatic** — an ordinary local. It lives in the current stack frame and it ceases to exist the
-moment the function returns. [ch14](#machine-level-code-on-riscv) shows you the frame. A pointer to it, returned, is a
-pointer into space that the next call is about to use for something else.
+**Automatic** — an ordinary local. It lives in the current call's region of memory — its *stack
+frame*, which [ch14](#machine-level-code-on-riscv) shows you — and it ceases to exist the moment
+the function returns. A pointer to it, returned, is a pointer into space that the next call is
+about to use for something else.
 
-**Static** — a file-scope variable, or a local marked `static`. It exists for the whole run of the
-program, there is exactly one, and *everybody shares it*. This is the one that produces bugs that
-work perfectly until the second caller arrives, which is what this chapter's second problem is.
+**Static** — a variable outside any function, or a local marked `static`. It exists for the whole
+run of the program, there is exactly one, and *everybody shares it*. This is the one that produces
+bugs that work perfectly until the second caller arrives, which is what this chapter's second
+problem is.
 
 **Allocated** — from `malloc`, or in a kernel from whatever the kernel has instead. It lives until
 somebody says otherwise, and deciding who that somebody is has consumed more engineering time
@@ -186,7 +189,8 @@ mean*.
 ## What we measured
 
 Nothing here is a cost. Every listing above is what one compiler emitted for one file, captured
-by the same machinery [ch12](#what-a-computer-does-with-a-program) introduced and regenerated by CI on each push.
+by the machinery [ch12](#what-a-computer-does-with-a-program) explains and regenerated by CI on
+each push.
 
 Each one turns an assertion into something you can check: that a plain read may
 be removed and a `volatile` one may not; that an array parameter and a pointer parameter produce
@@ -194,8 +198,8 @@ identical code; that a `static` helper can vanish entirely; and that calling thr
 produces a different instruction from calling by name.
 
 Those are facts about what the compiler *did*, and this chapter makes two other kinds of statement
-as well. Claims about what C *permits* — that `volatile`
-forbids elision, that an array parameter is adjusted to a pointer — are claims about the standard
+as well. Claims about what C *permits* — that `volatile` forbids removing an access, that an
+array parameter is adjusted to a pointer — are claims about the standard
 @iso-c17 and would remain true on a compiler that produced entirely different output. Claims about
 what any of it *costs* are not made at all.
 
@@ -270,10 +274,12 @@ xv6's own source @xv6-riscv-source is now worth opening, and this is the chapter
 possible. Its own commentary @xv6-book, written by the people who wrote the kernel and given away
 by MIT, is the best explanation of what that code does; [Appendix G](#appendix-g) maps its topics
 onto this book's chapters, and traces one system call through every layer both of them describe.
-Start with `kernel/uart.c`, which is about a hundred lines and contains a `volatile` device
-register, a static buffer with exactly the sharing problem this chapter's second problem
-describes, and a lock. You will not understand the lock yet. Read it anyway and come back after
+Start with `kernel/uart.c`, which is short and contains a `volatile` device register, a static
+buffer with exactly the sharing problem this chapter's second problem describes, and a lock. You will not understand the lock yet. Read it anyway and come back after
 [ch20](#locks-and-memory-ordering).
 
-[ch14](#machine-level-code-on-riscv) stops reading C and starts reading what it became: registers, the calling
-convention, and a stack frame you can walk by hand.
+[Part II](#part2) is next, and it leaves the kernel behind: six chapters on a machine with
+nothing on it, each building one mechanism — a trap, an interrupt, a page table — from the
+hardware alone, before any kernel is read. Reading C as machine code resumes in
+[ch14](#machine-level-code-on-riscv), which stops reading C and starts reading what it became:
+registers, the calling convention, and a stack frame you can walk by hand.

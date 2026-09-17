@@ -18,7 +18,7 @@ short_title: "02 · Reading a Listing"
 
 ## The question
 
-**What is the compiler telling me, and what is it not?**
+What is the compiler telling me, and what is it not?
 
 Almost every chapter from here on puts a listing in front of you — the instructions a compiler
 produced from source you can read beside it. Three of them are in the next chapter. You are never
@@ -30,12 +30,31 @@ weight — parentheses, which mean memory — is also the most likely to be read
 
 ## The material
 
+### One function, two instruction sets
+
+Here is a function with no cleverness in it at all:
+
+```{literalinclude} ../sysfs/lib/shapes.c
+:language: c
+:start-at: /* Two conditionals and three exits
+:end-before: /* A loop with a carried dependency
+```
+
+Compiled for each of the book's two architectures, at the same optimisation level — how hard the
+compiler was asked to try — by the same version of the same compiler. The conditions line under
+each listing says exactly which:
+
+```{include} _generated/reading-a-listing-clamp.md
+```
+
+The rest of this chapter is how to read those two.
+
 ### How a listing is laid out
 
 **The left-hand column is an address**, in hexadecimal, counted from the start of the function.
 `0:` is the first instruction, and the number on the next line tells you how many bytes it took —
-so a second instruction at `4:` means the first was four bytes long. You will also find
-instructions two bytes apart, because this architecture has short forms of its commonest
+so a second instruction at `4:` means the first was four bytes long. In the RISC-V listing you will
+also find instructions two bytes apart, because RISC-V has short forms of its commonest
 instructions @riscv-isa-unprivileged and the compiler uses them unasked. Instructions here are
 *not* all the same length, and [ch06](#a-trap-with-nothing-else) turns on that fact.
 
@@ -54,59 +73,30 @@ argument arrives in `a0` and its answer leaves in `a0`. [Appendix A](#appendix-a
 **Parentheses mean memory, and the number in front is a byte offset.** `4(a0)` is *the memory at
 the address in `a0`, plus four bytes* — not `a0` times anything. Nearly every listing in
 [Part I](#part1) turns on that one piece of notation, and the offset is usually the width of
-whatever the pointer points at, which is how the same C source becomes `4(a0)` in one function and
-`8(a0)` in another.
+whatever is stored at that address, which is how the same C source becomes `4(a0)` in one function
+and `8(a0)` in another.
 
 **Everything under a listing is provenance**: which compiler, which flags, which result file it was
 captured from. It is there so that a listing you find surprising can be regenerated rather than
 argued about.
 
-### The same function in two instruction sets
-
-Here is a function with no cleverness in it at all:
-
-```{literalinclude} ../sysfs/lib/shapes.c
-:language: c
-:start-at: /* Two conditionals and three exits
-:end-before: /* A loop with a carried dependency
-```
-
-Compiled for each of the book's two architectures, at the same optimisation level, by the same
-version of the same compiler — the conditions line under each listing says exactly which:
-
-```{include} _generated/reading-a-listing-clamp.md
-```
+### What the two disagree about
 
 Read the second comparison in each. AArch64 settles it with `csel` — compute both candidates,
-select one, never branch. RV64GC cannot: there is no conditional select in `rv64gc`
-@riscv-isa-unprivileged, which is what xv6 and every RISC-V example here are built for, so the same
-decision has to be a branch and the function comes out with three separate exits.
+select one, never branch. RV64GC — the particular set of RISC-V instructions that xv6 and every
+RISC-V example here are built for — has no conditional select @riscv-isa-unprivileged, so the same
+decision has to be a branch, and the function comes out with three separate exits.
 
 That is a real difference, and it is not a difference in speed. Nothing above says which is
-faster. A predicted branch is nearly free and an unpredictable one is not; `csel`
-pays a fixed price either way and creates a dependency the branch does not have. Which wins
-depends on the data, and finding out takes a machine — [ch26](#optimising-code) and [ch27](#the-cpu) are where
-that happens. Here it is enough to have seen that the choice exists.
+faster, and *What this cannot tell you* below says why not.
 
-Two smaller things in the same listings, both worth checking yourself:
-
-```bash
-make bench-listings                                   # leaves both object files in sysfs/build/
-riscv64-linux-gnu-readelf -rW sysfs/build/shapes-riscv64.o
-aarch64-linux-gnu-readelf -rW sysfs/build/shapes-aarch64.o
-```
-
-The RISC-V listing has `.L4` and `.L6` sitting *inside* the function, and the first command says
-why: there is a relocation for every branch in it, naming those labels. The assembler did not
-settle its own branch distances, because the linker is still allowed to shorten instructions —
-RISC-V calls that relaxation @riscv-psabi — and a distance settled before that would be wrong
-afterwards. The AArch64 object has no relocations in its text at all; its assembler knew the
-answers and the labels were discarded. The same job, divided differently between the assembler and
-the linker.
-
-The second thing is `sext.w`, which RISC-V emits on each path and AArch64 does not emit anywhere:
-RISC-V keeps a 32-bit `int` in a 64-bit register and has to say so, while AArch64 has a 32-bit view
-of the register and uses it. Neither is in the C. Both are the kind of thing [ch14](#machine-level-code-on-riscv) is for.
+Two smaller things are visible in the same listings. The RISC-V one has labels — `.L4`, `.L6` —
+sitting inside the function, and the AArch64 one has none; that is a division of labour between
+two tools you meet in [ch12](#what-a-computer-does-with-a-program) and
+[ch15](#linking-and-loading), and for now it is enough to have noticed it. And `sext.w`, which
+RISC-V emits on each path and AArch64 does not emit anywhere: RISC-V keeps a 32-bit `int` in a
+64-bit register and has to say so, while AArch64 has a 32-bit view of the register and uses it.
+Neither is in the C. Both are the kind of thing [ch14](#machine-level-code-on-riscv) is for.
 
 :::{note} None of that was typed
 `bench/run_disasm.py` compiled `sysfs/lib/shapes.c` for each architecture, ran `objdump` on the
@@ -128,11 +118,11 @@ push. [ch24](#measuring) is about the kind that cannot be.
 
 **Which of the two is faster.** This is the mistake the chapter exists to prevent, and it is
 tempting precisely because the listings are short enough to count. AArch64 settles the second
-comparison without branching and RISC-V cannot, so one is three instructions shorter — and that
-tells you nothing about time. A predicted branch is nearly free; an unpredictable one costs tens
-of cycles; `csel` pays a small fixed price and creates a dependency the branch does not have.
-Which wins depends on the data the function is given, and the only way to find out is to run both
-on hardware that can be asked. [ch26](#optimising-code) and [ch27](#the-cpu) do that.
+comparison without branching and RISC-V cannot, so one comes out shorter — and that tells you
+nothing about time. A branch the processor guessed right is nearly free and one it guessed wrong
+is not; `csel` pays a fixed price either way, and has to wait for both candidates before it can
+choose. Which wins depends on the data the function is given, and the only way to find out is to
+run both on hardware that can be asked. [ch26](#optimising-code) and [ch27](#the-cpu) do that.
 
 **What any of these instructions costs.** A mnemonic is a name, not a price. Nothing in a listing
 says how many cycles an instruction takes, whether its operands were in cache, or whether the core
@@ -184,3 +174,6 @@ python3 -m pytest tests/reading_a_listing/test_problem_3_width.py
 [Appendix F](#appendix-f) is this page's counterpart for AArch64 — three differences that change
 how a listing reads. The assembler syntax and the register roles are defined in the RISC-V
 unprivileged specification @riscv-isa-unprivileged and the psABI @riscv-psabi.
+
+[ch03](#memory-is-one-array) is next: one complete program, and its listing read the way this
+chapter has just shown you.

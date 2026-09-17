@@ -89,9 +89,9 @@ index, and nothing else.
 
 Two operators, and they are inverses.
 
-`&x` gives the index of where `x` lives. `*p` goes to the index held in `p` and reads what is
-there. So `*&x` is `x` again, which is the second row of the table above, printed by a program
-rather than asserted by a paragraph.
+`&x` gives the index of where `x` lives. `*p` goes to the index held in `p` — a *pointer*, a
+variable whose value is an index — and reads what is there. So `*&x` is `x` again, which is the
+second row of the table above, printed by a program rather than asserted by a paragraph.
 
 **The program never prints an address**, because an address is different every time the program
 runs and means nothing by itself; there is no fact in it. What is the same every time — and what is
@@ -140,9 +140,9 @@ why each listing is two instructions rather than one.) **`+ 1` never means "one 
 one *element*, and the element size comes from the type, and the type is not in the expression you
 are reading.
 
-This is why a pointer's type matters even when you never dereference it, and it is why a cast to a
-different pointer type changes what arithmetic on it does. Nothing about `p + 1` on the page tells
-you the answer; you have to know what `p` was declared as.
+This is why a pointer's type matters even when you never dereference it — never apply `*` to
+it — and it is why a cast to a different pointer type changes what arithmetic on it does. Nothing
+about `p + 1` on the page tells you the answer; you have to know what `p` was declared as.
 
 ### Reading a declaration
 
@@ -171,7 +171,7 @@ which of two things it promises not to change.
 
 Problem 3.1 is this table, generated rather than reproduced, with declarations you have not seen.
 
-### Arrays, and the promise that decays
+### Arrays, and why a pointer cannot carry a length
 
 An array is a run of elements, and its name in most expressions turns into the index of its first
 one. Pass an array to a function and what arrives is a pointer — the length does not travel with
@@ -216,7 +216,8 @@ A kernel casts constantly between a pointer and a plain integer, because an addr
 a number there — a physical page is a number, a device register is a number — and the two kinds of
 arithmetic are different:
 
-- **Pointer arithmetic** scales by the element. `p + 1` moves by `sizeof(*p)`.
+- **Pointer arithmetic** scales by the element. `p + 1` moves by `sizeof(*p)`, the size in
+  bytes of what `p` points at.
 - **Address arithmetic** does not. `(uint64)p + 1` moves by one byte.
 
 Rounding an address to a page boundary is address arithmetic, which is why the kernel's rounding
@@ -310,7 +311,7 @@ The C standard @iso-c17 is the authority on the claims here that are about the l
 than about a compiler — §6.5.6 on what adding an integer to a pointer means, and §6.7.6 on how a
 declaration is assembled from the inside out.
 
-[ch04](#c-without-a-runtime) is the other half of this part, and the half for a reader who already writes C. Every
-assumption an application programmer is entitled to make — that allocation succeeds, that the
+[ch04](#c-without-a-runtime) is next, and it is the chapter for a reader who already writes C.
+Every assumption an application programmer is entitled to make — that allocation succeeds, that the
 library is there, that memory is memory, that one thread is looking — stops holding, and the
 chapter counts what is missing rather than asserting it.
