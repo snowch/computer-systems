@@ -51,11 +51,11 @@ the question. A laptop is a *faster* machine and a *worse* instrument. If a Pi i
 possible, [Part V](#part5) still runs on a Linux laptop, and every chapter whose reading depends on the
 core's shape says so in its own header.
 
-The Pi is not the *most* legible instrument, and it is worth knowing what it is not. An **in-order**
-core — short pipeline, no out-of-order execution, no register renaming — makes microarchitecture
-plainer still: a dependent load that misses in cache stalls, visibly, for as long as the miss
-takes. The A76 reorders, so the connection between an instruction you wrote and a cycle that got
-spent runs through enough machinery that a small experiment occasionally comes out backwards.
+The Pi is not the *most* legible instrument. An **in-order** core — short pipeline, no out-of-order
+execution, no register renaming — makes microarchitecture plainer still: a dependent load that
+misses in cache stalls, visibly, for as long as the miss takes. The A76 reorders, so the connection
+between an instruction you wrote and a cycle that got spent runs through enough machinery that a
+small experiment occasionally comes out backwards.
 
 Two reasons that is the right trade anyway. The in-order RISC-V option could not sample, which
 cost more than legibility bought. And **every machine you are likely to care about optimising
@@ -130,24 +130,24 @@ kernel, firmware and `perf` build all have to agree, and four of those five chan
 without the box changing at all.
 
 :::{important} The book does not tell you which kernel to run
-It would be easy to end this section with an image and a version number, and that would be worse
-advice than it looks. A pinned version is wrong within a year, cannot be re-verified on every
-release, and teaches you to check a string instead of a machine — while the failure it is meant
-to prevent stays perfectly possible on the version that was correct when it was written.
+Ending this section with an image and a version number would be worse advice than it looks. A
+pinned version is wrong within a year, cannot be re-verified on every release, and teaches you to
+check a string instead of a machine — while the failure it is meant to prevent stays perfectly
+possible on the version that was correct when it was written.
 
 A *minimum* version would be worse still, and the reason is specific rather than pedantic. What
 went wrong on the Pi 5 was a **regression**, so the node was present in the older kernel and
 absent in the newer one; a floor selects for the broken configurations rather than against them.
 A range would work and would need maintaining forever — and it would still have to be written
 once per kernel tree, because the Raspberry Pi kernel and mainline are different trees that
-disagree about this today @rpi-dt-bcm2712. The version number is not the thing. The device tree
-in `/boot/firmware/` is the thing, and your machine will read it out for you.
+disagree about this today @rpi-dt-bcm2712. The version number is not what decides it. The device
+tree in `/boot/firmware/` is, and your machine will read it out for you.
 
-So the book does the other thing. Every `host` result stamps the board, the operating system, the
-kernel and whether `perf` could count and sample; the reference machine's own account is printed
-in [ch01](#setting-up-the-board). It tells you what produced the book's numbers; it is not a requirement for yours.
-What is required is that `verify-setup.py` passes on the machine in front of you, which is a
-question about that machine and not about a version string.
+So the book records the machine instead. Every `host` result stamps the board, the operating
+system, the kernel and whether `perf` could count and sample; the reference machine's own account
+is printed in [ch01](#setting-up-the-board). It tells you what produced the book's numbers; it is
+not a requirement for yours. What is required is that `verify-setup.py` passes on the machine in
+front of you, which is a question about that machine and not about a version string.
 :::
 
 ## The reference machine, and why your numbers will differ
@@ -173,10 +173,10 @@ being told.
 | [ch30](#whole-machine-profiling) | That `perf` can **sample**, not only count | Standard on a mainline ARM kernel. Most affordable RISC-V cores cannot, so this is the chapter a RISC-V reader will find they cannot run |
 | [ch31](#vectors) | A vector unit — NEON here | On a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run |
 
-The pattern is worth noticing, because it is the same one the two targets follow. A chapter's
-*mechanism* survives a change of hardware; its *numbers* do not. That is why the book insists on
-stamping every figure with the machine that produced it, and why [ch25](#the-memory-hierarchy) is written as an
-instruction rather than a table — a cache hierarchy you measured is worth more than one you read.
+A chapter's *mechanism* survives a change of hardware; its *numbers* do not, which is the same
+split the two targets follow. That is why the book insists on stamping every figure with the
+machine that produced it, and why [ch25](#the-memory-hierarchy) is written as an instruction
+rather than a table — a cache hierarchy you measured is worth more than one you read.
 
 If none of your numbers resemble the committed ones and you want to know whether that is your
 board or your method: it is almost always your board, and [ch24](#measuring) is where you learn to

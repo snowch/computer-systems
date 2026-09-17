@@ -30,7 +30,7 @@ touched — and the question stops being what went wrong and becomes what to do 
 
 ### The hardware will call you
 
-Strip away the vocabulary and a page fault is a callback with three unusual properties.
+A page fault is a callback, with three unusual properties.
 
 It is **precise**: the kernel is given the address, in `stval`, not merely told that something
 happened. It is **synchronous**: it happens at the instruction that touched the address and not
@@ -43,14 +43,14 @@ when a particular byte is used, and everything in this chapter is built on that 
 
 ### The instruction runs again
 
-Here is the difference from [ch16](#traps-and-system-calls) that makes it work, and it is one line of the kernel.
+The difference from [ch16](#traps-and-system-calls) that makes it work is one line of the kernel.
 
 After a system call, `usertrap` advances the saved program counter past the `ecall` before
 returning, because the call has been made and the program should carry on with the next
 instruction. After a page fault it does not. The saved program counter still points at the load or
 store that faulted, so returning from the handler **runs that instruction again**.
 
-Which is exactly what you want and is easy to miss the significance of. The handler does not
+That is exactly what you want, and its significance is easy to miss. The handler does not
 emulate the access, does not need to know what the instruction was, and does not have to put a
 value anywhere. It makes the address work and returns, and the hardware does the rest. A fault
 handler is therefore allowed to be ignorant of almost everything about the program it is rescuing.
@@ -77,9 +77,9 @@ would get the wrong answer. Problem 18.2 is about exactly these edges.
 
 ### Both policies are already here
 
-This is unusual enough to be worth stating plainly: **this kernel already implements both
-allocation policies**, and lets a program pick one per call. `sbrk` allocates the pages when you
-ask. `sbrklazy` increases the process's size and allocates nothing, leaving the faults to do it.
+Unusually, **this kernel already implements both allocation policies**, and lets a program pick
+one per call. `sbrk` allocates the pages when you ask. `sbrklazy` increases the process's size and
+allocates nothing, leaving the faults to do it.
 
 So this chapter adds no policy and changes no decision. The patch counts:
 
@@ -127,7 +127,7 @@ kernel entries equal to the number of pages the program actually uses. Which of 
 depends entirely on the ratio between them, and that ratio is a property of the program rather
 than of the policy.
 
-The last row is a different kind of fact and worth a moment. Before `main` ran at all, `exec` had
+The last row is a different kind of fact. Before `main` ran at all, `exec` had
 already allocated pages for the program's text, its data and its stack. Every process pays that,
 and it is the baseline everything else in the table sits on top of.
 
@@ -152,8 +152,8 @@ sharing*. Same hook, same handler, one more test.
 
 ### What laziness costs that is not faults
 
-There is a second price, it is not measured in pages or in faults, and it is the one that has
-consequences outside this chapter.
+There is a second price, and it is not pages or faults: it is when a program finds out it has run
+out of memory.
 
 An eager request that cannot be satisfied fails at the call. The program gets a return value it
 can test, and can do something sensible — free a cache, use a smaller buffer, report a clear

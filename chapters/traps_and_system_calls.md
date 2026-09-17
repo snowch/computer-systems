@@ -22,15 +22,15 @@ What does the hardware do when a program asks the kernel for something?
 
 [Part III](#part3) ended with a program loaded into an address space and running. It cannot do anything
 useful on its own — it cannot read a file, write to the console, or obtain more memory — because
-none of those are things a user program is permitted to do. Everything interesting requires asking,
-and the asking has a mechanism. This chapter is that mechanism, end to end, for one call.
+none of those are things a user program is permitted to do. Everything interesting requires asking
+the kernel, and this chapter follows one such request through the mechanism, end to end.
 
 ## The material
 
 ### A trap is not a call
 
-The instruction is `ecall`, and the temptation is to read it as a function call into the kernel.
-It is not, and nearly every way the two differ matters.
+The instruction is `ecall`, and it is not a function call into the kernel, though it is easy to
+read it as one. Nearly every way the two differ matters.
 
 A function call is an agreement. The caller knows it is calling, has arranged its registers
 accordingly, and the convention tells both sides who preserves what — that was [ch14](#machine-level-code-on-riscv).
@@ -42,15 +42,15 @@ code made no arrangements and has to find every register exactly as it left it. 
 satisfy the worst of its callers has no calling convention to lean on.
 
 So the trap path cannot save "the callee-saved registers". It has to save **everything**, and put
-everything back. The census at the end of this chapter is that claim as a table — one counter,
-entered for several unrelated reasons.
+everything back. The census at the end of this chapter shows the same thing as a table: one
+counter, entered for several unrelated reasons.
 
 ### The hardware's half
 
-`ecall` does a small, fixed amount of work, and the smallness is the point — this is the part
-implemented in silicon @riscv-isa-privileged. It records the address of the instruction that
-trapped, records why the trap happened, disables interrupts, switches the privilege level, and
-jumps to an address the kernel installed earlier.
+`ecall` does a small, fixed amount of work, and it is small because this is the part implemented in
+silicon @riscv-isa-privileged. It records the address of the instruction that trapped, records why
+the trap happened, disables interrupts, switches the privilege level, and jumps to an address the
+kernel installed earlier.
 
 It does *not* save registers, switch stacks, or change the page table. The processor's contribution
 is to get control to a known address with the reason available, and everything else is software's
@@ -74,8 +74,8 @@ faults. A page table cannot be swapped from code that is only in one of the two.
 xv6 solves it the way real kernels do: one page, the **trampoline**, mapped at the same virtual
 address in every address space, kernel and user alike. The switch happens inside that page, so
 whichever table is active the instruction after the switch is at an address that is still valid.
-[ch17](#virtual-memory) is where page tables become a mechanism rather than a word; this is the one place in
-[Part IV](#part4) where a chapter has to promise that something later will make sense.
+[ch17](#virtual-memory) explains page tables properly; this is the one place in [Part IV](#part4)
+where a chapter has to promise that something later will make sense.
 
 ### How long is the path?
 
@@ -113,8 +113,8 @@ Then run a workload and ask:
 ```{include} _generated/traps-and-system-calls-census.md
 ```
 
-**Most of that table is a list rather than a count, and the reason is worth more than the numbers
-would have been.**
+**Most of that table is a list rather than a count, because those counts were not reproducible —
+and the reason is worth more than the numbers would have been.**
 
 The obvious thing to measure was the shell: boot, run `ls`, and report how many system calls it
 took. That produced a satisfyingly large number — and a different one each time. How many times
@@ -142,7 +142,7 @@ decided and the shell's noise lands elsewhere. It asks a thousand times and the 
 thousand — which is a much smaller claim than the one that was almost printed, and unlike it, true
 on every machine.
 
-That is the discipline of [ch00](#prerequisites-and-setup) meeting a case where it costs something. The large number
+This is where [ch00](#prerequisites-and-setup)'s discipline costs something. The large number
 was easy, impressive, and meaningless. [ch29](#the-os-layers-cost) counts the lot, on a machine where elapsed
 time is a fact about the machine.
 

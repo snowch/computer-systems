@@ -22,16 +22,16 @@ short_title: "01 · Setting Up the Board"
 **Is this machine telling me the truth about itself?**
 
 [ch00](#prerequisites-and-setup) got the emulated targets working, and they are enough for
-everything up to [Part V](#part5). This chapter is the other machine — the one every number in the
-book is measured on, and therefore the one whose word has to be good.
+everything up to [Part V](#part5). This chapter sets up the other machine: the one every number in
+the book is measured on, and therefore the one whose word has to be good.
 
-That is not a formality. A counter can be present, be readable, return a number, and be a
-software estimate rather than a count of anything. Most of this chapter is spent establishing that
+A counter can be present, be readable, return a number, and still be a software estimate rather
+than a count of anything. Most of this chapter is spent establishing that
 the machine in front of you is not doing that, because a figure produced by a fake counter is
 indistinguishable from a real one once it is in a table.
 
-[Appendix H](#appendix-h) is the decision before this one — what the board has to be able to do,
-and how to tell whether the one you own qualifies. This chapter assumes it is on your desk.
+[Appendix H](#appendix-h) covers the decision that comes first — what the board has to be able to
+do, and how to tell whether the one you own qualifies. This chapter assumes it is on your desk.
 
 ## The material
 
@@ -45,11 +45,10 @@ will also set the hostname, your SSH key and your Wi-Fi while it writes. Use its
 It has to be a **64-bit** image. A 32-bit userspace on ARMv7 does not get you the ARMv8 PMU, and
 you would spend an afternoon finding that out.
 
-It also has to be an image whose **device tree describes the PMU**, and that is a real choice
-rather than a formality. The counters are in every Pi 5's silicon; whether Linux is told about
-them depends on the `.dtb` your image ships. Reading the sources @rpi-dt-bcm2712: the Raspberry Pi
-kernel carries an `arm-pmu` node for the Cortex-A76, with one overflow interrupt per core, and
-every Pi 5 variant inherits it. Mainline Linux's own BCM2712 tree carries no such node at all.
+It also has to be an image whose **device tree describes the PMU**, and not every image does. The
+counters are in every Pi 5's silicon; whether Linux is told about them depends on the `.dtb` your
+image ships. Reading the sources @rpi-dt-bcm2712: the Raspberry Pi kernel carries an `arm-pmu`
+node for the Cortex-A76, with one overflow interrupt per core, and every Pi 5 variant inherits it. Mainline Linux's own BCM2712 tree carries no such node at all.
 
 So prefer an image built on the Raspberry Pi kernel, which is what Raspberry Pi OS and the
 Raspberry Pi builds of other distributions use. A general-purpose distribution running a mainline
@@ -59,15 +58,15 @@ command settles it either way, and it is the next section.
 
 **2. Boot it, wired if you can.** Not because the link speed matters — nothing in [Part V](#part5) touches
 the network, so bandwidth, latency and the grade of cable are all irrelevant to every number in
-this book. What a radio does is make the machine do work you did not ask for: its driver takes
-interrupts and runs softirqs on the same cores your benchmark is running on, and a lossy link adds
-`sshd` wakeups on top. [ch28](#memory-ordering-on-real-hardware) and [ch29](#the-os-layers-cost), which measure small per-operation costs,
+this book. A radio makes the machine do work you did not ask for: its driver takes interrupts and
+runs softirqs on the same cores your benchmark is running on, and a lossy link adds `sshd` wakeups
+on top. [ch28](#memory-ordering-on-real-hardware) and [ch29](#the-os-layers-cost), which measure small per-operation costs,
 are where that is most likely to show.
 
-Most likely, and not measured. This book has not put a number on it, which means you should treat
-the advice as hygiene rather than as a result — and [ch24](#measuring) will hand you the tools to
-settle it yourself, because "the same benchmark, one thing changed that should not matter" is
-exactly that chapter's subject. Run it both ways and find out whether you can tell.
+That is a prediction, not a measurement. This book has not put a number on it, so treat the advice
+as hygiene rather than as a result — and [ch24](#measuring) will hand you the tools to settle it
+yourself, because "the same benchmark, one thing changed that should not matter" is exactly that
+chapter's subject. Run it both ways and find out whether you can tell.
 
 Only the machine being measured needs the cable. Your laptop can stay on Wi-Fi: its radio
 interrupts its own cores, not the ones running the benchmark. So for most people this costs a
@@ -170,7 +169,8 @@ substitutes for it.
 
 ### Counting is not sampling
 
-There is a second capability, and it is the reason this book's `host` target is an ARM machine.
+There is a second capability, sampling, and it is the reason this book's `host` target is an ARM
+machine.
 
 `perf stat` **counts**: it totals events over a whole run. `perf record` **samples**: it
 interrupts the program thousands of times a second to ask where it is, and builds a picture of
@@ -219,9 +219,9 @@ riscv-pmu-sbi: Perf sampling/filtering is not supported as sscof extension is no
 nothing to measure. `verify-setup.py` reports the two capabilities separately, precisely so you
 find out now rather than three hundred pages in.
 
-The distinction generalises well beyond RISC-V, which is why it is worth learning here: a
-profiler that samples is answering a different question, with different failure modes, from a
-counter that totals. [ch24](#measuring) takes that apart properly and [ch30](#whole-machine-profiling) depends on it.
+A profiler that samples answers a different question, with different failure modes, from a counter
+that totals, and the distinction generalises well beyond RISC-V. [ch24](#measuring) takes that
+apart properly and [ch30](#whole-machine-profiling) depends on it.
 
 ## What we measured
 

@@ -20,17 +20,17 @@ short_title: "00 · Prerequisites and Setup"
 
 What do I need on my desk, and how do I know it works?
 
-That second half is not a formality. Every later chapter rests on a claim about a machine — this
-compiler, this kernel, these counters — and a setup that is *almost* right fails three chapters
-later as something that looks like a bug in the material. So this chapter ends with a script that
-interrogates the machine you are sitting at and tells you which of the book's three targets it can
-currently run, and with measurements that record what those targets actually are.
+Knowing it works matters as much as having it. Every later chapter rests on a claim about a
+machine — this compiler, this kernel, these counters — and a setup that is *almost* right fails
+three chapters later as something that looks like a bug in the material. So this chapter ends with
+a script that interrogates the machine you are sitting at and tells you which of the book's three
+targets it can currently run, and with measurements that record what those targets actually are.
 
 ## The material
 
 ### Three targets, and what the repository does about it
 
-The preface makes the case for the arrangement; this is the operational version of it.
+The preface makes the case for the arrangement; here is what each target is in practice.
 
 **`bare`** is that same `qemu-system-riscv64` with no kernel under it at all — the machine on its
 own. [Part II](#part2) builds on it directly, and it shares xv6's cross-compiler and setup, so one
@@ -50,8 +50,8 @@ cache, no branch predictor, no store buffer, no pipeline, no memory latency. Ask
 took and it will answer, and the answer describes the laptop QEMU was running on and the
 translation strategy it happened to pick.
 
-That generalises well beyond QEMU, which is why it is the first thing this book teaches: almost
-every convenient way to observe a program changes what you are observing. A debugger stops it. A
+Almost every convenient way to observe a program changes what you are observing, which is why this
+book teaches it first and why it matters well beyond QEMU. A debugger stops it. A
 profiler samples it. A print statement in a loop makes the loop something else. Knowing which of
 your tools is lying to you about which question is the discipline underneath all of this.
 
@@ -135,7 +135,7 @@ You should get a boot log, a shell prompt, and `ls` should list a couple of doze
 **Getting out again is `Ctrl-A` then `X`.** It is a sequence rather than a chord: hold control and
 press A, let both go, then press X. QEMU exits immediately.
 
-That it is QEMU's key and not xv6's is the point. xv6 has no way to halt the machine — no
+The key belongs to QEMU rather than to xv6. xv6 has no way to halt the machine — no
 `shutdown`, no `halt`, nothing — so there is nothing to type at the shell prompt that would end
 the session. You are stopping the emulator out from under a kernel that has no opinion about it,
 which is the first of many small reminders that this is a teaching kernel and not a product.
@@ -187,15 +187,13 @@ the machine itself it reads the device tree and `/proc/cpuinfo`, prints whatever
 identifies the core — an implementer and part number on ARM, an ISA string and three
 implementation IDs on RISC-V — and checks that `perf` reaches hardware.
 
-Notice what it does *not* do: look anything up. Every fact it prints is read from the machine in
-front of it. A specification describes a product line; `/proc/cpuinfo` describes the silicon that
-is about to produce your numbers, and when the two disagree — which happens — the book cites the
-one it measured.
+It looks nothing up. Every fact it prints is read from the machine in front of it. A specification
+describes a product line; `/proc/cpuinfo` describes the silicon that is about to produce your
+numbers, and when the two disagree — which happens — the book cites the one it measured.
 
 #### The same program in both worlds
 
-Two checks remain, and they are the interesting ones. The first produces this chapter's first real
-result.
+Two checks remain. The first produces this chapter's first real result.
 
 `sysfs/include/sysfs/probe.h` asks the machine a handful of questions it can answer without a
 library: how big is each scalar type, where may it start, what does the compiler do to a struct,
@@ -243,8 +241,7 @@ double-precision float ABI @riscv-psabi; AArch64 arrives at the same layout by i
 you have only ever worked on 64-bit Linux this will look like the way things are. It is a choice
 the ABI made — twice, independently — and [ch13](#representing-information) takes it apart.
 
-The third table is the one worth staring at. Two structs, the same three members, different
-declaration order:
+The third table matters most. Two structs, the same three members, different declaration order:
 
 ```{include} _generated/prerequisites-and-setup-probe-layouts.md
 ```
@@ -261,8 +258,8 @@ Everything above is *structural*: sizes, offsets, byte order, which programs are
 many harts (independent hardware threads) announced themselves. Those are questions QEMU answers perfectly, because they are
 questions about what the instructions compute.
 
-Not one of them is a question about time, and that is not an accident of what this chapter chose
-to measure. It is the whole design. The xv6 target will never produce a timing in this book,
+None of them is a question about time, and that is the design rather than an accident of what this
+chapter chose to measure. The xv6 target will never produce a timing in this book,
 because a timing produced there would be meaningless, and a meaningless number in a table is
 worse than a missing one — a missing number announces itself.
 

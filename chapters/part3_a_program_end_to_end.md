@@ -28,7 +28,7 @@ On the way it has to answer what a number in memory actually is, because a progr
 it is instructions, and because the bugs that survive longest come from a value meaning something
 other than what its name suggests.
 
-It sits before [Part IV](#part4) for a reason that is nearly a pun: a kernel is a program. You
+It sits before [Part IV](#part4) because a kernel is a program. You
 cannot usefully read one until you know what a program is, what a compiler leaves unfinished, and
 who finishes it. [ch15](#linking-and-loading) ends at `exec`, which is precisely where [Part IV](#part4) begins.
 

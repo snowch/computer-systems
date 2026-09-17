@@ -21,9 +21,9 @@ short_title: "12 · What a Computer Does With a Program"
 
 What actually happens between a source file and a result, and which of it costs anything?
 
-Most of it costs nothing. That is the finding, and it is worth arriving at rather than being
-told: a great deal of what looks like work in a C program has been finished before the machine
-is switched on, and the part that remains is smaller and stranger than the source suggests.
+Most of it costs nothing. A great deal of what looks like work in a C program has been finished
+before the machine is switched on, and the part that remains is smaller and stranger than the
+source suggests.
 Separating the two is the skill the rest of [Part III](#part3) is built on, because you cannot ask what a
 program costs until you know which parts of it still exist at the time it runs.
 
@@ -41,8 +41,8 @@ of which leaves a file on disk that you are allowed to look at and normally neve
 Four programs, four handovers. Only one of them makes decisions.
 ```
 
-The book's walk through them is a shell script rather than a paragraph, because the point is that
-you can run it:
+The book's walk through them is a shell script rather than a paragraph, so that you can run it
+yourself:
 
 ```{literalinclude} ../sysfs/tools/stages.sh
 :language: bash
@@ -60,7 +60,8 @@ ls -l /tmp/walk
 
 ### What each stage is allowed to know
 
-The stages are not equal, and the inequality is the useful part.
+The stages differ in what each one is allowed to know, and that difference explains most of what
+each one does.
 
 **The preprocessor does text substitution and nothing else.** It has never heard of a function, a
 type, or a loop. `#include` means *paste that file in here*; a macro means *replace this name with
@@ -82,8 +83,8 @@ live, and resolves the notes. It is the first stage that knows a real address.
 
 ### The same loop, twice
 
-Here is the whole of the program's arithmetic. Two functions, and a reader would be within their
-rights to call them the same function:
+Here is the whole of the program's arithmetic. Two functions, close enough that you could
+reasonably call them the same function:
 
 ```{literalinclude} ../sysfs/include/sysfs/stages.h
 :language: c
@@ -111,18 +112,17 @@ And the second:
 
 That is a loop: a counter, an accumulation, and a branch backwards. It also has a case for zero
 and a pair of shifts at the top, which are there because `span` is a 32-bit `unsigned` living in
-a 64-bit register and the compiler has to say which half of it means anything —
-[ch13](#representing-information)'s subject, arriving early and uninvited, as it tends to.
+a 64-bit register and the compiler has to say which half of it means anything. That is
+[ch13](#representing-information)'s subject, arriving early.
 
 **Nothing about the source said one of these was expensive.** The difference is entirely about
 what the compiler could *prove*. It may replace a loop with its answer only when it can establish
 that the loop terminates, that the bound is known, and that the result cannot depend on anything
 it cannot see. Take any one of those away and the loop comes back.
 
-That is the first instance of a pattern this book returns to constantly: **the cost of a
-construct is not a property of the construct.** It depends on what the compiler was able to
-determine about its surroundings, which is why the answer to "is this fast?" is so often "show me
-the rest of the file".
+This book returns to that pattern constantly: **the cost of a construct is not a property of the
+construct.** It depends on what the compiler was able to determine about its surroundings, which
+is why the answer to "is this fast?" is so often "show me the rest of the file".
 
 ### What the object file still owes
 
@@ -152,9 +152,8 @@ Read the two columns against each other, because they disagree in an instructive
 The preprocessed file is enormous compared with the source, and almost none of it is yours: one
 `#include <stdio.h>` drags in every declaration the C library wants you to have. The compiler
 then throws nearly all of it away — the assembly it produces is a small fraction of the text it
-read — because a declaration you never used generates no code. That collapse is the clearest
-possible statement of what a declaration is: a promise about what exists, not an instruction to
-build it.
+read — because a declaration you never used generates no code. That collapse shows what a
+declaration is: a promise about what exists, not an instruction to build it.
 
 Then the file gets *larger* in bytes while getting much smaller in lines, which is what happens
 when text becomes a container format. The object file is ELF: headers, a symbol table,
@@ -196,9 +195,9 @@ case where more instructions run faster, for reasons entirely outside the instru
 
 **It is one compiler, at one optimisation level.** Everything in this chapter is what `gcc` at
 `-O2` decided, and the conditions line under each table says which `gcc`. A different version may
-fold a loop this one leaves alone. That is not a flaw in the example — it is the reason the
-listings are regenerated by CI instead of transcribed, and if the compiler changes its mind the
-build fails rather than the book quietly becoming wrong.
+fold a loop this one leaves alone. That is why the listings are regenerated by CI instead of
+transcribed: if the compiler changes its mind the build fails, rather than the book quietly
+becoming wrong.
 
 **"The compiler folded it" is a description, not a mechanism.** This chapter shows you that it
 happened and states the conditions under which it is allowed to. It does not show you how the
@@ -209,17 +208,16 @@ book is better off teaching you to *look at the output* than to model the optimi
 `<stdio.h>` and its dependencies, not "the cost of libc". A program that includes more headers
 preprocesses to more text and may still link to the same binary.
 
-**And that size was, briefly, a statement about this machine's directory layout.** The
-preprocessor writes into its output the name of every file it pasted in, spelled exactly as the
-command line spelled it. So an absolute include path makes the preprocessed file longer on a
-machine whose checkout sits deeper, and the same commit measured larger on a CI runner than on a
-laptop — the whole difference being the line markers naming one header. Nothing about the number
+**And that size briefly depended on where the repository sat on disk.** The preprocessor writes
+into its output the name of every file it pasted in, spelled exactly as the command line spelled
+it. So an absolute include path makes the preprocessed file longer on a machine whose checkout
+sits deeper, and the same commit measured larger on a CI runner than on a laptop — the whole
+difference being the line markers naming one header. Nothing about the number
 could have given that away; a size is a size. It surfaced only because CI regenerates this result
 instead of trusting the committed copy, and the two disagreed. `stages.sh` now names every path
 relative to the repository root, and the runner refuses to stamp a result if any file the walk
-produced mentions where the repository lives. Worth knowing in its own right, as the sharpest
-possible statement of what stage 1 actually does: it is pasting text, and the paths are part of
-the text.
+produced mentions where the repository lives. Worth knowing in its own right, because it shows
+exactly what stage 1 does: it pastes text, and the paths are part of the text.
 
 ## Problems
 

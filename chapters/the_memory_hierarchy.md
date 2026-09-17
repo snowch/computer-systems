@@ -23,8 +23,8 @@ short_title: "25 · The Memory Hierarchy"
 Where is the data, and what does each extra step out cost?
 
 [ch23](#the-same-program-on-both-targets) left a prediction on the table: two routes over the same array, differing by one
-load, so the structural model says the slower one costs somewhat under twice the faster. This is
-the chapter with the equipment to say what actually separates them, and it does not start by
+load, so the structural model says the slower one costs somewhat under twice the faster. This
+chapter has the equipment to say what actually separates them, and it does not start by
 looking anything up.
 
 ## The material
@@ -32,12 +32,12 @@ looking anything up.
 ### Measuring a cache instead of reading about it
 
 A datasheet will tell you this machine's cache sizes. So will `/sys`. Neither is the same as
-knowing, and the difference matters for a reason [ch00](#prerequisites-and-setup) states as policy: a specification
+measuring them, and [ch00](#prerequisites-and-setup) states the reason as policy: a specification
 is a claim about a product line, and a measurement is a statement about the silicon in front of
 you.
 
 The instrument is a **dependent pointer chase** — a cycle of pointers, each pointing at the next,
-walked one at a time. That shape is not decoration. It makes every load wait for the one before
+walked one at a time. That shape matters. It makes every load wait for the one before
 it, so the machine cannot overlap them, and what comes out is one latency rather than a
 throughput. A loop that walks an array with independent loads measures how many loads the machine
 can have in flight at once, which is a real number and a completely different one.
@@ -57,7 +57,7 @@ those points except how much memory the cycle covers, so each step is the workin
 fit in something — and the size at which it steps is the size of the thing it stopped fitting in.
 
 That is the whole measurement. The hierarchy is not inferred from a specification; it is read off
-a curve that the machine produced when asked a question it could not avoid answering honestly.
+a curve the machine produced when it was asked.
 
 Problem 25.1 is that reading, on synthetic curves whose answers are known by construction.
 
@@ -75,8 +75,8 @@ cost climbs a step at a time rather than jumping once.
 The naive reading is that the stride at which it first rises is the line size. On this machine that
 reading lands *below* what the vendor publishes, because the sharing thins out gradually: the curve
 is already moving before the last visit has a line to itself. That gap is what the vendor table below
-shows, and it is the thing to sit with rather than a number to trust on sight — but what the line
-*explains* does not depend on reading it to the byte. Alignment and padding matter because memory
+shows. It is worth understanding rather than trusting on sight — but what the line *explains* does
+not depend on reading it to the byte. Alignment and padding matter because memory
 moves in lines, and a structure straddling two costs two fetches for one field, which is the
 question [ch13](#representing-information) raised and could not settle.
 
@@ -114,7 +114,7 @@ Every number above came out of a curve. Only now is it worth looking anything up
 Two columns that ought to agree, and are allowed not to. Where they differ the measurement is what
 this book prints, for the reason the chapter opened with — the right-hand column describes a
 product line and the left-hand one describes the chip that produced it. A disagreement is not an
-error in either: it is the most interesting thing on the page, and the question to sit with is
+error in either: it is the most interesting thing on the page, and the question to ask is
 which column you would have believed if you had only had one of them.
 
 ### Back to the two routes
@@ -132,7 +132,7 @@ The structural model saw one extra load and predicted a factor under two. What s
 not the load count. It is that one program can overlap its memory accesses and the other cannot,
 which is not visible in the instruction stream at all.
 
-That is the lesson [Part V](#part5) exists for, and it is worth stating in the form that transfers: **the
+That is the lesson [Part V](#part5) exists for, and it is worth stating in its general form: **the
 cost of a memory access is not a property of the access. It is a property of what else the machine
 was able to do at the same time.**
 

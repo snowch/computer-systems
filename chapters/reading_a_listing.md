@@ -25,8 +25,8 @@ produced from source you can read beside it. Three of them are in the next chapt
 asked to write assembly, and you are never asked to know every mnemonic; you are asked to say what
 the compiler did, which is a much smaller skill and takes one chapter to acquire.
 
-It is worth acquiring now rather than in passing, because the one piece of notation that carries
-most of the weight is also the one most likely to be read as something else.
+It is worth acquiring now rather than in passing, because the notation that carries most of the
+weight — parentheses, which mean memory — is also the most likely to be read as something else.
 
 ## The material
 
@@ -82,8 +82,8 @@ select one, never branch. RV64GC cannot: there is no conditional select in `rv64
 @riscv-isa-unprivileged, which is what xv6 and every RISC-V example here are built for, so the same
 decision has to be a branch and the function comes out with three separate exits.
 
-That is a real difference and you should resist the obvious conclusion about it. Nothing above
-says which is faster. A predicted branch is nearly free and an unpredictable one is not; `csel`
+That is a real difference, and it is not a difference in speed. Nothing above says which is
+faster. A predicted branch is nearly free and an unpredictable one is not; `csel`
 pays a fixed price either way and creates a dependency the branch does not have. Which wins
 depends on the data, and finding out takes a machine — [ch26](#optimising-code) and [ch27](#the-cpu) are where
 that happens. Here it is enough to have seen that the choice exists.

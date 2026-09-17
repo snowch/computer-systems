@@ -23,13 +23,13 @@ short_title: "28 · Memory Ordering on Real Hardware"
 What do four cores cost each other, and what does a fence actually buy?
 
 [ch20](#locks-and-memory-ordering) established what a lock is made of and said plainly that what it *costs* is
-contention, which that target had no way to express. This is the chapter with four real cores, and
-it is also the chapter where the reader meets a second memory model — which is not a repetition of
-the first and is the reason this book has two architectures.
+contention, which that target had no way to express. This chapter has four real cores, and it is
+also where the reader meets a second memory model — which is the reason this book uses two
+architectures.
 
 ## The material
 
-### A cost with no data in it
+### A cost with no shared data
 
 Two threads, two counters, no shared data and no race. One of the two arrangements below is
 more than twice as slow as the other.
@@ -46,7 +46,7 @@ of that line is invalidated, and a core that wanted a *different* variable on th
 fetch it back. Neither thread is sharing anything; they are fighting over a container that happens
 to hold both their things.
 
-**False sharing is the name, and the name is slightly wrong in a useful way.** The sharing is
+**The name for this is false sharing, and the name is slightly misleading.** The sharing is
 real — the line is genuinely shared — and what is false is the implication that the program meant
 to share anything.
 
@@ -71,7 +71,7 @@ being ordered. AArch64 emits `stlr` — a store that carries the ordering itself
 no fence, and a reader who learned that a barrier is something you put between two operations will
 not recognise it as a barrier at all.
 
-Both satisfy the same requirement. Neither is the concept.
+Both satisfy the same requirement. Neither of them is memory ordering itself.
 
 That is why this book uses two architectures, and it is worth stating as plainly as possible:
 **a reader shown one weak memory model concludes that model is memory ordering.** Shown two, they
@@ -80,7 +80,8 @@ architecture-independent need; and that what actually transfers is the mechanism
 store buffers, coherence, and the fact that another core can observe your writes in an order you
 did not write them in.
 
-Problem 28.3 is that correspondence as a table, and the table is not the point. The asymmetry is.
+Problem 28.3 is that correspondence as a table, and what matters is the asymmetry between the two
+spellings rather than the table itself.
 
 ### What ordering costs
 

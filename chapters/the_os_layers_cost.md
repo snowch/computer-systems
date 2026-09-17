@@ -23,8 +23,8 @@ What does Linux charge for the services xv6 showed me?
 
 [Part IV](#part4) took three things apart — a system call, a page fault, a context switch — and counted
 what each one moved. It could not do anything else: the target has no cache, no predictor and no
-memory latency, so a duration measured there describes a laptop. This is the chapter where those
-three things meet a machine with a clock, and the counts become a model that can be wrong.
+memory latency, so a duration measured there describes a laptop. Here those three things meet a
+machine with a clock, and the counts become a model that can be wrong.
 
 ## The material
 
@@ -38,8 +38,8 @@ count is a property of the kernel as built, not of the machine that ran it. What
 a cost. They are a *floor*: the work has to happen, so the call cannot be cheaper than executing
 it, and problem 29.2 turns the count into that bound.
 
-A bound is worth having because of what it does when the measurement arrives. Come in under it
-and the model is wrong — some of those instructions are not on the path, or are not being
+A bound is worth having because it says something whichever way the measurement falls. Come in
+under it and the model is wrong — some of those instructions are not on the path, or are not being
 executed. Come in a little over it and the model explains the cost. Come in far over it and the
 model was never the expensive part, and the interesting question becomes what the rest is.
 
@@ -70,11 +70,11 @@ A frame, a branch, and a sign-extension to widen what the kernel returned. The t
 this listing at all. It is somewhere past that branch, in code shipped with the machine, and
 nothing at the call site distinguishes it from a call that never leaves the process.
 
-**That is the chapter's difficulty stated in one figure.** Cost in this layer is not visible in
-the code. Two calls that look identical in C can differ by whether a privilege boundary is
-crossed, and the compiler will not tell you, because the compiler does not know either.
+**Cost in this layer is not visible in the code.** Two calls that look identical in C can differ by
+whether a privilege boundary is crossed, and the compiler will not tell you, because the compiler
+does not know either.
 
-### The instrument and the thing
+### Timing something as small as a trap
 
 [ch24](#measuring) built the clock and, more usefully, measured what reading it costs. This is the
 chapter where that second number decides whether a measurement means anything.
@@ -122,7 +122,7 @@ the same way. Nothing about the trap differs. What differs is whether the kernel
 from memory it already had or had to go and ask storage, and problem 29.3 is the classification:
 four facts about an address, and the order the rules apply in.
 
-The order is most of the content. A page the process never asked for is fatal however good it
+The order is where the difficulty is. A page the process never asked for is fatal however good it
 looks; a translation that already exists costs nothing whatever else is true; and only then does
 the minor-against-major question arise at all.
 

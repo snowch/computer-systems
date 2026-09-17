@@ -21,8 +21,8 @@ short_title: "08 · One Page Table, Two Harts"
 What does address translation do, and what does a second core break?
 
 Two questions, and two programs, because they are two mechanisms and a chapter that ran them
-together would be teaching neither. What joins them is that both are things the hardware does to
-memory behind the program's back — one deliberately and usefully, one as a consequence of there
+together would be teaching neither. Both are the hardware changing what memory does behind the
+program's back — translation deliberately and usefully, a second core as a consequence of there
 being more than one processor.
 
 ## The material
@@ -95,7 +95,7 @@ The second program has two processors in it, and one counter.
 
 The usual way to show what goes wrong is to start both harts incrementing as fast as they can and
 observe that the total comes out short. That works, sometimes, and teaches the wrong thing when it
-does: it makes lost updates look like weather. The real claim is narrower and much more useful —
+does: it makes lost updates look like weather. The useful claim is narrower:
 `counter = counter + 1` is a load, an add and a store, and *anything at all* happening between the
 load and the store is enough.
 
@@ -147,10 +147,9 @@ see, and a figure you have reproduced is worth more than one you have been shown
 ```{include} _generated/one-page-table-two-harts-harts.md
 ```
 
-The runner refuses a run in which `updates_lost` is anything but exactly one. That is deliberate
-and it is the difference between a demonstration and a coincidence: if the handshake ever stopped
-holding the read-modify-write open, the program would still boot, still print, and still look
-convincing, while showing nothing at all.
+The runner refuses a run in which `updates_lost` is anything but exactly one. That is deliberate:
+if the handshake ever stopped holding the read-modify-write open, the program would still boot,
+still print, and still look convincing, while showing nothing at all.
 
 ## What this cannot tell you
 

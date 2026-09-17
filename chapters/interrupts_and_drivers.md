@@ -29,8 +29,8 @@ processor finished doing something, at a moment decided by that thing, while the
 the middle of work with no relationship to it at all. The instruction it lands between is
 arbitrary. The process it lands on is very probably not the one that asked.
 
-That difference is why device drivers are shaped the way they are, and this chapter is about
-finding out whether you can count the consequences.
+That difference is why device drivers are shaped the way they are, and this chapter asks whether
+its consequences can be counted.
 
 ## The material
 
@@ -46,9 +46,8 @@ nothing to do with the I/O and is not consulted. A process that performs no I/O 
 for every interrupt that arrives while it holds a core, and it pays in exactly the currency
 [ch16](#traps-and-system-calls) measured.
 
-So the obvious question is how many of these there are. That question turns out to have an answer
-for one kind of device and not for the other, and finding that out is the useful part of this
-chapter.
+So the obvious question is how many of these there are. It has an answer for one kind of device
+and not for the other, which is the useful part of this chapter.
 
 ### A workload that decides its own numbers
 
@@ -111,14 +110,14 @@ for more.** That is not a unit of anything. How many times a transmitter announc
 during a burst of output depends on how the output and the announcements interleave, which depends
 on timing, and timing inside an emulator is a property of the laptop.
 
-This is [ch16](#traps-and-system-calls)'s rule arriving from a new direction. There the uncountable thing was the
+This is [ch16](#traps-and-system-calls)'s rule again, from a different direction. There the uncountable thing was the
 timer, and the reason was obviously about elapsed time. Here two devices are doing what looks like
 the same job, and only one of them is countable — which is a much better demonstration that the
 question is about what an event *means* and not about which peripheral raised it.
 
 ### The zero
 
-The most interesting number in the table is the one that is zero.
+One number in the table is zero, and it says more about the emulator than about the driver.
 
 xv6's console driver is written to be asynchronous. A process writing to the console hands a
 character to the transmitter if it is idle, and otherwise **sleeps**, to be woken by the interrupt

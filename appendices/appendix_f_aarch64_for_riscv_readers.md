@@ -19,8 +19,9 @@ here it is again*. For anything not in the book's path, the architecture referen
 [Part III](#part3) and [Part IV](#part4) are RISC-V because the kernel small enough to read in an afternoon is a RISC-V
 kernel. [Part V](#part5) is AArch64 because that is where the performance counters work: sampling needs a
 PMU that can raise an interrupt on counter overflow, and no affordable RISC-V core can both count and sample.
-[Appendix H](#appendix-h) has the evidence and [ch28](#memory-ordering-on-real-hardware) has the return — a reader shown one weak memory
-model concludes that model *is* memory ordering.
+[Appendix H](#appendix-h) has the evidence, and [ch28](#memory-ordering-on-real-hardware) is where
+using two architectures pays off: a reader shown one weak memory model concludes that model *is*
+memory ordering.
 
 So the crossing is deliberate, and this page is the cost of it, paid in one place.
 
@@ -92,7 +93,8 @@ cmp  x0, x1
 b.lt label
 ```
 
-The flags are a side effect that persists. One thing they buy has no RISC-V equivalent; a second common idiom sidesteps them entirely.
+The flags are a side effect that persists. They buy the conditional select, which has no RISC-V
+equivalent; compare-and-branch-on-zero sidesteps them entirely.
 
 **Conditional select.** `csel x0, x1, x2, lt` writes one of two registers depending on the flags,
 with no branch at all. [ch27](#the-cpu) is about what that is worth: a branch the predictor cannot
@@ -122,12 +124,12 @@ what the difference means.
 | Release | `fence rw,w` before the store | `stlr` — the store itself |
 | Full barrier | `fence rw,rw` | `dmb ish` |
 
-**The asymmetry is the thing to carry away.** RISC-V puts an instruction *between* the two
+**The difference is where the ordering goes.** RISC-V puts an instruction *between* the two
 operations being ordered; AArch64 folds the ordering into one of them. A reader who learned that a
 barrier is something you put between two things will not recognise `stlr` as a barrier at all,
 which is exactly why [ch28](#memory-ordering-on-real-hardware) puts them side by side rather than teaching one.
 
-Both spell the same requirement. Neither spelling is the concept.
+Both spell the same requirement. Memory ordering is that requirement, not either way of writing it.
 
 ## Vectors
 

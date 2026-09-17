@@ -110,9 +110,9 @@ A page-table entry is sixty-four bits: flags at the bottom, a physical page numb
 | `RSW` | 8–9 | Two bits the hardware ignores and software may use |
 | `PPN` | 10–53 | The physical page number |
 
-**The `R`/`W`/`X` trick is the one to remember.** An entry with none of them set is a pointer to
-the next level; an entry with any of them set is a leaf. That is how one format serves both, and
-how a leaf can appear at a level above the last to map a larger page.
+**The `R`/`W`/`X` bits decide whether the entry is a leaf.** An entry with none of them set is a
+pointer to the next level; an entry with any of them set is a leaf. That is how one format serves
+both, and how a leaf can appear at a level above the last to map a larger page.
 
 ## Where to go next
 

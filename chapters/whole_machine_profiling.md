@@ -23,9 +23,8 @@ How do I find the bottleneck in something I did not write?
 
 Every measurement in this book so far has been of code the book wrote, in a loop chosen to isolate
 one mechanism, with the answer known before the machine was asked. That is the right shape for
-learning what a cache is. It is the wrong shape for the only situation in which any of this gets
-used, which is a program you did not write, doing something you do not fully understand, too
-slowly.
+learning what a cache is. It is the wrong shape for the situation this is all for: a program you
+did not write, doing something you do not fully understand, too slowly.
 
 ## The material
 
@@ -112,7 +111,7 @@ So the rule for reading a profile at instruction granularity is to read the neig
 never the line. An instruction with no reason to be expensive, sitting immediately after one with
 every reason, is not a mystery. It is the shape of the measurement.
 
-### The artefact that is worse than noise
+### Aliasing, and why it is worse than noise
 
 There is a second way a profile misleads, and unlike skid it leaves no trace.
 

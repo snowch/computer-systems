@@ -20,12 +20,13 @@ Regenerate it on your own board with `python3 -m bench.run_perfevents`.
 
 ## Counted, and computed
 
-The count of hardware counters is the whole of this appendix. Up to that many events run at once,
-each read straight from its own counter — a *count* of something that happened. Ask for one more and
-perf has no counter to give it, so it time-shares them: every event runs for a fraction of the
-workload and perf scales its reading up to a whole-run estimate. The number comes back looking the
-same and is no longer a count. The figure above found where that line falls by asking the machine —
-handing perf one more event at a time until one stopped running for the whole of the workload.
+How many hardware counters this core has decides whether perf counts or estimates. Up to that
+many events run at once, each read straight from its own counter — a *count* of something that
+happened. Ask for one more and perf has no counter to give it, so it time-shares them: every event
+runs for a fraction of the workload and perf scales its reading up to a whole-run estimate. The
+number comes back looking the same and is no longer a count. The figure above found where that line
+falls by asking the machine — handing perf one more event at a time until one stopped running for
+the whole of the workload.
 
 Carry that distinction out of [Part V](#part5). `perf stat -e cycles,instructions` is two counts; `perf stat`
 with a dozen events is a dozen estimates; and the `enabled` percentage perf prints beside each is how

@@ -41,8 +41,9 @@ separate table.
 :end-before: static struct open_file *file_for(int fd)
 ```
 
-Collapsing those two into one would be simpler and is the obvious first design. It is also wrong,
-in a way that only shows up later — and it shows up in this chapter's last section.
+Collapsing those two into one would be simpler and is the obvious first design. It is also wrong:
+two descriptors can refer to one open file and share its position, which the last section of this
+chapter shows.
 
 ### Two things worth having a table for
 
@@ -95,8 +96,8 @@ Write six bytes into the array and the position is at six. So read them straight
 It returns nothing. Not an error, not a short read — zero bytes, from a call that is plainly
 correct and an array that plainly has six bytes in it.
 
-The reason is the one thing about descriptors that catches everybody. A descriptor's position is
-**where you are in the open file**, not a note about whether you were last reading or writing. The
+A descriptor's position is **where you are in the open file**, not a note about whether you were
+last reading or writing, and that is the one thing about descriptors that catches everybody. The
 write left it at the end, and the end is where the read started, and after the end there is
 nothing. There is no separate read position to fall back on, because there is no separate read
 position at all.
@@ -129,7 +130,7 @@ Now the reason the two tables had to be two:
 One number is copied. The open file it refers to is not — so afterwards two descriptors are two
 names for one thing, and they share its position.
 
-Which is now something you can watch rather than take on trust. Six bytes have been written
+You can watch that happen rather than take it on trust. Six bytes have been written
 through descriptor 2; the program duplicates it onto 3 and writes one byte through the copy:
 
 ```{literalinclude} ../sysfs/bare/descriptors.c

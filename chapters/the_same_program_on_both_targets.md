@@ -26,8 +26,7 @@ program compiles to, where its data sits, how its address space is built, what i
 to ask for anything, and how many blocks of disk traffic a single byte becomes. All of it was obtained on a target
 chosen precisely because you can stop it anywhere and look.
 
-None of it is a duration, and this chapter is where that stops being a caveat and becomes the
-subject.
+None of it is a duration, and this chapter is about what that leaves out.
 
 ## The material
 
@@ -51,8 +50,8 @@ target and for the reference machine, run on both, they agree:
 ```{include} _generated/the-same-program-on-both-targets-agreement.md
 ```
 
-That table is worth reading as a statement of how much this book has established. The same source
-produces the same answer on two machines with different kernels, different instruction sets and
+That table shows how much the book has established so far. The same source produces
+the same answer on two machines with different kernels, different instruction sets and
 different everything else — because [ch13](#representing-information) checked the data model matched, and because the
 answer is a property of the arithmetic rather than of the machine.
 
@@ -82,11 +81,11 @@ it was arrived at correctly, and [Part V](#part5) exists because of how wrong it
 ```{include} _generated/the-same-program-on-both-targets-cost.md
 ```
 
-Nothing is substituted for it. That box is what this book does instead of a plausible figure, and
-this is a good place to say plainly why: a duration measured under QEMU would be a description of
-the laptop that ran the emulator. The emulator has no cache to miss, no prefetcher to defeat, no
-store buffer to fill, and no memory that takes time. It would produce a number, the number would
-look like the others in this book, and it would mean nothing at all.
+Nothing is substituted for it. That box is what this book prints instead of a plausible figure, and
+the reason is that a duration measured under QEMU would describe the laptop that ran the emulator.
+The emulator has no cache to miss, no prefetcher to defeat, no store buffer to fill, and no memory
+that takes time. It would produce a number, the number would look like the others in this book, and
+it would mean nothing at all.
 
 The chased route's whole cost is that each load has to finish before the next address is known.
 That is a statement about a memory system, and the target that has taught you everything else in
@@ -94,8 +93,8 @@ this book does not have one.
 
 ### Three things differ at once
 
-When the board does report, there is a trap waiting, and avoiding it is the skill the rest of
-[Part V](#part5) is built on.
+When the board does report, its numbers will be easy to misattribute, and avoiding that is the
+skill the rest of [Part V](#part5) is built on.
 
 The two runs differ in **three** ways simultaneously. One is emulated and one is not. One is xv6
 and one is Linux. One is RISC-V and one is AArch64. A difference in the measurement could be
@@ -142,8 +141,7 @@ confounds; the measurement supplies the size of the error and not its existence.
 
 ## What this cannot tell you
 
-**Everything the chapter is about.** That is the point and it is worth stating as a limitation
-rather than as a rhetorical flourish: the central claim here — that a complete structural model
+**Everything the chapter is about.** The central claim here — that a complete structural model
 predicts the cost badly — is *argued* in this chapter and *demonstrated* in the next eight.
 
 **Which of the three differences matters most.** Naming the confound is not separating it. Doing

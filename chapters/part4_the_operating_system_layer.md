@@ -31,16 +31,16 @@ in the middle of a trap and look at anything. That matters more than modernity h
 kernel would have the same mechanisms buried under thirty years of necessary special cases, and you
 would be taking someone's word for which lines were the point.
 
-The order is the argument. Traps come before virtual memory because a page fault is a trap.
+The order of the chapters follows the dependencies. Traps come before virtual memory because a page fault is a trap.
 Interrupts come before locks because a lock's first job is to survive one. Locks come before
 scheduling because a scheduler is largely the thing that needed them.
 
 ## What it leaves out
 
 Cost. Every question of the form *how long does this take* is refused here and asked again in
-[Part V](#part5), where there is hardware that can answer it. This is not tidiness — a timing taken
-under emulation is a fact about the emulator, and a chapter that produced one would be quietly
-teaching you to trust the wrong instrument.
+[Part V](#part5), where there is hardware that can answer it. The reason is that a timing taken
+under emulation is a fact about the emulator, so a chapter that produced one would be teaching you
+to trust the wrong instrument.
 
 Linux, except by contrast. xv6 is a teaching kernel and some of its choices are simplifications
 rather than designs; the chapters say which, and [ch29](#the-os-layers-cost) puts the same operations to a

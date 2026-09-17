@@ -62,9 +62,9 @@ blank, operating-system interfaces, has no single price because the trace below 
 
 ## One call through every layer: `fork`
 
-The worked example of how to use the table above, and the reason it is `fork`: it is the one call
-in the kernel that touches almost every mechanism this book takes apart separately. Reading it is
-the fastest way to see that the chapters are describing one system rather than six.
+`fork` is the worked example of how to use the table above, because it is the one call in the
+kernel that touches almost every mechanism this book takes apart separately. Reading it is the
+fastest way to see that the chapters are describing one system rather than six.
 
 In the pinned tree the function is `kfork` in `kernel/proc.c` — `sys_fork` in `kernel/sysproc.c`
 is a one-line wrapper. Older revisions of the commentary call it `fork`.
@@ -80,7 +80,7 @@ is a one-line wrapper. Older revisions of the commentary call it `fork`.
 | `filedup()` over the open files, and `idup()` on the working directory | reference counting | [ch22](#the-file-system) |
 | `np->state = RUNNABLE` makes it eligible to be chosen | scheduling | [ch21](#scheduling-and-context-switches) |
 
-**Why it returns twice** is the one line worth carrying away, and it is the row that sets `a0` to zero. Nothing
+**Why it returns twice** is the row that sets `a0` to zero, and the answer is that nothing
 returns twice. The child is a copy of the parent — including the saved register set the trap path
 will restore on the way out — with a single word changed: the register the calling convention uses
 for a return value. Both processes then resume at the instruction after the `ecall`, each reading

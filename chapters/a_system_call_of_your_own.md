@@ -23,8 +23,8 @@ What has to exist before `ecall` is a system call rather than a trap?
 [ch06](#a-trap-with-nothing-else) already executed an `ecall` and handled it. Nothing about that
 was a system call: no request was made, nothing was asked for, and the handler had nothing to
 decide. Four things are missing, and this chapter adds them — a number saying which call, somewhere
-to put arguments, somewhere to put a result, and a dispatch. A fifth thing turns out to be missing
-too, and it is the expensive one.
+to put arguments, somewhere to put a result, and a dispatch. A fifth is missing too, and it is the
+expensive one: the handler no longer knows its caller, so it has to save every register.
 
 ## The material
 
@@ -56,7 +56,7 @@ before the boundary itself can be shown, which would put this chapter after
 ```
 
 Thirty-one, not thirty-two, because `x0` is hard-wired to zero and has nothing to lose. It is
-written out rather than generated because writing it out is the point: this is the cost of not
+written out rather than generated so that its length is visible: this is the cost of not
 knowing your caller, and it is paid on every single call.
 
 The frame also becomes the interface. Once the registers are in memory, "the arguments" and "the
@@ -105,9 +105,9 @@ From the other side, a system call is four register moves and an instruction:
 :end-before: __attribute__((noinline)) static void user_of_the_interface
 ```
 
-The `"+r"(a0)` is doing something worth noticing: it tells the compiler that `a0` is both an input
-and an output, which is exactly the claim the convention makes. Get that wrong and the compiler
-will cheerfully assume the register still holds what it put there.
+The `"+r"(a0)` tells the compiler that `a0` is both an input and an output, which is exactly the
+claim the convention makes. Get that wrong and the compiler will cheerfully assume the register
+still holds what it put there.
 
 ## What we measured
 

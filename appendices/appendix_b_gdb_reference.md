@@ -61,7 +61,7 @@ alive and stopped; `Ctrl-A` then `C` returns. `Ctrl-A` then `X` exits, and works
 gdb is attached.
 
 **Port 26000.** Not 1234. xv6's own `.gdbinit` template says 1234 and this repository does not use
-it, because a fixed well-known port is a good way to attach to somebody else's QEMU.
+it, because a fixed well-known port makes it easy to attach to somebody else's QEMU by mistake.
 
 ## One hart, unless you mean it
 
@@ -124,7 +124,7 @@ Stopped in `usertrap`, a backtrace looks like this:
 ```
 
 The second frame is not corrupt and gdb is not confused. It is the trampoline, and gdb cannot name
-it for a reason worth understanding.
+it because the trampoline does not run at the address the linker gave it.
 
 **A breakpoint on `uservec` never fires.**
 

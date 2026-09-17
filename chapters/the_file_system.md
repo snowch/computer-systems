@@ -45,7 +45,7 @@ Written as the question was asked:
 ```
 
 That is the amplification factor, and it is not a rounding error. Nor is it waste — every one of
-those writes is doing something, and the rest of this chapter is what.
+those writes is doing something, and the rest of this chapter says what.
 
 Notice the last row of that second table as well. A file with nothing whatever in it, created and
 immediately removed, costs more disk traffic than the byte does. Most of what a file system does
@@ -69,9 +69,8 @@ Doubling the traffic looks like a strange thing to do on purpose. It is the only
 
 ### The commit is one write
 
-Here is the constraint stated precisely. A crash can happen between any two block writes. For the
-file system to be recoverable, **every prefix of what it writes must leave a state that recovery
-can turn into a correct one.**
+A crash can happen between any two block writes. For the file system to be recoverable, **every
+prefix of what it writes must leave a state that recovery can turn into a correct one.**
 
 Consider updating a file in place, with no log. Write the data block, then the inode that records
 the new size. A crash between them leaves a file whose size says one thing and whose contents say
@@ -91,14 +90,13 @@ A crash after step 2 and before step 4 leaves a header naming blocks, and recove
 their homes — which is safe whether or not step 3 had already done it, because copying the same
 block to the same place twice is the same as copying it once.
 
-**There is no moment at which half a transaction is visible.** That is the entire purpose of the
-exercise, and it is bought with exactly one thing: writing the header after the log and before the
-homes. Problem 22.3 asks you to check the other five orderings, and the ones that fail are the
+**There is no moment at which half a transaction is visible.** That is what the log is for, and it
+is bought with exactly one thing: writing the header after the log and before the homes. Problem 22.3 asks you to check the other five orderings, and the ones that fail are the
 ones that look reasonable.
 
 ### Idempotence is doing the real work
 
-Step 3's harmlessness is worth stopping on, because it is doing more than it appears to.
+Step 3 is harmless to repeat, and that property is doing more work than it appears to.
 
 Recovery does not know how far the original run got. It cannot know: the only evidence is the
 header, and the header says what the transaction *contains*, not what has been done about it. So
@@ -107,8 +105,8 @@ replaying an already-installed block changes nothing.
 
 That is why the log holds **blocks and not changes**. "Set byte 40 of block 6 to `x`" is not safe
 to apply twice if it is expressed as an increment; "block 6 now looks like this" is safe to apply
-any number of times. Choosing the idempotent representation is what makes a recovery procedure
-that does not need to know anything about history.
+any number of times. Choosing the idempotent representation is what lets recovery work without
+knowing anything about history.
 
 It also explains the amplification. A log of changes would be far smaller than a log of blocks,
 and would not survive being replayed twice.
@@ -130,8 +128,8 @@ undone the same way.
 
 ### The cache is why the reads are so few
 
-One number is nearly zero and is worth a sentence. Creating and deleting a whole file read
-**nothing** from the disk, and writing a byte read three blocks.
+The read counts are nearly zero. Creating and deleting a whole file read **nothing** from the
+disk, and writing a byte read three blocks.
 
 That is the buffer cache from the list above, doing the only thing a cache does. A block already
 in memory is not fetched, and a short workload touches the same handful of blocks — the

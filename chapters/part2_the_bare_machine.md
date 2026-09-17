@@ -20,11 +20,10 @@ short_title: "Introduction"
 
 Six chapters, each building one primitive of the machine with nothing else in the way.
 
-The difficulty this part answers is real and it is the usual reason people stall on kernels. A
-kernel presents its primitives already entangled. The first trap you meet in xv6 arrives with a
-process table, a page table, a scheduler and a lock attached to it, and the code that handles it is
-correct about all of them at once. You are asked to learn what a trap *is* from a page that assumes
-you already know.
+A kernel presents its primitives already entangled, and that is the usual reason people stall on
+them. The first trap you meet in xv6 arrives with a process table, a page table, a scheduler and a
+lock attached to it, and the code that handles it is correct about all of them at once. You are
+asked to learn what a trap *is* from a page that assumes you already know.
 
 So: no kernel. No library, no loader, no operating system, nothing at the far end of a `printf`.
 The machine comes out of reset and runs your instructions. Each chapter then adds exactly one

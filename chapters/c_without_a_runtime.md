@@ -20,8 +20,8 @@ short_title: "04 · Kernel C Is Not Application C"
 
 I already write applications — which of my habits stop working in a kernel?
 
-Note the question. It is not about C, and you do not have to have written C to have the habits
-this chapter is about: a Java or Python programmer holds more of them than a C one, not fewer,
+The question is not about C, and you do not have to have written C to have the habits this chapter
+is about: a Java or Python programmer holds more of them than a C one, not fewer,
 because more has been done for them. Every assumption below is one an application programmer is
 entitled to make in any language, and none of them holds here.
 
@@ -40,13 +40,13 @@ Here is what removing them costs, counted from the kernel that is checked in.
 ```{include} _generated/c-without-a-runtime-absences.md
 ```
 
-Three of those rows are the chapter.
+Three of those rows are what the rest of this chapter is about.
 
 ### No heap
 
 There is no `malloc`, and the table says so rather than the chapter asserting it: nothing in the
-kernel defines one. That is not an omission — it is the ordering problem. `malloc` is built on a
-kernel's memory management, and this *is* the memory management. It cannot call itself into
+kernel defines one. The reason is an ordering problem rather than an omission. `malloc` is built on
+a kernel's memory management, and this *is* the memory management. It cannot call itself into
 existence.
 
 So where do objects come from? Two places, and a kernel of this size uses both.
@@ -62,8 +62,8 @@ slot, `fork` fails — and *that* is what the limit means. A reader used to allo
 succeeds or raises has to get used to allocation that returns a null pointer and expects to be
 asked about it.
 
-**A free list made of the free memory itself.** The other source is whole pages, and the
-bookkeeping is the trick worth meeting once. A list of free pages needs a node per page, which
+**A free list made of the free memory itself.** The other source is whole pages, and their
+bookkeeping is worth meeting once. A list of free pages needs a node per page, which
 would need memory, which is what we are trying to allocate. The kernel resolves it by writing the
 link *into the free page*, because a free page by definition holds nothing anybody wants.
 
@@ -88,7 +88,7 @@ pointer, and the abstract machine has no concept that would make the cast meanin
 through it is undefined not because it is dangerous but because the standard has nothing to say
 about it.
 
-What makes it work anyway is that the compiler is not the last word on this program. The
+It works anyway because the compiler is not the last word on this program. The
 declaration, the object model and the lifetime rules exist to let a compiler optimise without
 asking the hardware; here the hardware is the authority, and the kernel is asserting a fact about
 the machine that C has no way to express. That is the real reason kernel C cannot be read as
@@ -106,9 +106,9 @@ gives the same answer, that a read nobody uses can be dropped, that two writes t
 combined into the last. `volatile` is how you withdraw those assumptions, and [ch05](#c-for-people-who-will-read-a-kernel) shows
 the compiler obeying, one instruction at a time.
 
-This is why kernel source is full of a keyword application code almost never needs. It is not
-defensive style. It is the difference between a driver and a program that receives one character
-for ever.
+This is why kernel source is full of a keyword application code almost never needs. `volatile` is
+not defensive style; it is the difference between a driver and a program that receives one
+character for ever.
 
 ### Somebody else is running
 
@@ -116,9 +116,9 @@ An application with one thread has exclusive access to its own data by default. 
 does: the table above gives this machine eight harts, every one of them able to be inside
 the same function as you, on data you are halfway through changing.
 
-What that costs is [ch20](#locks-and-memory-ordering)'s subject and it is not small. What matters here is the habit:
-when you read a kernel structure, the question "who else can reach this, and what are they holding
-while they do" is not paranoia, it is the first question. `static` on a file-scope variable does
+What that costs is [ch20](#locks-and-memory-ordering)'s subject and it is not small. When you read a
+kernel structure, ask who else can reach it and what they are holding while they do. That is not
+paranoia; it is the first question. `static` on a file-scope variable does
 not make it yours — it makes it invisible to other *files*, and every hart runs the same file.
 
 ### No floating point, on purpose
@@ -144,8 +144,8 @@ between them and they are worth reading early, because they are the shortest com
 tree and they are written in exactly the style [ch03](#memory-is-one-array)'s second problem asked for — pointers
 that move, no subscripts, a length passed alongside every buffer.
 
-One of them is a warning rather than a convenience. The kernel's string copy takes a size and
-always terminates; the standard one it is named after takes a size but does not reliably terminate. When a kernel
+The kernel's string copy is a warning rather than a convenience: it takes a size and always
+terminates, where the standard one it is named after takes a size but does not reliably terminate. When a kernel
 reimplements something the library already has, the reimplementation usually differs on purpose,
 and the difference is usually about a failure the library was willing to tolerate.
 
