@@ -1,4 +1,4 @@
-"""The reader's kernel-C exercises, built once for the three problems of *C Without a Runtime*."""
+"""The reader's kernel-C exercises, built once for the three problems of *Kernel C Is Not Application C*."""
 
 from __future__ import annotations
 

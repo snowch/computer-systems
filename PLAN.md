@@ -223,7 +223,7 @@ those would be the book disagreeing with itself, which is what ERRATA.md exists 
 - **Problems.** Read declarations and say what each names; walk a buffer with pointers rather than
   indices; round an address to a page boundary both ways.
 
-#### ch04 · C Without a Runtime — target `xv6`
+#### ch04 · Kernel C Is Not Application C — target `xv6`
 
 - **Objectives.** For the reader who already writes C, and for the reader who has just met it: what
   stops being true below the library. No heap, so objects live in fixed arrays and free lists made
