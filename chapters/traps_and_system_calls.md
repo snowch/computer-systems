@@ -89,7 +89,7 @@ over forty instructions of pure bookkeeping, and it will execute nearly as many 
 out, after the work is finished.
 
 `uservec` also does a handful of CSR operations, and one of them is the page-table switch.
-`userret` does fewer, because part of the return is `sret` itself putting the privilege level and
+`userret` does fewer, because part of the return is `sret`, supervisor mode's `mret`, itself putting the privilege level and
 the interrupt state back in one instruction.
 
 **This is a count and not a cost**, and the distinction is the whole reason it appears here rather
@@ -171,7 +171,7 @@ table its reproducibility, and the section above is the argument.
 
 **What any of this costs.** The path is eighty-odd instructions long; whether that is expensive
 depends on whether they hit in cache, whether the pipeline drains, and what the page-table switch
-does to the TLB — three questions this target has no opinion about whatsoever. It is entirely
+does to the TLB (the hardware cache of address translations) — three questions this target has no opinion about whatsoever. It is entirely
 possible for the *shorter* of two paths to be the slower one, and [ch29](#the-os-layers-cost) is where that gets
 settled.
 

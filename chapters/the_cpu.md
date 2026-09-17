@@ -104,7 +104,7 @@ exactly that by requiring two surprises before it changes its mind.
 One warning specific to reading a PMU, and it applies to every chapter after this one.
 
 Some events a performance monitoring unit reports are counted by hardware. Others are computed
-from the ones that are — `perf` will happily report an "IPC" or a "miss rate" that is a division
+from the ones that are — `perf` will happily report an "IPC" (instructions per cycle) or a "miss rate" that is a division
 of two other counters, and a "stall cycles" figure that is a subtraction. Those are derived, they
 inherit the error of both inputs, and on some cores they are documented as approximate.
 

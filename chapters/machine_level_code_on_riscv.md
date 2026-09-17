@@ -39,7 +39,7 @@ what was in them.
 There are only two ways to settle it, and a calling convention picks both. Either **the caller
 saves** a register before making the call and restores it afterwards, or **the callee saves** it
 on entry and puts it back before returning. Every register is assigned to one group or the other
-@riscv-psabi, and the assignment is the whole reason a prologue looks the way it does.
+@riscv-psabi, and the assignment is the whole reason a prologue — the instructions that set up a function's stack frame — looks the way it does.
 
 The consequence worth internalising is about *lifetime*, not about numbers:
 

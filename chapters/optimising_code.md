@@ -69,7 +69,7 @@ substantially longer, and at `-O3` the gap widens rather than closes.
 The hand-unrolled source is a **different, larger program** than the one the compiler would have
 produced. Its four bodies with explicit indices are harder to analyse than one body with a clean
 induction variable, so the transformations the compiler would have applied — including its own
-unrolling and vectorisation, which is what `-O3` turns up — have less to work with. The
+unrolling and vectorisation (doing several array elements per instruction, [ch31](#vectors)'s subject), which is what `-O3` turns up — have less to work with. The
 optimisation was applied by hand, so it could not also be applied by the compiler, and the
 compiler's version was better.
 

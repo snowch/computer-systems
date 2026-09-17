@@ -8,6 +8,9 @@ short_title: Preface
 
 *From bits to cycles, measured on real hardware.*
 
+A self-study text on computer systems and performance, in five parts and thirty-two chapters,
+built around one question and a rule about answering it.
+
 ## The question this book keeps asking
 
 **Where do the cycles go, and how would I know?**
@@ -100,9 +103,6 @@ underneath, and the reason to read it first is that those tools all report quant
 meaning is what this book establishes.
 
 ## What this book is
-
-A self-study text on computer systems and performance, in five parts and thirty-two chapters,
-built around one question and a rule about answering it.
 
 Three things make it the shape it is.
 
