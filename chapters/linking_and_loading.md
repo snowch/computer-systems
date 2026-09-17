@@ -29,8 +29,9 @@ a running program — and you should have written enough of a reader to believe 
 
 ### Write the reader
 
-A reader who has only ever used `readelf` believes an ELF file is a thing a tool understands. The
-fastest cure is to write a tool.
+A reader who has only ever used `readelf` — the standard tool for printing what an ELF file
+contains — believes an ELF file is a thing a tool understands. The fastest cure is to write a
+tool.
 
 ```{literalinclude} ../sysfs/tools/elfdump.c
 :language: c
@@ -44,11 +45,12 @@ Build it and point it at something:
 ./run elfdump xv6/stage/user/_sameanswer
 ```
 
-That is most of what an ELF file is: a header with a magic number, a handful of sizes, and the
-offsets of two arrays. Everything else is found by following one of those offsets. There is no
-`#include <elf.h>` anywhere in `sysfs/tools/elfdump.c`, deliberately — the structures are declared
-from the specification @elf-abi, so that they read as a documented layout of bytes rather than as
-something only a library may know.
+That is most of what an ELF file is: a header with a magic number — a few fixed bytes that say
+*this is ELF* — a handful of sizes, and the offsets of two arrays. Everything else is found by
+following one of those offsets. There is no `#include <elf.h>` anywhere in
+`sysfs/tools/elfdump.c`, deliberately — the structures are declared from the specification
+@elf-abi, so that they read as a documented layout of bytes rather than as something only a
+library may know.
 
 ### Two arrays, two audiences
 
@@ -56,9 +58,10 @@ The two arrays describe the same bytes to different readers, and confusing them 
 most common muddle about executables.
 
 **Sections** are the linker's view. They are named, they are numerous, and most of them exist to
-be combined with the corresponding sections of other objects: put all the `.text` together, all
-the `.rodata` together, resolve what refers to what. After linking, most of them have no further
-purpose — the debug sections in particular are enormous and are never loaded.
+be combined with the corresponding sections of other objects: put all the `.text` — the
+instructions — together, all the `.rodata` — the read-only data — together, resolve what refers
+to what. After linking, most of them have no further purpose — the debug sections in particular
+are enormous and are never loaded.
 
 **Segments** are the loader's view, and there are far fewer:
 
@@ -85,8 +88,7 @@ than by what the programmer named.
 ```{include} _generated/linking-and-loading-segment-table.md
 ```
 
-Look at the last two columns of the writable rows. Those segments occupy bytes in memory and none
-at all in the file.
+Look at the writable rows. Those segments occupy bytes in memory and none at all in the file.
 
 That is `.bss`: variables that start as zero. Storing them would mean putting a run of zeroes in
 every binary, so the format does not. It records how much space to provide and the loader provides
@@ -175,8 +177,7 @@ python3 -m pytest tests/linking_and_loading/test_problem_1_reader.py
 ```
 
 **15.2 — Which of these links?**
-Five pairs of translation units. Predict whether each produces a program. The test actually links
-them.
+Five pairs of C files. Predict whether each produces a program. The test actually links them.
 
 One of the five links successfully and produces a program that is wrong, which is not a trick: it
 is the reason the C language has a reputation. Say whether it links; the chapter has already said
@@ -208,8 +209,7 @@ The RISC-V psABI @riscv-psabi supplies the architecture-specific half — which 
 exist and what each computes — and is where to look when a relocation name appears in an error
 message.
 
-xv6's `kernel/exec.c` @xv6-riscv-source is about a hundred and fifty lines and is now readable end
-to end. It is the shortest complete answer to "what happens when you run a program" that exists
+xv6's `kernel/exec.c` @xv6-riscv-source is short, and it is now readable end to end. It is the shortest complete answer to "what happens when you run a program" that exists
 anywhere, and having written a reader for the format it consumes, you will find it contains no
 surprises at all. That feeling is what [Part III](#part3) was for.
 

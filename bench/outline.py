@@ -281,8 +281,8 @@ CHAPTERS: tuple[Chapter, ...] = (
         "What actually happens between a source file and a result, and which of it costs anything?",
         "what-a-computer-does-with-a-program",
         reads_disassembly="riscv",
-        owes="Object and section sizes at each toolchain stage (`xv6`), and instruction counts for "
-        "the same program under `perf stat` (`host`).",
+        owes="What each toolchain stage produced, and what linking added; nothing timed on either "
+        "target.",
     ),
     Chapter(
         13,

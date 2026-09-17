@@ -28,9 +28,10 @@ On the way it has to answer what a number in memory actually is, because a progr
 it is instructions, and because the bugs that survive longest come from a value meaning something
 other than what its name suggests.
 
-It sits before [Part IV](#part4) because a kernel is a program. You
-cannot usefully read one until you know what a program is, what a compiler leaves unfinished, and
-who finishes it. [ch15](#linking-and-loading) ends at `exec`, which is precisely where [Part IV](#part4) begins.
+It sits before [Part IV](#part4) because a kernel is a program. You cannot usefully read one
+until you know what a program is, what a compiler leaves unfinished, and who finishes it.
+[ch15](#linking-and-loading) ends at `exec`, the system call that puts a program into a process,
+which is precisely where [Part IV](#part4) begins.
 
 ## What it leaves out
 
@@ -46,13 +47,14 @@ spelling is local; the structure is not.
 
 ## Where to start
 
-[ch12](#what-a-computer-does-with-a-program), in order. This part is a single argument in four steps and each chapter finishes a
-question the one before it left open — a compiler that emits an unfinished object file, an object
-file whose unfinished parts a linker fills, a linked file that is still only a file.
+[ch12](#what-a-computer-does-with-a-program), in order. This part is a single argument in four
+steps, and each chapter finishes a question the one before it left open: what the compiler
+produced and what it left unfinished; what the bytes in it mean; what the instructions in it do;
+and who fills in the unfinished parts and puts the result in memory.
 
-If you already know ELF and want the rest, [ch13](#representing-information) stands alone reasonably well; it is about
-representation rather than tooling, and it is the chapter most likely to change what you think you
-know.
+If you already know ELF — the file format the rest of the part takes apart — and want the rest,
+[ch13](#representing-information) stands alone reasonably well; it is about representation
+rather than tooling, and it is the chapter most likely to change what you think you know.
 
 ## Which machine, and what it cannot tell you
 

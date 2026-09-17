@@ -13,7 +13,7 @@ short_title: "12 · What a Computer Does With a Program"
 |---|---|
 | **Target** | `xv6` and `host` — every example says which |
 | **Prerequisites** | [ch00](#prerequisites-and-setup) |
-| **What it measures** | Object and section sizes at each toolchain stage (`xv6`), and instruction counts for the same program under `perf stat` (`host`). |
+| **What it measures** | What each toolchain stage produced, and what linking added: `bench/results/stagewalk-riscv64.json`. Nothing here is timed on either target. |
 | **What it captures** | What the compiler emits for the same loop twice: `bench/results/stages-riscv64.json` |
 :::
 
@@ -23,16 +23,17 @@ What actually happens between a source file and a result, and which of it costs 
 
 Most of it costs nothing. A great deal of what looks like work in a C program has been finished
 before the machine is switched on, and the part that remains is smaller and stranger than the
-source suggests.
-Separating the two is the skill the rest of [Part III](#part3) is built on, because you cannot ask what a
-program costs until you know which parts of it still exist at the time it runs.
+source suggests. Separating the two is the skill the rest of [Part III](#part3) is built on,
+because you cannot ask what a program costs until you know which parts of it still exist at the
+time it runs.
 
 ## The material
 
 ### One command is four programs
 
-`gcc sameanswer.c -o sameanswer` looks like one operation. It is a driver that runs four, each
-of which leaves a file on disk that you are allowed to look at and normally never do.
+`gcc sameanswer.c -o sameanswer` looks like one operation. `gcc` is a launcher that runs four
+programs in turn, each of which leaves a file on disk that you are allowed to look at and
+normally never do.
 
 ```{figure} _figures/what-a-computer-does-with-a-program-stages.svg
 :alt: The four stages of the toolchain, what each hands on, and what each discards.
@@ -50,8 +51,8 @@ yourself:
 :end-before: for stage in
 ```
 
-Four commands differing only in where the driver is told to stop. Run it on the program this
-chapter uses:
+Four commands differing only in where `gcc` is told to stop. Run it on the program this chapter
+uses:
 
 ```bash
 sysfs/tools/stages.sh sysfs/tools/sameanswer.c /tmp/walk
@@ -164,11 +165,12 @@ And then linking:
 ```{include} _generated/what-a-computer-does-with-a-program-linking.md
 ```
 
-The last two rows are the same program. One is linked statically against the GNU C library; the
-other is linked by xv6 against its own user library, which is a few hundred lines and knows how
-to do almost nothing. The difference between them is not your program — your program is
-identical — it is the cost of everything `printf` is prepared to do if asked. [ch15](#linking-and-loading) opens
-that binary up and says where it all went.
+The two linked sizes are the same program. One is linked statically — every library routine it
+needs copied into the file — against the GNU C library; the other is linked by xv6 against its
+own user library, which is a few hundred lines and knows how to do almost nothing. The
+difference between them is not your program — your program is identical — it is the cost of
+everything `printf` is prepared to do if asked. [ch15](#linking-and-loading) opens that binary
+up and says where it all went.
 
 ### The same program in both worlds
 
@@ -212,8 +214,9 @@ preprocesses to more text and may still link to the same binary.
 into its output the name of every file it pasted in, spelled exactly as the command line spelled
 it. So an absolute include path makes the preprocessed file longer on a machine whose checkout
 sits deeper, and the same commit measured larger on a CI runner than on a laptop — the whole
-difference being the line markers naming one header. Nothing about the number
-could have given that away; a size is a size. It surfaced only because CI regenerates this result
+difference being the lines the preprocessor writes to say which file each piece came from, naming
+one header. Nothing about the number could have given that away; a size is a size. It surfaced
+only because CI regenerates this result
 instead of trusting the committed copy, and the two disagreed. `stages.sh` now names every path
 relative to the repository root, and the runner refuses to stamp a result if any file the walk
 produced mentions where the repository lives. It shows exactly what stage 1 does: it pastes text,

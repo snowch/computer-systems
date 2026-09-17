@@ -21,12 +21,12 @@ short_title: "14 · Machine-Level Code on RISC-V"
 What did the compiler actually emit, and how do I read it?
 
 [ch02](#reading-a-listing) taught you to read a line of one: which column is which, what an
-operand means, where the number in brackets comes from. This chapter is about what the lines say
-between them, which is a different skill — and the one the listings in [Part III](#part3) have
-been quietly assuming. By the end of it you should be able to open an unfamiliar function, find
-where its arguments went, work out how much stack it wanted and why, and walk back up the chain of
-calls that reached it — by hand, and then in a debugger, and understand that these are the same
-operation.
+operand means, what the number in front of the parentheses is. This chapter is about what the
+lines say between them, which is a different skill — and the one the listings in
+[Part III](#part3) have been quietly assuming. By the end of it you should be able to open an
+unfamiliar function, find where its arguments went, work out how much stack it wanted and why,
+and walk back up the chain of calls that reached it — by hand, and then in a debugger, and
+understand that these are the same operation.
 
 ## The material
 
@@ -45,8 +45,8 @@ stack frame — looks the way it does.
 The consequence is about *lifetime*, not about register numbers:
 
 - A value you need **after** a call should live in a **callee-saved** register, because the callee
-  is obliged to hand it back unchanged. It costs a store and a load in the prologue and epilogue —
-  paid once per function.
+  is obliged to hand it back unchanged. It costs a store in the prologue and a load in the
+  epilogue — the matching instructions that take the frame down again — paid once per function.
 - A value you need only **between** calls can live in a **caller-saved** one, which costs nothing
   at all, because nobody has promised anything about it.
 
@@ -68,10 +68,11 @@ register it wants to use, somewhere for an array, somewhere for arguments beyond
 travel in registers — it takes that room from the stack, by subtracting from the stack pointer.
 That block is its **frame**.
 
-Two of the slots in it sit at fixed offsets, which is what makes a backtrace possible: the return
-address, and the caller's frame pointer. Follow the second and you are in the caller's frame;
-read the first and you know where it will resume. That is a linked list, and walking it is a
-loop:
+Two of the slots in it sit at fixed offsets, which is what makes a backtrace possible: the
+*return address* — where the call came from, and so where the function will resume — and the
+caller's *frame pointer*, the register that marks where a frame starts. Follow the second and you
+are in the caller's frame; read the first and you know where it will resume. That is a linked
+list, and walking it is a loop:
 
 ```{literalinclude} ../sysfs/tools/framewalk.c
 :language: c
@@ -125,7 +126,7 @@ frame at all and touches no memory: arguments arrive in registers, the result le
 nothing ever needed an address.
 
 **`sysfs_many_locals` is the striking one.** It takes eight arguments and computes four
-intermediates, and at `-O0` it wants a frame of over a hundred bytes and does more memory
+intermediates, and at `-O0` it wants the largest frame in the table and does more memory
 operations than it has instructions at `-O2`. At `-O2` it needs no frame either. Everything fit.
 
 That pair shows what an optimiser is actually for. It is not making the arithmetic cleverer — the
@@ -133,8 +134,9 @@ multiplications are the same multiplications. **It is keeping values in register
 memory**, and the difference between those two is the subject of [ch25](#the-memory-hierarchy).
 
 **`sysfs_calls_out` keeps a frame at `-O2`, and a small one.** It calls something, so the return
-address in `ra` is no longer safe where it is — the callee's own `jal` will overwrite it. A frame
-appears for exactly one reason and holds exactly one thing.
+address in `ra` — the register a call leaves it in — is no longer safe where it is: the callee's
+own `jal`, the call instruction, will overwrite it. A frame appears for exactly one reason and
+holds exactly one thing.
 
 **`sysfs_accumulates` keeps the same frame at both levels.** It has a loop with a call in it, and
 a running total that must survive each call. That total has to live in a callee-saved register, and
@@ -166,9 +168,10 @@ branch that is taken or not — which is why [ch12](#what-a-computer-does-with-a
 backwards, and why a loop and an `if` look so similar once compiled.
 
 RISC-V folds the comparison and the branch into one instruction, which is a design choice rather
-than a universal: it has no condition-code register, so there is no flags state to carry between
-them. That difference resurfaces in [ch26](#optimising-code) on a machine that does have one, and it is one
-of the few places where the two architectures genuinely do not translate word for word.
+than a universal: it has no condition-code register — no register that remembers the result of
+the last comparison — so there is nothing to carry between them. That difference resurfaces in
+[ch26](#optimising-code) on a machine that does have one, and it is one of the few places where
+the two architectures genuinely do not translate word for word.
 
 ### Stepping it in the debugger
 
@@ -259,8 +262,8 @@ register table in it is worth having open the first few times you read a disasse
 The unprivileged specification @riscv-isa-unprivileged defines the instructions themselves. Its
 instruction listing answers "what does `sd` actually do" faster than any tutorial.
 
-xv6's `kernel/swtch.S` @xv6-riscv-source is about thirty lines of assembly that saves fourteen
-registers into one context and restores fourteen from another, and that is the entire mechanism
+xv6's `kernel/swtch.S` @xv6-riscv-source is a few dozen lines of assembly that save fourteen
+registers into one context and restore fourteen from another, and that is the entire mechanism
 of a context switch. Read it now. You will not know *why* it is called or what a context is
 until [ch21](#scheduling-and-context-switches), but you can already read every instruction in it,
 which is a good way to find out that you can.
