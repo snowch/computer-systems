@@ -82,6 +82,15 @@ jobs:
           BASE_URL: ${{ steps.pages.outputs.base_path == '/' && '' || steps.pages.outputs.base_path }}
         run: myst build --html --strict
 
+      # The theme emits one icon link and has no option for the rest, so the tags that decide
+      # what a phone shows when the page is saved to a home screen are added here. Before
+      # check-built-links below, deliberately: two of the tags are `href="....png"` and
+      # `href="....svg"`, which that step already knows how to verify.
+      - name: Add the home-screen icon links to every page
+        env:
+          BASE_URL: ${{ steps.pages.outputs.base_path == '/' && '' || steps.pages.outputs.base_path }}
+        run: python3 scripts/inject-icon-links.py _build/html "$BASE_URL"
+
       - name: Install Chromium for the PDF build
         # The PDF is rendered by a browser rather than by LaTeX: no TeX distribution needed, and
         # the output is what a reader gets by pressing Print on the HTML.

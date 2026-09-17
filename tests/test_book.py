@@ -30,6 +30,28 @@ from bench.outline import (
 from bench.stamp import RESULTS_DIR, ROOT
 
 MYST = yaml.safe_load((ROOT / "myst.yml").read_text())
+
+
+def _script(name: str):
+    """Import a script by path. Their names have hyphens in them, so `import` will not do.
+
+    The source is compiled here rather than handed to `spec.loader.exec_module`, which consults
+    `scripts/__pycache__` and validates it on the source's size and modification time. Those are
+    not enough: editing a colour to the same number of characters and putting it back leaves both
+    unchanged within a second, and the loader then serves bytecode for source that no longer
+    exists. That was not a theory — it made the palette guard below report the value from a
+    previous edit, which for a test is the worst available failure, since it can also report a
+    pass that way.
+    """
+    import types  # noqa: PLC0415
+
+    path = ROOT / "scripts" / f"{name}.py"
+    module = types.ModuleType(name.replace("-", "_"))
+    module.__file__ = str(path)
+    exec(compile(path.read_text(), str(path), "exec"), module.__dict__)  # noqa: S102
+    return module
+
+
 TOC = MYST["project"]["toc"]
 TOC_FILES = [child["file"] for entry in TOC if "children" in entry for child in entry["children"]]
 
@@ -364,13 +386,7 @@ def test_a_problem_reference_carries_the_word_problem(page: str):
     Appendices are checked too, because appendix G was outside both this and the syncer: it said
     `problem 2.2` beside a link to *Kernel C Is Not Application C*, whose problems have been 4.x for three renumberings.
     """
-    import importlib.util
-
-    spec = importlib.util.spec_from_file_location(
-        "sync_labels", ROOT / "scripts" / "sync-labels.py"
-    )
-    sync_labels = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(sync_labels)
+    sync_labels = _script("sync-labels")
 
     text = INLINE_CODE.sub("", FENCED.sub("", (ROOT / page).read_text()))
     text = sync_labels.PROBLEM_REFERENCE.sub("", PROBLEM_HEADING.sub("", text))
@@ -1687,13 +1703,8 @@ def test_the_appendices_are_not_all_the_same_page():
 
 
 def _verify_numbers_module():
-    """Import the script by path. Its name has a hyphen in it, so `import` will not do."""
-    import importlib.util  # noqa: PLC0415
-
-    spec = importlib.util.spec_from_file_location("vn", ROOT / "scripts" / "verify-numbers.py")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    """The rule this book's second invariant rests on, loaded from the script that enforces it."""
+    return _script("verify-numbers")
 
 
 CAUGHT = [
@@ -1919,3 +1930,81 @@ def test_no_committed_result_names_a_chapter_by_number():
             if hit not in {"ch64"}:  # "aarch64" is not a chapter
                 wrong.append(f"{path.name}: {hit}")
     assert not wrong, "a committed result names a chapter by number: " + "; ".join(wrong)
+
+
+# -- the site icon ----------------------------------------------------------------------------
+
+
+def test_the_icon_ships_every_file_its_tags_point_at():
+    """A link in the head and a file in `static_files` are edited in different places.
+
+    The tags are injected after the build, from a list in one script; the files reach the site
+    root from `static_files` in myst.yml. Nothing but this test connects the two, and a tag
+    pointing at a file nobody copies is a 404 that only shows up on a phone — which is the one
+    place nobody checks.
+    """
+    shipped = {Path(entry).name for entry in MYST["project"].get("static_files", [])}
+    referenced = set(_script("inject-icon-links").REFERENCED)
+    missing = referenced - shipped
+    assert not missing, (
+        f"the head links to {sorted(missing)}, which myst.yml does not ship as static_files"
+    )
+
+
+def test_every_icon_the_manifest_names_exists():
+    """The manifest is a promise to a launcher, and a missing icon in it is silent."""
+    import json  # noqa: PLC0415
+
+    manifest = json.loads((ROOT / "icons" / "site.webmanifest").read_text())
+    for entry in manifest["icons"]:
+        assert (ROOT / "icons" / entry["src"]).is_file(), (
+            f"site.webmanifest names {entry['src']}, which is not in icons/"
+        )
+    purposes = {entry["purpose"] for entry in manifest["icons"]}
+    assert "maskable" in purposes, (
+        "no maskable icon: Android crops to whatever shape the launcher uses, and this mark's "
+        "corners sit outside the safe circle"
+    )
+
+
+def test_the_favicon_myst_names_is_the_one_that_is_built():
+    """The theme emits its own default when this is wrong, so the failure looks like a choice."""
+    favicon = MYST["site"]["options"].get("favicon")
+    assert favicon, "myst.yml sets no favicon, so the theme serves MyST's own logo"
+    assert (ROOT / favicon).is_file(), f"myst.yml names {favicon}, which does not exist"
+    assert Path(favicon).name in {p.name for p in (ROOT / "icons").iterdir()}
+
+
+def test_the_icon_uses_the_figure_palette():
+    """One book, one palette.
+
+    The icon repeats the three colours rather than importing them, because bench/ is the
+    measurement package and an icon is not a measurement. That is a duplication, so it needs a
+    test: a figure palette that moved and left the icon behind would be a tab icon that no
+    longer matches the diagrams.
+    """
+    from bench import diagrams  # noqa: PLC0415
+
+    icons = _script("make-icons")
+    # The third pair is spelled differently at each end on purpose: in a figure the colour marks
+    # something the reader should be wary of, and on an icon it is simply the accent.
+    for here, there in (("INK", "INK"), ("PAPER", "PAPER"), ("ACCENT", "WARN")):
+        assert getattr(icons, here) == getattr(diagrams, there), (
+            f"make-icons.{here} and diagrams.{there} have drifted apart"
+        )
+
+
+def test_the_deploy_workflow_injects_the_icon_links():
+    """Nothing else puts them in, so a dropped step is a silent regression to a screenshot tile."""
+    workflow = (ROOT / ".github" / "workflows" / "deploy.yml").read_text()
+    assert "inject-icon-links.py" in workflow, (
+        "deploy.yml does not run scripts/inject-icon-links.py, so the built pages carry no "
+        "apple-touch-icon and iOS will save a screenshot instead"
+    )
+    build = workflow.index("myst build --html")
+    inject = workflow.index("inject-icon-links.py")
+    links = workflow.index("check-built-links.py")
+    assert build < inject < links, (
+        "the injection has to run after the build and before check-built-links, which is what "
+        "verifies the files those tags point at were published"
+    )

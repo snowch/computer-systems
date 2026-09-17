@@ -279,6 +279,22 @@ the preprocessor to `[ch12]` and the system-call path to `[ch16]`; the Part V ma
 
 ---
 
+## 4a. The social-share image is a random chapter diagram
+
+Noticed while fixing the site icon, and left alone deliberately because it is a different job.
+
+The published pages carry `<meta property="og:image" content=".../prerequisites-and-se-….svg">`.
+Nobody chose that: MyST falls back to the first image it finds in the project when
+`project.thumbnail` is unset, and the first image is a diagram from the setup chapter. So every
+link to this book — Slack, iMessage, a forum — previews with an SVG of a QEMU boot diagram, and
+most platforms decline to render SVG at all and show nothing.
+
+`project.thumbnail` in `myst.yml` is the fix and is one line. What it should point at is the
+question: a proper card is 1200×630 with the title set in it, which is a design task rather than
+a path. `icons/icon-512.png` would do as a stopgap — deliberate and branded, if the wrong shape.
+
+---
+
 ## 5. Editorial calls that are yours, not a bug
 
 Found during the review, deliberately not changed.

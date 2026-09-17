@@ -26,6 +26,16 @@ project:
     code: Apache-2.0
   bibliography:
     - references.bib
+  # Copied to the root of the built site, where a phone looks for them. The favicon is handled
+  # separately, by `site.options.favicon` below; these are the ones no theme option can place,
+  # and `scripts/inject-icon-links.py` adds the tags that point at them.
+  static_files:
+    - icons/apple-touch-icon.png
+    - icons/icon.svg
+    - icons/icon-192.png
+    - icons/icon-512.png
+    - icons/icon-maskable-512.png
+    - icons/site.webmanifest
   exclude:
     - _build_stamp.md
     - README.md
@@ -114,6 +124,9 @@ site:
   options:
     style: ./custom.css
     logo_text: Systems From Scratch
+    # Without this the theme still emits <link rel="icon" href="…/favicon.ico"> and serves its
+    # own default, so the book shipped with MyST's logo in the browser tab.
+    favicon: icons/favicon.ico
   nav:
     - title: Chris Snow
       url: https://snowch.github.io
