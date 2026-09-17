@@ -8,20 +8,22 @@ short_title: Preface
 
 *From bits to cycles, measured on real hardware.*
 
-A self-study text on computer systems and performance, in five parts and thirty-two chapters,
-built around one question and a rule about answering it.
+A self-study text on computer systems and performance, in five parts and thirty-two chapters.
 
-## The question this book keeps asking
+## What it is about
 
-**Where do the cycles go, and how would I know?**
+This book teaches you to find out where a program's time actually goes, and to know when your
+answer is wrong. It is easy to learn that a cache miss is expensive, or that a system call costs
+more than a function call. It is much harder to measure it yourself — on a machine in front of
+you, for a program you did not write — and to know whether the number you got can be trusted.
 
-That second clause is the whole book. It is easy to learn that a cache miss is expensive, that a
-system call costs more than a function call, that branch prediction exists. It is much harder to
-be able to *find out* — on a machine in front of you, for a program you did not write — where the
-time actually went, and to know when the answer you got is wrong.
+## What it covers
 
-So every layer here gets the same treatment: how it works, then what it costs, then how that cost
-was measured and what the measurement could not see.
+You work up the layers, from the bits a value is made of to a whole program on real hardware: how
+data is represented, how C becomes machine code, how a program is linked and loaded, what the
+operating system does to run it, and what the CPU does with it. Each layer gets the same three
+questions: how does it work, what does it cost, and how do you measure that cost without fooling
+yourself?
 
 ## What you will be able to do
 
