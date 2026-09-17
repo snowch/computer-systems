@@ -44,10 +44,11 @@ instrument is most of what is being measured.
 ```{include} _generated/measuring-clock.md
 ```
 
-Two numbers there, and they measure different things. What a clock *costs* is how long the read
+The first two numbers there measure different things. What a clock *costs* is how long the read
 takes. What it can *resolve* is the smallest change it will ever report — a clock can hand back
 nanoseconds and still only ever move in steps of a hundred of them, in which case a measurement of
-anything shorter is a coin toss between zero and one step.
+anything shorter is a coin toss between zero and one step. The third row is what the first
+implies: work that costs as much as reading the clock is half instrument.
 
 Problem 24.2 turns this into the arithmetic you actually need: given what the work costs and what
 the clock costs, how many repetitions must go inside one timed region before the instrument is
@@ -60,9 +61,10 @@ Run identical work, on an idle machine, two thousand times:
 ```{include} _generated/measuring-spread.md
 ```
 
-Look at the last row. Identical work, identical input, nothing else running — and yet nine
-runs in ten agree to within a rounding error while the slowest stands far outside them. Nothing was
-wrong with any of those measurements; they are all correct observations of what happened.
+Read the 90th percentile against the fastest, and then the slowest. Identical work, identical
+input, nothing else running — and yet nine runs in ten agree to within a rounding error while the
+slowest stands far outside them. Nothing was wrong with any of those measurements; they are all
+correct observations of what happened.
 
 So "how long does it take" has no answer, and the question has to change. Report a distribution
 instead, which is why `sysfs_summarise` exists and why problem 24.1 asks you to write it.

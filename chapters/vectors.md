@@ -14,7 +14,7 @@ short_title: "31 · Vectors"
 | **Target** | `host` — the reference machine, natively |
 | **Prerequisites** | [ch30](#whole-machine-profiling) |
 | **Assumes** | a vector unit — NEON on the reference core. This chapter became measurable when [Part V](#part5) moved to AArch64; on a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run. |
-| **What it measures** | Which of five loops the compiler widens, at three sets of flags: `bench/results/vectors-census.json` |
+| **What it measures** | Which of five loops the compiler widens, at three sets of flags: `bench/results/vectors-census.json`; and what the widening bought: `bench/results/vectors-host.json` |
 :::
 
 ## The question
@@ -75,7 +75,8 @@ give a different answer. A compiler that did that on its own would be changing y
 output to make it faster.
 
 The third column grants exactly that permission. `-ffast-math` says the answer may change, and the
-loop widens immediately, which is the proof that the refusal was never a limitation.
+loop widens immediately, which is the proof that the refusal was never a limitation. Hold on to
+this one: the last table in this chapter says what the permission bought.
 
 Problem 31.2 is the disagreement itself. You write both orders, the test supplies an input where
 they differ, and you compare the bit patterns. Being told that floating-point addition is not
@@ -108,11 +109,27 @@ found this out by tripping over its own guard.
 
 Each measured speedup sits beside the most its lane count could possibly have bought.
 
-Compare each speedup with its bound. A speedup on its own invites you to be pleased with it; as a
-fraction of the bound it makes you ask where the rest went — and the answer is a tail, or memory,
-or a loop that was never the bottleneck to begin with. Problem 31.3 is that arithmetic, and it
-deliberately does not clamp: a result over the bound means something other than the width changed,
-and the comparison has stopped being between two versions of one loop.
+Read the two loops that never widen first, and then stop reading their last column. Their measured
+speedup is about one, as it must be, since nothing changed — and the percentage beside it is
+arithmetic rather than achievement: anything that did not move at all sits at a quarter of a
+fourfold bound by definition. The column means something only for the rows that widened.
+
+Of those, the one with independent elements and a multiply each got most of the way to its bound,
+and the integer reduction got a good deal less — the partials still have to be combined at the
+end, and that combining is not four-at-a-time work.
+
+**Then the float sum, which is the finding.** It widened, under permission this chapter spent a
+whole section justifying, and it bought nothing whatever: its measured speedup is one. The
+compiler's refusal at `-O3` was correct, the permission that overrode it was granted, the
+vectorisation happened — and the loop takes what it always took, because what limits it is not
+arithmetic width. Getting a program's answers changed and its time not changed is the worst trade
+in this book, and nothing in the census could have predicted it. Only the measurement did.
+
+Compare each speedup with its bound, then. A speedup on its own invites you to be pleased with it;
+as a fraction of the bound it makes you ask where the rest went — and the answer is a tail, or
+memory, or a loop that was never the bottleneck to begin with. Problem 31.3 is that arithmetic,
+and it deliberately does not clamp: a result over the bound means something other than the width
+changed, and the comparison has stopped being between two versions of one loop.
 
 ## What we measured
 
@@ -122,7 +139,9 @@ at `-O3`, nothing further widens under `-ffast-math`, or the loop with the depen
 vector instructions — each of which would leave the chapter asserting something its own evidence
 had stopped supporting.
 
-Measured on the board: what the widening actually bought, beside what it was allowed to buy.
+Measured on the board: what the widening actually bought, beside what it was allowed to buy. The
+five rows include the two loops that never widen, which are there as a control — a loop that did
+not change should measure as not having changed, and they do.
 
 ## What this cannot tell you
 

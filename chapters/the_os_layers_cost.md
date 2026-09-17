@@ -14,7 +14,7 @@ short_title: "29 · The OS Layer's Cost on Real Hardware"
 | **Target** | `host` — the reference machine, natively |
 | **Answers the cost of** | [ch16](#traps-and-system-calls), [ch18](#page-faults-as-a-feature), [ch21](#scheduling-and-context-switches) |
 | **Prerequisites** | [ch28](#memory-ordering-on-real-hardware) |
-| **What it measures** | The trap instruction and the call that hides it: `bench/results/oscalls-aarch64.json` |
+| **What it measures** | The trap instruction and the call that hides it: `bench/results/oscalls-aarch64.json`; and what the three services, the two kinds of fault and the two routes cost: `bench/results/oscost-host.json`, `bench/results/faultcost-host.json`, `bench/results/vdso-host.json` |
 :::
 
 ## The question
@@ -101,11 +101,26 @@ Every row has a baseline beside it, because a duration on its own is not a cost.
 system call takes is not useful until it is beside the cheapest thing the machine can do, and it
 is the ratio that survives being read on a different machine two years from now.
 
+Now settle the bound. Problem 29.2 turns the trap path's instruction count into a floor, and the
+measured system call is far above whatever floor you compute from it — not a little over, which
+would mean the model explains the cost, but several times over. So the third case above is the
+one that happened: **executing the trap path is not what a system call mostly costs.** The
+registers moved, the privilege change and the page-table switch are all real and all counted, and
+something outside that count is larger than all of them together. This chapter does not find out
+what; [ch30](#whole-machine-profiling) is the equipment for asking a machine where its time went.
+
 The baselines are chosen to be unflattering. A system call compared against an empty function
 call; a fault compared against a write to a page that is already there; a context switch compared
 against the same work done without leaving the thread. In each case the comparison is between
 doing the thing and not doing it, which is the only comparison that answers "what did the kernel
 cost me".
+
+Read the ratio column rather than the durations, and read it knowing the baselines differ. The
+system call's ratio is the largest by a wide margin and the switch's the smallest, which is not a
+ranking of the three services: it is a statement about what each is being compared against. An
+empty function call is the cheapest thing in this book, so anything measured against it looks
+enormous. The switch's baseline already includes real work. Change the baselines and the ranking
+changes, which is exactly why each row names its own.
 
 ### Two faults that are not the same fault
 
@@ -119,8 +134,12 @@ host file.
 
 Both faults in that table enter the kernel by exactly the path [ch16](#traps-and-system-calls) traced, and leave it
 the same way. Nothing about the trap differs. What differs is whether the kernel could answer
-from memory it already had or had to go and ask storage, and problem 29.3 is the classification:
-four facts about an address, and the order the rules apply in.
+from memory it already had or had to go and ask storage — and that one difference is worth more
+than everything else in this chapter put together. Read the three rows as a ladder: an access that
+does not fault, a fault the kernel answers from memory it already had, and a fault that has to
+wait for storage. Each step up is a large multiple of the one below it, and the second step is by
+far the larger. Problem 29.3 is the classification: four facts about an address, and the order the
+rules apply in.
 
 The order is where the difficulty is. A page the process never asked for is fatal whatever the
 other facts say; a translation that already exists costs nothing whatever else is true; and only
@@ -132,9 +151,15 @@ then does the minor-against-major question arise at all.
 ```
 
 Some system calls are not system calls. The kernel maps a page of its own code into every
-process, and a few requests — reading the clock is the one that matters here — are served by
-running that code with no privilege change at all. The answer comes from memory the kernel keeps
-up to date, and the process never traps.
+process — the **vDSO** — and a few requests, reading the clock being the one that matters here,
+are served by running that code with no privilege change at all. The answer comes from memory the
+kernel keeps up to date, and the process never traps.
+
+The table forces the comparison the usual way round, by making the same request both ways. The
+same call, the same answer, and the trap route costs several times what the vDSO route does.
+Notice also that the trapping `clock_gettime` costs more than the trapping `getpid` beside it:
+`getpid` is the floor of the boundary, and anything the kernel actually does after the trap is
+charged on top of it.
 
 This closes a loop opened five chapters earlier. [ch24](#measuring)'s clock is cheap enough to time
 things with *because* of this mechanism; a clock that trapped would be an instrument of the same
@@ -177,10 +202,12 @@ comparison has to take it themselves.
 prices the kernel that the reader can stop mid-trap, because the machine it runs on is a program, and
 that is the trade the two targets were chosen to make.
 
-**Whether the model explains the cost.** The bound in problem 29.2 says what the call cannot beat.
-If the measurement is far above it, this chapter has shown that [Part IV](#part4)'s account is
-incomplete without showing what is missing — and the instruction count is not where the answer will
-be found.
+**What the rest of a system call is.** The bound says what the call cannot beat and the
+measurement came in far above it, so this chapter has shown that [Part IV](#part4)'s account is
+incomplete without showing what is missing. Pipeline effects at a privilege change, a cold
+predictor on the kernel's side, the TLB, the mitigations a modern kernel carries on that path —
+each is a candidate and none of them is measured here. The instruction count is not where the
+answer will be found, which is most of what this chapter establishes.
 
 ## Problems
 
@@ -204,7 +231,7 @@ python3 -m pytest tests/the_os_layers_cost/test_problem_2_bound.py
 
 **29.3 — Which fault is this?**
 Four facts about an address and a stated precedence. The minor-against-major split is the one
-worth orders of magnitude, and it is not a fact about the fault.
+worth the largest factor in this chapter, and it is not a fact about the fault.
 
 ```bash
 python3 -m pytest tests/the_os_layers_cost/test_problem_3_faults.py
