@@ -30,7 +30,7 @@ being more than one processor.
 ### An address is a number until something translates it
 
 Everything so far has used addresses that were what they said. `&marker` was where `marker`
-actually was; the UART was at the number the board's documentation gives. Translation makes that
+actually was; the UART (the console's serial device) was at the number the board's documentation gives. Translation makes that
 stop being true, and the whole of the mechanism is a table the program writes and a register that
 points at it.
 

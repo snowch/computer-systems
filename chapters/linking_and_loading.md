@@ -100,7 +100,7 @@ the *cheapest* initial state, because it is the one the loader was going to prod
 ### What `exec` actually does
 
 The interface above is small enough that you can now read the kernel side of it. xv6's `exec`
-opens the file, checks the magic number, walks the program headers, and for each loadable one
+opens the file, checks the magic number, walks the program headers (the segment array), and for each loadable one
 allocates pages and copies bytes in @xv6-riscv-source. Then it builds a stack, puts the arguments
 on it, and switches the process to the new address space.
 

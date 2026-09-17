@@ -258,7 +258,7 @@ nanoseconds.
 ## What this cannot tell you
 
 Everything above is *structural*: sizes, offsets, byte order, which programs are in an image, how
-many harts announced themselves. Those are questions QEMU answers perfectly, because they are
+many harts (independent hardware threads) announced themselves. Those are questions QEMU answers perfectly, because they are
 questions about what the instructions compute.
 
 Not one of them is a question about time, and that is not an accident of what this chapter chose
