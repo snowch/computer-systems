@@ -66,10 +66,30 @@ and running [ch24](#measuring)'s experiments on both is an instructive afternoon
 
 ## It is an ARM machine, and everything before Part V is RISC-V
 
-That is deliberate: `perf` has to both count *and* sample, no affordable RISC-V core does both,
-and choosing one would have cost two chapters of [Part V](#part5). The [preface](#preface) has the
-evidence; this appendix is about choosing the machine, and [ch01](#setting-up-the-board) is where
-you make it work.
+That is deliberate. The kernel small enough to read in an afternoon is a RISC-V kernel; the
+hardware whose counters actually work is an ARM one. Those are different machines, and pretending
+otherwise would mean lying about one of them.
+
+[Part V](#part5) needs `perf` to do two separate things: **count** events over a run, and
+**sample** — interrupt the program thousands of times a second to ask where it is. Sampling needs
+the counters to raise an interrupt when they overflow. On ARM that is a standard part of the
+performance monitoring unit. On RISC-V it is an optional extension, and a 2025 study of the three
+RISC-V cores you can actually buy @riscv-pmu-profiling found that none of them wins:
+
+| | SiFive U74 | T-Head C910 | SpacemiT X60 |
+|---|---|---|---|
+| Out-of-order | No | Yes | No |
+| Vector extension | **None** | 0.7.1 (draft) | RVV 1.0 |
+| **Counter-overflow interrupt** | **No** | Yes | Limited |
+| Upstream Linux support | Yes | Partial | **No** |
+
+Read down the columns. Choosing RISC-V for [Part V](#part5) would have made two of its eight
+chapters unmeasurable — one needs sampling, one needs a vector unit — on boards that are hard to
+buy, with firmware that has broken `perf` between distribution releases. A Raspberry Pi costs none
+of that.
+
+The [preface](#preface) says what that costs a reader. Everything outside the disassembly is
+method, and method does not have an architecture.
 
 % number-ok: SoC specification from @rpi-bcm2712; every figure in this book comes from the machine itself
 Its SoC is a BCM2712: four Arm Cortex-A76 cores at 2.4 GHz, 64 kB of L1 instruction and data
