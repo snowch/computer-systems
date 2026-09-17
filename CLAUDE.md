@@ -131,6 +131,31 @@ Direct, precise, British English, active voice, short sentences. First-person pl
 No marketing tone, no filler, no "in this chapter we will". Figures are drawn by code and must
 show a mechanism.
 
+**Say it, do not perform it.** The rules above were not enough on their own: the prose drifted into
+a mannered, literary register that makes the reader decode instead of read. Three habits cause it,
+and all three are banned.
+
+- **Rhetorical framing instead of a statement.** "The question this book keeps asking", "That second
+  clause is the whole book", "the honest version is more interesting" — deliver the point as a plain
+  sentence, not as a device the reader has to unpack.
+- **Withhold, then reveal.** Do not set up a puzzle and make the reader wait for its meaning. Lead
+  with the point; the first sentence of a paragraph should already say what the paragraph is about.
+- **Abstraction over the concrete noun.** Name the thing: "a page table", not "the machinery that
+  arranges it".
+
+The test is simple: a reader should never have to work out what a sentence means. If a paragraph
+needs a second read to decode the author's intent, that is a defect, not a style, and it gets
+rewritten. An introduction — to the book, a part, or a chapter — states plainly what it is about,
+what it covers, and what the reader will be able to do, before any argument for its shape. Example:
+
+> The question this book keeps asking. Where do the cycles go, and how would I know? That second
+> clause is the whole book.
+
+becomes
+
+> This book teaches you to find out where a program's time actually goes, and to know when your
+> answer is wrong.
+
 **Length follows the material.** There is no page target, deliberately. A chapter is as long as
 what it has to convey, and no longer — ch10 has a data model to take apart and ch28 has one
 question about a vector unit, and forcing those to the same size would pad one and cramp the
