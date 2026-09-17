@@ -105,6 +105,9 @@ from it rather than drafted from a desk, which is the one thing it could never h
 **[Download the whole book as a PDF](/systems-from-scratch.pdf)** — every chapter and appendix in
 one file, built from the same source as this site, so the two cannot disagree about what a
 chapter says.
+
+```{include} _build_stamp.md
+```
 :::
 
 ## How the book is arranged

@@ -27,6 +27,7 @@ project:
   bibliography:
     - references.bib
   exclude:
+    - _build_stamp.md
     - README.md
     - PLAN.md
     - CLAUDE.md
