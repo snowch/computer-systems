@@ -888,6 +888,34 @@ def test_every_prose_mention_of_a_part_is_a_link(path):
     )
 
 
+@pytest.mark.parametrize("path", PROSE_FILES, ids=[str(p) for p in PROSE_FILES])
+def test_every_prose_mention_of_the_preface_is_a_link(path):
+    """The same rule as the part above, for the one page that is not a chapter or a part.
+
+    The preface is where the three targets, the measurement rule and the book's own argument are
+    settled, so chapters send the reader back to it — and five of the eight mentions were plain
+    text while three were already `[preface](#preface)`. A reader told that "the preface argues for
+    three targets" with no way to reach it has to go and find it, which is the whole thing a link
+    is for. The anchor has existed since the page did; only the habit was missing.
+
+    The preface itself is exempt: a page does not link to itself, and its frontmatter and anchor
+    are not prose.
+    """
+    if str(path) == "index.md":
+        pytest.skip("the preface does not link to itself")
+    text = (ROOT / path).read_text()
+    bare = [
+        f"line {n}: {line.strip()[:70]}"
+        for n, line in enumerate(FENCED.sub("", text).splitlines(), start=1)
+        if re.search(r"(?<!\[)\bpreface\b", line, re.I)
+        and not re.search(r"\[[Pp]reface\]\(#preface\)", line)
+    ]
+    assert not bare, (
+        f"{path} names the preface in prose without linking it — write it as "
+        f"[preface](#preface):\n  " + "\n  ".join(bare)
+    )
+
+
 #: "Three chapters and one job", "Six chapters, each building one primitive" — a *paragraph*
 #: opening by counting chapters.
 #:
