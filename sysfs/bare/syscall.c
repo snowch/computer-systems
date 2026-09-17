@@ -1,10 +1,11 @@
 /* The bare-metal system-call chapter: what has to exist before `ecall` is a system call rather than a trap.
  *
- * The bare-metal trap chapter's handler knew its caller: the same function, a few instructions earlier, compiled at the
- * same time. The compiler could therefore work out which registers mattered and save exactly
- * those. Here the caller is a stranger — it runs in a different privilege mode and the handler
- * has no idea which registers it was using — so the handler saves all of them, by hand, because
- * there is nobody left to work it out for you.
+ * The bare-metal trap chapter's handler had nothing to say to the code it interrupted, so the
+ * compiler could save whatever it touched into slots nothing else needed to see. A system call
+ * reads its number and its arguments out of the caller's registers and puts a result back into
+ * one, so the saved registers have to be a frame the handler can reach — and a frame the compiler
+ * laid out for its own prologue is not. So the handler saves all of them, by hand, into a frame
+ * it will read from and write into.
  *
  * On top of that: a number saying which call, somewhere to put arguments, somewhere to put a
  * result, and a dispatch. Those four things are the difference between a trap and an API.

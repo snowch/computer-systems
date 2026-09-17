@@ -22,17 +22,18 @@ What arrives without being asked for, and what does a privilege level actually r
 
 [ch06](#a-trap-with-nothing-else)'s trap was caused. An instruction executed, and the trap was that
 instruction's consequence — remove the `ecall` and nothing happens. This chapter is about the other
-kind, which no instruction causes and which would arrive if the program were doing nothing at all.
-It is also about privilege levels: what "allowed" means in hardware is a two-bit privilege field
-and a refusal.
+kind, an *interrupt*, which no instruction causes and which would arrive if the program were doing
+nothing at all. It is also about privilege levels: what "allowed" means in hardware is a two-bit
+field and a refusal.
 
 ## The material
 
 ### Something that arrives on its own
 
 The timer is a device that counts. `mtime` goes up whether or not anybody reads it; when it reaches
-`mtimecmp`, the processor takes an interrupt. Both live at fixed addresses on this board, and there
-is nothing else to it:
+`mtimecmp`, the processor takes an interrupt. Both are addresses that are wires, in
+[ch04](#c-without-a-runtime)'s sense — fixed places on this machine, in a block called the CLINT —
+and there is nothing else to it:
 
 ```{literalinclude} ../sysfs/bare/privilege.c
 :language: c
@@ -41,8 +42,9 @@ is nothing else to it:
 ```
 
 Arming it takes three writes — one to say *when*, one to enable this particular interrupt, and one
-to enable interrupts at all. The two levels do different jobs: the per-source bit says which
-interrupts a program is interested in, and the global bit is what a critical section turns off.
+to enable interrupts at all. The two enable bits do different jobs: the per-source bit says which
+interrupts a program is interested in, and the global bit is what a *critical section* — a stretch
+of code that must not be interrupted — turns off.
 
 ```{literalinclude} ../sysfs/bare/privilege.c
 :language: c
@@ -72,8 +74,8 @@ ways, depending on one bit.
 
 ### What a privilege level refuses
 
-Machine mode may do anything. Supervisor mode may not, and this is the smallest demonstration of
-what "may not" means in hardware:
+Machine mode may do anything. Supervisor mode — the level below it, and the one a kernel runs
+in — may not, and this is the smallest demonstration of what "may not" means in hardware:
 
 ```{literalinclude} ../sysfs/bare/privilege.c
 :language: c
@@ -95,8 +97,9 @@ privilege, which is why the way back has to be arranged before leaving.
 ```
 
 Getting into supervisor mode is the same instruction that returns from a trap. `mret` goes to
-`mepc` at the privilege level named in `mstatus.MPP`, so setting that field to *supervisor* and
-executing `mret` is a deliberate demotion:
+`mepc` at the privilege level named in `mstatus.MPP` — the field that records which level the
+last trap came from, and so which level `mret` goes back to — so setting that field to
+*supervisor* and executing `mret` is a deliberate demotion:
 
 ```{literalinclude} ../sysfs/bare/privilege.c
 :language: c
@@ -104,9 +107,10 @@ executing `mret` is a deliberate demotion:
 :end-before: int main(void)
 ```
 
-`bare_open_memory()` opens the physical-memory-protection regions, and leaving it out will cost
-you an afternoon. With no firmware in front of the program every one of those regions starts
-closed, and closed means closed to supervisor and user mode — machine mode is exempt. Without it,
+`bare_open_memory()` opens the *physical memory protection* regions — a small table in the
+processor saying which addresses the lower modes may touch — and leaving it out will cost you an
+afternoon. With no firmware in front of the program every one of those regions starts closed, and
+closed means closed to supervisor and user mode — machine mode is exempt. Without it,
 the supervisor program faults on its first instruction, with a cause that has nothing to do with
 what it was trying to do.
 
@@ -128,8 +132,8 @@ subject.
 
 ## What we measured
 
-Run it yourself before reading the table — the numbers below are what you should
-see, and a figure you have reproduced is worth more than one you have been shown:
+Run it yourself before reading the table — the rows below are what you should see, and a
+figure you have reproduced is worth more than one you have been shown:
 
 ```bash
 ./run privilege
@@ -154,6 +158,8 @@ never enters it. Nothing here needed it, and a demonstration with a level that m
 would have taught that levels make no difference.
 
 ## Problems
+
+Three, in `tests/interrupts_and_privilege/`.
 
 **7.1 — Interrupt an interrupt.**
 Arrange for the timer to fire while the handler is still running, and say what happens and why.

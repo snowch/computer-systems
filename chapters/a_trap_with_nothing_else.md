@@ -20,19 +20,19 @@ short_title: "06 · A Trap, With Nothing Else in the Machine"
 
 What is a trap, when nothing else is going on?
 
-A trap is usually met in the middle of a kernel, where it arrives carrying a process, a page
-table, a lock and a scheduler, and where the code that handles it is correct about all of them at
-once. That is a hard place to learn what the mechanism *is*, because almost nothing on the page is
-the mechanism. Here there is nothing else: no kernel, no library, no loader, and no operating
-system. One handler, one deliberate trap, and every question about it answered by the machine.
+A trap is a jump the processor makes without being asked, to an address it was given in
+advance. [Part II](#part2) said why a kernel is a hard place to learn that: almost nothing on the
+page is the mechanism. Here there is nothing else — no kernel, no library, no loader, and no
+operating system. One handler, one deliberate trap, and every question about it answered by the
+machine.
 
 ## The material
 
 ### The whole machine
 
 Three files, and between them they are the entire runtime. The linker script says where the
-program goes, because with `-bios none` QEMU releases the processor at a fixed address and expects
-to find instructions there.
+program goes, because with `-bios none` — no firmware — QEMU releases the processor at a fixed
+address and expects to find instructions there.
 
 ```{literalinclude} ../sysfs/bare/bare.ld
 :language: text
@@ -40,8 +40,9 @@ to find instructions there.
 :end-before: .rodata
 ```
 
-The entry code makes a stack and zeroes the memory C is entitled to assume is zero. Nothing else
-will: there is no loader to interpret program headers, and no runtime to call before `main`.
+The entry code makes a stack and zeroes the memory C is entitled to assume is zero — every
+variable outside a function that was declared without a value. Nothing else will: there is no
+loader to set memory up, and no runtime to call before `main`.
 
 ```{literalinclude} ../sysfs/bare/start.S
 :language: asm
@@ -62,8 +63,12 @@ about sleeping and waking.
 
 ### Where the processor goes
 
-A trap is a jump the processor makes without being asked. One register decides where it lands:
-`mtvec`, the machine trap vector, holds the address to go to.
+One register decides where a trap lands: `mtvec`, the machine trap vector, holds the address to
+go to. It is one of the processor's *control and status registers* — CSRs, a set apart from `a0`
+and its neighbours, read and written with instructions of their own, which is what
+`bare_csr_write` wraps. The `m` is for *machine mode*, the most privileged state the processor
+has and the one it comes out of reset in; [ch07](#interrupts-and-privilege) is where the other
+modes appear.
 
 ```{literalinclude} ../sysfs/bare/trap.c
 :language: c
@@ -84,8 +89,9 @@ is which is the handler's job, and it reads `mcause` to do it —
 
 ### Where it was, and the mistake that loops for ever
 
-The processor also records where it was when the trap happened, in `mepc`. Exactly which
-instruction that means is the first thing about traps that surprises people:
+The processor also records where it was when the trap happened, in `mepc` — the saved *program
+counter*, the processor's record of which instruction it is on. Exactly which instruction that
+means is the first thing about traps that surprises people:
 
 ```{literalinclude} ../sysfs/bare/trap.c
 :language: c
@@ -108,15 +114,16 @@ is a program that prints nothing and never finishes.
 
 Whether four is the right number to add is not obvious either. [ch02](#reading-a-listing)
 pointed out that instructions on this architecture are not all the same length, so adding a fixed
-four ought to look reckless. It is safe here only because the programs in this part are built for
-`rv64g`, without the compressed extension, so every instruction in them really is four bytes. That
-is a property of the build, not of the processor, and the first problem below is about what happens
-when it stops holding.
+four ought to look reckless. It is safe here only because the programs in this part are built
+for `rv64g`, without the compressed extension — the short forms [ch02](#reading-a-listing)
+mentioned — so every instruction in them really is four bytes. That is a property of the build,
+not of the processor, and the first problem below is about what happens when it stops holding.
 
 ### What a trap does not do
 
 It does not save anything. Not the registers, not the stack, not a frame — the processor changes
-`mepc`, `mcause` and a couple of bits of `mstatus`, jumps, and that is all. Every register still
+`mepc`, `mcause` and a couple of bits of `mstatus`, its status register, then jumps, and that is
+all. Every register still
 holds what the interrupted code put there, and the instant the handler uses one, that value is
 gone.
 
@@ -125,17 +132,24 @@ Here the compiler covers for us:
 ```{literalinclude} ../sysfs/bare/trap.c
 :language: c
 :start-at: /* `interrupt("machine")` makes the compiler do two things
-:end-before: __attribute__((interrupt
+:end-before:     taken++;
 ```
 
-The compiler can only do that because it can see both sides. The handler and the code it interrupts
-were compiled together, so it knows which registers are live and saves those. Take that away
-— make the caller a program the compiler has never seen — and there is nobody left to work it out.
-That is [ch09](#a-system-call-of-your-own), and it is why its handler saves all thirty-one by hand.
+What the compiler saves is a private matter between the handler's first instructions and its
+last — the `mret` that jumps back to `mepc`: the C in between cannot name those slots, cannot
+read what the interrupted code had in `a0`, and cannot change what it will get back. That is fine here, because this handler has
+nothing to say to the code it interrupted. A trap that is *told* something and has to *answer* —
+a system call, which takes its arguments from the caller's registers and puts its result back
+into one — needs the saved registers laid out where the handler can reach them, and that is a
+frame written by hand. It is [ch09](#a-system-call-of-your-own), and it is why that handler
+saves all thirty-one itself.
 
 ### Proving it
 
-The program sets a register, traps, and reads the register back afterwards.
+The program sets a register, traps — with `ecall`, the instruction whose only job is to trap —
+and reads the register back afterwards. `asm volatile` is how C embeds instructions of your own;
+the `volatile` is [ch05](#c-for-people-who-will-read-a-kernel)'s, and stops the compiler
+removing them.
 
 ```{literalinclude} ../sysfs/bare/trap.c
 :language: c
@@ -145,8 +159,8 @@ The program sets a register, traps, and reads the register back afterwards.
 
 ## What we measured
 
-Run it yourself before reading the table — the numbers below are what you should
-see, and a figure you have reproduced is worth more than one you have been shown:
+Run it yourself before reading the table — the rows below are what you should see, and a
+figure you have reproduced is worth more than one you have been shown:
 
 ```bash
 ./run trap
@@ -156,26 +170,24 @@ see, and a figure you have reproduced is worth more than one you have been shown
 ```
 
 Every row is the machine answering rather than the chapter asserting, and `bench/run_bare.py`
-refuses the run if any of them stops being true — including the two that look like formalities.
-If `mepc_is_the_ecall` ever came back *no*, the paragraph above about the infinite loop would be
-describing a different processor.
+refuses the run if any of them stops being true — including the two that look like formalities:
+that `mtvec` reads back what was written, and that the program resumed, which it proves by
+reaching the line that prints it. If `mepc_is_the_ecall` ever came back *no*, the paragraph above
+about the infinite loop would be describing a different processor.
 
 ## What this cannot tell you
 
-**How long a trap takes.** Nothing on this target may be timed, for the reason the whole book has
-two targets: QEMU models no cache, no branch predictor, no store buffer and no memory latency, so a
-duration measured here is a fact about the laptop running the emulator. What a trap *costs* is
-[ch29](#the-os-layers-cost), on hardware.
+**How long a trap takes.** Nothing on this target may be timed, for the reason
+[Part I](#part1) gives: a duration measured under QEMU is a fact about the laptop running the
+emulator. What a trap *costs* is [ch29](#the-os-layers-cost), on hardware.
 
 **What a real board does before your code runs.** QEMU with `-bios none` hands the processor over
-at the reset address with the machine in a defined state. A physical board has firmware that has
-already run, errata, and a reset sequence considerably less tidy than this one. This chapter
-teaches the architecture, not any particular chip, and the program here will not boot a real board
-unchanged.
+at the reset address with the machine in a defined state. [Part II](#part2) says what a physical
+board does instead, and why this program will not boot one unchanged.
 
 **Whether the compiler will keep covering for you.** `interrupt("machine")` saved the registers
-because the compiler could see what needed saving. That is a property of this arrangement, not of
-traps, and one more privilege level is enough to remove it.
+because this handler had nothing to hand back. The moment a trap has to answer the code it
+interrupted, the saving is yours to write.
 
 ## Problems
 

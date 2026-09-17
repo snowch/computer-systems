@@ -248,7 +248,7 @@ CHAPTERS: tuple[Chapter, ...] = (
         "What has to exist before `ecall` is a system call rather than a trap?",
         "a-system-call-of-your-own",
         owes="A call number, arguments and a return value crossing the boundary, and the count of "
-        "registers this handler has to save once the caller is a stranger.",
+        "registers a handler saves when the saved registers are its interface.",
     ),
     Chapter(
         10,

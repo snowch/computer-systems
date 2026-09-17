@@ -13,7 +13,7 @@ short_title: "09 · A System Call of Your Own"
 |---|---|
 | **Target** | `bare` — the same machine under QEMU with no operating system on it |
 | **Prerequisites** | [ch08](#one-page-table-two-harts) |
-| **What it measures** | A call number, arguments and a return value crossing the boundary, and the count of registers this handler has to save once the caller is a stranger. |
+| **What it measures** | A call number, arguments and a return value crossing the boundary, and the count of registers a handler saves when the saved registers are its interface. |
 :::
 
 ## The question
@@ -24,18 +24,17 @@ What has to exist before `ecall` is a system call rather than a trap?
 was a system call: no request was made, nothing was asked for, and the handler had nothing to
 decide. Four things are missing, and this chapter adds them — a number saying which call, somewhere
 to put arguments, somewhere to put a result, and a dispatch. A fifth is missing too, and it is the
-expensive one: the handler no longer knows its caller, so it has to save every register.
+expensive one: the arguments and the result live in the caller's registers, so the handler has to
+save every register somewhere it can read and write them.
 
 ## The material
 
-### The caller is now a stranger
+### The saved registers are the interface
 
-[ch06](#a-trap-with-nothing-else)'s handler could be careless because the compiler was not. It could see the handler and the
-code it interrupted, knew which registers were live, and saved exactly those.
-
-That arrangement is gone. The caller runs in supervisor mode, was compiled separately as far as
-the boundary is concerned, and might be using any register for anything. So the handler saves all
-of them:
+[ch06](#a-trap-with-nothing-else)'s handler could let the compiler save the registers because it
+never needed to look at them. This one does: the call number and the arguments arrive in the
+caller's registers, and the result has to go back in one, so the saved registers have to be
+somewhere the handler's C can read and write. That is a frame the handler lays out itself.
 
 :::{note} This is not the user-to-kernel boundary yet
 A system call on a real machine goes from *user* mode to *supervisor* mode. This one goes from
@@ -48,6 +47,11 @@ this chapter after [ch11](#fork-built-rather-than-read) rather than before it.
 [ch16](#traps-and-system-calls) is the same four ingredients at the level a reader expects.
 :::
 
+The frame holds every register the caller had, not the three the interface needs, because a frame
+that holds every register is a complete description of the caller — the thing
+[ch11](#fork-built-rather-than-read) copies to make a second process from the first — where a
+frame that holds three is not:
+
 ```{literalinclude} ../sysfs/bare/syscall.c
 :language: c
 :start-at: /* The trap entry. Naked because every instruction in it matters
@@ -55,8 +59,8 @@ this chapter after [ch11](#fork-built-rather-than-read) rather than before it.
 ```
 
 Thirty-one, not thirty-two, because `x0` is hard-wired to zero and has nothing to lose. It is
-written out rather than generated so that its length is visible: this is the cost of not
-knowing your caller, and it is paid on every single call.
+written out rather than generated so that its length is visible: this is the cost of describing
+the caller completely, and it is paid on every single call.
 
 The frame also becomes the interface. Once the registers are in memory, "the arguments" and "the
 registers" are the same thing, and the handler reads them as an array:
@@ -109,8 +113,8 @@ still holds what it put there.
 
 ## What we measured
 
-Run it yourself before reading the table — the numbers below are what you should
-see, and a figure you have reproduced is worth more than one you have been shown:
+Run it yourself before reading the table — the rows below are what you should see, and a
+figure you have reproduced is worth more than one you have been shown:
 
 ```bash
 ./run syscall
@@ -141,6 +145,8 @@ untrusted code, and everything about that is [ch16](#traps-and-system-calls)'s p
 [ch11](#fork-built-rather-than-read) runs into the first half of it.
 
 ## Problems
+
+Three, in `tests/a_system_call_of_your_own/`.
 
 **9.1 — Add a call, and an error.**
 Add a call that can fail for a reason other than being unknown, and return something the caller can
