@@ -64,6 +64,17 @@ jobs:
       - name: Check the figures are current
         run: python3 scripts/render-figures.py --check
 
+      # Fill the build stamp the preface includes, so a reader can tell which commit and day this
+      # site was built from. The committed default says "a local working copy"; this overwrites it
+      # for the published build only (it is never committed back).
+      - name: Stamp the build with its commit and date
+        run: |
+          SHORT=$(git rev-parse --short HEAD)
+          FULL=$(git rev-parse HEAD)
+          DATE=$(date -u +%Y-%m-%d)
+          printf 'Built on %s from commit [`%s`](https://github.com/snowch/computer-systems/commit/%s) — compare it with the [latest on GitHub](https://github.com/snowch/computer-systems) to see whether a newer one exists.\n' \
+            "$DATE" "$SHORT" "$FULL" > _build_stamp.md
+
       - name: Build the book
         env:
           # base_path is "/" for a user site and "/repo" for a project site; MyST wants an empty
