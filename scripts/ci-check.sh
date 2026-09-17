@@ -34,6 +34,13 @@ echo "== every displayed chapter number still matches the outline =="
 # chapter became ch18 — which --strict cannot see, because the anchor still resolves.
 python3 scripts/sync-labels.py --check
 
+echo "== the site icon is what its code draws =="
+# Pixel for pixel, not just present: the first version of the icon was rasterised by headless
+# Chromium, whose --window-size turned out to be the window rather than the viewport, and every
+# PNG was committed with a white band along the bottom. The mark is axis-aligned rectangles, so
+# it is now rasterised by exact arithmetic and can be compared exactly.
+python3 scripts/make-icons.py --check
+
 echo "== benchmark result stamps =="
 python3 scripts/verify-numbers.py
 
