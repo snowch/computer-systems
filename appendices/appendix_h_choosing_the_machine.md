@@ -13,7 +13,7 @@ any money, and then only to settle an argument with a spec sheet.
 book is measured, and [ch01](#setting-up-the-board) is where you make it work. What follows is
 the decision before that — what the `host` target has to be able to do, how to check a machine you
 already own, and what changes if yours differs from the reference. The *argument* for a second
-machine at all is in the preface; this is the shopping and the checking.
+machine at all is in the [preface](#preface); this is the shopping and the checking.
 
 A **Raspberry Pi 5 with 4 GB or more**, and an active cooler. That is the whole decision. Every Pi
 5 has the counters this book needs — same SoC, same four cores, no variant where they are missing

@@ -36,7 +36,7 @@ twenty-two chapters sit between finishing the first and *needing* the second.
 before you own anything, and then only to settle an argument with a spec sheet. This part assumes
 the machines exist.
 
-**Any reason for the arrangement.** The preface argues for three targets on two machines and for
+**Any reason for the arrangement.** The [preface](#preface) argues for three targets on two machines and for
 the instruction sets not matching. These chapters take that as settled and get it working.
 
 ## Where to start

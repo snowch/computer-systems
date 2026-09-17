@@ -184,6 +184,6 @@ problem in problem 31.1 by not having a compile-time width at all, and seeing on
 other's choices visible as choices.
 
 That is the last measurement in the book. [Appendix A](#appendix-a) collects the reference cards,
-and the preface says what this book set out to make you able to do. The test is not whether you
+and the [preface](#preface) says what this book set out to make you able to do. The test is not whether you
 remember any of these numbers, but whether, next time something is slow, the first thing you reach
 for is a measurement.

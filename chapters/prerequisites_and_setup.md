@@ -30,7 +30,7 @@ targets it can currently run, and with measurements that record what those targe
 
 ### Three targets, and what the repository does about it
 
-The preface makes the case for the arrangement; here is what each target is in practice.
+The [preface](#preface) makes the case for the arrangement; here is what each target is in practice.
 
 **`bare`** is that same `qemu-system-riscv64` with no kernel under it at all — the machine on its
 own. [Part II](#part2) builds on it directly, and it shares xv6's cross-compiler and setup, so one
@@ -44,7 +44,7 @@ split, and [ch12](#what-a-computer-does-with-a-program) is where it crosses.
 **`host`** is a small Linux machine on the desk, reached over SSH — a Raspberry Pi 5 in this book.
 Everything about *what a program costs* is measured there, natively. [Part V](#part5) lives there.
 
-The one thing worth repeating from the preface, because every later chapter depends on it: QEMU is
+The one thing worth repeating from the [preface](#preface), because every later chapter depends on it: QEMU is
 a functional emulator. It computes what the instructions compute and models nothing else — no
 cache, no branch predictor, no store buffer, no pipeline, no memory latency. Ask it how long a loop
 took and it will answer, and the answer describes the laptop QEMU was running on and the
