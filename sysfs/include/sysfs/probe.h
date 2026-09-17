@@ -74,7 +74,7 @@ struct sysfs_size_order {
  *
  * RISC-V is little-endian in every implementation anyone ships, but "everyone knows that" is the
  * kind of claim this book is not allowed to make. Reading the first byte of a known integer costs
- * three instructions and turns it into something measured. */
+ * three lines of C and turns it into something measured. */
 static inline int sysfs_is_little_endian(void) {
   unsigned int word = 1u;
   const unsigned char *bytes = (const unsigned char *)&word;

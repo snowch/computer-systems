@@ -19,7 +19,7 @@ short_title: "01 · Setting Up the Board"
 
 ## The question
 
-**Is this machine telling me the truth about itself?**
+Is this machine telling me the truth about itself?
 
 [ch00](#prerequisites-and-setup) got the emulated targets working, and they are enough for
 everything up to [Part V](#part5). This chapter sets up the other machine: the one every number in
@@ -42,32 +42,35 @@ follows is the shape of the task and the parts this book depends on.
 will also set the hostname, your SSH key and your Wi-Fi while it writes. Use its advanced options
 — it saves the whole "find it on the network and change the default password" dance.
 
-It has to be a **64-bit** image. A 32-bit userspace on ARMv7 does not get you the ARMv8 PMU, and
-you would spend an afternoon finding that out.
+It has to be a **64-bit** image. A 32-bit userspace on ARMv7 does not get you the ARMv8 PMU — the
+performance monitoring unit, the block of hardware the counters live in — and you would spend an
+afternoon finding that out.
 
 It also has to be an image whose **device tree describes the PMU**, and not every image does. The
-counters are in every Pi 5's silicon; whether Linux is told about them depends on the `.dtb` your
-image ships. In the sources @rpi-dt-bcm2712, the Raspberry Pi kernel carries an `arm-pmu` node for
-the Cortex-A76, with one overflow interrupt per core, and every Pi 5 variant inherits it. Mainline
-Linux's own BCM2712 tree carries no such node at all.
+device tree is the file the kernel is handed at boot saying what hardware is present; the counters
+are in every Pi 5's silicon, but whether Linux is told about them depends on the compiled device
+tree, the `.dtb`, your image ships. In the sources @rpi-dt-bcm2712, the Raspberry Pi kernel
+carries an `arm-pmu` node for the Cortex-A76, with one overflow interrupt per core, and every Pi 5
+variant inherits it. Mainline Linux's own BCM2712 tree carries no such node at all.
 
 So prefer an image built on the Raspberry Pi kernel, which is what Raspberry Pi OS and the
 Raspberry Pi builds of other distributions use. A general-purpose distribution running a mainline
 kernel with mainline device trees on the same board may have no hardware PMU exposed to it
 whatever — not because the chip lacks one, but because nothing told the kernel it was there. One
-command settles it either way, and it is the next section.
+command settles it either way, and it is in *Proving the counters are real* below.
 
 **2. Boot it, wired if you can.** A radio makes the machine do work you did not ask for: its
-driver takes interrupts and runs softirqs on the same cores your benchmark is running on, and a
-lossy link adds `sshd` wakeups on top. Link speed has nothing to do with it — nothing in
-[Part V](#part5) touches the network, so bandwidth, latency and the grade of cable are all
-irrelevant to every number in this book. [ch28](#memory-ordering-on-real-hardware) and [ch29](#the-os-layers-cost), which measure small per-operation costs,
-are where the interference is most likely to show.
+driver runs on the same cores your benchmark is running on, waking up for every packet and doing
+its deferred work there, and a lossy link adds `sshd` wakeups on top. Link speed has nothing to do
+with it — nothing in [Part V](#part5) touches the network, so bandwidth, latency and the grade of
+cable are all irrelevant to every number in this book.
 
-That is a prediction, not a measurement. This book has not put a number on it, so treat the advice
-as hygiene rather than as a result — and [ch24](#measuring) will hand you the tools to settle it
-yourself, because "the same benchmark, one thing changed that should not matter" is exactly that
-chapter's subject. Run it both ways and find out whether you can tell.
+That is a mechanism, and [ch24](#measuring) measures what it does: the same fixed workload run
+many times over, with the radio off and then with it on, because "the same benchmark, one thing
+changed that should not matter" is exactly that chapter's subject. What it found is worth
+carrying here as advice rather than as a number — the radio never made the fastest run slower, and
+it made the typical one less predictable. Wire the board, and run it both ways yourself when you
+get there.
 
 Only the machine being measured needs the cable. Your laptop can stay on Wi-Fi: its radio
 interrupts its own cores, not the ones running the benchmark. So for most people this costs a
@@ -175,8 +178,9 @@ machine.
 
 `perf stat` **counts**: it totals events over a whole run. `perf record` **samples**: it
 interrupts the program thousands of times a second to ask where it is, and builds a picture of
-where the time went from those interruptions. Sampling needs the counters to raise an interrupt
-when they overflow, and that is a separate hardware feature from counting.
+where the time went from those interruptions. Sampling needs the counters to raise an interrupt —
+to stop the program and hand control to the kernel — when they overflow, and that is a separate
+hardware feature from counting.
 
 Test it with a program that is actually running. The first of these commands looks like a test and
 is not:
@@ -278,3 +282,6 @@ python3 -m pytest tests/setting_up_the_board/test_problem_2_sampling.py
 is the same thing as a checklist. The counter-overflow interrupt that sampling needs is the
 Sscofpmf extension @riscv-sscofpmf on RISC-V and a standard part of the PMU on ARM; the reference
 board's SoC is documented by its vendor @rpi-bcm2712.
+
+[ch02](#reading-a-listing) is next, on either machine. It teaches reading what the compiler
+produced, which every chapter after it assumes you can do.

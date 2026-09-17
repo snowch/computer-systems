@@ -37,18 +37,20 @@ The [preface](#preface) makes the case for the arrangement; here is what each ta
 check covers both.
 
 **`xv6`** is the MIT teaching kernel under `qemu-system-riscv64`: a complete operating system in
-about nine thousand lines, which you can stop mid-trap and inspect. Parts I and IV live there, and
-so does everything the book says about *what a program does*; [Part III](#part3) works on both sides of the
-split, and [ch12](#what-a-computer-does-with-a-program) is where it crosses.
+about nine thousand lines, which you can stop anywhere — halfway through entering the kernel, if
+you like — and inspect. Parts I and IV live there, and so does everything the book says about
+*what a program does*; [Part III](#part3) works on both sides of the split, and
+[ch12](#what-a-computer-does-with-a-program) is where it crosses.
 
 **`host`** is a small Linux machine on the desk, reached over SSH — a Raspberry Pi 5 in this book.
 Everything about *what a program costs* is measured there, natively. [Part V](#part5) lives there.
 
 QEMU is a functional emulator, and every later chapter depends on what that means. The
 [preface](#preface) says so too: QEMU computes what the instructions compute and models nothing
-else — no cache, no branch predictor, no store buffer, no pipeline, no memory latency. Ask it how
-long a loop took and it will answer, and the answer describes the laptop QEMU was running on and
-the translation strategy it happened to pick.
+else — none of the machinery that decides how long an instruction actually takes, so no cache, no
+branch predictor, no store buffer, no pipeline, no memory latency. Ask it how long a loop took and
+it will answer, and the answer describes the laptop QEMU was running on and how it happened to
+translate the instructions.
 
 Almost every convenient way to observe a program changes what you are observing. A debugger stops
 it. A profiler samples it. A print statement in a loop makes the loop something else. Knowing
@@ -70,10 +72,12 @@ contains a duration at all.
 
 Two machines, and only one of them has to be bought. Whatever you are reading this on runs both
 emulated targets; `host` needs a small Linux board. The reference board is a **Raspberry Pi 5**,
-but what matters is a capability rather than a part number: `perf` has to both count and sample.
-[Appendix H](#appendix-h) states that properly, and says how to check a machine you already own
-and what changes if yours differs from the reference. Read it before you spend
-anything — and then carry on here, because nothing in this chapter needs the board.
+but what matters is a capability rather than a part number: `perf`, Linux's tool for reading the
+processor's performance counters, has to be able both to count events and to sample where the
+program was when they happened. [Appendix H](#appendix-h) states that properly, and says how to
+check a machine you already own and what changes if yours differs from the reference. Read it
+before you spend anything — and then carry on here, because nothing in this chapter needs the
+board.
 [ch01](#setting-up-the-board) is where it gets set up, and twenty-two chapters go by before
 anything depends on it.
 
@@ -92,11 +96,12 @@ On a Debian or Ubuntu machine, including the board itself:
 sudo apt install -y gcc-riscv64-linux-gnu qemu-system-misc qemu-user-static gdb-multiarch
 ```
 
-`qemu-user-static` is worth installing even though no chapter requires it. It runs a cross-built
-RV64 binary directly on an x86-64 or Apple-silicon machine, which means every `host`-target
-example in [Part V](#part5) can be compiled and **checked for correctness** away from the board. It
-cannot tell you anything about time, and the repository does not let it try — but it is the
-difference between being able to work on [Part V](#part5) from a train and not.
+`qemu-user-static` is worth installing even though no chapter requires it. It runs a program built
+for a different processor directly on your own machine — an ARM binary on an x86-64 laptop, say —
+which means every `host`-target example in [Part V](#part5) can be compiled and **checked for
+correctness** away from the board. It cannot tell you anything about time, and the repository does
+not let it try — but it is the difference between being able to work on [Part V](#part5) from a
+train and not.
 
 #### The repository
 
@@ -193,11 +198,13 @@ numbers, and when the two disagree — which happens — the book cites the one 
 
 #### The same program in both worlds
 
-Two checks remain. The first produces this chapter's first real result.
+Two commands remain. The first boots the kernel, runs a probe and stamps this chapter's first real
+result; the second builds the same probe for the other target and checks that the two agree about
+every answer.
 
 `sysfs/include/sysfs/probe.h` asks the machine a handful of questions it can answer without a
-library: how big is each scalar type, where may it start, what does the compiler do to a struct,
-which end of a word is the low byte. It is compiled twice from the same bytes, for two targets
+library: how big each basic type is, which addresses it is allowed to start at, what the compiler
+does to a struct, and which end of a multi-byte value holds its least significant byte. It is compiled twice from the same bytes, for two targets
 that disagree about what a C library is, and the header says so at the top — the first design
 decision in this book that exists entirely because of where the code has to run:
 
@@ -207,8 +214,8 @@ decision in this book that exists entirely because of where the code has to run:
 :end-before: #ifndef SYSFS_PROBE_H
 ```
 
-The rest of the header follows from that decision. Asking the machine which end of a word it puts
-the low byte at, rather than assuming, costs three instructions:
+The rest of the header follows from that decision. Asking the machine which end of a value it
+puts the least significant byte at, rather than assuming, costs three lines of C:
 
 ```{literalinclude} ../sysfs/include/sysfs/probe.h
 :language: c
@@ -236,10 +243,12 @@ The C implementation it presents, as reported from inside the kernel:
 ```
 
 This is the **LP64** data model: `long` and pointers are 64-bit, `int` stays 32-bit, and every
-scalar type's alignment equals its size. RISC-V spells its variant LP64D, for the
-double-precision float ABI @riscv-psabi; AArch64 arrives at the same layout by its own route. If
-you have only ever worked on 64-bit Linux this will look like the way things are. It is a choice
-the ABI made — twice, independently — and [ch13](#representing-information) takes it apart.
+basic type's alignment — the address boundary it has to start on — equals its size. That is a
+choice made by the ABI, the agreement between compiler and operating system about how data is laid
+out and passed around; RISC-V spells its variant LP64D, for the double-precision float convention
+@riscv-psabi, and AArch64 arrives at the same layout by its own route. If you have only ever
+worked on 64-bit Linux this will look like the way things are. It is a choice, made twice,
+independently, and [ch13](#representing-information) takes it apart.
 
 The third table matters most. Two structs, the same three members, different declaration order:
 
@@ -339,7 +348,7 @@ separates a confident answer from a correct one.
 
 For the reference machine, Raspberry Pi's own documentation @rpi-bcm2712 gives the SoC and its
 cache hierarchy, and Arm's Cortex-A76 technical reference manual @arm-a76-trm gives the pipeline
-and the PMU events [ch27](#the-cpu) reads. The RISC-V hardware the [preface](#preface) argues against is
+and the PMU events [ch27](#the-cpu) reads. The RISC-V hardware [Appendix H](#appendix-h) argues against is
 documented at @starfive-jh7110 and @sifive-u74 if you want to follow that thread. Either way the
 caveat stands: where a document and a measurement disagree, the book prints the measurement and
 says so.
@@ -353,5 +362,8 @@ understand it. Its authors also wrote a commentary on it, which is excellent and
 this book deliberately does not follow; if you want a second account of the same kernel
 after [Part IV](#part4), that is the one to read.
 
-[ch12](#what-a-computer-does-with-a-program) takes a single program and follows it from source text to a result on both targets,
-and asks — for the first of many times — which parts of that journey cost anything.
+Next is [ch01](#setting-up-the-board) if the board is on your desk, and
+[ch02](#reading-a-listing) if it is not — nothing between here and [Part V](#part5) needs it.
+Further on, [ch12](#what-a-computer-does-with-a-program) takes a single program and follows it
+from source text to a result on both targets, and asks — for the first of many times — which parts
+of that journey cost anything.

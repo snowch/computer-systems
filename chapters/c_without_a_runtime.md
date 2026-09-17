@@ -21,11 +21,11 @@ short_title: "04 · Kernel C Is Not Application C"
 I already write applications — which of my habits stop working in a kernel?
 
 The question is not about C, and you do not have to have written C to have the habits this chapter
-is about: a Java or Python programmer holds more of them than a C one, not fewer,
-because more has been done for them. Every assumption below is one an application programmer is
-entitled to make in any language, and none of them holds here.
+is about: a Java or Python programmer holds more of them than a C one, not fewer, because more has
+been done for them. Every assumption below is one an application programmer is entitled to make
+in any language, and none of them holds here.
 
-What goes wrong is not syntax. [ch03](#memory-is-one-array) is the syntax.
+What goes wrong is not syntax; [ch03](#memory-is-one-array) covered that.
 
 ## The material
 
@@ -44,10 +44,11 @@ Three of those rows are what the rest of this chapter is about.
 
 ### No heap
 
-There is no `malloc` — nothing in the kernel defines one, and the row in the table above is a
-count rather than a claim. The reason is an ordering problem rather than an omission. `malloc` is
-built on a kernel's memory management, and this *is* the memory management. It cannot call itself
-into existence.
+There is no `malloc`, the library call an application makes when it wants memory, and no *heap*,
+the region `malloc` hands memory out from. Nothing in the kernel defines either, and the row in
+the table above is a count rather than a claim. The reason is an ordering problem rather than an
+omission. `malloc` is built on a kernel's memory management, and this *is* the memory management.
+It cannot call itself into existence.
 
 So where do objects come from? Two places, and a kernel of this size uses both.
 
@@ -58,14 +59,16 @@ So where do objects come from? Two places, and a kernel of this size uses both.
 
 Every one of those is the length of an array that exists for the whole run. The kernel does not
 allocate a process; it finds an unused slot in `proc[]` and marks it used. When there is no unused
-slot, `fork` fails — and *that* is what the limit means. A reader used to allocation that either
-succeeds or raises has to get used to allocation that returns a null pointer and expects to be
-asked about it.
+slot, `fork` — the call that creates a process — fails, and *that* is what the limit means. A
+reader used to allocation that either succeeds or raises has to get used to allocation that
+returns a *null pointer* — a pointer whose value is zero, C's spelling of *nothing here* — and
+expects the caller to check.
 
-**A free list made of the free memory itself.** The other source is whole pages. A list of free
-pages needs a node per page, which would need memory, which is what we are trying to allocate.
-The kernel resolves it by writing the link *into the free page*, because a free page by definition
-holds nothing anybody wants.
+**A free list made of the free memory itself.** The other source is whole *pages* — the
+fixed-size blocks the hardware divides memory into, and the unit it is handed out in. A list of
+free pages needs a node per page, which would need memory, which is what we are trying to
+allocate. The kernel resolves it by writing the link *into the free page*, because a free page by
+definition holds nothing anybody wants.
 
 ```{literalinclude} ../xv6/xv6-riscv/kernel/kalloc.c
 :language: c
@@ -74,26 +77,38 @@ holds nothing anybody wants.
 :caption: xv6, `kernel/kalloc.c` — MIT licence
 ```
 
-That is [ch03](#memory-is-one-array)'s self-referential struct doing real work, and the whole of
-the free list's bookkeeping. Freeing a page casts its address to a `struct run *`, writes the
-current head of `kmem.freelist` into the page's first bytes, and makes the page the new head;
-allocating takes the head and follows the link it finds there. Four lines of pointer arithmetic
-that would be undefined behaviour in an application and are the allocator here.
+That is [ch03](#memory-is-one-array)'s self-referential struct, and here it is doing real work.
+This is the whole of what freeing a page does to it:
+
+```{literalinclude} ../xv6/xv6-riscv/kernel/kalloc.c
+:language: c
+:start-at: r = (struct run *)pa;
+:end-before: release(&kmem.lock);
+:caption: xv6, `kernel/kalloc.c` — MIT licence
+```
+
+Cast the page's address to a `struct run *`, write the current head of the list into the page's
+first bytes, and make the page the new head; allocating takes the head and follows the link it
+finds there. Three lines of pointer arithmetic that would be undefined behaviour in an application
+and are the allocator here — and one `acquire`, which is *Somebody else is running* below.
 [ch18](#page-faults-as-a-feature) measures what it costs.
 
-*Undefined behaviour* is not a figure of speech here. C is defined in terms of an abstract machine
-in which a pointer points at an *object* — something created by a declaration, or by an allocator,
-with a lifetime the standard describes. `pa` is none of those. It is an integer the linker script
-and the hardware agree is the address of usable memory, cast to a pointer, and the abstract
-machine has no concept that would make the cast meaningful. Writing through it is undefined not
-because it is dangerous but because the standard has nothing to say about it.
+*Undefined behaviour* — the C standard's name for anything it declines to give a meaning to — is
+not a figure of speech here. C is defined in terms of an *abstract machine*, the standard's own
+model of what a C program does, written without reference to any real hardware. In that model a
+pointer points at an *object*: something created by a declaration, or by an allocator, with a
+lifetime the standard describes. `pa`, the address `kfree` was handed, is none of those. It is an
+integer the kernel's build and the hardware agree is the address of usable memory, cast to a
+pointer, and the abstract machine has no concept that would make the cast meaningful. Writing
+through it is undefined not because it is dangerous but because the standard has nothing to say
+about it.
 
-It works anyway because the compiler is not the last word on this program. The
-declaration, the object model and the lifetime rules exist to let a compiler optimise without
-asking the hardware; here the hardware is the authority, and the kernel is asserting a fact about
-the machine that C has no way to express. That is the real reason kernel C cannot be read as
-portable ISO C with some extra library calls missing — it is the same language making a different
-bargain about who decides what an address means.
+It works anyway because the compiler is not the last word on this program. Declarations, objects
+and lifetimes exist so that a compiler can reason about a program without asking the hardware;
+here the hardware is the authority, and the kernel is asserting a fact about the machine that C
+has no way to express. That is the real reason kernel C cannot be read as the C of the standard
+with some library calls missing — it is the same language making a different bargain about who
+decides what an address means.
 
 ### Memory that is not memory
 
@@ -103,32 +118,35 @@ different answers because the second read consumes the next byte to arrive.
 
 Every assumption a compiler makes about memory is wrong for those addresses — that reading twice
 gives the same answer, that a read nobody uses can be dropped, that two writes to one place can be
-combined into the last. `volatile` is how you withdraw those assumptions, and [ch05](#c-for-people-who-will-read-a-kernel) shows
-the compiler obeying, one instruction at a time.
+combined into the last. `volatile`, a word put on the declaration, is how you withdraw those
+assumptions, and [ch05](#c-for-people-who-will-read-a-kernel) shows the compiler obeying, one
+instruction at a time.
 
 This is why kernel source is full of a keyword application code almost never needs. `volatile` is
-not defensive style; it is the difference between a driver and a program that receives one
-character for ever.
+not defensive style; it is the difference between a *driver* — the part of a kernel that talks to
+one device — and a program that receives one character for ever.
 
 ### Somebody else is running
 
 An application with one thread has exclusive access to its own data by default. A kernel never
-does: the table above gives this machine eight harts, every one of them able to be inside
-the same function as you, on data you are halfway through changing.
+does: `NCPU` in the table of bounds above gives this machine eight harts, every one of them able
+to be inside the same function as you, on data you are halfway through changing.
 
 What that costs is [ch20](#locks-and-memory-ordering)'s subject and it is not small. When you read a
-kernel structure, ask who else can reach it and what they are holding while they do. That is not
-paranoia; it is the first question. `static` on a file-scope variable does
-not make it yours — it makes it invisible to other *files*, and every hart runs the same file.
+kernel structure, ask who else can reach it, and what stops them reaching it at the same moment
+as you. That is not paranoia; it is the first question. `static` on a variable declared outside
+any function does not make it yours — it hides the name from other *files*, and every hart runs
+the same file.
 
 ### No floating point, on purpose
 
 Zero instructions in the whole kernel name a floating-point register. That is a decision rather
 than an oversight, and it is the kind of decision a kernel gets to make.
 
-Floating-point registers are part of a process's state. Saving and restoring them on every context
-switch costs time on every switch, whether or not the process ever used one. xv6 declines: it does
-not save them, so the kernel may not use them either, because a kernel that used one would corrupt
+Floating-point registers are part of a process's state. Saving and restoring them on every
+*context switch* — the moment the kernel stops running one process and starts another — costs
+time on every switch, whether or not the process ever used one. xv6 declines: it does not save
+them, so the kernel may not use them either, because a kernel that used one would corrupt
 whichever process it interrupted. The cost of the feature is paid by everyone and the benefit
 accrues to few, so the feature is not offered.
 
@@ -139,19 +157,20 @@ something other than memory.
 ### Almost no library, so the kernel writes its own
 
 The table counts the functions this kernel reimplements because nothing supplies them: the string
-and memory routines, and a formatted-print routine for the console. They are a hundred lines
-between them, the shortest complete C in the tree, and written in exactly the style
+and memory routines, and a formatted-print routine for the console. They are two short files,
+the plainest complete C in the tree, and written in exactly the style
 [ch03](#memory-is-one-array)'s second problem asked for — pointers that move, no subscripts, a
 length passed alongside every buffer. Read them early.
 
-The kernel's string copy differs from the standard one it is named after: it takes a size and
-always terminates, where the standard one takes a size and does not reliably terminate. When a
-kernel reimplements something the library already has, the reimplementation usually differs on
-purpose, and the difference is usually about a failure the library was willing to tolerate.
+The string copy is the example to notice. The standard `strncpy` takes a size and does not
+promise to write the zero byte that ends a string; the kernel carries that one and, beside it,
+`safestrcpy`, which takes a size and always writes it. When a kernel writes its own version of
+something the library already has, the version usually differs on purpose, and the difference is
+usually about a failure the library was willing to tolerate.
 
 ### Failure returns, it does not raise
 
-There is no exception, no unwinder, no destructor and nothing to catch. A function that can fail
+There is no exception, no `finally`, no destructor and nothing to catch. A function that can fail
 returns something you must look at, and a caller that does not look has written the bug.
 
 This is the habit that takes longest to acquire, because in an application ignoring a failure is
@@ -159,18 +178,18 @@ usually survivable — something above you will notice. Here, nothing is above y
 deciding which of several plausible kernel functions can fail at all, which is a question about
 where their memory comes from — this chapter in one exercise.
 
-### What the language lets you do and you must not
+### What C lets you do that you must not
 
 C will not stop you. Neither will the hardware, until [ch18](#page-faults-as-a-feature). The three mistakes that cost
 the most time, all of which compile without a word of complaint:
 
-- **A pointer to a local, after the function returned.** The bytes are still there and still
-  readable, right up until the next call writes over them, which is why this produces a bug that
-  works in testing.
+- **A pointer to a local — a variable in the current call's region — after the function
+  returned.** The bytes are still there and still readable, right up until the next call writes
+  over them, which is why this produces a bug that works in testing.
 - **Reading or writing past the end of an array.** Nothing checks. [ch13](#representing-information) has the arithmetic
   that makes a bounds check look right and be wrong.
-- **Two harts writing one variable with no lock**, which works perfectly until the machine is
-  busy. [ch20](#locks-and-memory-ordering) is the chapter, and [ch28](#memory-ordering-on-real-hardware) is what it costs on real hardware.
+- **Two harts writing one variable with no lock** — nothing to make one wait for the other —
+  which works perfectly until the machine is busy. [ch20](#locks-and-memory-ordering) is the chapter, and [ch28](#memory-ordering-on-real-hardware) is what it costs on real hardware.
 
 ## What we measured
 
@@ -234,9 +253,9 @@ python3 -m pytest tests/c_without_a_runtime/test_problem_3_volatile.py
 
 ## Where to go next
 
-`kernel/string.c` and `kernel/kalloc.c` are the two files to read after this chapter — a hundred
-and eighty lines between them, containing every idea above. [Appendix D](#appendix-d)
-says what else is in the tree and which chapter reads it.
+`kernel/string.c` and `kernel/kalloc.c` are the two files to read after this chapter — short
+enough for one sitting, and containing every idea above. [Appendix D](#appendix-d) says what else
+is in the tree and which chapter reads it.
 
 [ch05](#c-for-people-who-will-read-a-kernel) is the last chapter of this part and the one that puts a compiler behind the claims.
 It sorts C's constructs by a single question — has the machine heard of this? — and answers it
