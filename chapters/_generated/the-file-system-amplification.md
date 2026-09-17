@@ -7,4 +7,4 @@
 | Blocks entered in the log | 6 | 10 | 4 |
 | Transactions committed | 5 | 6 | 1 |
 
-*Conditions: target `xv6` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · xv6-riscv @ 9e3161a · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `xv6's own CFLAGS` · 2026-09-16 · Source: `bench/results/blocks-xv6.json`, code hash `1437596b2211367a`.*
+*Conditions: target `xv6` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · xv6-riscv @ 9e3161a · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `xv6's own CFLAGS` · 2026-09-17 · Source: `bench/results/blocks-xv6.json`, code hash `92b201238488aa7b`.*

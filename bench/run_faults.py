@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 8's measurement: what choosing an allocation policy costs.
+"""The page-faults chapter's measurement: what choosing an allocation policy costs.
 
     python3 -m bench.run_faults           # boot, run the workload, read the fault census
     python3 -m bench.run_faults --check   # re-run and compare; write nothing
@@ -10,7 +10,7 @@ patch counts and changes nothing. What is missing from the kernel, and from most
 laziness, is the exchange rate: how many pages are saved, and how many entries into the kernel are
 bought with them.
 
-Deterministic by construction rather than by observation, which is the ch13 lesson applied before
+Deterministic by construction rather than by observation, which is the traps chapter's lesson applied before
 rather than after. ``faultload`` decides how much it asks for and how much of it it touches, and
 prints both; the kernel counts independently; this runner refuses to stamp a result in which the
 two disagree. The shell allocates as well, which is why the census is per process and why only

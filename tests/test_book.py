@@ -27,7 +27,7 @@ from bench.outline import (
     in_part,
     reading_disassembly,
 )
-from bench.stamp import ROOT
+from bench.stamp import RESULTS_DIR, ROOT
 
 MYST = yaml.safe_load((ROOT / "myst.yml").read_text())
 TOC = MYST["project"]["toc"]
@@ -701,8 +701,8 @@ CAPTION_COUNT = re.compile(r"(\d+)\s+instructions?\b")
 def test_prose_beside_a_listing_agrees_with_it_about_how_many_instructions():
     """The third contradiction, and the one no existing check could have caught.
 
-    ch01 said "One instruction each" in the paragraph under a listing whose own caption, generated
-    from a stamped result, said two. Both numbers were on the same screen. `--strict` sees a valid
+    A chapter said "One instruction each" in the paragraph under a listing whose own caption,
+    generated from a stamped result, said two. Both numbers were on the same screen. `--strict` sees a valid
     document and `verify-numbers.py` sees no digits in the prose, because the prose spelled it.
     """
     wrong = []
@@ -1412,15 +1412,16 @@ def test_every_problem_says_how_to_run_it(chapter: Chapter):
 
 
 def test_host_chapter_headers_do_not_name_a_specific_board():
-    """The hardware requirement is a capability (ch00), so a header naming one board is wrong.
+    """The hardware requirement is a capability, so a header naming one board is wrong.
 
     Every host chapter said 'VisionFive 2 Lite' until this was caught — nine chapters that would
     have been inaccurate for any reader who bought something else. The reference machine has since
     changed once, which is the argument for this test rather than against it: the pattern names
     both the old board and the current one, because a header pinned to either is the same mistake.
 
-    Two exemptions, both by construction. ch00 is the chapter that recommends a specific machine,
-    and does so in its body, having first said what the machine has to be able to do. And the
+    Two exemptions, both by construction. Appendix H is the page that recommends a specific
+    machine, having first said what the machine has to be able to do, and it is not a chapter so
+    this never scans it. And the
     **Assumes** row is where naming the reference core is the whole point — a chapter that depends
     on a 4-wide out-of-order pipeline has to say which one it measured, or the row tells the reader
     nothing they can act on.
@@ -1454,7 +1455,7 @@ def test_the_hardware_advice_carries_its_caveat():
     decision that is, and the note is the kind of thing that gets tidied away in an edit."""
     notes = (ROOT / "hardware" / "README.md").read_text()
     chapter = (ROOT / CHOOSING_THE_MACHINE.path).read_text()
-    for text, where in ((notes, "hardware/README.md"), (chapter, "ch00")):
+    for text, where in ((notes, "hardware/README.md"), (chapter, CHOOSING_THE_MACHINE.path)):
         lowered = text.lower()
         assert "return policy" in lowered, f"{where} does not mention checking the return policy"
         assert "warranty" in lowered, f"{where} does not disclaim a warranty"
@@ -1868,3 +1869,53 @@ def test_no_shipped_source_names_a_chapter_by_number(source: str):
         f"{source} names a chapter by number ({', '.join(hits)}) — a bare number with no anchor "
         f"behind it, which nothing can keep right. Name what the chapter is about instead"
     )
+
+
+#: Everything under `bench/` a chapter's number could hide in, which is all of it but the outline.
+#: `bench/outline.py` is where the numbers are *derived*, so it says `ch` on purpose.
+def _bench_modules() -> list[str]:
+    return [
+        path.relative_to(ROOT).as_posix()
+        for path in sorted((ROOT / "bench").glob("*.py"))
+        if path.name != "outline.py"
+    ]
+
+
+@pytest.mark.parametrize("module", _bench_modules())
+def test_no_runner_names_a_chapter_by_number(module: str):
+    """Every runner opened by naming the chapter it serves, and thirty of them named the wrong one.
+
+    `run_kernelc.py` said "Chapter 2's census" and served the freestanding-C chapter; `run_traps.py`
+    said "Chapter 6's" and served the traps chapter; `run_hierarchy.py` said seventeen and serves
+    twenty-five. Four of those strings were not comments at all — they were `note` and `why` fields
+    the runner stamps into the committed result, so the wrong number was published in
+    `bench/results/`.
+
+    These are worse than a stale comment in a chapter, because there is no anchor beside them and
+    no reader to notice: the only person who reads a runner's docstring is someone already lost.
+    The chapter each one serves is derivable — its result feeds a figure and a chapter includes
+    that figure — so a name is always available and cannot go stale.
+    """
+    body = (ROOT / module).read_text()
+    hits = sorted({m.group(0) for m in re.finditer(r"\bch\d{2}\b|\b[Cc]hapter \d+\b", body)})
+    assert not hits, (
+        f"{module} names a chapter by number ({', '.join(hits)}). The chapter a runner serves is "
+        f"derivable from the figure its result feeds — name it instead"
+    )
+
+
+def test_no_committed_result_names_a_chapter_by_number():
+    """A runner's `note` is stamped into the file, so a wrong number outlives the edit that fixed it.
+
+    Five results carried one. Four regenerate — the deterministic ones re-run and rewrite their
+    own notes — and `measuring-host.json` is a board timing that cannot be re-run off the Pi, so
+    its note was corrected in place. That is safe precisely here: `note` lives under `conditions`,
+    which is provenance rather than summary, so nothing hashes it and `measurement_differences`
+    never compares it. The number would otherwise have waited for the next trip to the board.
+    """
+    wrong = []
+    for path in sorted(RESULTS_DIR.glob("*.json")):
+        for hit in re.findall(r"\bch\d{2}\b", path.read_text()):
+            if hit not in {"ch64"}:  # "aarch64" is not a chapter
+                wrong.append(f"{path.name}: {hit}")
+    assert not wrong, "a committed result names a chapter by number: " + "; ".join(wrong)

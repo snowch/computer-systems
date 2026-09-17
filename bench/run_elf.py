@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Chapter 5's artefact: what is actually in an xv6 binary.
+"""The linking chapter's artefact: what is actually in an xv6 binary.
 
     python3 -m bench.run_elf           # read the binaries and stamp what is in them
     python3 -m bench.run_elf --check   # re-read and compare; write nothing
 
 Structure, not cost. Sections, segments and symbol counts are facts about a file, read by the
-book's own reader rather than by ``readelf`` — which is the point of ch12 having written one.
+book's own reader rather than by ``readelf`` — which is the point of the chapter having written one.
 
 The subject is xv6's own programs, built by xv6's Makefile with xv6's linker script, because a
 Linux binary's answer to "where does this get loaded" is complicated by a dynamic loader and a

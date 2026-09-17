@@ -9,7 +9,7 @@
  * The arithmetic is not the exercise. The exercise is the path: this file is staged into the
  * kernel tree, compiled by the RISC-V cross compiler, linked against xv6's user library,
  * written into the file system image, booted under QEMU and run at the shell — and if any link
- * in that chain is missing, you find out now rather than in chapter 6.
+ * in that chain is missing, you find out now rather than in the traps chapter.
  *
  * xv6 has no libc. What you have is declared in user/user.h: printf, atoi, exit, and not much
  * else. `exit` takes an argument and does not return.

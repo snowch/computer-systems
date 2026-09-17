@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 9's measurement: how much interrupting a fixed amount of I/O takes.
+"""The drivers chapter's measurement: how much interrupting a fixed amount of I/O takes.
 
     python3 -m bench.run_interrupts           # boot, run the workload, read the census
     python3 -m bench.run_interrupts --check   # re-run and compare; write nothing
@@ -14,7 +14,7 @@ notification that it is ready for more, and how many of those you need depends o
 fell out rather than on how many characters there were.
 
 So one of them is a property of the workload and the other is a property of the afternoon, and
-this runner records the first and declines the second — for the same reason ch13 declines to
+this runner records the first and declines the second — for the same reason the traps chapter declines to
 record timer interrupts, which is also why the timer is missing here.
 
 What it records about the console is the one fact that survives: how many times the writing process

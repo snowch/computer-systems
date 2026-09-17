@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 13's artefact: the same program on both targets, and what they agree about.
+"""The two-routes chapter's artefact: the same program on both targets, and what they agree about.
 
     python3 -m bench.run_bridge           # run it on both targets and stamp what they said
     python3 -m bench.run_bridge --check   # re-run and compare; write nothing

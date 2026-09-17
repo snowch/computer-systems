@@ -21,7 +21,7 @@ FLAGS = ["-O2", "-march=rv64gc", "-mabi=lp64d", "-static"]
 @pytest.fixture(scope="module")
 def observed(tmp_path_factory) -> dict[str, bool]:
     if not shutil.which(CC):
-        pytest.skip(f"{CC} is not installed (see ch00)")
+        pytest.skip(f"{CC} is not installed (see the setup chapter)")
     directory = tmp_path_factory.mktemp("resolve")
     results: dict[str, bool] = {}
     for name, (first, second) in CASES.items():

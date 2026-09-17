@@ -34,7 +34,7 @@ def _has_backward_branch(listing: str) -> bool:
 @pytest.fixture(scope="module")
 def built(tmp_path_factory):
     if not shutil.which("riscv64-linux-gnu-gcc"):
-        pytest.skip("riscv64-linux-gnu-gcc is not installed (see ch00)")
+        pytest.skip("riscv64-linux-gnu-gcc is not installed (see the setup chapter)")
     directory = tmp_path_factory.mktemp("unfold")
     (directory / "reader.c").write_text(UNFOLDABLE_SUM)
     return directory
@@ -66,7 +66,7 @@ def test_the_reader_function_computes_the_sum(built):
     )
     runner = shutil.which("qemu-riscv64-static") or shutil.which("qemu-riscv64")
     if not runner:
-        pytest.skip("no user-mode QEMU to run RV64 with (see ch00)")
+        pytest.skip("no user-mode QEMU to run RV64 with (see the setup chapter)")
     out = subprocess.run([runner, str(binary)], capture_output=True, text=True, check=True).stdout
     assert out.strip() == str(EXPECTED), f"reader_sum({SPAN}) should be {EXPECTED}"
 

@@ -26,7 +26,7 @@ EXPECTED_FRAMES = 3
 def walked(build_dir) -> list[str]:
     runner = shutil.which("qemu-riscv64-static") or shutil.which("qemu-riscv64")
     if not runner:
-        pytest.skip("no user-mode QEMU to run RV64 with (see ch00)")
+        pytest.skip("no user-mode QEMU to run RV64 with (see the setup chapter)")
     base = target_for("riscv64")
     target = HostTarget(
         name="framewalk",

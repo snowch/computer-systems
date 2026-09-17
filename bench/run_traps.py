@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 6's measurement: how often the kernel is entered, why, and how far it has to go.
+"""The traps chapter's measurement: how often the kernel is entered, why, and how far it has to go.
 
     python3 -m bench.run_traps           # boot, run the workload, read the census
     python3 -m bench.run_traps --check   # re-run and compare; write nothing
@@ -9,11 +9,12 @@ Two kinds of fact, neither of them a duration.
 **The census** comes from the kernel itself. ``xv6/patches/13-trap-census.patch`` counts every
 trap by cause and prints the table on Ctrl-T, the way xv6 already prints its process table on
 Ctrl-P. Counting is what is available here: QEMU models no pipeline and no memory system, so a
-time measured inside it describes the laptop, and ch13 says so at length.
+time measured inside it describes the laptop, and the chapter says so at length.
 
 **The path length** is read out of the built kernel. Entering and leaving the kernel is a fixed
 sequence of instructions in ``trampoline.S``, and counting them is a statement about how much
-work a trap *is* that holds regardless of what any machine charges for it. ch26 puts a price on
+work a trap *is* that holds regardless of what any machine charges for it. The OS-cost chapter
+puts a price on
 the same path, on hardware.
 """
 
@@ -107,7 +108,7 @@ def read_census(transcript: str) -> dict[str, Any]:
     # occasionally makes one it otherwise does not, so the number moved between two runs of the
     # same workload. What survives here is a number the workload fixed and lists of what occurred.
     #
-    # ch26 counts the lot, on a machine where elapsed time is a fact about the machine.
+    # The OS-cost chapter counts the lot, on a machine where elapsed time is a fact about the machine.
     probe = syscalls.get(str(PROBE_SYSCALL), 0)
     return {
         "probe_syscall": PROBE_SYSCALL,
@@ -208,7 +209,7 @@ def capture() -> dict[str, Any]:
         machine=describe_qemu(),
         conditions={
             "cpus": xv6.DEFAULT_CPUS,
-            "note": "counts only — QEMU models no timing, so none is recorded (ch00)",
+            "note": "counts only — QEMU models no timing, so none is recorded (the setup chapter)",
             "workload": " ; ".join(WORKLOAD),
         },
     )

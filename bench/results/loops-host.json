@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "8798f4115f50c627",
+  "code_fingerprint": "4d834678d5e2d16a",
   "code_sources": [
     "bench/run_loopcost.py",
     "sysfs/bench/loopcost.c",

@@ -37,7 +37,7 @@ def by_anchor(anchor: str) -> Chapter:
 
 
 #: How a chapter's header names its target. Deliberately neither a product name nor an
-#: architecture for `host`: ch00 states the requirement as a capability, and a header naming one
+#: architecture for `host`: appendix H states the requirement as a capability, and a header naming one
 #: board would be wrong for every reader who bought a different one — which was the state of all
 #: nine host chapters until it was caught.
 TARGET_LABEL = {
@@ -155,8 +155,8 @@ def part_stub(part: Part, previous: Part | None) -> str:
 
     Parts had no page at all for a long time — ``myst.yml`` gave each a title and a list of
     children, which the theme renders as an unclickable heading — and what that could not hold was
-    anything part-shaped. Part I's routing note lived inside ch01, so a reader who took its advice
-    to skip ch01 only ever saw it by accident.
+    anything part-shaped. Part I's routing note lived inside its own first chapter, so a reader
+    who took the advice to skip that chapter only ever saw the note by accident.
 
     The sections are fixed, and ``tests/test_book.py`` checks all five are present and in order.
     What they must not become is a walk through the part's chapters: that is the sidebar's job and

@@ -4,7 +4,7 @@
     python3 -m bench.run_interference          # on the board only; toggles the Wi-Fi radio
     python3 -m bench.run_interference --check   # re-run and compare; write nothing
 
-ch01 recommends wiring the board rather than using its radio, on the mechanism that a wireless
+The board chapter recommends wiring the board rather than using its radio, on the mechanism that a wireless
 driver takes interrupts and runs deferred work on the cores being measured. This measures the
 claim rather than asserting it: the same fixed workload, run many times with the radio off and
 again with it on, reported as what survived and what did not.
@@ -14,7 +14,7 @@ control the radio, so it is standalone rather than part of `make bench-board`, a
 radio to off when it is done — the state every other measurement in this book is taken in.
 
 The number to watch is the floor. Interference can only add time, never remove it, so the fastest
-sample is the one it missed. If ch24's argument for the minimum is right, the radio will move the
+sample is the one it missed. If the measurement chapter's argument for the minimum is right, the radio will move the
 mean and leave the floor exactly where it was.
 """
 

@@ -54,7 +54,7 @@ _ARCHIVE_SOURCE = "int packaged(int x){ return x + 1; }"
 @pytest.fixture(scope="module")
 def messages(tmp_path_factory) -> dict[str, str]:
     if not shutil.which(CC):
-        pytest.skip(f"{CC} is not installed (see ch00)")
+        pytest.skip(f"{CC} is not installed (see the setup chapter)")
     directory = tmp_path_factory.mktemp("diagnose")
     out: dict[str, str] = {}
     # The archive case needs one built first, and it is the reason this problem exists.

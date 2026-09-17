@@ -450,7 +450,7 @@ def toolchain_stages() -> str:
 def struct_padding(result: str) -> str:
     """Where the holes are, drawn from the offsets the probe measured rather than from the rules.
 
-    ch00 prints a table saying one struct is larger than the other. A table cannot show *where*
+    The setup chapter prints a table saying one struct is larger than the other. A table cannot show *where*
     the extra bytes went, and that is the whole lesson: the gaps are not at the end, they are
     wedged between members, put there so the next member can start somewhere it is allowed to.
 

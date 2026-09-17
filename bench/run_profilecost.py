@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 22's measurements: where the samples landed, before and after, and on which instruction.
+"""The profiling chapter's measurements: where the samples landed, before and after, and on which instruction.
 
     python3 -m bench.run_profilecost          # on the board only, and needs perf to sample
     python3 -m bench.run_profilecost --check  # re-run and compare; write nothing
@@ -43,10 +43,10 @@ LIBRARY = "sysfs/lib/profiling.c"
 HEADER = "sysfs/include/sysfs/profiling.h"
 FIGURE = "whole-machine-profiling-profile and whole-machine-profiling-skid"
 
-#: The loop ch27 reads instruction by instruction.
+#: The loop the chapter reads instruction by instruction.
 HOT = "sysfs_tally_scatter"
 
-#: Below this share of samples a symbol is noise rather than a finding, and ch27's second problem
+#: Below this share of samples a symbol is noise rather than a finding, and the chapter's second problem
 #: is the arithmetic for why.
 FLOOR = 1.0
 
@@ -109,7 +109,7 @@ def capture() -> list[dict[str, Any]]:
         )
     if before[HOT] < FLOOR:
         raise ProfileError(
-            f"{HOT} holds {before[HOT]}% of the samples, below the {FLOOR}% floor. ch27's census "
+            f"{HOT} holds {before[HOT]}% of the samples, below the {FLOOR}% floor. The census "
             "predicts it dominates; if it does not, the program or the prediction has changed."
         )
 
@@ -125,7 +125,7 @@ def capture() -> list[dict[str, Any]]:
 
     if not annotated:
         raise ProfileError(
-            f"perf annotate returned no per-instruction samples for {HOT}. Without them ch27's "
+            f"perf annotate returned no per-instruction samples for {HOT}. Without them the chapter's "
             "skid figure has nothing to show, and the chapter does not estimate one."
         )
 

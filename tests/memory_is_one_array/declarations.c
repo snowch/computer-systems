@@ -59,7 +59,7 @@ int d_classify(const char *declaration) {
  *   first pair that does not, as `unsigned char` values, first minus second.
  *
  * `d_copy`'s regions never overlap here, which is a promise the real `memmove` does not get and
- * ch02 comes back to.
+ * the C-as-machine-code chapter comes back to.
  */
 uint64_t d_length(const char *s) {
   (void)s;
@@ -87,8 +87,8 @@ int d_compare(const void *a, const void *b, uint64_t n) {
  * already on a boundary is its own answer in both directions.
  *
  * This is address arithmetic, not pointer arithmetic: the quantity is a number of bytes and
- * nothing here scales by an element. The kernel does this on every page it touches, and ch15's
- * allocator opens by rounding one way and closing by rounding the other — which is the pair of
+ * nothing here scales by an element. The kernel does this on every page it touches, and the
+ * freestanding-C chapter's allocator opens by rounding one way and closing by rounding the other — which is the pair of
  * decisions this problem is really about.
  *
  * Both can be written without a division, a modulo or a branch. Finding that form is the exercise;

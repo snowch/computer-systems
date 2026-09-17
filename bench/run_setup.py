@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 0's measurements: prove each target works, and record exactly what it is.
+"""The setup chapters' measurements: prove each target works, and record exactly what it is.
 
     python3 -m bench.run_setup --target xv6             # boots xv6 under QEMU; runs anywhere
     python3 -m bench.run_setup --target host            # the board's own account of itself
@@ -143,7 +143,7 @@ def run_xv6() -> dict[str, Any]:
 def perf_capability() -> dict[str, Any]:
     """Whether ``perf stat`` on this board reads real hardware counters, and which ones.
 
-    This is the single most important thing chapter 0 establishes about the board, because every
+    This is the single most important thing the board chapter establishes, because every
     chapter in Part V assumes it. On RISC-V the counters reach Linux through the SBI PMU
     extension, so the answer depends on the firmware as much as on the silicon — which means it
     has to be asked of the machine rather than looked up.
@@ -155,7 +155,7 @@ def perf_capability() -> dict[str, Any]:
     if not shutil.which("perf"):
         return {
             "perf_counters_readable": False,
-            "perf_note": "perf is not installed (linux-tools; see ch00)",
+            "perf_note": "perf is not installed (linux-tools; see the board chapter)",
         }
 
     probe = subprocess.run(
@@ -208,8 +208,9 @@ def perf_can_sample() -> dict[str, Any]:
     Counting and sampling are different capabilities and a board can have the first without the
     second. Sampling needs the counters to raise an overflow interrupt, which on RISC-V means the
     **Sscofpmf** extension @riscv-sscofpmf; a kernel without it says so at boot and then refuses.
-    The SiFive U74 does not implement it. That is the difference between ch26, which counts, and
-    ch27, which samples, so it is recorded as a fact about the board rather than discovered in a
+    The SiFive U74 does not implement it. That is the difference between the OS-cost chapter,
+    which counts, and the profiling chapter, which samples, so it is recorded as a fact about the
+    board rather than discovered in a
     chapter.
 
     **This asks for samples rather than for an exit code.** An earlier version ran
@@ -257,7 +258,7 @@ def run_host() -> dict[str, Any]:
         raise SystemExit(
             f"--target host describes the machine being measured, and this is a {kind!r} one.\n"
             "Run it over SSH on the machine being measured:  make bench-board\n"
-            "Nothing here can be measured by emulation; see ch00 for why."
+            "Nothing here can be measured by emulation; see the setup chapter for why."
         )
 
     target = resolve_host_target()
@@ -305,7 +306,7 @@ def main(argv: list[str] | None = None) -> int:
             conditions={
                 "cpus": summary["cpus_requested"],
                 "memory": "128M",
-                "note": "structural facts only — QEMU models no timing (ch00)",
+                "note": "structural facts only — QEMU models no timing (the setup chapter)",
             },
         )
     else:

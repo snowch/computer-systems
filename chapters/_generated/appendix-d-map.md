@@ -6,8 +6,8 @@
 | `kernel/start.c` | 66 | [ch16](#traps-and-system-calls) | the machine-mode setup that hands over to supervisor mode |
 | `kernel/syscall.c` | 151 | [ch16](#traps-and-system-calls) | the dispatch table, and how arguments cross the boundary |
 | `kernel/syscall.h` | 23 | [ch16](#traps-and-system-calls) | the call numbers |
-| `kernel/sysproc.c` | 112 | [ch16](#traps-and-system-calls) | the process calls, including the one ch13's workload uses |
-| `kernel/trampoline.S` | 153 | [ch16](#traps-and-system-calls) | uservec and userret — the register moves ch13 counts |
+| `kernel/sysproc.c` | 112 | [ch16](#traps-and-system-calls) | the process calls, including the one the traps chapter's workload uses |
+| `kernel/trampoline.S` | 153 | [ch16](#traps-and-system-calls) | uservec and userret — the register moves the traps chapter counts |
 | `kernel/trap.c` | 220 | [ch16](#traps-and-system-calls) | where a trap is decided, and where a page fault would be handled |
 | `kernel/memlayout.h` | 63 | [ch17](#virtual-memory) | what is mapped where, and why the trampoline is at the top |
 | `kernel/riscv.h` | 417 | [ch17](#virtual-memory) | the Sv39 field definitions, as macros over a 64-bit word |
@@ -22,12 +22,12 @@
 | `kernel/spinlock.c` | 116 | [ch20](#locks-and-memory-ordering) | the lock, and the memory barriers around it |
 | `kernel/spinlock.h` | 8 | [ch20](#locks-and-memory-ordering) | what a lock is made of |
 | `kernel/proc.c` | 701 | [ch21](#scheduling-and-context-switches) | the scheduler, and both halves of a context switch |
-| `kernel/proc.h` | 104 | [ch21](#scheduling-and-context-switches) | the context ch18 counts the registers of |
+| `kernel/proc.h` | 104 | [ch21](#scheduling-and-context-switches) | the context the scheduling chapter counts the registers of |
 | `kernel/swtch.S` | 42 | [ch21](#scheduling-and-context-switches) | the switch itself — fourteen registers and nothing else |
 | `kernel/bio.c` | 153 | [ch22](#the-file-system) | the buffer cache, and why a read can cost nothing |
 | `kernel/file.c` | 179 | [ch22](#the-file-system) | what a file descriptor actually is |
 | `kernel/fs.c` | 741 | [ch22](#the-file-system) | inodes, blocks, and the path from a name to a byte |
-| `kernel/log.c` | 261 | [ch22](#the-file-system) | the write-ahead log ch19 counts the amplification of |
+| `kernel/log.c` | 261 | [ch22](#the-file-system) | the write-ahead log the file-system chapter counts the amplification of |
 | `kernel/virtio_disk.c` | 333 | [ch22](#the-file-system) | the only device in the system that makes you wait |
 
-*Conditions: target `xv6` · the xv6 submodule's source, read rather than built · xv6-riscv @ 9e3161a · none · `none` · 2026-09-16 · Source: `bench/results/filemap-xv6.json`, code hash `e4176b53d0b64a41`.*
+*Conditions: target `xv6` · the xv6 submodule's source, read rather than built · xv6-riscv @ 9e3161a · none · `none` · 2026-09-17 · Source: `bench/results/filemap-xv6.json`, code hash `72ccf96c95f8b570`.*

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Chapter 2's census: what the kernel as built does not have.
+"""The freestanding-C chapter's census: what the kernel as built does not have.
 
     python3 -m bench.run_kernelc           # walk the built kernel and stamp what is there
     python3 -m bench.run_kernelc --check    # re-walk and compare; write nothing
 
-ch02 tells a reader who already writes C which of their habits stop working below the library.
+It tells a reader who already writes C which of their habits stop working below the library.
 Every one of those claims is checkable against the kernel that is checked in, so none of them is
 asserted here: the floating-point instruction count, the absence of a heap, the library functions
 the kernel reimplements because nothing supplies them, and the compile-time bounds that stand in
@@ -56,7 +56,7 @@ POOL_BOUNDS = ("NPROC", "NCPU", "NOFILE", "NFILE", "NINODE", "NDEV", "NBUF", "MA
 
 
 class KernelCError(RuntimeError):
-    """The kernel stopped being the kernel ch02 describes."""
+    """The kernel stopped being the kernel the chapter describes."""
 
 
 def toolprefix() -> str:
@@ -102,7 +102,7 @@ def pool_bounds(kernel_dir: Path) -> dict[str, int]:
 
     param.h defines some of them in terms of others — NBUF is MAXOPBLOCKS * 3 — so every macro in
     the header is read first and then resolved to a number, repeatedly, until nothing more can be
-    worked out. Reading only the names ch02 quotes gave NBUF a size of zero, which is the kind of
+    worked out. Reading only the names the chapter quotes gave NBUF a size of zero, which is the kind of
     wrong that looks like a fact.
     """
     text = (kernel_dir / "param.h").read_text()
@@ -154,13 +154,13 @@ def capture() -> dict[str, Any]:
     if counts["floating_point"]:
         raise KernelCError(
             f"{counts['floating_point']} instruction(s) in the kernel name a floating-point "
-            "register. ch02 says this kernel has none, and explains a context switch that does "
+            "register. The chapter says this kernel has none, and explains a context switch that does "
             "not save them — if that has changed, the chapter is now wrong about something it "
             "uses to make a point about what a kernel chooses not to support."
         )
     if heap:
         raise KernelCError(
-            f"the kernel defines {heap}. ch02's whole second section is that there is no heap "
+            f"the kernel defines {heap}. The chapter's whole second section is that there is no heap "
             "here and that objects come from fixed arrays instead."
         )
     if not any(library.values()):
@@ -196,7 +196,7 @@ def capture() -> dict[str, Any]:
         },
         conditions={
             "note": "counts and names only; nothing here was executed",
-            "why": "ch02's claims about what the kernel lacks should fail when it gains them",
+            "why": "the chapter's claims about what the kernel lacks should fail when it gains them",
         },
     )
 
@@ -218,7 +218,9 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     differences = measurement_differences(committed, payload)
     if not differences:
-        print(f"{payload['name']}: unchanged — the kernel still lacks what ch02 says it lacks")
+        print(
+            f"{payload['name']}: unchanged — the kernel still lacks what the chapter says it lacks"
+        )
         return 0
     print(f"{payload['name']}: the kernel has MOVED\n")
     for difference in differences:

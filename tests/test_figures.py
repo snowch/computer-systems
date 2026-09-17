@@ -133,7 +133,7 @@ def test_listing_shows_each_architecture_once(name: str, figure: Listing):
 
 @pytest.mark.parametrize(("name", "figure"), LISTING_FIGURES, ids=[n for n, _ in LISTING_FIGURES])
 def test_listing_architectures_share_a_compiler_version(name: str, figure: Listing):
-    """ch00 tells the reader the two listings came from the same version of the same compiler.
+    """The listing chapter tells the reader both came from the same version of the same compiler.
 
     That is true of the committed results and need not stay true: regenerate them on a machine
     whose two cross compilers are a release apart and the sentence quietly becomes false while
@@ -244,7 +244,7 @@ def test_board_table_skips_bogomips(board_result):
 
 
 def test_board_table_reports_counting_and_sampling_separately(board_result):
-    """ch00's central claim about the hardware: a core can count and still not sample."""
+    """The board chapter's central claim about the hardware: a core can count and still not sample."""
     board_result("riscv64")
     table = board_identity_table("setup-host")
     assert "| `perf stat` reads hardware counters | yes |" in table
@@ -252,7 +252,7 @@ def test_board_table_reports_counting_and_sampling_separately(board_result):
 
 
 def test_board_table_names_the_configuration_not_only_the_board(board_result):
-    """The reference board's own PMU went missing for a kernel release (ch00, @rpi-pmu-dt-6507).
+    """The reference board's own PMU went missing for a kernel release (@rpi-pmu-dt-6507).
 
     So "which board" is not the whole answer to "do the counters work": the image and the kernel
     are part of the configuration the numbers came from, and the table a reader compares against
@@ -265,7 +265,7 @@ def test_board_table_names_the_configuration_not_only_the_board(board_result):
 
 
 def test_board_table_shows_how_many_samples_the_check_collected(board_result):
-    """A sampling claim backed by an exit status is not backed by anything (ch00)."""
+    """A sampling claim backed by an exit status is not backed by anything."""
     board_result("aarch64")
     assert "| Samples collected in the capability check | 214 |" in board_identity_table(
         "setup-host"

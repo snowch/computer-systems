@@ -14,7 +14,7 @@ from tests.representing_information.problem_2_reorder import DECLARED, MEMBERS, 
 
 pytestmark = pytest.mark.hostcode
 
-#: Alignment of each type, in bytes, under both of the book's ABIs. ch00 measured these rather
+#: Alignment of each type, in bytes, under both of the book's ABIs. The setup chapter measured these rather
 #: than assuming them, and the probe's table is where they come from.
 _ALIGN = {"char": 1, "short": 2, "int": 4, "double": 8}
 

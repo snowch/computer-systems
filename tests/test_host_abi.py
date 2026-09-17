@@ -6,7 +6,7 @@ and not the reference *hardware*. On the machine that is native; in CI it is a c
 plus user-mode QEMU. Nothing here is timed, and nothing here could be: see :mod:`bench.measure`.
 
 The assertions are ABI facts, and they hold on both architectures the book supports — AArch64 and
-RV64 are both LP64 and little-endian, which is itself the point ch00 makes with the probe.
+RV64 are both LP64 and little-endian, which is itself the point the setup chapter makes with the probe.
 """
 
 from __future__ import annotations

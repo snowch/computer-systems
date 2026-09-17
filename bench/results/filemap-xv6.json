@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "e4176b53d0b64a41",
+  "code_fingerprint": "72ccf96c95f8b570",
   "code_sources": [
     "bench/run_filemap.py"
   ],
@@ -7,7 +7,7 @@
     "note": "line counts of the submodule at its pinned commit; nothing was compiled",
     "why": "a hand-written file map describes whichever xv6 its author was reading"
   },
-  "generated_at": "2026-09-16T18:32:09+00:00",
+  "generated_at": "2026-09-17T14:26:06+00:00",
   "kind": "artefact",
   "machine": {
     "arch": "riscv64",
@@ -20,14 +20,14 @@
   "recorded_on": {
     "arch": "x86_64",
     "cpu": {
-      "bogomips": "5200.00",
-      "model name": "Intel(R) Xeon(R) 6973P-C"
+      "bogomips": "5599.99",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.80GHz"
     },
     "cpus_online": "0-3",
-    "kernel": "Linux 6.17.0-1022-azure",
+    "kernel": "Linux 6.18.44-fc-v33",
     "kind": "other",
-    "os": "Ubuntu 24.04.5 LTS",
-    "python": "3.11.16"
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
   },
   "summary": {
     "files": {
@@ -244,7 +244,7 @@
       },
       "log.c": {
         "chapter": "the-file-system",
-        "for": "the write-ahead log ch19 counts the amplification of"
+        "for": "the write-ahead log the file-system chapter counts the amplification of"
       },
       "memlayout.h": {
         "chapter": "virtual-memory",
@@ -260,7 +260,7 @@
       },
       "proc.h": {
         "chapter": "scheduling-and-context-switches",
-        "for": "the context ch18 counts the registers of"
+        "for": "the context the scheduling chapter counts the registers of"
       },
       "riscv.h": {
         "chapter": "virtual-memory",
@@ -296,11 +296,11 @@
       },
       "sysproc.c": {
         "chapter": "traps-and-system-calls",
-        "for": "the process calls, including the one ch13's workload uses"
+        "for": "the process calls, including the one the traps chapter's workload uses"
       },
       "trampoline.S": {
         "chapter": "traps-and-system-calls",
-        "for": "uservec and userret \u2014 the register moves ch13 counts"
+        "for": "uservec and userret \u2014 the register moves the traps chapter counts"
       },
       "trap.c": {
         "chapter": "traps-and-system-calls",

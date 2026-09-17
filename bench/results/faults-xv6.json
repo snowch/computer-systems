@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "924bbf8f2253b7e6",
+  "code_fingerprint": "89e452857447d851",
   "code_sources": [
     "bench/run_faults.py",
     "bench/xv6.py",
@@ -12,7 +12,7 @@
     "note": "counts only: pages allocated and faults taken; nothing here was timed",
     "policies": "both are this kernel's own \u2014 sbrk allocates on request, sbrklazy on touch"
   },
-  "generated_at": "2026-09-16T18:32:02+00:00",
+  "generated_at": "2026-09-17T14:25:58+00:00",
   "kind": "measurement",
   "machine": {
     "arch": "riscv64",
@@ -26,14 +26,14 @@
   "recorded_on": {
     "arch": "x86_64",
     "cpu": {
-      "bogomips": "5200.00",
-      "model name": "Intel(R) Xeon(R) 6973P-C"
+      "bogomips": "5599.99",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.80GHz"
     },
     "cpus_online": "0-3",
-    "kernel": "Linux 6.17.0-1022-azure",
+    "kernel": "Linux 6.18.44-fc-v33",
     "kind": "other",
-    "os": "Ubuntu 24.04.5 LTS",
-    "python": "3.11.16"
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
   },
   "summary": {
     "faultload": {

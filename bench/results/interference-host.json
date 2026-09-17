@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "a61f28e7ddabdbc2",
+  "code_fingerprint": "b0f816ce68014b0e",
   "code_sources": [
     "bench/run_interference.py",
     "sysfs/bench/measuring.c",

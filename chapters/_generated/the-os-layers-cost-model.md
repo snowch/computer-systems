@@ -7,4 +7,4 @@
 | Page fault | 17 for 17 first touches | [ch18](#page-faults-as-a-feature) |
 | Context switch | 14 registers, 224 bytes | [ch21](#scheduling-and-context-switches) |
 
-*Conditions: target `xv6` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · xv6-riscv @ 9e3161a · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `xv6's own CFLAGS` · 2026-09-16 · Source: `bench/results/traps-xv6.json`, code hash `6deac9e77d5ee5ab`.*
+*Conditions: target `xv6` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · xv6-riscv @ 9e3161a · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `xv6's own CFLAGS` · 2026-09-17 · Source: `bench/results/traps-xv6.json`, code hash `f78d829cb10e7c2c`.*

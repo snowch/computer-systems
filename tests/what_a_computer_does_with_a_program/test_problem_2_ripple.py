@@ -86,7 +86,7 @@ def _walk(directory: Path, source: str, header: str) -> dict[str, bytes]:
 def observed(tmp_path_factory) -> dict[str, set[str]]:
     """For each change: the stages whose output actually differed."""
     if not shutil.which(CC):
-        pytest.skip(f"{CC} is not installed (see ch00)")
+        pytest.skip(f"{CC} is not installed (see the setup chapter)")
 
     source, header = PROGRAM.read_text(), HEADER.read_text()
     workspace = tmp_path_factory.mktemp("ripple")

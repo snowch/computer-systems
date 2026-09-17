@@ -68,9 +68,9 @@ class BareUnavailableError(RuntimeError):
 def problems() -> list[str]:
     missing = []
     if not shutil.which(CC):
-        missing.append(f"{CC} is not installed (see ch00)")
+        missing.append(f"{CC} is not installed (see the setup chapter)")
     if not shutil.which("qemu-system-riscv64"):
-        missing.append("qemu-system-riscv64 is not installed (see ch00)")
+        missing.append("qemu-system-riscv64 is not installed (see the setup chapter)")
     return missing
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 21's measurements: what Linux charges for the three services Part IV took apart.
+"""The OS-cost chapter's measurements: what Linux charges for the three services Part IV took apart.
 
     python3 -m bench.run_oscost          # on the board only
     python3 -m bench.run_oscost --check  # re-run and compare; write nothing
@@ -112,7 +112,7 @@ def capture() -> list[dict[str, Any]]:
     if faults["faults"].get("major", 0) <= faults["faults"].get("minor", 0):
         raise OsCostError(
             f"a major fault measured {faults['faults'].get('major')} ns and a minor one "
-            f"{faults['faults'].get('minor')} ns. ch26's claim is that waiting for storage is "
+            f"{faults['faults'].get('minor')} ns. The chapter's claim is that waiting for storage is "
             "orders of magnitude worse; if it is not, posix_fadvise did not drop the page cache "
             "and the 'major' fault was served from memory."
         )

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 16's measurements: what the instrument costs, what one workload spreads over, and how
+"""The measurement chapter's figures: what the instrument costs, what one workload spreads over, and how
 much of an answer is decided by something that cannot matter.
 
     python3 -m bench.run_measuring          # on the board only
@@ -7,7 +7,7 @@ much of an answer is decided by something that cannot matter.
 
 Three invocations of `sysfs/bench/measuring.c`, which is the chapter's workload and prints one
 fact per line. The runner does no statistics of its own: the distribution is summarised in C, by
-`sysfs_summarise`, because that is the function ch21 argues about and a second implementation here
+`sysfs_summarise`, because that is the function the chapter argues about and a second implementation here
 would be a second thing to trust.
 
 The bias experiment is the one worth understanding before reading the numbers. The same work is
@@ -69,7 +69,7 @@ def refuse_a_result_that_did_not_measure_anything(facts: dict[str, Any]) -> None
     if not clock.get("cost_ns") or not clock.get("resolution_ns"):
         raise MeasuringError(
             "the clock reported a cost or a resolution of zero. Either the clock is not being "
-            "read or the loop was optimised away; ch21 is about that number and cannot print a "
+            "read or the loop was optimised away; the chapter is about that number and cannot print a "
             "zero for it."
         )
 
@@ -77,7 +77,7 @@ def refuse_a_result_that_did_not_measure_anything(facts: dict[str, Any]) -> None
     if spread["max"] <= spread["min"]:
         raise MeasuringError(
             "every repetition of the workload took exactly the same time. On a real machine that "
-            "does not happen, and ch21's argument is that a single duration is an anecdote — a "
+            "does not happen, and the argument is that a single duration is an anecdote — a "
             "result with no spread in it would demonstrate the opposite."
         )
 
@@ -119,7 +119,7 @@ def capture() -> dict[str, Any]:
             "bench/run_measuring.py",
             WORKLOAD,
         ],
-        note="three experiments, summarised in C by the same sysfs_summarise ch21 argues about",
+        note="three experiments, summarised in C by the same sysfs_summarise the chapter argues about",
         workload="sysfs/bench/measuring.c, run once per experiment",
     )
 

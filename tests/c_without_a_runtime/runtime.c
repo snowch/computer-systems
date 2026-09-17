@@ -28,8 +28,8 @@
  *
  * The case worth getting right is the one an application programmer has never written: what
  * happens when there is no entry left. It is not an exception and it is not a crash. It is a
- * value the caller is expected to look at, and ch02's whole last section is about callers that
- * do not.
+ * value the caller is expected to look at, and this chapter's whole last section is about
+ * callers that do not.
  *
  * Freeing an entry that is already free, or an index outside the pool, must change nothing.
  */

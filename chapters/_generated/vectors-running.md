@@ -17,4 +17,4 @@
  268:	ret
 ```
 
-*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -O3 -ffast-math -c` · 2026-09-16 · Source: `bench/results/vectors-o3fast.json`, code hash `10aad707be61d486`.*
+*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `-O2 -Wall -Wextra -O3 -ffast-math -c` · 2026-09-17 · Source: `bench/results/vectors-o3fast.json`, code hash `9a4601ec65522b39`.*
