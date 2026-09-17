@@ -15,7 +15,7 @@ short_title: "28 · Memory Ordering on Real Hardware"
 | **Answers the cost of** | [ch20](#locks-and-memory-ordering) |
 | **Prerequisites** | [ch27](#the-cpu) |
 | **Assumes** | Four cores and this interconnect's coherence. The scaling curve moves elsewhere; the mechanism does not. |
-| **What it measures** | Which counters share a cache line: `bench/results/sharing-layout.json` |
+| **What it measures** | Which counters share a cache line: `bench/results/sharing-layout.json`; and what that sharing, and an atomic, cost on four cores: `bench/results/sharing-host.json` |
 :::
 
 ## The question
@@ -31,8 +31,8 @@ architectures.
 
 ### A cost with no shared data
 
-Two threads, two counters, no shared data and no race. One of the two arrangements below is
-more than twice as slow as the other.
+Two threads, two counters, no shared data and no race. One of the two arrangements below costs
+more than twice what the other does.
 
 ```{include} _generated/memory-ordering-on-real-hardware-layout.md
 ```
@@ -90,11 +90,24 @@ spellings rather than the table itself.
 Two columns because the difference between them is most of what there is to know. An atomic
 operation on a line nobody else wants is nearly free: the core already owns the line exclusively
 and the operation is local. The same operation on a line four cores are all writing costs the
-coherence traffic to take the line away from whoever had it, every time.
+coherence traffic to take the line away from whoever had it, every time — and the table puts that
+at more than an order of magnitude.
 
 So "atomics are expensive" is not a fact about atomics. It is a fact about contention, and the
 same instruction has two costs that differ by a large factor depending on something that is not in
 the instruction.
+
+Now read the rows against each other, because they answer the second half of this chapter's
+question. Uncontended, the ordered atomic costs measurably more than the relaxed one: that
+difference is what the ordering buys, and it is the only place in this book where a fence has a
+price of its own. Contended, the two are the same to within the width of the measurement. **The
+ordering is free exactly when the contention is not**, because once the line has to be fetched
+from another core, waiting for it has already done everything the ordering was going to.
+
+Which makes the plain row the one to be careful with. An ordinary non-atomic increment is cheaper
+than either atomic in both columns, and on four cores it is cheaper by a very large factor — and
+it is also wrong, for [ch20](#locks-and-memory-ordering)'s reason. That row is what the lost update
+costs you: nothing, until it costs you everything.
 
 ### Predict before you measure
 
@@ -107,14 +120,16 @@ That is a ceiling computed from the program, before the machine is involved at a
 
 A measured curve on its own tells you very little. A measured curve that falls short of a
 predicted one tells you there is something to find — and false sharing, atomic contention and
-coherence traffic are exactly the things that live in the gap. Problem 28.2 is the prediction; the
-board supplies the curve; the difference is the chapter's real subject.
+coherence traffic are exactly the things that live in the gap. Problem 28.2 is the prediction.
+This chapter's tables give two thread counts rather than a curve, which is enough to show the
+direction and not enough to fit anything to; the curve is yours to take, on your own machine, and
+the prediction is what makes it worth taking.
 
 ## What we measured
 
 Where the fields land: that decides whether the cores will fight, and finding it needs no machine.
-The fights themselves were then measured on the board, along with the cost of an atomic contended and
-uncontended.
+The fights themselves were then measured on the board — two layouts at two thread counts — along
+with three kinds of increment, each on one core and on four.
 
 The runner refuses to stamp a layout in which the packed structure's counters have stopped sharing
 a line or the padded one's have started, because either would leave this chapter demonstrating

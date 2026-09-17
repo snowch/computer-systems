@@ -14,7 +14,7 @@ short_title: "30 · Whole-Machine Profiling"
 | **Target** | `host` — the reference machine, natively |
 | **Prerequisites** | [ch29](#the-os-layers-cost) |
 | **Assumes** | that `perf` can sample. ARM PMUs support counter-overflow interrupts as standard, so this works on the reference machine — but most affordable RISC-V cores do not, and a reader following [Part V](#part5) on one will find this the chapter they cannot run. |
-| **What it measures** | What the program under the profiler does, counted before anyone times it: `bench/results/tally-census.json` |
+| **What it measures** | What the program under the profiler does, counted before anyone times it: `bench/results/tally-census.json`; and where the samples landed, before and after: `bench/results/profile-host.json` |
 :::
 
 ## The question
@@ -107,8 +107,13 @@ interrupt is taken when the machine notices, and by then the program counter has
 ```{include} _generated/whole-machine-profiling-skid.md
 ```
 
+Almost every sample in that loop landed on one instruction, and the instruction is an `add` of one
+to a register. Nothing about an increment is expensive on any machine in this book. What is
+expensive is what happened a few instructions earlier and had not finished, and the increment is
+merely where the core had got to when the counter overflowed.
+
 So the rule for reading a profile at instruction granularity is to read the neighbourhood and
-never the line. An instruction with no reason to be expensive, sitting immediately after one with
+never the line. An instruction with no reason to be expensive, sitting shortly after one with
 every reason, is not a mystery. It is the shape of the measurement.
 
 ### Aliasing, and why it is worse than noise
@@ -139,11 +144,17 @@ The change is the second arrangement: partition the keys so that every increment
 of the table small enough to stay resident, at the cost of reading the keys twice more and writing
 them once more.
 
-The chapter commits to neither outcome in advance. If the program got faster, the census explained
-why before the profiler did, and the trade — more traffic for better locality — is one you can now
-look for elsewhere. If it got *slower*, that is the more valuable result: the profile moved, the
-symbol it blamed changed, and the program did not improve, which is precisely what happens when you
-optimise what the profile blames rather than what the measurement says.
+The blame moved completely. Before, one symbol held essentially all of the samples; after, that
+symbol holds none and its replacement holds nearly all of them. A profile could hardly be more
+emphatic.
+
+**And it does not say whether the program got faster.** A profile reports *shares*, and shares sum
+to one whatever the total is: a program that took twice as long would produce this same table if
+its time were distributed the same way. Reading that emphatic a move as a result is the mistake
+this whole part is arranged to prevent — the number that would settle it is a duration, taken
+[ch24](#measuring)'s way, before and after, and this chapter did not take one. The census predicted
+where the time would move and the profile confirms it moved there. Whether the trade paid is a
+separate measurement, and it has not been made here.
 
 ## What we measured
 
@@ -153,7 +164,8 @@ Alongside it, the disassembly of the scattered inner loop, which is what makes t
 concrete rather than a warning.
 
 Measured on the board: the profiles themselves, before and after, and the instruction-level samples
-that show where the skid put them.
+that show where the skid put them. All of it is shares of samples; no duration was taken, which is
+why the section above declines to say which arrangement is faster.
 
 ## What this cannot tell you
 
@@ -174,6 +186,11 @@ sampling inside the loop points at that.
 **How to profile something that is fast.** Every technique here needs the program to run long
 enough to collect samples. For anything shorter, the equipment is [ch24](#measuring)'s — repetition and
 a distribution — and the two do not substitute for each other.
+
+**Whether the change in this chapter was an improvement.** Said above and repeated here because it
+is the easiest thing on the page to forget: a profile ranks, and a ranking is not a total. Every
+claim of the form "this made it faster" in this book rests on a duration, and this chapter has
+none.
 
 **What it costs to measure.** The interrupt has to be taken, the handler has to run, and the
 sample has to be written down. At a high sampling rate that is not free, and it is charged to the

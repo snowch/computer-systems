@@ -96,12 +96,39 @@ Several chapters describe the *shape* of a result the board has not produced yet
 so they read correctly either way, but the board is the first chance to check:
 
 - ch28 says one arrangement is "several times slower than the other" — false sharing, unmeasured.
-- ch24 says "the slowest run is a multiple of the fastest".
-- ch25 says the latency curve is "flat, then steps, then flat, then steps again".
-- ch29 says the vDSO difference is large enough to matter.
+- ch24 says "the slowest run is a multiple of the fastest" — **checked**, the table agrees.
+- ch25 says the latency curve is "flat, then steps, then flat, then steps again" — **checked**,
+  and two sentences that did not survive the numbers were rewritten (the TLB "runs out first" and
+  the stride curve "keeps climbing"). Two things the board should be asked again about:
+  - the levels curve never rises above a few nanoseconds per dependent load out to the largest
+    working set tried, which is far below any main-memory latency — either the set is still
+    smaller than the last cache, or the chase is not defeating the prefetcher, or the loads are
+    not dependent; a chase that reaches memory should step again, and this one does not;
+  - the stride curve is not monotonic — it peaks around a page and falls back at larger
+    strides — and the chapter now says it cannot explain that rather than pretending to.
+- ch29 says the vDSO difference is large enough to matter — **checked**, the table agrees, and
+  the chapter now reads the rows rather than only introducing them.
 
 If a number comes back and contradicts one of those, the prose is what changes. That is invariant
 3 working as intended rather than a defect, but it needs a pass.
+
+Three more the editorial pass over Part V turned up, each needing the board rather than a laptop:
+
+- **Two of the book's own tables price the same call differently.** The measurement chapter's
+  clock table reports the cost of reading the clock; the OS-cost chapter's vDSO table reports
+  `clock_gettime` through the vDSO, and `sysfs_now_ns` is a thin wrapper round exactly that call.
+  The two figures differ by about a factor of two. Probably the harnesses: one takes the minimum
+  of back-to-back differences, the other a per-call figure from a loop. Neither chapter mentions
+  the other, and one of them should — decide which figure answers "what does reading the clock
+  cost" and say so where the other is printed.
+- **The profiling chapter has no duration.** Its before-and-after table is shares of samples, so
+  it cannot say whether the partitioned arrangement is faster; the chapter now says so plainly
+  rather than implying an outcome. A `tally` timing taken the measurement chapter's way, before
+  and after, would close it and is a small addition to `bench/run_profile.py`.
+- **The vectors chapter's float sum widened and bought nothing** (measured speedup of one under
+  `-ffast-math`). That is a genuinely good finding and the chapter now leads with it, but it would
+  be worth confirming it is not an artefact of the harness — if the loop is memory-bound at that
+  size, a smaller working set should show the widening paying.
 
 ---
 

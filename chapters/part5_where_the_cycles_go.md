@@ -27,8 +27,9 @@ because the commonest way to be wrong about performance is not arithmetic — it
 cost to a mechanism you had only a rough idea about.
 
 [ch24](#measuring) comes first and is the method: how to get a number you would defend, and how you
-would know it was wrong. Everything after it is that method applied to one layer at a time, ending
-with the two chapters that are about finding a cost in something you did not write.
+would know it was wrong. Everything after it is that method applied to one layer at a time — the
+memory, the compiler, the core, the kernel — then to a whole machine at once, and last to the one
+unit a program has to be rewritten to use.
 
 It is last because it is the only part that needs the other four to have happened.
 

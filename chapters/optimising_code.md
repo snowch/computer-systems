@@ -14,7 +14,7 @@ short_title: "26 · Optimising Code"
 | **Target** | `host` — the reference machine, natively |
 | **Answers the cost of** | [ch14](#machine-level-code-on-riscv) |
 | **Prerequisites** | [ch25](#the-memory-hierarchy) |
-| **What it measures** | What the compiler makes of five hand-optimisations: `bench/results/loops-aarch64.json` |
+| **What it measures** | What the compiler makes of five hand-optimisations: `bench/results/loops-aarch64.json`; and what each then costs on the board: `bench/results/loops-host.json` |
 :::
 
 ## The question
@@ -66,7 +66,7 @@ substantially longer, and at `-O3` the gap widens rather than closes.
 
 The hand-unrolled source is a **different, larger program** than the one the compiler would have
 produced. Its four bodies with explicit indices are harder to analyse than one body with a clean
-induction variable, so the compiler has less to work with — less for its own unrolling, and less
+loop counter, so the compiler has less to work with — less for its own unrolling, and less
 for vectorisation (doing several array elements per instruction, [ch31](#vectors)'s subject), which is what `-O3` turns up. The
 optimisation was applied by hand, so it could not also be applied by the compiler, and the
 compiler's version was better.
@@ -82,8 +82,8 @@ A compiler this good will delete work that nothing observes, including the work 
 to time — and then every number that benchmark reports is meaningless.
 
 `tests/optimising_code/escapes.c` contains five functions doing identical arithmetic. They differ only in
-what becomes of the result: dropped, returned, stored through a `volatile`, stored to a file-scope
-variable nothing reads, or used in a condition that is never true.
+what becomes of the result: dropped, returned, stored through a `volatile`, stored to a variable
+outside any function that nothing reads, or used in a condition that is never true.
 
 Two of those loops are removed entirely and three survive, and which is which is not the division
 most people expect. Problem 26.3 is that prediction, graded by compiling the file and counting —
@@ -103,10 +103,12 @@ a spectacular speedup, and nothing about it looks wrong.
 ```
 
 Instruction counts say whether a source change survived the compiler. They do not say what the
-surviving differences cost, and this chapter has been careful to claim only the first. The plain,
-hoisted and reduced variants are the same program and therefore cost the same; whether the longer
-unrolled version is also *slower* is a question about [ch27](#the-cpu)'s machinery, and the answer is
-not automatic — more instructions can run in less time.
+surviving differences cost; the board does. Read this table against the one above it. The three
+variants that compiled to the same program cost the same, as they must. The two longer programs
+cost more — and by a margin far smaller than the difference in their instruction counts would
+suggest. That gap between the count and the cost is [ch27](#the-cpu)'s subject, and the reason
+this chapter has claimed only what the counts can support: more instructions can run in nearly
+the same time.
 
 ## What we measured
 
@@ -115,7 +117,8 @@ compiled and counted rather than run. CI regenerates them on every push, so the 
 about what this compiler does are checked against this compiler continuously — and if a future
 version stops equalising those three, the build fails rather than the book quietly becoming wrong.
 
-The timings are a different question, and they were measured on the board.
+The timings are a different question, and the board answered it: the table under *What this
+cost* is the same five variants at `-O2`, run rather than counted.
 
 ## What this cannot tell you
 

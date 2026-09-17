@@ -53,8 +53,9 @@ Walk a cycle that covers more and more memory, and plot how long one step takes:
 ```
 
 The curve is flat, then steps, then flat, then steps again. Nothing in the program changed between
-those points except how much memory the cycle covers, so each step is the working set ceasing to
-fit in something — and the size at which it steps is the size of the thing it stopped fitting in.
+those points except how much memory the cycle covers, so each step is the *working set* — the
+memory the loop touches — ceasing to fit in something, and the size at which it steps is the size
+of the thing it stopped fitting in.
 
 Nothing else is needed to find the levels. The hierarchy is not inferred from a specification; it
 is read off a curve the machine produced when it was asked.
@@ -69,8 +70,8 @@ A second experiment, with the working set fixed and the gap between visits growi
 ```
 
 Flat, and then it climbs. While several visits share a cache line the later ones are nearly free —
-the first fetch brought them all — and each doubling of the stride halves how many share, so the
-cost climbs a step at a time rather than jumping once.
+the first fetch brought them all — and each doubling of the *stride*, that gap, halves how many
+share, so the cost climbs a step at a time rather than jumping once.
 
 The naive reading is that the stride at which it first rises is the line size. On this machine that
 reading lands *below* what the vendor publishes, because the sharing thins out gradually: the curve
@@ -82,10 +83,13 @@ question [ch13](#representing-information) raised and could not settle.
 
 Problem 25.3 turns that into arithmetic. The shape it asks about is a ceiling: the line effect gets
 steadily worse as the stride grows and then can get no worse, because one line per visit is as few
-as they can share. The measured curve keeps climbing past that point anyway, because a second
-effect has taken over the same axis — translation running out, which the next section measures.
+as they can share. The measured curve does something past that point that the arithmetic cannot
+account for — it climbs steeply, then falls back — so whatever moves it there is a second effect
+sharing the axis. By then the stride has grown to a page and beyond, and translation is involved,
+which the next section measures. Why the curve falls back again is not something this chapter can
+say from this curve alone, and it does not guess.
 
-### Translation has a cache too, and it runs out first
+### Translation has a cache too
 
 [ch17](#virtual-memory) established that every address is a question answered by a walk through three levels
 of page table. It did not say what happens when that walk is not cached, because that target has
@@ -97,11 +101,16 @@ Touch one pointer per page, so the *data* comfortably fits in the last-level cac
 ```{include} _generated/the-memory-hierarchy-reach.md
 ```
 
-The reach of a TLB is its entries multiplied by the page size. Read the last row against the first
-two: it is far smaller than the cache behind it. So a program can fit its data in cache entirely
-and still be limited by memory, because every access first costs a page-table walk that missed. [ch17](#virtual-memory)'s
-three levels are three more memory accesses, and this is where that stops being a structural fact
-and becomes a cost.
+The reach of a TLB is its entries multiplied by the page size, and the second row is that product.
+The third row was meant to put the last-level cache beside it, and on this board it cannot: the
+levels curve above found no step for one. Set the reach against the vendor's figure for that cache
+in the table below instead, and the two are the same size — so on this core the translations run
+out at about the point the data does, not well before it, which is the textbook shape and not
+this machine's. What survives is the mechanism. A program whose data fits in cache can still pay
+for a page-table walk on every access once it touches more pages than the TLB holds, and
+[ch17](#virtual-memory)'s three levels are then three more memory accesses. That is where the
+walk stops being a structural fact and becomes a cost; how large a one, on a board where the two
+limits coincide, is not something this experiment separates.
 
 ### Comparing the curve with the datasheet
 
@@ -115,6 +124,13 @@ this book prints, for the reason the chapter opened with — the right-hand colu
 product line and the left-hand one describes the chip that produced it. A disagreement is not an
 error in either: it is the most interesting thing on the page, and the question to ask is
 which column you would have believed if you had only had one of them.
+
+Here they disagree twice. The measured line is a fraction of the vendor's, and the section on the
+line said why the first rise lands early. And the curve's second step sits at the size the vendor
+gives for the *last* level, not the second: the level between them, which the vendor lists at a
+quarter of that size, produced no step of its own. At this instrument's resolution the curve could
+not separate that level from the one behind it, so the measurement reports one step where the
+datasheet lists two.
 
 ### Back to the two routes
 
@@ -152,9 +168,10 @@ shape of the curves, and the reasoning — which is why the problems are about r
 than about remembering sizes.
 
 **How the cache decides what to evict.** The steps say how big each level is and say nothing about
-associativity or replacement policy, both of which are measurable with more elaborate versions of
-the same instrument and neither of which this chapter builds. A working set that fits but maps to
-too few sets behaves like one that does not fit, and nothing here would distinguish them.
+associativity — how many places in the cache a given address is allowed to sit — or replacement
+policy, both of which are measurable with more elaborate versions of the same instrument and
+neither of which this chapter builds. A working set that fits but crowds into too few of those
+places behaves like one that does not fit, and nothing here would distinguish them.
 
 **What a write costs.** Every experiment reads. Writes have their own path — store buffers,
 write-allocate policies, and the coherence traffic [ch28](#memory-ordering-on-real-hardware) is about — and measuring reads
@@ -164,6 +181,12 @@ and assuming writes behave similarly is a good way to be wrong by a large factor
 latency is a latency. That means every number here is a *worst case*, and a real program with a
 predictable access pattern may never see any of them. [ch26](#optimising-code) is where making a pattern
 predictable becomes a thing you do deliberately.
+
+**Whether the largest working set reached main memory.** The levels curve stops stepping at the
+last size tried, and nothing in it says whether that final plateau is a cache or the memory behind
+it. A working set larger than every cache should step again, higher; the sizes tried here did not
+show it, and the reason — a set still small enough, a pattern the prefetcher could follow after
+all, or something else — is a question for the board rather than for this page.
 
 ## Problems
 
