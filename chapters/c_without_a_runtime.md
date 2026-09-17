@@ -1,10 +1,10 @@
 ---
-title: "C Without a Runtime"
-short_title: "04 · C Without a Runtime"
+title: "Kernel C Is Not Application C"
+short_title: "04 · Kernel C Is Not Application C"
 ---
 
 (c-without-a-runtime)=
-# 04 · C Without a Runtime
+# 04 · Kernel C Is Not Application C
 
 :::{note} Chapter header
 :class: dropdown

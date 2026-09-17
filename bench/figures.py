@@ -490,7 +490,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.vector_speedup_table,
         result="vectors-host",
     ),
-    # -- C Without a Runtime---------------------------------------------------------------------------
+    # -- Kernel C Is Not Application C---------------------------------------------------------------------------
     "c-without-a-runtime-absences": Table(
         render=tables.kernel_absences_table,
         result="kernelc-xv6",

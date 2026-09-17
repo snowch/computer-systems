@@ -187,7 +187,7 @@ CHAPTERS: tuple[Chapter, ...] = (
     Chapter(
         4,
         "c_without_a_runtime",
-        "C Without a Runtime",
+        "Kernel C Is Not Application C",
         PART_C,
         "xv6",
         "I already write C — which of my habits stop working in a kernel?",

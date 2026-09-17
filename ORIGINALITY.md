@@ -91,7 +91,7 @@ the `cdecl` tradition of declaration-reading rules.
 
 ---
 
-## ch04 · C Without a Runtime
+## ch04 · Kernel C Is Not Application C
 
 **Closest in subject.** OSTEP and the xv6 book on kernel memory management; "kernel C" sections of
 various OS course notes; the Linux kernel's own coding-style and API documentation; writing on

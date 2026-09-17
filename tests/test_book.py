@@ -362,7 +362,7 @@ def test_a_problem_reference_carries_the_word_problem(page: str):
     owns the number from then on; write `7.1` and nobody does.
 
     Appendices are checked too, because appendix G was outside both this and the syncer: it said
-    `problem 2.2` beside a link to *C Without a Runtime*, whose problems have been 4.x for three renumberings.
+    `problem 2.2` beside a link to *Kernel C Is Not Application C*, whose problems have been 4.x for three renumberings.
     """
     import importlib.util
 
@@ -1004,7 +1004,7 @@ def test_a_chapter_reference_in_prose_is_a_link(path):
     `sync-labels` rewrites the label inside a link because the anchor tells it which chapter is
     meant. A bare one carries no anchor, so nothing can correct it and nothing did: four of the
     eight in the book pointed at chapters that had nothing to do with the sentence. ch07 credited
-    "the `mepc + 4` from ch04" — ch04 is *C Without a Runtime* — and ch11 said ch06 got away with
+    "the `mepc + 4` from ch04" — ch04 is *Kernel C Is Not Application C* — and ch11 said ch06 got away with
     three top-level page-table entries, which is ch08's page table and ch06's trap.
 
     Writing the reference as a link fixes it twice over: the anchor says which chapter is meant,
