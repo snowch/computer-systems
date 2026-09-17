@@ -27,8 +27,8 @@ timing may be measured — and nothing needs it until [ch24](#measuring).
 
 So the two chapters are in that order, and they are separate on purpose: you can finish
 [ch00](#prerequisites-and-setup) this afternoon on a laptop, and do
-[ch01](#setting-up-the-board) whenever the hardware turns up. The board chapter comes next, but
-twenty-two chapters sit between finishing the first and *needing* the second.
+[ch01](#setting-up-the-board) whenever the hardware turns up. The board chapter is the next one
+in the book, but twenty-two chapters sit between finishing the first and *needing* the second.
 
 ## What it leaves out
 
@@ -41,8 +41,8 @@ the instruction sets not matching. These chapters take that as settled and get i
 
 ## Where to start
 
-[ch00](#prerequisites-and-setup), on whatever you are reading this on. It ends with a program
-compiled for both architectures and run under both emulated targets, which is how you know the
+[ch00](#prerequisites-and-setup), on whatever you are reading this on. It ends with one program
+compiled for two targets and run on both, agreeing about every answer, which is how you know the
 setup is real rather than merely installed.
 
 Then [ch01](#setting-up-the-board) when the board arrives — or later. Nothing before
@@ -54,8 +54,9 @@ point which targets your machines can currently run.
 Both, which is what makes this a part rather than a chapter. The emulated targets answer questions
 about what a program *does*, and **nothing here or in Parts I to IV is ever timed**:
 QEMU models no cache, no branch predictor and no memory latency, so a duration measured inside it
-describes the laptop and the translation strategy rather than the machine being emulated. The
-board answers questions about cost, and is the only place in the book a timing may be taken.
+describes the laptop, and how the emulator translates instructions, rather than the machine being
+emulated. The board answers questions about cost, and is the only place in the book a timing may be
+taken.
 
 Neither can tell you yet whether any of it is *worth* measuring. Setting a machine up
 proves it runs; it does not prove a number coming out of it means anything, and

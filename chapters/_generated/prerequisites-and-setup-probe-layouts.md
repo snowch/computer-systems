@@ -5,4 +5,4 @@
 | `declaration_order` | 12 | 4 | 6 |
 | `size_order` | 8 | 4 | 2 |
 
-*Conditions: target `xv6` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · xv6-riscv @ 9e3161a · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `xv6's own CFLAGS (-O -march=rv64gc -std=gnu99 -ffreestanding)` · 2026-09-17 · Source: `bench/results/setup-xv6.json`, code hash `f2c52e8efea9dcbf`.*
+*Conditions: target `xv6` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · xv6-riscv @ 9e3161a · riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 · `xv6's own CFLAGS (-O -march=rv64gc -std=gnu99 -ffreestanding)` · 2026-09-17 · Source: `bench/results/setup-xv6.json`, code hash `b3e54cf82a22855a`.*
