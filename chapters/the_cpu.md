@@ -23,15 +23,15 @@ short_title: "27 · The CPU"
 What is this core doing between fetching an instruction and finishing it?
 
 [ch26](#optimising-code) ended on a deferral: instruction counts cannot say whether the longer program is the
-slower one. This is why. A modern core does not execute instructions one at a time in the order
-they appear, and the two things it does instead — overlapping independent work, and guessing
+slower one. The reason is that a modern core does not execute instructions one at a time in the
+order they appear, and the two things it does instead — overlapping independent work, and guessing
 which way a branch will go — are what decide the answer.
 
 ## The material
 
 ### The branch that was not there
 
-This chapter set out to measure branch misprediction, and its first act was to fail.
+This chapter set out to measure branch misprediction, and the first attempt failed.
 
 `sysfs/lib/pipeline.c` contains a loop that counts how many values exceed a threshold, written
 with an `if`. Compile it and look:
@@ -45,7 +45,7 @@ both outcomes and selects between them with no control flow at all. There is not
 mispredict. A measurement of branch prediction on that loop would have produced a number, and the
 number would have been about something else entirely.
 
-That is [ch26](#optimising-code)'s lesson arriving one chapter later and biting this book: what you wrote and
+That is [ch26](#optimising-code)'s lesson again, one chapter later and at this book's expense: what you wrote and
 what runs are different things, and the gap is exactly where a measurement goes wrong quietly.
 
 **The fix is to make the branch un-removable**, which means putting something in the taken case

@@ -22,9 +22,8 @@ short_title: "26 · Optimising Code"
 What will the compiler do for me, and what will it never do?
 
 [ch25](#the-memory-hierarchy) ended by saying that a memory access costs what it costs because of what else the
-machine could do at the same time. This chapter asks the question that follows immediately: given
-that, what is worth changing in the source — and the first thing to establish is which changes the
-compiler is going to make anyway.
+machine could do at the same time. Given that, what is worth changing in the source? The first
+thing to establish is which changes the compiler is going to make anyway.
 
 ## The material
 
@@ -80,8 +79,8 @@ algorithm, your data layout, or your memory access pattern** — and those are t
 
 ### The benchmark that measured nothing
 
-There is a failure mode that makes every number in a benchmark meaningless, and it follows
-directly from the compiler being good at this.
+A compiler this good will delete work that nothing observes, including the work a benchmark exists
+to time — and then every number that benchmark reports is meaningless.
 
 `tests/optimising_code/escapes.c` contains five functions doing identical arithmetic. They differ only in
 what becomes of the result: dropped, returned, stored through a `volatile`, stored to a file-scope

@@ -22,7 +22,7 @@ short_title: "31 · Vectors"
 What does vectorising actually buy, and when will the compiler do it for me?
 
 [ch30](#whole-machine-profiling) was about finding the expensive loop in a program nobody here has
-read. This is the last thing left to do to one once it has been found, and it is the narrowest
+read. This chapter is what you do to that loop once you have found it, and it asks the narrowest
 question in the book: the unit can do four of these at once, so what became of the other three?
 
 ## The material
@@ -108,8 +108,8 @@ found this out by tripping over its own guard.
 
 Each measured speedup sits beside the most its lane count could possibly have bought.
 
-That column is the chapter's argument. A speedup on its own invites you to be pleased with it; as
-a fraction of the bound it invites the only useful question, which is where the rest went — and
+The comparison with the bound is the chapter's argument. A speedup on its own invites you to be
+pleased with it; as a fraction of the bound it makes you ask where the rest went — and
 the answer is a tail, or memory, or a loop that was never the bottleneck to begin with. Problem
 31.3 is that arithmetic, and it deliberately does not clamp: a result over the bound means
 something other than the width changed, and the comparison has stopped being between two versions
@@ -184,6 +184,6 @@ problem in problem 31.1 by not having a compile-time width at all, and seeing on
 other's choices visible as choices.
 
 That is the last measurement in the book. [Appendix A](#appendix-a) collects the reference cards,
-and the preface says what this book set out to make you able to do; the honest test of whether it
-worked is not whether you remember any of these numbers. It is whether, next time something is
-slow, the first thing you reach for is a measurement.
+and the preface says what this book set out to make you able to do. The test is not whether you
+remember any of these numbers, but whether, next time something is slow, the first thing you reach
+for is a measurement.

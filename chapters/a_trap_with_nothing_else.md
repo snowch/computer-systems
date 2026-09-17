@@ -84,8 +84,8 @@ subject.
 
 ### Where it was, and the mistake that loops for ever
 
-The processor also records where it was when the trap happened, in `mepc`. The word "was" is doing
-a lot of work there, and it is the first thing about traps that surprises people:
+The processor also records where it was when the trap happened, in `mepc`. Exactly which
+instruction that means is the first thing about traps that surprises people:
 
 ```{literalinclude} ../sysfs/bare/trap.c
 :language: c
@@ -165,8 +165,7 @@ describing a different processor.
 **How long a trap takes.** Nothing on this target may be timed, and the reason is the reason the
 whole book has two targets: QEMU models no cache, no branch predictor, no store buffer and no
 memory latency, so a duration measured here is a fact about the laptop running the emulator. What
-a trap *costs* is [ch29](#the-os-layers-cost), on hardware, and the answer is more interesting
-than this chapter could make it look.
+a trap *costs* is [ch29](#the-os-layers-cost), on hardware.
 
 **What a real board does before your code runs.** QEMU with `-bios none` hands the processor over
 at the reset address with the machine in a defined state. A physical board has firmware that has

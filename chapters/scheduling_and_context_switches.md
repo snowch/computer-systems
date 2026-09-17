@@ -32,7 +32,7 @@ understanding why needs a precise account of what a switch actually moves.
 ```{include} _generated/scheduling-and-context-switches-swtch.md
 ```
 
-Read the first two rows against each other, because the ratio is the point.
+Read the first two rows against each other.
 
 [ch16](#traps-and-system-calls)'s trap path saves thirty-one registers. `swtch` saves fourteen. Both are moving "the
 state of a thread" and one of them moves less than half as much, which looks like an optimisation
@@ -47,7 +47,8 @@ callee-saved set, plus the return address and the stack pointer — fourteen reg
 structure that holds them has fourteen fields.
 
 So the cost of a switch is low for the same reason the cost of a trap is high, and neither number
-is a property of how well the code was written. They are properties of who agreed to what.
+is a property of how well the code was written. Both follow from the calling convention: the
+switch can rely on it and the trap path cannot.
 
 ### Where the thread goes
 
@@ -91,7 +92,7 @@ intervene is a more instructive ten minutes than reading about it.
 
 ### Sleeping is not a state of the CPU
 
-[ch19](#interrupts-and-drivers)'s console driver slept, and this is where that gets settled.
+[ch19](#interrupts-and-drivers)'s console driver slept, and this section says what that meant.
 
 Sleeping is not the hardware doing anything. It is a process marking itself not-runnable, noting
 what it is waiting for, and calling `sched` — after which some other thread's registers are in the

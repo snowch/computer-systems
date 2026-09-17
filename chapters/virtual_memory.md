@@ -24,7 +24,7 @@ Every chapter so far has treated an address as a number that names a place. [ch1
 a loader put a program at the address its linker chose, and [ch16](#traps-and-system-calls) left a promise: the
 trampoline page is mapped into two address spaces at once, which is only a sentence anybody can
 say if an address means different things to different programs. It does. This chapter is about the
-machinery that arranges it, and about what that machinery costs — not in time, which this target
+page tables that arrange it, and about what they cost — not in time, which this target
 cannot tell you, but in the memory it takes to say where memory is.
 
 ## The material
@@ -44,8 +44,8 @@ answers, and the answer is looked up rather than computed.**
 
 ### Nine, nine, nine, twelve
 
-The scheme is called Sv39, and the temptation is to learn its layout as a fact. It is not a fact;
-it is forced, and two decisions force it.
+The scheme is called Sv39, and its layout is not an arbitrary fact to be memorised. Two decisions
+force all of it.
 
 Choose a page size, and choose how big an entry describing a page must be. Everything else
 follows: a table is one page of entries, so the number of entries per table is one divided by the
@@ -95,7 +95,7 @@ what a kernel can do with that distinction; problem 17.3 is about extracting it.
 
 ### Two clusters and five tables
 
-Here is where the chapter stops describing and starts counting.
+The rest of this section counts pages of table.
 
 `init` is the first program xv6 runs, and the smallest interesting address space in the system. It
 maps six pages. Describing those six pages takes five more.
@@ -116,19 +116,19 @@ A chain is two pages whether it ends in one mapping or five hundred.
 
 ### The map costs memory
 
-Which makes the totals worth putting side by side.
+The totals are worth putting side by side.
 
 ```{include} _generated/virtual-memory-shape.md
 ```
 
 The kernel maps an enormous amount of memory and spends almost nothing per page describing it.
 init maps almost nothing and spends nearly as much on the description as on the thing described.
-That inversion is not a paradox once the last column is read as the explanation for the other two:
-the kernel's memory arrives in a handful of vast runs, and init's in two tiny ones.
+The last column explains both: the kernel's memory arrives in a handful of vast runs, and init's
+in two tiny ones.
 
 Two of the kernel's regions account for nearly everything it maps. One is the whole of the RAM it
 manages, direct-mapped so that a physical address and a kernel virtual address are the same
-number — which is not a cheat but a decision, and one that makes the kernel's own pointers
+number — a deliberate decision, and one that makes the kernel's own pointers
 translatable without any bookkeeping at all. The other is a run of device registers so long that
 three separate devices, laid out end to end by the machine's designers, come out as a single
 region: the census cannot tell them apart, because as far as the page table is concerned they are
@@ -152,16 +152,15 @@ The two pages at the top need another middle table and another last table, becau
 within a gigabyte of them. Two pages of table for two pages of mapping, and every process in the
 system pays it.
 
-**Those two pages are the trapframe and the trampoline.** The mechanism [ch16](#traps-and-system-calls) measured in
-instructions has a second price, in a currency that chapter had no way to express: per process, two pages
-of table, for as long as the process exists. Neither number is a cost in the sense this book
+**Those two pages are the trapframe and the trampoline.** The trap path [ch16](#traps-and-system-calls) measured in
+instructions has a second price that chapter could not express: per process, two pages of table,
+for as long as the process exists. Neither number is a cost in the sense this book
 usually means — [ch29](#the-os-layers-cost) is where traps get priced in time — but both are real, and the
 second one is invisible unless somebody counts it.
 
 ### The model and the kernel
 
-One more thing is worth saying about how the numbers above were obtained, because it is not the
-usual thing.
+The numbers above were obtained twice over, by two independent routes, which is worth explaining.
 
 The kernel counts its own tables by walking them. Separately, `sysfs/lib/sv39.c` computes how
 many tables a set of mappings *requires*, from the addresses alone, with no machine involved:
@@ -182,8 +181,8 @@ chapter spent a section arriving at:
 
 The two are arrived at from opposite ends — one by inspecting a running system, the other from a
 specification — and the runner refuses to record a result in which they disagree. So the figures
-above are not a measurement that happens to be reproducible. They are an agreement, and if a
-future xv6 changes its layout the disagreement is what CI will report.
+above are not merely a reproducible measurement: they are two derivations agreeing, and if a
+future xv6 changes its layout, CI will report the disagreement.
 
 ## What we measured
 

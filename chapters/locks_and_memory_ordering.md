@@ -20,7 +20,7 @@ short_title: "20 · Locks and Memory Ordering"
 
 What breaks when two harts touch the same memory, and what is the minimum fix?
 
-[ch19](#interrupts-and-drivers) ended owing an answer. Its census counters are incremented from interrupt handlers
+[ch19](#interrupts-and-drivers) left a question unanswered. Its census counters are incremented from interrupt handlers
 and from process context, on three harts, with no lock anywhere — and the patch says so in a
 comment that amounts to *this is fine*. Either that is defensible or the book has been printing
 numbers from a data structure that races, so this chapter has to settle it.
@@ -54,8 +54,8 @@ The minimum fix is to ask the machine for an increment it will not interrupt:
 On RISC-V that is `amoadd.d` — atomic memory operation, add, doubleword. One instruction, so there
 is no gap to land in.
 
-The AArch64 version is the surprise, and it is worth stopping on. Instead of an instruction there
-is a **call** to a helper with a name the programmer never wrote. AArch64 gained single-instruction
+The AArch64 version does not get one instruction. Instead there is a **call** to a helper with a
+name the programmer never wrote. AArch64 gained single-instruction
 atomics in a later revision of the architecture, so a compiler that does not know which chip it is
 building for cannot use them directly; it emits a call to a routine that decides at run time.
 Whether the same C is one instruction or a function call is therefore not a property of the source
@@ -128,7 +128,7 @@ price of that safety rather than of the mutual exclusion.
 
 ### So were those unlocked counters right?
 
-Back to the debt.
+Back to the unlocked counters.
 
 [ch19](#interrupts-and-drivers)'s counters are incremented without a lock from several harts and from interrupt
 context. On the evidence above, that increment is three instructions and updates can certainly be

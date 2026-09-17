@@ -20,12 +20,11 @@ short_title: "Introduction"
 
 [Part IV](#part4)'s chapters, asked again as questions about time.
 
-This is not a second book about performance bolted to the first. Nearly every chapter here has a
-counterpart earlier in the book and names it in its header: you arrive already knowing what a
-context switch moves, what a page fault does, what a lock is for, and the only thing left to
-establish is the price. That is a much better position to measure from than the usual one, because
-the commonest way to be wrong about performance is not arithmetic — it is attributing a cost to a
-mechanism you had only a rough idea about.
+Nearly every chapter here has a counterpart earlier in the book and names it in its header, so you
+arrive already knowing what a context switch moves, what a page fault does and what a lock is for.
+Only the price is left to establish. That is a better position to measure from than the usual one,
+because the commonest way to be wrong about performance is not arithmetic — it is attributing a
+cost to a mechanism you had only a rough idea about.
 
 [ch24](#measuring) comes first and is the method: how to get a number you would defend, and how you
 would know it was wrong. Everything after it is that method applied to one layer at a time, ending

@@ -21,14 +21,14 @@ short_title: "Introduction"
 Four chapters. One of them teaches reading what a compiler produced, and the other three have
 one job between them: enough C to read a kernel and change it, and no more.
 
-That "no more" is a real limit rather than modesty. C is a large language and most of it never
-appears in the code this book reads. A part that set out to cover the language would spend most of
-its length on things you are never going to meet here, and would still not have taught the thing
-that actually stops people — which is not syntax.
+The limit is deliberate. C is a large language and most of it never appears in the code this book
+reads, so a part that set out to cover the language would spend most of its length on things you
+are never going to meet here.
 
-What stops people is the model. Your language was built to hide it: memory is one array of bytes,
-everything in it has an index, and a type is mostly a statement about how wide a step is. Every
-language has that underneath. Yours decided you did not need to see it; C decided you did.
+What stops people reading kernel code is not C's syntax. It is the memory model your language was
+built to hide: memory is one array of bytes, everything in it has an index, and a type is mostly a
+statement about how wide a step is. Every language has that underneath. Yours decided you did not
+need to see it; C decided you did.
 
 This part is first because everything after it is written in C and half of it asks you to change
 some. [Part II](#part2) builds the machine's primitives in C and its problems have you rewriting a

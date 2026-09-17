@@ -21,9 +21,9 @@ short_title: "11 · fork, Built Rather Than Read"
 What is the least a machine needs before two programs can run on it?
 
 `fork` is usually introduced as a riddle: a function that returns twice, with different answers. It
-is not a riddle, and the reason it looks like one is that it is normally met from the outside. From
-the inside it is a short function, and the two returns stop being mysterious the moment you can see
-what a return actually is.
+is not a riddle. It looks like one because it is normally met from the outside. From the inside it
+is a short function, and the two returns stop being mysterious once you can see that a return value
+is a word in a saved register set.
 
 Everything this chapter needs already exists. [ch08](#one-page-table-two-harts) built an address
 space; [ch09](#a-system-call-of-your-own) saved a caller's registers into a frame. A process is
@@ -92,8 +92,8 @@ moment of the call. [ch18](#page-faults-as-a-feature) is where that stops being 
 :end-before: }
 ```
 
-`sp` is loaded last for a reason that is obvious in hindsight: every other load is relative to it,
-and a frame stops being addressable the instant you replace the pointer to it.
+`sp` is loaded last because every other load is relative to it, and a frame stops being addressable
+the instant you replace the pointer to it.
 
 The scheduler is four lines, and calling it a scheduler is generous:
 

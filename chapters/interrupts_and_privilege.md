@@ -23,8 +23,8 @@ What arrives without being asked for, and what does a privilege level actually r
 [ch06](#a-trap-with-nothing-else)'s trap was caused. An instruction executed, and the trap was that
 instruction's consequence — remove the `ecall` and nothing happens. This chapter is about the other
 kind, which no instruction causes and which would arrive if the program were doing nothing at all.
-And about the machinery that makes the word "allowed" mean something, which turns out to be a
-two-bit field and a refusal.
+It is also about privilege levels: what "allowed" means in hardware is a two-bit privilege field
+and a refusal.
 
 ## The material
 
@@ -41,7 +41,7 @@ is nothing else to it:
 ```
 
 Arming it takes three writes — one to say *when*, one to enable this particular interrupt, and one
-to enable interrupts at all. The two-level enable is not redundancy: the per-source bit says which
+to enable interrupts at all. The two levels do different jobs: the per-source bit says which
 interrupts a program is interested in, and the global bit is what a critical section turns off.
 
 ```{literalinclude} ../sysfs/bare/privilege.c
@@ -104,11 +104,11 @@ executing `mret` is a deliberate demotion:
 :end-before: int main(void)
 ```
 
-`bare_open_memory()` is there for a reason worth knowing before it costs you an afternoon. With no
-firmware in front of the program every physical-memory-protection region starts closed, and closed
-means closed to supervisor and user mode — machine mode is exempt. Without it, the supervisor
-program faults on its first instruction, with a cause that has nothing to do with what it was
-trying to do.
+`bare_open_memory()` opens the physical-memory-protection regions, and leaving it out will cost
+you an afternoon. With no firmware in front of the program every one of those regions starts
+closed, and closed means closed to supervisor and user mode — machine mode is exempt. Without it,
+the supervisor program faults on its first instruction, with a cause that has nothing to do with
+what it was trying to do.
 
 ### And getting back
 
@@ -121,8 +121,8 @@ and points `mepc` at the address the program recorded before it left:
 :end-before:     /* An exception nobody planned for.
 ```
 
-`mret` restores no registers at all, which is the detail that makes this genuinely awkward and
-which `bare_enter_supervisor()` exists to handle in one place. [ch11](#fork-built-rather-than-read)
+`mret` restores no registers at all. That is what makes crossing back genuinely awkward, and
+`bare_enter_supervisor()` handles it in one place. [ch11](#fork-built-rather-than-read)
 is where that stops being an inconvenience and becomes the subject.
 
 ## What we measured

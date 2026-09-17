@@ -23,15 +23,15 @@ Which parts of C are really about addresses, and how do I read them without flin
 This is not a C tutorial and it does not cover the language. It covers the subset that becomes
 visible in machine code, sorted by a single question: **has the machine heard of this?** Some of
 C's most-argued-about constructs are instructions to the compiler that leave no trace at all.
-Another is a prohibition that survives into every single load. Telling those apart is what
-makes kernel source readable, because a kernel is mostly the second kind.
+`volatile` is a prohibition that survives into every single load. Telling those apart makes kernel
+source readable, because a kernel is mostly the second kind.
 
 ## The material
 
 ### Everything here is an address
 
-A pointer is not a mysterious thing. It is an integer that happens to be the number of a byte,
-carrying a type that says how many bytes to take from there and how to read them. That is the
+A pointer is an integer that happens to be the number of a byte, carrying a type that says how
+many bytes to take from there and how to read them. That is the
 whole idea, and almost every difficulty with pointers is really a difficulty about something
 else. [ch03](#memory-is-one-array) asked three questions of any declaration — *where does this
 live*, *how long does it stay there*, *how big is it*. A kernel needs a fourth, and this chapter
