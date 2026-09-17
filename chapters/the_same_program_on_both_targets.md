@@ -14,7 +14,7 @@ short_title: "23 · The Same Program on Both Targets"
 | **Target** | both — `xv6` and `host`, the same source compiled and run on each |
 | **Answers the cost of** | [ch14](#machine-level-code-on-riscv), [ch16](#traps-and-system-calls), [ch17](#virtual-memory) |
 | **Prerequisites** | [ch22](#the-file-system) |
-| **What it measures** | Everything the two targets agree about: `bench/results/bridge-both.json`, and the timing that is not among them |
+| **What it measures** | Everything the two targets agree about: `bench/results/bridge-both.json`; and what the two routes cost on the board, which is not among them: `bench/results/bridge-host.json` |
 :::
 
 ## The question
@@ -76,20 +76,26 @@ twice what the sequential one does.
 **Hold on to that prediction.** It is the most that a complete structural understanding can offer,
 it was arrived at correctly, and [Part V](#part5) exists because of how wrong it is.
 
-### The number that is not here
+### The number the first target could not supply
 
 ```{include} _generated/the-same-program-on-both-targets-cost.md
 ```
 
-Nothing is substituted for it. That box is what this book prints instead of a plausible figure, and
-the reason is that a duration measured under QEMU would describe the laptop that ran the emulator.
-The emulator has no cache to miss, no prefetcher to defeat, no store buffer to fill, and no memory
-that takes time. It would produce a number, the number would look like the others in this book, and
-it would mean nothing at all.
+That table came from the board and could have come from nowhere else. A duration measured under
+QEMU would describe the laptop that ran the emulator: it has no cache to miss, no prefetcher to
+defeat, no store buffer to fill, and no memory that takes time. It would produce a number, the
+number would look like the others in this book, and it would mean nothing at all. So until the
+board answered, this table was a box saying so.
+
+Read the last two rows against each other. The first is the prediction the section above arrived
+at, from the instruction counts; the second is what the machine did. Everything
+[Part III](#part3) and [Part IV](#part4) can say about these two functions was in that prediction,
+and it was arrived at correctly, and the machine disagrees with it by more than the whole of the
+structural account can explain.
 
 The chased route's whole cost is that each load has to finish before the next address is known.
 That is a statement about a memory system, and the target that has taught you everything else in
-this book does not have one.
+this book does not have one. [ch25](#the-memory-hierarchy) is where that cost gets taken apart.
 
 ### Three things differ at once
 
@@ -120,9 +126,9 @@ very program. A model built on counting instructions is a model of one compiler 
 architecture.
 
 **The memory layout is structural and does transfer**, but not automatically: it transfers because
-both targets are LP64 with the same alignment rules, which [ch13](#representing-information) measured rather than
-assumed. A book that had chosen a 32-bit target for [Part III](#part3) would have had to say something quite
-different here.
+both targets are LP64 — `long` and pointers are both eight bytes — with the same alignment rules,
+which [ch13](#representing-information) measured rather than assumed. A book that had chosen a
+32-bit target for [Part III](#part3) would have had to say something quite different here.
 
 And one thing transfers that is neither: **the mechanisms themselves**. A page fault is a page
 fault, a context switch saves the callee-saved registers, a log makes a group of writes atomic.
@@ -141,8 +147,9 @@ its existence.
 
 ## What this cannot tell you
 
-**Everything the chapter is about.** The central claim here — that a complete structural model
-predicts the cost badly — is *argued* in this chapter and *demonstrated* in the next eight.
+**Why the prediction was wrong.** The central claim here — that a complete structural model
+predicts the cost badly — is shown in one table and explained in none of this chapter. The next
+eight are the explanation.
 
 **Which of the three differences matters most.** Naming the confound is not separating it. Doing
 that needs configurations this book does not ship: a Linux image for the RISC-V target, or a

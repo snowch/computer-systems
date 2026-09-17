@@ -67,7 +67,8 @@ The work you asked for is the box in the middle.
 
 The diagram leaves out a problem the code has to solve. The kernel runs with a different page
 table from the process, so at some point the address space must change — and the instant it
-changes, the code that is running must still be mapped, or the next instruction fetch faults. A page table cannot be swapped from code that is only in one of the two.
+changes, the code that is running must still be mapped, or the next instruction fetch faults. A
+page table cannot be swapped from code that is only in one of the two.
 
 xv6 solves it the way real kernels do: one page, the **trampoline**, mapped at the same virtual
 address in every address space, kernel and user alike. The switch happens inside that page, so
@@ -80,11 +81,12 @@ where a chapter has to promise that something later will make sense.
 ```{include} _generated/traps-and-system-calls-path-counts.md
 ```
 
-Those counts are the state movement in full: the way in saves thirty-one registers, the way out
-restores them, and neither is doing anything you asked for. Before `usertrap` has looked at why it
-was entered — before any argument has been examined or any work begun — the machine has executed
-over forty instructions of pure bookkeeping, and it will execute nearly as many again on the way
-out, after the work is finished.
+Those counts are the state movement in full: the way in — `uservec`, the assembly in the
+trampoline page — saves thirty-one registers, the way out — `userret` — restores them, and neither
+is doing anything you asked for. Before `usertrap`, the C the assembly hands over to, has looked
+at why it was entered — before any argument has been examined or any work begun — the machine has
+executed over forty instructions of pure bookkeeping, and it will execute nearly as many again on
+the way out, after the work is finished.
 
 `uservec` also does a handful of CSR operations, and one of them is the page-table switch.
 `userret` does fewer, because `sret` — supervisor mode's `mret` — puts the privilege level and
@@ -120,9 +122,10 @@ the shell calls `read` depends on how the console delivered its characters, whic
 timing, and elapsed time inside QEMU is a property of the laptop running it. Two runs of an
 identical workload disagreed, which is how this was found out rather than assumed.
 
-An exception is caused by an instruction your program executed, so for a *fixed sequence of
-instructions* it is reproducible. The trouble is that "run the shell" is not a fixed sequence of
-instructions. So the workload is a program that removes the question:
+An *exception* — a trap an instruction caused, as opposed to an interrupt — is reproducible for
+a *fixed sequence of instructions*, because the same instructions cause the same traps. The
+trouble is that "run the shell" is not a fixed sequence of instructions. So the workload is a
+program that removes the question:
 
 ```{literalinclude} ../xv6/apps/trapload.c
 :language: c
@@ -168,9 +171,9 @@ reproducibility, for the reasons the section above gives.
 
 **What any of this costs.** The path is eighty-odd instructions long; whether that is expensive
 depends on whether they hit in cache, whether the pipeline drains, and what the page-table switch
-does to the TLB (the hardware cache of address translations) — three questions this target has no opinion about whatsoever. It is entirely
-possible for the *shorter* of two paths to be the slower one, and [ch29](#the-os-layers-cost) is where that gets
-settled.
+does to the TLB (the hardware cache of address translations) — three questions this target has no
+opinion about whatsoever. It is entirely possible for the *shorter* of two paths to be the slower
+one, and [ch29](#the-os-layers-cost) is where that gets settled.
 
 **What a real kernel's path looks like.** xv6's is short because xv6 is small. Linux's does
 considerably more on the way in — checking for signals, handling seccomp filters, auditing — and
@@ -223,7 +226,7 @@ do and what each CSR in the path is for. The section on trap handling is short, 
 alongside `trampoline.S` is the fastest way to work out which half of the path is hardware.
 
 xv6's `kernel/trampoline.S` and `kernel/trap.c` @xv6-riscv-source are now readable in full — the
-assembly is the path this chapter counted, and `usertrap` is forty lines of C. Read the assembly
+assembly is the path this chapter counted, and `usertrap` is a short piece of C. Read the assembly
 first and the C second; the order matters, because the C makes no sense until you know what state
 it has been handed.
 

@@ -31,9 +31,10 @@ in the middle of a trap and look at anything. That matters more than modernity h
 kernel would have the same mechanisms buried under thirty years of necessary special cases, and you
 would be taking someone's word for which lines were the point.
 
-The order of the chapters follows the dependencies. Traps come before virtual memory because a page fault is a trap.
-Interrupts come before locks because a lock's first job is to survive one. Locks come before
-scheduling because a scheduler is largely the thing that needed them.
+The order of the chapters follows the dependencies. Traps come before virtual memory because a
+page fault — the trap taken when an address has no mapping — is a trap. Interrupts come before
+locks because a lock's first job is to survive one. Locks come before scheduling because a
+scheduler is largely the thing that needed them.
 
 ## What it leaves out
 
@@ -61,15 +62,15 @@ stops being about how a thing works and starts being about how you would find ou
 `xv6` under `qemu-system-riscv64`, read in a debugger.
 
 **Nothing in this part is timed, and nothing in it may be.** QEMU is the right instrument for
-structure and the wrong one for everything else. It will tell you
-exactly which register held the faulting address and in what order the stores happened in the
-program's own view; it models no cache, no branch predictor, no store buffer and no memory latency,
-so it cannot tell you what any of it cost or what a second hart really does to the first.
+structure and the wrong one for everything else. It will tell you exactly which register held the
+faulting address and in what order the stores happened in the program's own view; it models no
+cache, no branch predictor, no store buffer and no memory latency, so it cannot tell you what any
+of it cost or what a second hart really does to the first.
 
-The sharper limit is that **QEMU lies convincingly.** A duration measured
-here is a real number, reproducible, and about the host machine and the translation strategy rather
-than about RISC-V — and once written into a table it is indistinguishable from a measurement. That
-is why the rule is absolute and why a check enforces it rather than a convention.
+The sharper limit is that **QEMU lies convincingly.** A duration measured here is a real number,
+reproducible, and about the host machine and the translation strategy rather than about RISC-V —
+and once written into a table it is indistinguishable from a measurement. That is why the rule is
+absolute and why a check enforces it rather than a convention.
 
 ## Where this leaves you
 

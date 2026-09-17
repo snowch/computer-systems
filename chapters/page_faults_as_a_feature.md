@@ -78,8 +78,8 @@ not crash; it would get the wrong answer. Problem 18.2 is about exactly these ed
 ### Both policies are already here
 
 Unusually, **this kernel already implements both allocation policies**, and lets a program pick
-one per call. `sbrk` allocates the pages when you ask. `sbrklazy` increases the process's size and
-allocates nothing, leaving the faults to do it.
+one per call. `sbrk`, the call that grows a process's memory, allocates the pages when you ask.
+`sbrklazy` increases the process's size and allocates nothing, leaving the faults to do it.
 
 So this chapter adds no policy and changes no decision. The patch counts:
 
@@ -90,8 +90,8 @@ So this chapter adds no policy and changes no decision. The patch counts:
 ```
 
 Per process, because the shell is allocating too and a global total would mostly be a fact about
-the shell. Latched on the way out, because by the time anybody can press a key the interesting
-process has exited.
+the shell. Recorded as the process exits, because by the time anybody can press a key the
+interesting process has gone.
 
 ### The trade, counted
 
@@ -163,9 +163,9 @@ idea it is allocating anything. There is no return value to check at that point,
 kernel can do but kill the process.
 
 So laziness moves a failure from a place where the program can handle it to a place where it
-cannot. That is the whole reason an operating system which overcommits memory needs a policy for
-choosing something to kill, and problem 18.3 is about being able to say precisely when each
-version finds out.
+cannot. That is the whole reason an operating system which *overcommits* — promises more memory
+than it has — needs a policy for choosing something to kill, and problem 18.3 is about being able
+to say precisely when each version finds out.
 
 ## What we measured
 
@@ -189,7 +189,8 @@ show both ends. Whether trading those pages for those faults is a good deal depe
 memory costs relative to kernel entries on the machine in question, which is a question about
 hardware and not about kernels.
 
-**Copy-on-write, demand paging, and the rest.** The chapter names them and measures none of them,
+**Copy-on-write, demand paging — a page fetched from disk when first touched — and the rest.**
+The chapter names them and measures none of them,
 which is deliberate and is not the same as their being free. Each is this hook with a different
 test, and each has its own exchange rate that this chapter has not measured. Naming a mechanism
 and pricing it are different things, and the book tries hard not to let the first pass for the

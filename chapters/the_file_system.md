@@ -44,8 +44,9 @@ The same cost in bytes rather than blocks:
 ```{include} _generated/the-file-system-cost.md
 ```
 
-That is the amplification factor, and it is not a rounding error. Nor is it waste — every one of
-those writes is doing something, and the rest of this chapter says what.
+That is the *amplification* — how much the disk was given for the one byte the program wrote —
+and it is not a rounding error. Nor is it waste: every one of those writes is doing something,
+and the rest of this chapter says what.
 
 Notice the last row of that second table as well. A file with nothing whatever in it, created and
 immediately removed, costs more disk traffic than the byte does. Most of what a file system does
@@ -72,8 +73,9 @@ Doubling the traffic looks like a strange thing to do on purpose. It is the only
 A crash can happen between any two block writes. For the file system to be recoverable, **every
 prefix of what it writes must leave a state that recovery can turn into a correct one.**
 
-Consider updating a file in place, with no log. Write the data block, then the inode that records
-the new size. A crash between them leaves a file whose size says one thing and whose contents say
+Consider updating a file in place, with no log. Write the data block, then the *inode* — the
+on-disk record that describes a file: its size, and where its blocks are — so that it records the
+new size. A crash between them leaves a file whose size says one thing and whose contents say
 another, and nothing on the disk records which was intended. There is no recovery procedure,
 because there is no information to recover from.
 
@@ -106,8 +108,9 @@ replaying an already-installed block changes nothing.
 
 That is why the log holds **blocks and not changes**. "Set byte 40 of block 6 to `x`" is not safe
 to apply twice if it is expressed as an increment; "block 6 now looks like this" is safe to apply
-any number of times. Choosing the idempotent representation is what lets recovery work without
-knowing anything about history.
+any number of times. Choosing the *idempotent* representation — the one that comes out the same
+however many times it is applied — is what lets recovery work without knowing anything about
+history.
 
 It also explains the amplification. A log of changes would be far smaller than a log of blocks,
 and would not survive being replayed twice.
@@ -121,11 +124,11 @@ updates atomic, the buffer cache that keeps blocks in memory and decides when th
 and the disk driver from [ch19](#interrupts-and-drivers).
 
 The log took four block-writes for one byte: the data block itself, the inode recording that the
-file is now one byte long and where that byte is, the bitmap recording that the data block is no
-longer free, and — once the program deletes the file at the end — the bitmap again, giving the
-block back. The traffic is not the file system being careless. It is a byte requiring three facts
-to be made true at once, by a design in which they become true together or not at all, and then
-undone the same way.
+file is now one byte long and where that byte is, the *bitmap* — the allocator's one-bit-per-block
+record of which blocks are free — recording that the data block is no longer free, and — once the
+program deletes the file at the end — the bitmap again, giving the block back. The traffic is not
+the file system being careless. It is a byte requiring three facts to be made true at once, by a
+design in which they become true together or not at all, and then undone the same way.
 
 ### The cache is why the reads are so few
 
@@ -134,9 +137,10 @@ disk, and writing a byte read three blocks.
 
 That is the buffer cache from the list above, doing the only thing a cache does. A block already
 in memory is not fetched, and a short workload touches the same handful of blocks — the
-superblock, the log header, the inode block, the bitmap — over and over. Reads are the operation a
-cache can eliminate entirely; writes are the operation it can only delay, and a log is a design
-that deliberately declines to delay them very much.
+superblock, which says where everything else on the disk is, the log header, the inode block, the
+bitmap — over and over. Reads are the operation a cache can eliminate entirely; writes are the
+operation it can only delay, and a log is a design that deliberately declines to delay them very
+much.
 
 ## What we measured
 
@@ -203,12 +207,13 @@ python3 -m pytest tests/the_file_system/test_problem_3_ordering.py
 
 ## Where to go next
 
-xv6's `kernel/log.c` @xv6-riscv-source is a hundred and fifty lines and is the whole of this
-chapter. Read `commit` first — it is five lines and they are in the order this chapter argued for —
-then `recover_from_log`, which is what makes those five lines mean anything.
+xv6's `kernel/log.c` @xv6-riscv-source is the whole of this chapter. Read `commit` first — it is
+a handful of lines and they are in the order this chapter argued for — then `recover_from_log`,
+which is what makes those lines mean anything.
 
-`kernel/fs.c` and `kernel/bio.c` are the layers underneath, and `bio.c` is now the third thing in
-this book to turn out to be a cache with a lock around it.
+`kernel/fs.c` and `kernel/bio.c` are the layers underneath, and `bio.c` turns out to be a cache
+with a lock around it, which is a shape worth recognising: a great deal of a kernel is one or the
+other, and much of it is both.
 
 [ch23](#the-same-program-on-both-targets) is the hinge. Everything [Part IV](#part4) has established is about what a program *does*, on a
 target chosen because you can stop it and look. The next chapter puts the same program on a machine
