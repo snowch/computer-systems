@@ -66,8 +66,9 @@ each one does.
 
 **The preprocessor does text substitution and nothing else.** It has never heard of a function, a
 type, or a loop. `#include` means *paste that file in here*; a macro means *replace this name with
-that text*. When it finishes, every name it introduced is gone and no later stage can tell that a
-macro was ever involved. This is why a macro is not a variable and why a bug in one is reported at
+that text*. What comes out — one source file with everything it included pasted in — is what the
+compiler actually sees, and is called a *translation unit*. When the preprocessor finishes, every
+name it introduced is gone and no later stage can tell that a macro was ever involved. This is why a macro is not a variable and why a bug in one is reported at
 a line that does not look wrong.
 
 **The compiler is the only stage that decides anything.** It reads C and writes assembly, and

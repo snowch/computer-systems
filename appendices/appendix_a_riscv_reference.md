@@ -20,9 +20,10 @@ discarded, which is how the instruction set gets a no-op, a move and a compare-a
 without spending encodings on them.
 
 The names on the left are the only ones you will see in this book's listings. The hardware has no
-opinion about them: the roles below are a *convention* @riscv-psabi, agreed between compilers, and
-[ch14](#machine-level-code-on-riscv) shows that a convention is a contract an interrupt is not a
-party to.
+opinion about them: the roles below are a *convention* @riscv-psabi, agreed between compilers.
+[ch14](#machine-level-code-on-riscv) shows what the convention buys a compiler, and
+[ch16](#traps-and-system-calls) shows what it is worth to a trap — which is nothing, because a
+trap is not a party to it.
 
 | Register | `x` number | Role | Preserved across a call? |
 |---|---|---|---|
@@ -119,5 +120,6 @@ both, and how a leaf can appear at a level above the last to map a larger page.
 The unprivileged specification @riscv-isa-unprivileged for the instruction encodings and the
 memory model, the privileged specification @riscv-isa-privileged for everything on this page below
 the register table, and the psABI @riscv-psabi for the convention. The SBI specification
-@riscv-sbi describes the layer beneath the kernel that [ch16](#traps-and-system-calls) mentions and this book does
-not otherwise use.
+@riscv-sbi describes the firmware layer beneath the kernel, which
+[ch01](#setting-up-the-board) meets once — a RISC-V machine reaches its performance counters
+through it — and this book does not otherwise use.
