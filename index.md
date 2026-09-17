@@ -169,67 +169,20 @@ and no pipeline. Watching a program in a debugger tells you what it *does*. Only
 tells you what it *costs*. [ch23](#the-same-program-on-both-targets) puts the same program through both and makes
 the gap concrete.
 
-### Why they do not share an instruction set
+The two emulated targets are RISC-V and the board is ARM, because the kernel small enough to read
+is a RISC-V kernel and the hardware whose counters actually work is an ARM one.
+[Appendix H](#appendix-h) has the evidence.
 
-The kernel small enough to read in an afternoon is a RISC-V kernel. The hardware whose counters
-actually work is an ARM one. Those are different machines, and pretending otherwise would mean
-lying about one of them.
+That costs you one thing: you read disassembly in two instruction sets rather than one. Five
+chapters read it as AArch64 — [ch26](#optimising-code), [ch27](#the-cpu),
+[ch29](#the-os-layers-cost), [ch30](#whole-machine-profiling) and [ch31](#vectors) — and five read
+it as RISC-V, in Parts I and III. [ch02](#reading-a-listing) shows one small function both ways
+before either matters, and [Appendix F](#appendix-f) translates between them.
 
-[Part V](#part5) needs `perf` to do two separate things: **count** events over a run, and **sample** —
-interrupt the program thousands of times a second to ask where it is. Sampling needs the counters
-to raise an interrupt when they overflow. On ARM that is a standard part of the performance
-monitoring unit. On RISC-V it is an optional extension, and a 2025 study of the three RISC-V cores
-you can actually buy @riscv-pmu-profiling found that none of them wins:
-
-| | SiFive U74 | T-Head C910 | SpacemiT X60 |
-|---|---|---|---|
-| Out-of-order | No | Yes | No |
-| Vector extension | **None** | 0.7.1 (draft) | RVV 1.0 |
-| **Counter-overflow interrupt** | **No** | Yes | Limited |
-| Upstream Linux support | Yes | Partial | **No** |
-
-Read down the columns. Choosing RISC-V for [Part V](#part5) would have made two of its eight chapters
-unmeasurable — one needs sampling, one needs a vector unit — on boards that are hard to buy, with
-firmware that has broken `perf` between distribution releases. A Raspberry Pi costs none of that.
-
-### What the split buys
-
-That reads like a regrettable compromise. It is not: the two architectures buy more than they cost.
-
-This book's argument is *use the instrument that can answer your question, and know what each
-instrument cannot tell you*. Chapter after chapter applies that to caches, to profilers, to
-emulators. Applying it to the book's own construction gives exactly this arrangement, and it buys
-three things a single-architecture book could not offer.
-
-**The concepts are visibly not about an instruction set.** A book that stays on one architecture
-has to *assert* that its ideas generalise. This one demonstrates it, by having them survive a
-change of architecture in front of you.
-
-**You get two memory models instead of one.** [ch20](#locks-and-memory-ordering) teaches RISC-V's;
-[ch28](#memory-ordering-on-real-hardware) measures ARM's, which is also weak and differently specified. A reader shown only one would reasonably
-conclude that model *is* memory ordering. Shown two, you learn it is a family, that a fence is an
-architecture-specific spelling of an architecture-independent need, and that store buffers and
-coherence are what actually transfer.
-
-**[ch23](#the-same-program-on-both-targets) gets harder in the way that matters.** Three things differ between watching a program
-under xv6 and profiling it on real hardware: emulation against hardware, one kernel against
-another, one instruction set against another. Attributing a difference to the wrong one is the
-commonest way to be confidently wrong about performance, and that chapter is where you practise
-separating them.
-
-The split costs you one thing: you read disassembly in two instruction sets instead of one, and
-reading disassembly is a small part of the book. In Parts I and III it is RISC-V:
-[ch03](#memory-is-one-array),
-[ch05](#c-for-people-who-will-read-a-kernel), [ch12](#what-a-computer-does-with-a-program),
-[ch13](#representing-information) and [ch14](#machine-level-code-on-riscv). In
-[Part V](#part5) it is AArch64: [ch26](#optimising-code), [ch27](#the-cpu),
-[ch29](#the-os-layers-cost), [ch30](#whole-machine-profiling) and [ch31](#vectors). Two chapters print both at once because
-the comparison is the content — [ch20](#locks-and-memory-ordering) on what an atomic looks like
-either way, and [ch23](#the-same-program-on-both-targets) on one program compiled for each.
-[ch02](#reading-a-listing) is the third, and comes first: it shows one small function both ways so
-the difference is concrete rather than promised. [Appendix F](#appendix-f) translates
-between the two for the reader who meets the second having learned the first. Everything else is
-method, and method does not have an architecture.
+It also buys something. [ch20](#locks-and-memory-ordering) teaches RISC-V's memory model and
+[ch28](#memory-ordering-on-real-hardware) measures ARM's, and a reader shown only one would
+reasonably conclude that model *is* memory ordering. Shown two, you learn it is a family, and that
+store buffers and coherence are what actually transfer.
 
 ### One argument, not two tutorials
 
