@@ -53,20 +53,14 @@ needs, and it is reachable in three chapters, which the craft is not.
 
 ## Where to start
 
-**Everyone starts at [ch02](#reading-a-listing).** It is short, it assumes no C, and every
-chapter after it puts a listing in front of you at some point. Then the routing applies.
+Read the four in order. [ch02](#reading-a-listing) is short and assumes no C, and every chapter
+after it puts a listing in front of you. If you already write C, [ch03](#memory-is-one-array) is
+the memory model you already have — skim it rather than skip it, because
+[ch04](#c-without-a-runtime) is where it stops being the C you know.
 
-**If you already write C**, go on to [ch04](#c-without-a-runtime). The on-ramp before it is one
-you do not need. That chapter — the one written for you — is about the habits that stop working when there is no
-library underneath you.
-
-**If you program fluently in something else and have never written C**, go on to
-[ch03](#memory-is-one-array). You are not being taught to program.
-
-**If you have tried C before and bounced off pointers**, also [ch03](#memory-is-one-array), and
-notice that it does not open with them. It opens with one complete program that prints four
-numbers, and the pointers arrive afterwards as a way of explaining numbers you have already
-watched appear.
+[ch03](#memory-is-one-array) does not open with pointers: it opens with one complete program that
+prints four numbers, and the pointers arrive afterwards as a way of explaining numbers you have
+already watched appear.
 
 ## Which machine, and what it cannot tell you
 

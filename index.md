@@ -64,31 +64,6 @@ hardware is assumed before it is built. [ch27](#the-cpu) does the same for the p
 grounds that a reader who has seen a five-stage diagram in a lecture still has no idea what a real
 core does with a branch.
 
-### If you come from a managed language
-
-Java, C#, Go and Python all leave you in the same position, and it is not one of ignorance. The
-difficulty is not what you are missing — it is what you already have. A handful of ideas are
-correct in your language, keep their names here, and mean something else. Nothing warns you,
-because the word did not change.
-
-| You already know | What it is here | Where |
-|---|---|---|
-| A reference | An index into one array of bytes, with a type saying how wide a step is | [ch03](#memory-is-one-array) |
-| Allocating whenever you like, and a collector | A fixed array decided at compile time, or a free list built out of the free memory | [ch04](#c-without-a-runtime) |
-| An exception | A returned value the caller is expected to look at, and sometimes no way to report at all | [ch04](#c-without-a-runtime) |
-| `volatile` in Java or C#, meaning *ordered between threads* | `volatile`, meaning *do not remove this access* — and **not** a threading primitive | [ch05](#c-for-people-who-will-read-a-kernel), [ch20](#locks-and-memory-ordering) |
-| A JIT that optimises what runs hot | A compiler that optimised once, and a listing you can read | [ch12](#what-a-computer-does-with-a-program), [ch26](#optimising-code) |
-| A language memory model | Two hardware memory models, neither of which is your language's | [ch20](#locks-and-memory-ordering), [ch28](#memory-ordering-on-real-hardware) |
-
-Two of those rows will not surprise a Go programmer: errors are values there too, and Go compiles
-ahead of time rather than optimising what runs hot. You start closer to C on those, and no closer
-on the rest — which is worth knowing, because it tells you where to slow down.
-
-The `volatile` row is the one that costs people afternoons, and only if you write Java or C#; Go
-and Python have no such keyword to be misled by. It is spelled the same as C's and does a
-different job, and [ch05](#c-for-people-who-will-read-a-kernel) shows the compiler obeying the C
-one, instruction by instruction.
-
 ### Where this is meant to deliver you
 
 This book is an on-ramp. The destination it was written against is *Systems Performance*
