@@ -63,7 +63,7 @@ def test_patches_apply_or_say_why():
 
 @pytest.mark.hostcode
 def test_both_targets_give_the_same_answers(booted, host_target, build_dir: Path):
-    """The whole of chapter 0's claim, in one assertion.
+    """The whole of the setup chapter's claim, in one assertion.
 
     The same header, compiled by two toolchains against two libraries for two different systems,
     reports identical sizes, identical layouts and identical byte order. Everything the book says

@@ -52,7 +52,8 @@ def require_board(what: str) -> None:
         raise NotTheBoardError(
             f"{what} is a `host` measurement and this is a {kind!r} machine.\n"
             "Run it on the machine being measured:  make bench-board\n"
-            "An emulated duration is not a slow measurement, it is not a measurement; see ch00."
+            "An emulated duration is not a slow measurement, it is not a measurement; see the\n"
+            "setup chapter."
         )
 
 

@@ -31,8 +31,6 @@ the record of how it was done and how to re-run it.
 
 ### Set it up
 
-### Set it up
-
 [ch01](chapters/setting_up_the_board.md) is the procedure and
 [Appendix H](appendices/appendix_h_choosing_the_machine.md) is the shopping. The two things that
 are not optional: the active cooler, because a board that throttles mid-run is measuring two
@@ -122,15 +120,24 @@ listings, the bare-metal results and the xv6 censuses all regenerate under QEMU 
 > `host/measurement` board timings, which a comment cannot have changed, are re-stamped in place by
 > `scripts/restamp-host-fingerprints.py` (no re-measure).
 >
-> **Still to do — the part-3 reading job, no board and no toolchain needed:** the `chNN` in `bench/`
-> runner docstrings (149), `scripts/` (41, mostly `ci-check.sh` headings) and `tests/` (205 — and
-> `tests/prerequisites_and_setup/` legitimately says `ch00`, so this tree cannot take a blanket
-> guard). Editing a deterministic runner's comment re-runs cleanly through the regen workflow;
-> editing a `run_*cost.py` needs the same re-stamp the board timings got. **Optional polish:** the
-> patch **filenames** are still old chapter numbers (`13-trap-census.patch` is the traps chapter's,
-> off by three); renaming them to a plain `01`–`06` sequence also touches the `PATCH=` constants in
-> six `bench/run_*.py`, three `{literalinclude}` paths in the traps, page-faults and file-system
-> chapters, and `xv6/README.md`.
+> **Status (2026-09-17). Done.** `bench/`, `scripts/` and `tests/` are named rather than numbered
+> too. Thirty runners opened by naming the wrong chapter, and four of those strings were not
+> comments — they were the `note` and `for` fields a runner stamps into its result, so appendix D
+> printed "the process calls, including the one ch13's workload uses" to the reader, where ch13 is
+> *Representing Information*. `bench/measure.py` was included despite being `CORE_SOURCES`, since
+> the regeneration was happening anyway. Two more guards:
+> `test_no_runner_names_a_chapter_by_number` over every `bench/*.py` but `outline.py`, where the
+> numbers are derived and `ch` is meant, and `test_no_committed_result_names_a_chapter_by_number`
+> over `bench/results/`. `tests/test_book.py` is deliberately outside both: most of its `chNN` are
+> quotations of the bug each guard was written for, and correcting those would make the record
+> false.
+>
+> **Optional polish, still open:** the patch **filenames** are old chapter numbers
+> (`13-trap-census.patch` is the traps chapter's, off by three); renaming them to a plain `01`–`06`
+> sequence also touches the `PATCH=` constants in six `bench/run_*.py`, three `{literalinclude}`
+> paths in the traps, page-faults and file-system chapters, and `xv6/README.md`. And
+> `tests/prerequisites_and_setup/ch00ping.c` is a chapter number in a filename — correct today,
+> which is exactly why it is easy to leave.
 
 ### What is wrong
 

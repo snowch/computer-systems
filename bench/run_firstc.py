@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Chapter 1's first artefact: what one complete C program prints.
+"""The memory-as-one-array chapter's first artefact: what one complete C program prints.
 
     python3 -m bench.run_firstc           # run it and stamp what it said
     python3 -m bench.run_firstc --check    # re-run and compare; write nothing
 
 Small, and it earns its place twice. It is the first thing in the book a reader who has never
 written C can compile and run, so the chapter needs its output to be quotable rather than
-asserted. And it is the same fact ch01's disassembly then shows from underneath — that `p + 1`
+asserted. And it is the same fact the chapter's disassembly then shows from underneath — that `p + 1`
 moves by the size of an element — arrived at first by watching a program say so.
 
 **No address is recorded, deliberately.** One would differ on every run and would be a number the
@@ -36,7 +36,7 @@ PROGRAM = "sysfs/tools/firstc.c"
 
 
 class FirstCError(RuntimeError):
-    """The program stopped saying what ch01 quotes it as saying."""
+    """The program stopped saying what the chapter quotes it as saying."""
 
 
 def parse(text: str) -> dict[str, Any]:
@@ -64,13 +64,13 @@ def capture() -> dict[str, Any]:
 
     if facts["value"] != facts["roundtrip"]:
         raise FirstCError(
-            f"`*&value` gave {facts['roundtrip']} where `value` is {facts['value']}. ch01's first "
+            f"`*&value` gave {facts['roundtrip']} where `value` is {facts['value']}. The chapter's first "
             "claim is that the two are inverses; if they are not, the chapter is wrong about the "
             "only thing it asks the reader to take on trust."
         )
     if facts["steps"].get("int64") != 2 * facts["steps"].get("int32", 0):
         raise FirstCError(
-            f"the two element steps are {facts['steps']}, and ch01's point is that one is twice "
+            f"the two element steps are {facts['steps']}, and the chapter's point is that one is twice "
             "the other because the element is twice as wide. On a machine where that does not "
             "hold the chapter needs rewriting, not re-running."
         )
@@ -111,7 +111,9 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     differences = measurement_differences(committed, payload)
     if not differences:
-        print(f"{payload['name']}: unchanged — the first program still says what ch01 quotes")
+        print(
+            f"{payload['name']}: unchanged — the first program still says what the chapter quotes"
+        )
         return 0
     print(f"{payload['name']}: has MOVED\n")
     for difference in differences:

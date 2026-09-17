@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 7's measurement: what an address space costs to describe.
+"""The virtual-memory chapter's measurement: what an address space costs to describe.
 
     python3 -m bench.run_pagetable           # boot, dump the page tables, stamp the shape
     python3 -m bench.run_pagetable --check   # re-run and compare; write nothing
@@ -7,14 +7,15 @@
 Not a timing, and not because timing was inconvenient. A page table is consulted by hardware this
 target does not model — QEMU has no TLB to miss and no memory to wait for — so the only honest
 question here is a structural one: how many physical pages does the machine spend saying where
-its other physical pages are? ch22 puts a price on a miss, on a machine that can charge one.
+its other physical pages are? The memory-hierarchy chapter puts a price on a miss, on a machine
+that can charge one.
 
 Two rows, and both are structural constants rather than anything a run happened to produce. The
 **kernel's** map is built once by ``kvmmake`` from a layout fixed at compile time. **init's** is
 built by ``exec`` from a binary whose size is fixed by the linker, and init never calls ``sbrk``.
 The shell's row is deliberately not recorded: xv6's shell mallocs while it parses, so its size is
 a fact about what it has been asked to do rather than about address spaces. That distinction cost
-ch13 a commit to learn.
+the traps chapter a commit to learn.
 
 The interesting part is the cross-check. ``sysfs/tools/sv39.c`` computes, from the runs of pages
 alone and with no machine involved, how many page-table pages Sv39 requires to describe them. The

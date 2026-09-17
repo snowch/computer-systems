@@ -407,7 +407,7 @@ def board_identity_table(name: str) -> str:
         ["Board (device tree)", machine.get("model")],
         # Image and kernel together, because the counters are a property of the configuration and
         # not only of the silicon: the reference board's own PMU went missing for a kernel
-        # release. ch00 tells the reader to verify rather than match this row.
+        # release. The board chapter tells the reader to verify rather than match this row.
         ["Operating system", machine.get("os")],
         ["Kernel", machine.get("kernel")],
         ["Cores online", machine.get("cpus_online")],
@@ -416,7 +416,7 @@ def board_identity_table(name: str) -> str:
     rows += core_identity_rows(machine.get("cpu", {}))
     rows += [
         # The two capabilities Part V is built on, and they are separate questions: a core can
-        # count perfectly well and be unable to sample at all. ch00 says why.
+        # count perfectly well and be unable to sample at all. The board chapter says why.
         ["`perf stat` reads hardware counters", summary.get("perf_counters_readable")],
         ["Cycle counter event", summary.get("perf_cycles_event")],
         ["`perf record` can sample", summary.get("perf_can_sample")],
@@ -555,9 +555,9 @@ def chapter_link(anchor: str) -> str:
 
     Typed out, these go stale the way every other number does — and worse than usual, because
     `sync-labels.py` rewrites `chapters/*.md` and a generated fragment is not one of those. Five
-    of them said `[ch13]` over `#traps-and-system-calls` for three renumberings, in tables ch21
-    and ch23 print, and nothing could see it: the anchor resolved, so `--strict` was satisfied,
-    and the syncer was never shown the file.
+    of them carried the traps chapter's anchor under a label three renumberings out of date, in
+    tables the scheduling and crossing chapters print, and nothing could see it: the anchor
+    resolved, so `--strict` was satisfied, and the syncer was never shown the file.
 
     So the anchor is the argument and the label is derived, which is the same rule the rest of the
     book follows and the only one that survives a chapter moving.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 4's artefact: what the stack frame costs, at two optimisation levels.
+"""The machine-code chapter's artefact: what the stack frame costs, at two optimisation levels.
 
     python3 -m bench.run_frames           # measure and stamp
     python3 -m bench.run_frames --check   # re-measure and compare; write nothing

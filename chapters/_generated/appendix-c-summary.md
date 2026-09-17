@@ -9,4 +9,4 @@
 | perf's portable names (hardware / cache) | 9 / 12 |
 | Software events the kernel keeps | 26 |
 
-*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · 2026-09-16 · Source: `bench/results/perfevents-host.json`, code hash `d6ecefedde92a8f1`.*
+*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · 2026-09-16 · Source: `bench/results/perfevents-host.json`, code hash `33a891ae8292682f`.*

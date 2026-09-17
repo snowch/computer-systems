@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 12's measurement: what one byte costs the disk.
+"""The file-system chapter's measurement: what one byte costs the disk.
 
     python3 -m bench.run_blocks           # boot, run both workloads, read the censuses
     python3 -m bench.run_blocks --check   # re-run and compare; write nothing
@@ -10,7 +10,7 @@ inflate the answer by more than the answer. So `blockload` performs the same ope
 differing in one `write` call, the census is zeroed before each, and what is subtracted is
 everything that is not the byte.
 
-Deterministic for the same filesystem image, which [ch16] established and which this runner
+Deterministic for the same filesystem image, which the drivers chapter established and which this runner
 depends on more heavily: block counts are decided by where the file system puts things.
 """
 

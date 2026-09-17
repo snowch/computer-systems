@@ -9,9 +9,9 @@ may not — ``bench.stamp.provenance_problems`` refuses one, for the reason it r
 ``xv6``.
 
 **Each program is refused unless it still demonstrates its chapter's claim.** A program that
-boots, prints and exits cleanly is not evidence of anything on its own: ch04's trap could resume
-without ever having been taken, ch06's harts could both run and lose nothing, ch09's fork could
-return the same answer twice. The claims below are what each chapter actually says, written where
+boots, prints and exits cleanly is not evidence of anything on its own: the bare-metal trap
+chapter's trap could resume without ever having been taken, the harts could both run and lose
+nothing, the fork could return the same answer twice. The claims below are what each chapter actually says, written where
 they will fail rather than in prose where they would simply become untrue.
 """
 
@@ -31,9 +31,9 @@ from bench.stamp import (
     write_result,
 )
 
-#: Which chapter each program belongs to. ch06 has two, because "what does translation do" and
-#: "what does a second core break" are two questions and one program answering both would be
-#: answering neither clearly.
+#: Which chapter each program belongs to, by anchor. The page-table chapter has two programs,
+#: because "what does translation do" and "what does a second core break" are two questions and
+#: one program answering both would be answering neither clearly.
 CHAPTER_OF = {
     "trap": "a-trap-with-nothing-else",
     "privilege": "interrupts-and-privilege",

@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "9434772f75e9f7a0",
+  "code_fingerprint": "2cf5e7f79ec7d0c2",
   "code_sources": [
     "bench/run_disasm.py",
     "bench/disasm.py",
@@ -10,7 +10,7 @@
     "compiler": "riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
     "note": "no timing: this records what the compiler chose, not what it cost"
   },
-  "generated_at": "2026-09-16T18:31:42+00:00",
+  "generated_at": "2026-09-17T14:25:51+00:00",
   "kind": "listing",
   "machine": {
     "arch": "riscv64",
@@ -22,14 +22,14 @@
   "recorded_on": {
     "arch": "x86_64",
     "cpu": {
-      "bogomips": "5200.00",
-      "model name": "Intel(R) Xeon(R) 6973P-C"
+      "bogomips": "5599.99",
+      "model name": "Intel(R) Xeon(R) Processor @ 2.80GHz"
     },
     "cpus_online": "0-3",
-    "kernel": "Linux 6.17.0-1022-azure",
+    "kernel": "Linux 6.18.44-fc-v33",
     "kind": "other",
-    "os": "Ubuntu 24.04.5 LTS",
-    "python": "3.11.16"
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.11.15"
   },
   "summary": {
     "listings": {

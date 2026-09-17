@@ -8,4 +8,4 @@
 | `sysfs_vec_sum_f32` | 8 (0 vector) | 9 (0 vector) | 37 (5 vector) |
 | `sysfs_vec_sum_i32` | 12 (0 vector) | 40 (5 vector) | 40 (5 vector) |
 
-*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc · `the book's aarch64 listing flags, then with -O3, then with -O3 -ffast-math` · 2026-09-16 · Source: `bench/results/vectors-census.json`, code hash `5d3380bb94c6673f`.*
+*Conditions: target `host` · aarch64 cross compiler, any machine — nothing here was executed · aarch64-linux-gnu-gcc · `the book's aarch64 listing flags, then with -O3, then with -O3 -ffast-math` · 2026-09-17 · Source: `bench/results/vectors-census.json`, code hash `7aadd394c6e4d2c1`.*

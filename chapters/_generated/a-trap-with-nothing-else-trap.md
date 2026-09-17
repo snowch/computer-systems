@@ -10,4 +10,4 @@
 | A register set before the trap, still set after it | yes |
 | Traps taken | 1 |
 
-*Conditions: target `bare` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · no firmware, no kernel · riscv64-linux-gnu-gcc · `-march=rv64g -mabi=lp64 -mcmodel=medany -ffreestanding -nostdlib -fno-pic -fno-stack-protector -fno-builtin -O1 -g -Wall -Werror` · 2026-09-16 · Source: `bench/results/trap-bare.json`, code hash `2bbdbf2bf6ea4d69`.*
+*Conditions: target `bare` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · no firmware, no kernel · riscv64-linux-gnu-gcc · `-march=rv64g -mabi=lp64 -mcmodel=medany -ffreestanding -nostdlib -fno-pic -fno-stack-protector -fno-builtin -O1 -g -Wall -Werror` · 2026-09-17 · Source: `bench/results/trap-bare.json`, code hash `160b2b96a1df4b9d`.*

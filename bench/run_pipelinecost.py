@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 19's measurements: what the core does between fetching an instruction and finishing it.
+"""The pipeline chapter's measurements: what the core does between fetching an instruction and finishing it.
 
     python3 -m bench.run_pipelinecost          # on the board only, and needs perf counters
     python3 -m bench.run_pipelinecost --check  # re-run and compare; write nothing
@@ -12,7 +12,7 @@ and nothing else.
     branch   the same arithmetic on the same multiset of values, reordered so that the branch
              is anywhere from perfectly predictable to not at all.
 
-**The branch sweep uses `sysfs_count_over_calling` and not `sysfs_count_over`.** ch24 opens by
+**The branch sweep uses `sysfs_count_over_calling` and not `sysfs_count_over`.** The chapter opens by
 showing the compiler turning the plain one into a `cset` with no branch in it, and a branchless
 loop cannot mispredict — measuring it would produce a flat line and a chapter concluding that
 prediction does not matter. The first version of this runner did exactly that.
@@ -46,7 +46,7 @@ EVENTS = ["instructions", "cycles", "branches", "branch-misses"]
 
 
 class PipelineCostError(RuntimeError):
-    """The sweep stopped measuring what ch24 is about."""
+    """The sweep stopped measuring what the chapter is about."""
 
 
 def parse(text: str) -> dict[str, Any]:
@@ -93,7 +93,7 @@ def capture() -> dict[str, Any]:
         if "cycles" not in counts or "instructions" not in counts or not counts["cycles"]:
             raise PipelineCostError(
                 "this PMU did not supply instructions and cycles, so IPC cannot be reported. "
-                "ch24's first table is IPC; it is not a figure this book will estimate."
+                "the chapter's first table is IPC; it is not a figure this book will estimate."
             )
         answers.add(facts["answer"])
         variants[facts["label"]] = {
@@ -104,7 +104,7 @@ def capture() -> dict[str, Any]:
     if len(answers) != 1:
         raise PipelineCostError(
             f"the chain widths computed different totals ({sorted(answers)}). They are one sum "
-            "with a different number of accumulators, and ch24 compares them only while that holds."
+            "with a different number of accumulators, and the chapter compares them only while that holds."
         )
 
     points = []
@@ -117,7 +117,7 @@ def capture() -> dict[str, Any]:
         if "branch-misses" not in counts or "branches" not in counts:
             raise PipelineCostError(
                 "this PMU has no branch or branch-miss counter, so the mispredict rate cannot be "
-                "measured. ch24 says what it would take rather than estimating it."
+                "measured. The chapter says what it would take rather than estimating it."
             )
         points.append(
             {
@@ -142,7 +142,7 @@ def capture() -> dict[str, Any]:
     if spread < 1:
         raise PipelineCostError(
             f"the mispredict rate moved by {spread:.2f} points across the whole sweep. Either the "
-            "compiler removed the branch — ch24 shows it doing exactly that to the other "
+            "compiler removed the branch — the chapter shows it doing exactly that to the other "
             "variant — or the counter is not counting."
         )
 

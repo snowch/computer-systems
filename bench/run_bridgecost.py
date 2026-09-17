@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 15's price: what the two routes cost, beside what their instruction counts predicted.
+"""The two-routes chapter's price: what the routes cost, beside what their instruction counts predicted.
 
     python3 -m bench.run_bridgecost          # on the board only
     python3 -m bench.run_bridgecost --check  # re-run and compare; write nothing
@@ -52,7 +52,7 @@ def parse(text: str) -> dict[str, Any]:
 def predicted_ratio() -> float:
     """What the instruction counts say the ratio should be, from the committed structural result.
 
-    This is the number ch20 exists to falsify. It comes from `bridge-both`, which both targets
+    This is the number the two-routes chapter exists to falsify. It comes from `bridge-both`, which both targets
     agreed about, so the chapter's prediction and its measurement cannot drift apart.
     """
     counts = load_result("bridge-both")["summary"]["instructions"]["aarch64"]
@@ -65,7 +65,7 @@ def capture() -> dict[str, Any]:
 
     if not facts["agree"]:
         raise BridgeCostError(
-            "the two routes computed different totals. ch20's whole argument is that they agree "
+            "the two routes computed different totals. The whole argument is that they agree "
             "about everything except cost; a disagreement makes this a comparison between two "
             "different programs."
         )

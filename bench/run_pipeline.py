@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 17's artefact: what the core is given to work with.
+"""The pipeline chapter's artefact: what the core is given to work with.
 
     python3 -m bench.run_pipeline           # classify the instructions in each variant
     python3 -m bench.run_pipeline --check   # re-classify and compare; write nothing
@@ -14,7 +14,7 @@ is how the book found that out about its own code rather than discovering it in 
 **How much parallelism the source offers.** The four sums do the same additions with different
 numbers of accumulators, so they differ in the length of the dependent chain and not in the work.
 Instruction counts see that exactly backwards — the shortest program has the longest chain — which
-is [ch23]'s closing point made concrete.
+is the optimisation chapter's closing point made concrete.
 """
 
 from __future__ import annotations
@@ -62,7 +62,7 @@ def capture() -> dict[str, Any]:
     if flattened["if_converted"] == 0:
         raise RuntimeError(
             "sysfs_count_over still contains a branch, so this compiler did not if-convert it and "
-            "ch24's opening finding no longer holds. The chapter says the compiler removed the "
+            "the chapter's opening finding no longer holds. It says the compiler removed the "
             "branch; check whether that is still true before re-stamping."
         )
     if branchy["conditional_branches"] <= flattened["conditional_branches"]:

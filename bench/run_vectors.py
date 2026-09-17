@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 21's evidence: five loops, two optimisation levels, and which of them got wider.
+"""The vectors chapter's evidence: five loops, two optimisation levels, and which of them got wider.
 
     python3 -m bench.run_vectors           # capture and stamp
     python3 -m bench.run_vectors --check   # re-capture and diff; write nothing
@@ -221,7 +221,7 @@ def main(argv: list[str] | None = None) -> int:
     status = 0
     for payload in payloads:
         if args.check:
-            status |= compare(payload, "the compiler still makes the same of ch28's five loops")
+            status |= compare(payload, "the compiler still makes the same of the five loops")
         else:
             path = write_result(payload)
             print(f"wrote {Path(path).relative_to(ROOT)}")

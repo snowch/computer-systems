@@ -117,7 +117,7 @@ def capture() -> dict[str, Any]:
             "Run it over SSH on the board:  python3 -m bench.run_perfevents"
         )
     if not (bin_perf := subprocess.run(["which", "perf"], capture_output=True, text=True).stdout):
-        raise SystemExit("perf is not installed; see ch00")
+        raise SystemExit("perf is not installed; see the board chapter")
 
     pmu = _cpu_pmu()
     generic_hardware = _generic("hw")

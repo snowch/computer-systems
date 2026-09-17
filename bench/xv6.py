@@ -47,8 +47,9 @@ STAGE = ROOT / "xv6" / "stage"
 #: xv6's shell prompt. Everything here is a search for this two-character string.
 PROMPT = "$ "
 
-#: Default core count. Three, matching upstream's own default, and enough that ch17 and ch18 have
-#: something to say about concurrency while a boot still takes about a second.
+#: Default core count. Three, matching upstream's own default, and enough that the locking and
+#: scheduling chapters have something to say about concurrency while a boot still takes about a
+#: second.
 DEFAULT_CPUS = 3
 
 
@@ -60,11 +61,11 @@ def missing_requirements() -> list[str]:
     """What is stopping the xv6 target from running, in words a reader can act on."""
     problems = []
     if not shutil.which("qemu-system-riscv64"):
-        problems.append("qemu-system-riscv64 is not installed (see ch00)")
+        problems.append("qemu-system-riscv64 is not installed (see the setup chapter)")
     if not (XV6_SUBMODULE / "Makefile").exists():
         problems.append("the xv6 submodule is empty (git submodule update --init --recursive)")
     if not (shutil.which("riscv64-linux-gnu-gcc") or shutil.which("riscv64-unknown-elf-gcc")):
-        problems.append("no RISC-V cross compiler on PATH (see ch00)")
+        problems.append("no RISC-V cross compiler on PATH (see the setup chapter)")
     return problems
 
 
@@ -216,7 +217,8 @@ def qemu_command(stage: Path, cpus: int = DEFAULT_CPUS, memory: str = "128M") ->
         # so every boot starts from the same filesystem. Without it a measurement that writes a
         # file would depend on how many times the suite had been run since `mkfs` last ran — and
         # while QEMU does not in fact flush this image before it is killed, "the emulator happens
-        # not to get round to it" is not a property to record numbers against. ch16 counts disk
+        # not to get round to it" is not a property to record numbers against. The drivers chapter
+        # counts disk
         # interrupts, which is what made the question worth settling rather than assuming.
         f"file={stage / 'fs.img'},if=none,format=raw,id=x0,snapshot=on",
         "-device",

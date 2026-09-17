@@ -1,5 +1,5 @@
 {
-  "code_fingerprint": "57ccbc7b83141b44",
+  "code_fingerprint": "52aa592ba783a4c7",
   "code_sources": [
     "bench/run_oscost.py",
     "sysfs/bench/oscost.c",

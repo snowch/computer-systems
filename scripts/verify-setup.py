@@ -275,8 +275,8 @@ def check_host_target(report: Report) -> bool:
 def check_perf(report: Report) -> None:
     """Does perf reach hardware counters on this machine?
 
-    The one capability Part V cannot work around, which is why ch00 checks it rather than
-    assuming it. On ARM the usual failure is a kernel that was never told the PMU exists; on
+    The one capability Part V cannot work around, which is why the board chapter checks it rather
+    than assuming it. On ARM the usual failure is a kernel that was never told the PMU exists; on
     RISC-V the counters arrive through the firmware's SBI PMU extension, so the answer depends on
     the firmware as much as on the core.
     """
@@ -308,7 +308,7 @@ def check_perf(report: Report) -> None:
         report.say(
             WARN,
             "  on ARM check the device tree has a PMU node (dmesg | grep -i pmu); on RISC-V "
-            "check CONFIG_RISCV_PMU_SBI and the firmware's SBI PMU extension. ch00 has both",
+            "check CONFIG_RISCV_PMU_SBI and the firmware's SBI PMU extension. The board chapter has both",
         )
         report.block("perf cannot read counters on this board")
 
@@ -406,7 +406,7 @@ def main() -> int:
     host_part = next(part for part in PARTS if part.target == "host")
     first_host_chapter = in_part(host_part)[0].label
     if bare_ready and xv6_ready and host_ready:
-        print("All three targets are available here. Start at chapter 0.")
+        print("All three targets are available here. Start at the first chapter.")
     elif bare_ready or xv6_ready:
         print(
             f"The emulated targets are ready: {emulated} run here in full.\n"
@@ -419,7 +419,7 @@ def main() -> int:
             f"Install a cross compiler and QEMU to work through {emulated} as well."
         )
     else:
-        print("No target is ready yet. Chapter 0 walks through all three.")
+        print("No target is ready yet. The two setup chapters walk through all three.")
     return 0
 
 

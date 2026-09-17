@@ -116,7 +116,7 @@ class Listing:
 BOARD = "run `make bench-board` on the reference machine and commit the result"
 
 FIGURES: dict[str, Table | Diagram | Listing] = {
-    # -- ch00 ---------------------------------------------------------------------------
+    # -- Prerequisites and Setup---------------------------------------------------------------------------
     "prerequisites-and-setup-targets": Diagram(
         draw=three_target_map,
         alt="The bare, xv6 and host targets side by side, with what each can and cannot answer.",
@@ -135,7 +135,7 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     ),
     "reading-a-listing-clamp": Listing(
         symbol="sysfs_clamp",
-        # RISC-V first: it is the target the reader has already booted by this point in ch00.
+        # RISC-V first: it is the target the reader has already booted by this point.
         results=("shapes-riscv64", "shapes-aarch64"),
     ),
     # -- What a Computer Does With a Program---------------------------------------------------------------------------

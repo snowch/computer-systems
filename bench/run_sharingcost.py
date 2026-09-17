@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 20's measurements: what four cores cost each other.
+"""The false-sharing chapter's measurements: what four cores cost each other.
 
     python3 -m bench.run_sharingcost          # on the board only
     python3 -m bench.run_sharingcost --check  # re-run and compare; write nothing
@@ -12,7 +12,7 @@ writes, against one each has to itself.
 **This runner refuses a flat first experiment**, and that refusal is the reason it is worth
 reading. The packed layout must be meaningfully slower than the padded one; if it is not, either
 the counters are not where the layout says they are or the threads are not running at the same
-time, and in both cases ch25's headline figure would be a table showing that false sharing costs
+time, and in both cases the headline figure would be a table showing that false sharing costs
 nothing.
 
 Neither the magnitude nor the direction can be checked anywhere but the board, so nothing here is
@@ -48,7 +48,7 @@ CONTENDED = 1.3
 
 
 class SharingCostError(RuntimeError):
-    """The experiment stopped demonstrating what ch25 says it demonstrates."""
+    """The experiment stopped demonstrating what the chapter says it demonstrates."""
 
 
 def parse(text: str) -> dict[str, Any]:
@@ -92,7 +92,7 @@ def capture() -> dict[str, Any]:
             expected_sharing = layout == "packed"
             if facts["same_line"] != expected_sharing:
                 raise SharingCostError(
-                    f"the {layout} layout reported same_line={facts['same_line']}, and ch25 is "
+                    f"the {layout} layout reported same_line={facts['same_line']}, and the chapter is "
                     f"about it being {expected_sharing}. The arena is line-aligned precisely so "
                     "this holds; if it has stopped, the two arrangements are one arrangement."
                 )

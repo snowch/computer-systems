@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 1's artefacts: what each stage of the toolchain hands to the next.
+"""The program-end-to-end chapter's artefacts: what each stage of the toolchain hands to the next.
 
     python3 -m bench.run_stages           # walk the toolchain and stamp the result
     python3 -m bench.run_stages --check   # re-walk and compare; write nothing
@@ -112,7 +112,7 @@ def refuse_a_size_that_describes_this_checkout(scratch: Path) -> None:
 def walk() -> dict[str, Any]:
     """Run the four commands and read back what they left behind."""
     if not shutil.which(CC):
-        raise WalkError(f"{CC} is not installed (see ch00)")
+        raise WalkError(f"{CC} is not installed (see the setup chapter)")
     with tempfile.TemporaryDirectory() as scratch:
         printed = subprocess.run(
             ["sh", str(WALK), SOURCE, scratch, CC],

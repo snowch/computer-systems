@@ -10,4 +10,4 @@
 | Table in play at once, partitioned | 8,192 (32,768 bytes) |
 | Key traffic partitioning adds | 3,145,728 reads, 1,048,576 writes |
 
-*Conditions: target `host` · aarch64 cross build, any machine — run under user-mode QEMU for counts only · aarch64-linux-gnu-gcc · `-O2 -g -Wall -Wextra -static` · 2026-09-16 · Source: `bench/results/tally-census.json`, code hash `c03be3830259c7ce`.*
+*Conditions: target `host` · aarch64 cross build, any machine — run under user-mode QEMU for counts only · aarch64-linux-gnu-gcc · `-O2 -g -Wall -Wextra -static` · 2026-09-17 · Source: `bench/results/tally-census.json`, code hash `e19cdb43c99e15cf`.*

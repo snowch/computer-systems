@@ -46,8 +46,8 @@ from bench.stamp import (
 #: symbols in the order a chapter meets them).
 #:
 #: One result per file per architecture rather than one big result, because the fingerprint is
-#: taken over the sources a result names — so editing ch10's example would otherwise invalidate
-#: ch09's listings and send an author to the wrong chapter looking for what changed.
+#: taken over the sources a result names — so editing one chapter's example would otherwise
+#: invalidate another's listings and send an author to the wrong chapter looking for what changed.
 SOURCES: dict[str, tuple[str, str, tuple[str, ...]]] = {
     "shapes": (
         "sysfs/lib/shapes.c",
@@ -160,7 +160,7 @@ def target_for(arch: str) -> HostTarget:
         cc = "gcc"
     else:
         raise ToolchainMissingError(
-            f"no {arch} compiler: install {APT_PACKAGE[arch]} (see ch00). Listings are committed, "
+            f"no {arch} compiler: install {APT_PACKAGE[arch]} (see the setup chapter). Listings are committed, "
             "so this is only needed to regenerate them."
         )
     return HostTarget(

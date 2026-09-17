@@ -160,7 +160,7 @@ def test_disassembles_both_architectures(arch: str, build_dir):
 
 @pytest.mark.hostcode
 def test_the_two_architectures_disagree_about_clamp():
-    """The teaching claim in ch00, asserted rather than hoped for.
+    """The teaching claim in the listing chapter, asserted rather than hoped for.
 
     If a future compiler starts emitting a conditional select on RISC-V, or stops emitting one on
     AArch64, the chapter's explanation is wrong and this is where that surfaces — before a reader
@@ -174,16 +174,16 @@ def test_the_two_architectures_disagree_about_clamp():
             pytest.skip(f"needs both cross compilers; {arch} is missing")
         texts[arch] = disassemble([SHAPES_SOURCE], "sysfs_clamp", target).text
 
-    assert "csel" in texts["aarch64"], "ch00 says AArch64 selects rather than branches"
+    assert "csel" in texts["aarch64"], "the chapter says AArch64 selects rather than branches"
     assert "csel" not in texts["riscv64"]
     assert texts["riscv64"].count("ret") > texts["aarch64"].count("ret"), (
-        "ch00 says the RISC-V version needs more exits"
+        "the chapter says the RISC-V version needs more exits"
     )
 
 
 @pytest.mark.hostcode
 def test_the_two_assemblers_divide_the_work_differently():
-    """ch00 tells the reader to run readelf and see this. It should be there when they do.
+    """The setup chapter tells the reader to run readelf and see this. It should be there when they do.
 
     RISC-V leaves every intra-function branch as a relocation against a local label, because the
     linker may still relax the code and change the distances; AArch64's assembler settles them and

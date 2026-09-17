@@ -12,10 +12,10 @@ from tests.the_os_layers_cost.harness import ask
 
 # (instructions, ipc_x100, mhz)
 CASES = {
-    "ch13's path at IPC 1.5": (83, 150, 2_400),
-    "ch13's path at IPC 1.0": (83, 100, 2_400),
-    "ch13's path at IPC 0.5": (83, 50, 2_400),
-    "ch13's path on a slower clock": (83, 250, 1_500),
+    "the trap path at IPC 1.5": (83, 150, 2_400),
+    "the trap path at IPC 1.0": (83, 100, 2_400),
+    "the trap path at IPC 0.5": (83, 50, 2_400),
+    "the trap path on a slower clock": (83, 250, 1_500),
     "one instruction": (1, 100, 1_000),
     "a cycle per megahertz": (2_400, 100, 2_400),
     "a long path": (10_000, 175, 2_400),
@@ -39,8 +39,8 @@ def test_rounding_twice_gives_a_different_answer():
 
 def test_halving_the_ipc_doubles_the_floor():
     """Scaffolding: the bound's shape, which is the part a reader should be able to predict."""
-    fast = expected(*CASES["ch13's path at IPC 1.5"])
-    slow = expected(*CASES["ch13's path at IPC 0.5"])
+    fast = expected(*CASES["the trap path at IPC 1.5"])
+    slow = expected(*CASES["the trap path at IPC 0.5"])
     assert slow == pytest.approx(3 * fast, rel=0.02)
 
 

@@ -49,4 +49,4 @@
 | `df4:    ldp     x29, x30, [sp], #48` | +44 | 0.0% |
 | `df8:    ret` | +45 | 0.0% |
 
-*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/skid-host.json`, code hash `f4afe799317fa20d`.*
+*Conditions: target `host` · Raspberry Pi 5 Model B Rev 1.1 · Linux 6.18.50+rpt-rpi-2712 · cc (Debian 14.2.0-19) 14.2.0 · `-O2 -g -Wall -Wextra` · 2026-09-16 · Source: `bench/results/skid-host.json`, code hash `fb4c63af07e67d03`.*

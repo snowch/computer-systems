@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 17's measurements: where the data is, found by asking rather than by looking it up.
+"""The memory-hierarchy chapter's measurements: where the data is, found by asking rather than by looking it up.
 
     python3 -m bench.run_hierarchy          # on the board only
     python3 -m bench.run_hierarchy --check  # re-run and compare; write nothing
@@ -113,13 +113,13 @@ def derive(facts: dict[str, Any]) -> dict[str, Any]:
     if not line_steps:
         raise HierarchyError(
             "the stride sweep is flat: no gap between visits made the chase slower. Either the "
-            "chain is not being followed or the compiler removed it, and ch22's line-size figure "
+            "chain is not being followed or the compiler removed it, and the line-size figure "
             "cannot come from a curve with no step in it."
         )
     if not size_steps:
         raise HierarchyError(
             "the size sweep is flat: growing the working set cost nothing. That would mean there "
-            "is no hierarchy to measure, which is the one thing ch22 is about."
+            "is no hierarchy to measure, which is the one thing the chapter is about."
         )
 
     vendor = vendor_caches()

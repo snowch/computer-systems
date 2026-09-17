@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 11's measurement: what a context switch moves, and how many of them a workload decides.
+"""The scheduling chapter's measurement: what a context switch moves, and how many of them a workload decides.
 
     python3 -m bench.run_switch           # read swtch out of the kernel, boot, read the census
     python3 -m bench.run_switch --check   # re-run and compare; write nothing
@@ -8,14 +8,14 @@ Two facts, and the first is the chapter.
 
 **What `swtch` saves**, read out of the kernel as built. A context switch is a function call, so
 the ABI has already dealt with everything a caller was willing to lose — which means the switch
-itself has to preserve far less than [ch13]'s trap path, and the difference is not an optimisation
+itself has to preserve far less than the traps chapter's trap path, and the difference is not an optimisation
 but a consequence of one side having agreed to the convention.
 
 **How many switches a workload causes**, by reason. Only one of the three reasons is a number the
 workload fixes: a process that exits switches away exactly once. How often the timer took the CPU
 away is a statement about elapsed time, and how often a process waited is a statement about
 whether the thing it waited for had already happened — so those two are counted by the kernel and
-declined by this runner, for [ch16]'s reasons.
+declined by this runner, for the drivers chapter's reasons.
 """
 
 from __future__ import annotations

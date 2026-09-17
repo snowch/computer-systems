@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 18's artefact: which counters share a cache line.
+"""The false-sharing chapter's artefact: which counters share a cache line.
 
     python3 -m bench.run_sharing           # read the layouts and stamp them
     python3 -m bench.run_sharing --check   # re-read and compare; write nothing
@@ -9,7 +9,7 @@ line — is answered by the compiler and the layout, so it can be answered here.
 costs needs four cores and is `memory-ordering-on-real-hardware-sharing`, pending on the board.
 
 Built for the reference architecture and run under user-mode QEMU for its *answers*, which is the
-same arrangement [ch20] uses: a layout is a fact about a data model and an ABI, and both are
+same arrangement the chapter uses: a layout is a fact about a data model and an ABI, and both are
 present in a cross build.
 """
 

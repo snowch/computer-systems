@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Chapter 16's artefact: what the compiler does to five versions of one loop.
+"""The optimisation chapter's artefact: what the compiler does to five versions of one loop.
 
     python3 -m bench.run_loops           # compile each variant at each level and stamp the counts
     python3 -m bench.run_loops --check   # re-compile and compare; write nothing
 
-Not a timing, and it does not need to be. The question ch23 asks first is *whether the source
+Not a timing, and it does not need to be. The question the chapter asks first is *whether the source
 change survived the compiler at all* — and that is answered by the instruction counts, which are
 compiler output rather than machine behaviour, so CI regenerates them on every push exactly as it
 does the listings.

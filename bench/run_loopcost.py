@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Chapter 18's price: what five spellings of one loop are worth once a compiler has had them.
+"""The optimisation chapter's price: what five spellings of one loop are worth once a compiler has had them.
 
     python3 -m bench.run_loopcost          # on the board only
     python3 -m bench.run_loopcost --check  # re-run and compare; write nothing
@@ -62,7 +62,7 @@ def capture() -> dict[str, Any]:
     if disagreed:
         raise LoopCostError(
             f"{disagreed} computed a different total from `plain`. The five are one computation "
-            "written five ways, and ch23's comparison is only a comparison while that holds."
+            "written five ways, and the comparison is only a comparison while that holds."
         )
     empty = sorted(name for name, data in facts["loops"].items() if not data["total_ns"])
     if empty:

@@ -34,7 +34,7 @@ SOURCE_DIRS = {
 }
 
 #: The first line of a program's opening comment, which every one of them has. The forms vary --
-#: `/* firstc — one complete C program`, `/* ch06 (first half): one page table`,
+#: `/* firstc — one complete C program`, `/* One page table, installed by hand`,
 #: `/* trapload, xv6 target: ask the kernel` -- so the rule is "whatever follows the first dash or
 #: colon", and a line with neither is taken whole.
 OPENING = re.compile(r"^/\*\s*(.+?)\s*$", re.MULTILINE)

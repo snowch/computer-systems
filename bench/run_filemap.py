@@ -54,7 +54,7 @@ READS: dict[str, tuple[str, str]] = {
     ),
     "trampoline.S": (
         "traps-and-system-calls",
-        "uservec and userret — the register moves ch13 counts",
+        "uservec and userret — the register moves the traps chapter counts",
     ),
     "trap.c": (
         "traps-and-system-calls",
@@ -67,7 +67,7 @@ READS: dict[str, tuple[str, str]] = {
     "syscall.h": ("traps-and-system-calls", "the call numbers"),
     "sysproc.c": (
         "traps-and-system-calls",
-        "the process calls, including the one ch13's workload uses",
+        "the process calls, including the one the traps chapter's workload uses",
     ),
     "vm.c": ("virtual-memory", "the page-table walk, mapping, and the kernel's own address space"),
     "riscv.h": ("virtual-memory", "the Sv39 field definitions, as macros over a 64-bit word"),
@@ -88,13 +88,19 @@ READS: dict[str, tuple[str, str]] = {
         "scheduling-and-context-switches",
         "the scheduler, and both halves of a context switch",
     ),
-    "proc.h": ("scheduling-and-context-switches", "the context ch18 counts the registers of"),
+    "proc.h": (
+        "scheduling-and-context-switches",
+        "the context the scheduling chapter counts the registers of",
+    ),
     "swtch.S": (
         "scheduling-and-context-switches",
         "the switch itself — fourteen registers and nothing else",
     ),
     "bio.c": ("the-file-system", "the buffer cache, and why a read can cost nothing"),
-    "log.c": ("the-file-system", "the write-ahead log ch19 counts the amplification of"),
+    "log.c": (
+        "the-file-system",
+        "the write-ahead log the file-system chapter counts the amplification of",
+    ),
     "fs.c": ("the-file-system", "inodes, blocks, and the path from a name to a byte"),
     "file.c": ("the-file-system", "what a file descriptor actually is"),
     "virtio_disk.c": ("the-file-system", "the only device in the system that makes you wait"),

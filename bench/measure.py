@@ -27,8 +27,8 @@ the fastest the machine can do the work — plus interference: interrupts, migra
 process, a TLB shootdown. Interference only ever adds. So the book reports the **minimum** as the
 best case the hardware can achieve, the **median** as what a caller typically sees, and a high
 percentile as the tail, and it never reports a mean, which is a number nobody experiences and
-which a single scheduling hiccup can move. Chapter 14 makes this argument properly and measures
-the distribution that justifies it.
+which a single scheduling hiccup can move. The measurement chapter makes this argument properly
+and measures the distribution that justifies it.
 """
 
 from __future__ import annotations
@@ -50,8 +50,8 @@ COMMON_FLAGS: tuple[str, ...] = ("-O2", "-g", "-Wall", "-Wextra")
 #: Architecture flags, by target architecture.
 #:
 #: AArch64 gets none: the baseline is armv8-a and naming a specific core would bake the
-#: reference machine into every binary, which is exactly the mistake ch00 stopped making about
-#: boards. RISC-V gets an explicit ``-march``/``-mabi`` because the toolchain's default varies by
+#: reference machine into every binary, which is exactly the mistake the setup chapter stopped
+#: making about boards. RISC-V gets an explicit ``-march``/``-mabi`` because the default varies by
 #: distribution, and a silently different ABI is a very confusing way to lose an afternoon.
 ARCH_FLAGS: dict[str, tuple[str, ...]] = {
     "aarch64": (),
@@ -105,7 +105,7 @@ def resolve_host_target(prefer_portable: bool = False) -> HostTarget:
     are both places a timing means something, and both are recorded by name in the result.
 
     Then cross-compilation with user-mode emulation, which gets the reference architecture's
-    semantics onto an x86-64 CI runner. AArch64 is tried before RISC-V because ch00's reference
+    semantics onto an x86-64 CI runner. AArch64 is tried before RISC-V because the reference
     machine is a Pi; the RISC-V path stays because Parts III and IV need that toolchain anyway and
     a reader following Part V on a RISC-V board should have their examples checked too.
 
@@ -223,7 +223,8 @@ def repeat(work: Callable[[], float], n: int, warmup: int = 0) -> list[float]:
 def summarise(samples: Sequence[float]) -> dict[str, Any]:
     """Reduce samples to what the book prints: a floor, a typical case, and a tail.
 
-    No mean. See this module's docstring, and ch21 for the measurement that settles it.
+    No mean. See this module's docstring, and the measurement chapter for the figure that
+    settles it.
     """
     if not samples:
         raise ValueError("cannot summarise an empty sample set")
