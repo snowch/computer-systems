@@ -44,8 +44,8 @@ particular: it is the order in which everything else is initialised, which is a 
 have seen once and a poor thing to study in isolation.
 
 **Nothing in `user/` is mapped either.** The book's own programs live in `xv6/apps/`, and the
-kernel's user programs are read in passing rather than studied — with one exception the chapters
-name, which is that [ch16](#traps-and-system-calls) explains why the shell is the worst possible thing to measure.
+kernel's user programs are read in passing rather than studied — with one exception:
+[ch16](#traps-and-system-calls) explains why the shell is the worst possible thing to measure.
 
 ## What this cannot tell you
 

@@ -21,8 +21,8 @@ short_title: "24 · Measuring"
 How do I get a number I would defend, and how would I know it was wrong?
 
 [ch23](#the-same-program-on-both-targets) established that the structural model does not predict cost, and pointed at a
-machine that can answer. This chapter first measures what reading the clock costs, and then changes
-something about the program that cannot matter, to find out whether the answer moves.
+machine that can answer. This chapter first measures what reading the clock costs, then changes
+something about the program that should make no difference, and checks whether the answer moves.
 
 ## The material
 
@@ -64,9 +64,8 @@ Look at the last row. Identical work, identical input, nothing else running — 
 runs in ten agree to within a rounding error while the slowest stands far outside them. Nothing was
 wrong with any of those measurements; they are all correct observations of what happened.
 
-So "how long does it take" has no answer, and the question has to be replaced. What is reported
-instead is a distribution, which is why `sysfs_summarise` exists and why problem 24.1 asks you to
-write it.
+So "how long does it take" has no answer, and the question has to change. Report a distribution
+instead, which is why `sysfs_summarise` exists and why problem 24.1 asks you to write it.
 
 **Why the minimum is usually the number to look at.** Everything that can happen to a measurement
 on a real machine makes it slower: an interrupt arrives, another process is scheduled, a page is
@@ -80,15 +79,15 @@ statistics, and the mistake is not picking the wrong one but not noticing there 
 
 ### Why the first measurements are slow
 
-The first few measurements are slower, always, and for three reasons this book takes apart
-either side of this chapter: [ch18](#page-faults-as-a-feature)'s pages are not yet faulted in, [ch25](#the-memory-hierarchy)'s caches hold somebody
+The first few measurements are slower, always, for three reasons the chapters either side of this
+one take apart: [ch18](#page-faults-as-a-feature)'s pages are not yet faulted in, [ch25](#the-memory-hierarchy)'s caches hold somebody
 else's data, and the branch predictor of [ch27](#the-cpu) has never seen this loop.
 
 Discarding them is standard practice and is usually done wrong. Warm-up is a property of
 *position*: the first samples are slow because they are first. A slow sample in the middle is
 interference, it is not warm-up, and discarding everything before it throws away good
-measurements in order to hide a bad one. Problem 24.3 is exactly that distinction, and that is why
-the definition it asks you to implement has a second clause.
+measurements in order to hide a bad one. Problem 24.3 is that distinction, which is why the
+definition it asks you to implement has a second clause.
 
 ### The variable that should not matter
 
@@ -106,23 +105,23 @@ everything sits and not padding the compiler quietly folded away.
 The addresses differ; the median does not move by a nanosecond. On this core, where the data sits
 does not change what reaching it costs.
 
-On other machines it does move. Mytkowicz and colleagues @mytkowicz2009wrong showed the same
-change — the size of an environment variable, which moves the stack, which is what the padding here
-does — to be large enough to manufacture or erase the kind of speedup papers are published about.
-Their machine cared. This one, measured the same way, does not: very likely a core with this much
-first-level cache, and this forgiving an attitude to unaligned access, hides what a 2009 one could
-not.
+On other machines it does move. Mytkowicz and colleagues @mytkowicz2009wrong made the same change —
+they varied the size of an environment variable, which moves the stack, exactly as the padding here
+does — and found it large enough to manufacture or erase the kind of speedup papers are published
+about. Their machine cared. This one, measured the same way, does not, very likely because a core
+with this much first-level cache, and this forgiving an attitude to unaligned access, hides what a
+2009 one could not.
 
-The reason to run the experiment survives the null result untouched. You cannot tell which machine
-you have by reasoning about it — Mytkowicz and colleagues could not, and neither could this chapter
+The null result does not make the experiment less worth running. You cannot tell which machine you
+have by reasoning about it — Mytkowicz and colleagues could not, and neither could this chapter
 until the board answered. A single configuration, measured carefully, can be confidently wrong, and
-no amount of repetition inside it ever finds out. So the defence is not to conclude the effect is
-gone because this page did not find it. It is to vary the thing that should not matter, on your own
-machine, and see whether your result survives.
+no amount of repetition inside it ever finds out. So do not conclude the effect is gone because
+this page did not find it. Vary the thing that should not matter, on your own machine, and see
+whether your result survives.
 
 ### The floor moves
 
-One more, specific to this book's reference machine and to most small ones.
+One more source of slow samples, specific to this book's reference machine and to most small ones.
 
 A Raspberry Pi 5 under sustained load gets hot and reduces its clock. Not gradually and not with a
 warning: the frequency drops, and every measurement after that point is against a different
@@ -152,12 +151,12 @@ not, because interference can only ever add time: the fastest run is the one it 
 earlier argument for the minimum, demonstrated rather than asserted — everything the radio does
 makes a measurement slower, so the mean carries the interference and the floor carries the work.
 
-The rest of the table is the warning. A clean run with the radio on is indistinguishable from one
-with it off, so a single measurement gives you none: the radio's background work arrives in bursts,
-and only a run that catches one is wrecked — its mean dragged well above the floor while its
-neighbours look fine. Which run you happened to take decides your answer, and nothing inside that
-run tells you which kind you got. It is the warm-up problem inverted: not a slow prefix you can cut,
-but slow samples scattered through a run that averages out clean until it does not.
+Now read the rest of the table. A clean run with the radio on is indistinguishable from one with it
+off, so a single measurement cannot tell you which you have: the radio's background work arrives in
+bursts, and only a run that catches one is wrecked — its mean dragged well above the floor while
+its neighbours look fine. Which run you happened to take decides your answer, and nothing inside
+that run tells you which kind you got. It is the warm-up problem inverted: not a slow prefix you
+can cut, but slow samples scattered through a run that averages out clean until it does not.
 
 Wiring the board does not make it faster. It makes the number mean something, by removing a source
 of slow samples the work has no say in. The radio is one such source; a busy neighbour, a background
@@ -231,11 +230,12 @@ The table above is this board's. `python3 -m bench.run_interference` runs the sa
 toggles the radio for you and restores it — so run it on yours and report the three things the
 method should let you defend: that the floor did not move, that the mean did, and how often a run
 was disturbed. That last figure travels least of anything in this chapter, because it depends on
-your radio, your kernel and whatever else the machine was doing, and that is the point.
+your radio, your kernel and whatever else the machine was doing — which is why you have to take it
+yourself.
 
 There is no test, because the answer is a property of your machine rather than a fact to check
 against. If the floor *does* move on yours, something more interesting than the radio is loose, and
-finding out what is the skill this chapter exists to teach.
+tracking it down is the skill this chapter exists to teach.
 
 ## Where to go next
 

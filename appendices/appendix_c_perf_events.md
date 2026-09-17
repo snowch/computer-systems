@@ -9,8 +9,8 @@ short_title: "Appendix C"
 An appendix here is a reference, not a chapter: no argument, no narrative, and everything in it
 either cites a primary source or comes from a stamped result. This one is generated from the
 reference machine, because which events a core exposes is a property of its silicon, its kernel and
-its firmware together and cannot be read off a datasheet. What each event *means* is the Cortex-A76
-manual's to say @arm-a76-trm; which events exist *here* is `bench/results/perfevents-host.json`'s.
+its firmware together and cannot be read off a datasheet. The Cortex-A76 manual @arm-a76-trm says
+what each event *means*; `bench/results/perfevents-host.json` says which events exist *here*.
 Regenerate it on your own board with `python3 -m bench.run_perfevents`.
 
 ## What this machine has
@@ -35,8 +35,8 @@ counters and the same limit.
 
 ## The hardware events
 
-The events the PMU counts — the raw names the kernel exposes for this core. Their meanings are the
-Cortex-A76 manual's @arm-a76-trm, and this book redraws none of them.
+The events the PMU counts — the raw names the kernel exposes for this core. The Cortex-A76 manual
+@arm-a76-trm defines what they mean, and this book redraws none of it.
 
 ```{include} ../chapters/_generated/appendix-c-raw.md
 ```

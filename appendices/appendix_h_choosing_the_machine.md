@@ -10,8 +10,8 @@ An appendix in this book is a reference, not a chapter. This one is read once, b
 any money, and then only to settle an argument with a spec sheet.
 
 [Part V](#part5) is the only part that needs hardware of its own: it is where every number in the
-book is measured, and [ch01](#setting-up-the-board) is where you make it work. What follows is
-the decision before that — what the `host` target has to be able to do, how to check a machine you
+book is measured, and [ch01](#setting-up-the-board) is where you make it work. This appendix covers
+the decision before that: what the `host` target has to be able to do, how to check a machine you
 already own, and what changes if yours differs from the reference. The *argument* for a second
 machine at all is in the [preface](#preface); this is the shopping and the checking.
 
@@ -40,7 +40,7 @@ run you ever take.
 ## Why a separate board, and not the laptop you are reading this on
 
 A laptop can almost certainly count and sample — `perf` on x86-64 is mature, and on Linux you
-could start [Part V](#part5) this afternoon. The reason not to is that the machine is too complicated to
+could start [Part V](#part5) this afternoon. Do not, because a laptop is too complicated to
 learn on. A current laptop has cores of two different kinds, a clock that moves constantly, two
 threads sharing one core's execution units, and a scheduler migrating your benchmark across all of
 it. Each of those makes a measurement harder to attribute. The Pi 5 is four identical cores with
@@ -67,7 +67,9 @@ and running [ch24](#measuring)'s experiments on both is an instructive afternoon
 ## It is an ARM machine, and everything before Part V is RISC-V
 
 That is deliberate: `perf` has to both count *and* sample, no affordable RISC-V core does both,
-and choosing one would have cost two chapters of [Part V](#part5). The [preface](#preface) has the evidence; this appendix is about choosing the machine, and [ch01](#setting-up-the-board) is where you make it work.
+and choosing one would have cost two chapters of [Part V](#part5). The [preface](#preface) has the
+evidence; this appendix is about choosing the machine, and [ch01](#setting-up-the-board) is where
+you make it work.
 
 % number-ok: SoC specification from @rpi-bcm2712; every figure in this book comes from the machine itself
 Its SoC is a BCM2712: four Arm Cortex-A76 cores at 2.4 GHz, 64 kB of L1 instruction and data
@@ -103,7 +105,7 @@ This book does not sell hardware, has no relationship with any vendor, and has t
 its own reference machine. Prices, availability and listings change; nothing here is a warranty
 that a given machine will work for you.
 
-The practical version: **the requirement you cannot check before it arrives is the one that
+In practice: **the requirement you cannot check before it arrives is the one that
 matters most.** No product listing can honestly promise you working performance counters, because
 they depend on the image as much as on the board. Buy somewhere with a return policy, and run
 `scripts/verify-setup.py` on day one rather than the week you reach [Part V](#part5).
@@ -135,7 +137,7 @@ pinned version is wrong within a year, cannot be re-verified on every release, a
 check a string instead of a machine — while the failure it is meant to prevent stays perfectly
 possible on the version that was correct when it was written.
 
-A *minimum* version would be worse still, and the reason is specific rather than pedantic. What
+A *minimum* version would be worse still. What
 went wrong on the Pi 5 was a **regression**, so the node was present in the older kernel and
 absent in the newer one; a floor selects for the broken configurations rather than against them.
 A range would work and would need maintaining forever — and it would still have to be written
@@ -146,8 +148,8 @@ tree in `/boot/firmware/` is, and your machine will read it out for you.
 So the book records the machine instead. Every `host` result stamps the board, the operating
 system, the kernel and whether `perf` could count and sample; the reference machine's own account
 is printed in [ch01](#setting-up-the-board). It tells you what produced the book's numbers; it is
-not a requirement for yours. What is required is that `verify-setup.py` passes on the machine in
-front of you, which is a question about that machine and not about a version string.
+not a requirement for yours. The only requirement is that `verify-setup.py` passes on the machine
+in front of you, which is a question about that machine and not about a version string.
 :::
 
 ## The reference machine, and why your numbers will differ

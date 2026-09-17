@@ -40,8 +40,8 @@ me", and it is not a subtlety: the default is no.
 At `-O3` two of them widen. At `-O3` with permission to change the answer, a third joins them. Two
 never do, at any setting.
 
-So there are four different reasons a loop is not vectorised somewhere in that table, and only one
-of them is about the optimisation level.
+So that table holds four different reasons a loop is not vectorised, and only one of them is about
+the optimisation level.
 
 ### The one that widens
 
@@ -74,7 +74,7 @@ order — lanes accumulating independently, partials combined at the end — and
 give a different answer. A compiler that did that on its own would be changing your program's
 output to make it faster.
 
-The third column is that permission granted. `-ffast-math` says the answer may change, and the
+The third column grants exactly that permission. `-ffast-math` says the answer may change, and the
 loop widens immediately, which is the proof that the refusal was never a limitation.
 
 Problem 31.2 is the disagreement itself. You write both orders, the test supplies an input where
@@ -108,12 +108,11 @@ found this out by tripping over its own guard.
 
 Each measured speedup sits beside the most its lane count could possibly have bought.
 
-The comparison with the bound is the chapter's argument. A speedup on its own invites you to be
-pleased with it; as a fraction of the bound it makes you ask where the rest went — and
-the answer is a tail, or memory, or a loop that was never the bottleneck to begin with. Problem
-31.3 is that arithmetic, and it deliberately does not clamp: a result over the bound means
-something other than the width changed, and the comparison has stopped being between two versions
-of one loop.
+Compare each speedup with its bound. A speedup on its own invites you to be pleased with it; as a
+fraction of the bound it makes you ask where the rest went — and the answer is a tail, or memory,
+or a loop that was never the bottleneck to begin with. Problem 31.3 is that arithmetic, and it
+deliberately does not clamp: a result over the bound means something other than the width changed,
+and the comparison has stopped being between two versions of one loop.
 
 ## What we measured
 

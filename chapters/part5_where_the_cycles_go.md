@@ -36,10 +36,10 @@ It is last because it is the only part that needs the other four to have happene
 
 The whole of what *Systems Performance* @gregg-sysperf covers, deliberately, because that book is
 where this one is trying to deliver you. Tracing and BPF, flame graphs, the network and storage
-stacks, containers, observability across a fleet: none of it is here. What is here is the layer
-underneath — the substrate whose quantities all of those tools report. The relationship is one-way,
-and the reason to do this first is that a flame graph of a workload whose costs you cannot account
-for is a picture rather than an answer.
+stacks, containers, observability across a fleet: none of it is here. This part is the layer
+underneath — cache misses, faults and context switches are what all of those tools report, and
+this is where they get their meaning. Do this first, because a flame graph of a workload whose
+costs you cannot account for is a picture rather than an answer.
 
 It also leaves out a list of numbers to memorise. The figures are this board's. Some of them would
 be different on yours by a factor that matters, and every chapter says so. What transfers is the
@@ -68,8 +68,8 @@ will not match, and where that is likely the chapter says what to expect instead
 number is universal.
 
 The disassembly here is AArch64, not the RISC-V you learned in [Part III](#part3).
-[Appendix F](#appendix-f) is the translation between the two. The reason for the change is the
-subject of this part rather than an accident of it: these chapters need performance counters that
+[Appendix F](#appendix-f) is the translation between the two. The change of architecture is not an
+accident: these chapters need performance counters that
 both *count* and *sample*, and no purchasable RISC-V core does both. Staying on one architecture
 would have cost two chapters their measurements, which is a worse trade than asking you to read a
 second instruction set in five of them.
@@ -79,14 +79,14 @@ counter the firmware does not expose, a second machine that does not exist — t
 shows the reasoning it used instead, and states what it would take to measure. It does not borrow a
 number from somewhere else.
 
-This part also does something more specific than warning that figures differ: more than once it sets
-out to reproduce a well-known effect and finds it mostly gone. Bias from where the stack sits, the
-penalty for false sharing, the clean step that betrays a cache line — each is real, each is in the
-literature, and on this newer core each came back smaller than the folklore promises, sometimes to
-nothing. That is not the measurement failing. A modern core spends its transistors hiding exactly
-these effects, so the older the demonstration the likelier the silicon has closed it, and the number
-you inherited was taken on a machine that no longer exists. It is stated once here because you will
-meet it in three chapters, and the answer is the same each time: measure yours.
+More than once this part sets out to reproduce a well-known effect and finds it mostly gone. Bias
+from where the stack sits, the penalty for false sharing, the clean step that betrays a cache line:
+each is real, each is in the literature, and on this newer core each came back smaller than the
+folklore promises, sometimes to nothing. That is not the measurement failing. A modern core spends
+its transistors hiding exactly these effects, so the older the demonstration the likelier the
+silicon has closed it, and the number you inherited was taken on a machine that no longer exists.
+It is said once here because you will meet it in three chapters, and the answer is the same each
+time: measure yours.
 
 ## Where this leaves you
 

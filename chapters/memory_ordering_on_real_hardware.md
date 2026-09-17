@@ -38,8 +38,8 @@ more than twice as slow as the other.
 ```
 
 The counters are the same counters. What differs is padding, and therefore whether the two land on
-the same cache line — which is decided before anything runs, by the compiler and the layout, which
-is why this figure is measured here rather than on the board.
+the same cache line. The compiler and the layout settle that before anything runs, which is why
+this figure is measured here rather than on the board.
 
 Coherence works in lines, not in variables. When one core writes a line, every other core's copy
 of that line is invalidated, and a core that wanted a *different* variable on that line has to
@@ -71,14 +71,13 @@ being ordered. AArch64 emits `stlr` — a store that carries the ordering itself
 no fence, and a reader who learned that a barrier is something you put between two operations will
 not recognise it as a barrier at all.
 
-Both satisfy the same requirement. Neither of them is memory ordering itself.
+Both satisfy the same requirement. Neither spelling is memory ordering itself.
 
-That is why this book uses two architectures, and it is worth stating as plainly as possible:
-**a reader shown one weak memory model concludes that model is memory ordering.** Shown two, they
-find that "weakly ordered" is a family; that a fence is an architecture-specific spelling of an
-architecture-independent need; and that what actually transfers is the mechanism underneath —
-store buffers, coherence, and the fact that another core can observe your writes in an order you
-did not write them in.
+That is why this book uses two architectures: **a reader shown one weak memory model concludes that
+model is memory ordering.** Shown two, they find that "weakly ordered" is a family; that a fence is
+an architecture-specific spelling of an architecture-independent need; and that what actually
+transfers is the mechanism underneath — store buffers, coherence, and the fact that another core
+can observe your writes in an order you did not write them in.
 
 Problem 28.3 is that correspondence as a table, and what matters is the asymmetry between the two
 spellings rather than the table itself.
@@ -113,7 +112,7 @@ board supplies the curve; the difference is the chapter's real subject.
 
 ## What we measured
 
-Where the fields land, which decides whether the cores will fight, and which needs no machine.
+Where the fields land: that decides whether the cores will fight, and finding it needs no machine.
 The fights themselves were then measured on the board, along with the cost of an atomic contended and
 uncontended.
 

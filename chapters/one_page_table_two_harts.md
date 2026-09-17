@@ -21,9 +21,9 @@ short_title: "08 · One Page Table, Two Harts"
 What does address translation do, and what does a second core break?
 
 Two questions, and two programs, because they are two mechanisms and a chapter that ran them
-together would be teaching neither. Both are the hardware changing what memory does behind the
-program's back — translation deliberately and usefully, a second core as a consequence of there
-being more than one processor.
+together would teach neither. Both are the hardware changing what memory does behind the program's
+back: translation does it deliberately and usefully; a second core does it simply because there is
+more than one processor.
 
 ## The material
 
@@ -54,9 +54,8 @@ The entire table is three entries:
 
 Two of them map memory to itself. They have to: the moment translation is switched on, the
 instruction after the switch is fetched through the table, and a table without the code in it
-would make the program vanish. The third is the interesting one — a different virtual address
-pointing at the same physical memory, so that afterwards two addresses a gigabyte apart name one
-byte.
+would make the program vanish. The third points a different virtual address at the same physical
+memory, so that afterwards two addresses a gigabyte apart name one byte.
 
 ```{figure} _figures/one-page-table-two-harts-alias.svg
 :alt: Three gigapage entries: two identity mappings and one alias into RAM.
@@ -147,9 +146,9 @@ see, and a figure you have reproduced is worth more than one you have been shown
 ```{include} _generated/one-page-table-two-harts-harts.md
 ```
 
-The runner refuses a run in which `updates_lost` is anything but exactly one. That is deliberate:
-if the handshake ever stopped holding the read-modify-write open, the program would still boot,
-still print, and still look convincing, while showing nothing at all.
+The runner refuses a run in which `updates_lost` is anything but exactly one, because if the
+handshake ever stopped holding the read-modify-write open, the program would still boot, still
+print, and still look convincing, while showing nothing at all.
 
 ## What this cannot tell you
 

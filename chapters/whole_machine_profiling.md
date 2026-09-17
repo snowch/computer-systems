@@ -50,9 +50,9 @@ The conditional in the decode phase is taken almost every time. It is the most c
 in the source of that function, and [ch27](#the-cpu) already established what a branch this lopsided
 costs a predictor.
 
-And the partitioned arrangement adds substantial extra traffic in re-reading the keys in order to shrink
-the table in play at once. Whether that trade pays is not a question the census can answer. It is
-the reason there is a second arrangement at all.
+And the partitioned arrangement re-reads the keys, which adds substantial extra traffic, in order to
+shrink the part of the table in play at any one time. Whether that trade pays is not a question the
+census can answer. That open question is why there is a second arrangement at all.
 
 **The census is a prediction, and writing it down first is the method.** A profile with nothing
 committed to beforehand is remarkably easy to agree with: whatever it blames becomes what you
@@ -130,7 +130,7 @@ The fix is not to choose the period more carefully; there is no period that is c
 loop. It is to make the period slightly random, which real profilers do, and which is worth
 knowing about because it is the reason the tool's defaults are not round numbers.
 
-### Before and after
+### The two profiles, before and after
 
 ```{include} _generated/whole-machine-profiling-profile.md
 ```
@@ -139,12 +139,11 @@ The change is the second arrangement: partition the keys so that every increment
 of the table small enough to stay resident, at the cost of reading the keys twice more and writing
 them once more.
 
-Two outcomes are worth distinguishing, and the chapter commits to neither in advance. If the
-program got faster, the census explained why before the profiler did, and the trade — more traffic
-for better locality — is one you can now look for elsewhere. If it got *slower*, that is the more
-valuable result: the profile moved, the symbol it blamed changed, and the program did not improve,
-which is precisely what happens when you optimise what the profile blames rather than what the
-measurement says.
+The chapter commits to neither outcome in advance. If the program got faster, the census explained
+why before the profiler did, and the trade — more traffic for better locality — is one you can now
+look for elsewhere. If it got *slower*, that is the more valuable result: the profile moved, the
+symbol it blamed changed, and the program did not improve, which is precisely what happens when you
+optimise what the profile blames rather than what the measurement says.
 
 ## What we measured
 
@@ -215,8 +214,8 @@ python3 -m pytest tests/whole_machine_profiling/test_problem_3_aliasing.py
 is worth reading once even if you never call it: the structure it takes is a list of every
 decision a profiler makes on your behalf. Mytkowicz and colleagues @mytkowicz2009wrong is the
 paper to read on measurement bias — it shows profilers disagreeing with each other about the same
-program, for reasons that are nobody's bug, and it is the best available argument for the habit
-of writing the prediction down first that this chapter is built on.
+program, for reasons that are nobody's bug, and it is the best available argument for the habit this
+chapter is built on: writing the prediction down first.
 
 [ch31](#vectors) is the last measurement in the book and the narrowest: one loop, one unit, and the
 question of what vectorising actually buys when it is measured against the arithmetic rather than

@@ -23,8 +23,8 @@ What does watching a program in a debugger fail to tell me about what it costs?
 
 Everything up to here has built a complete structural account of a machine. You can say what a
 program compiles to, where its data sits, how its address space is built, what it costs the kernel
-to ask for anything, and how many blocks of disk traffic a single byte becomes. All of it was obtained on a target
-chosen precisely because you can stop it anywhere and look.
+to ask for anything, and how many blocks of disk traffic a single byte becomes. All of it was
+obtained on a target chosen precisely because you can stop it anywhere and look.
 
 None of it is a duration, and this chapter is about what that leaves out.
 
@@ -50,7 +50,7 @@ target and for the reference machine, run on both, they agree:
 ```{include} _generated/the-same-program-on-both-targets-agreement.md
 ```
 
-That table shows how much the book has established so far. The same source produces
+That agreement is what the book has established so far. The same source produces
 the same answer on two machines with different kernels, different instruction sets and
 different everything else — because [ch13](#representing-information) checked the data model matched, and because the
 answer is a property of the arithmetic rather than of the machine.
@@ -93,8 +93,8 @@ this book does not have one.
 
 ### Three things differ at once
 
-When the board does report, its numbers will be easy to misattribute, and avoiding that is the
-skill the rest of [Part V](#part5) is built on.
+The board's numbers will be easy to misattribute, and avoiding that is the skill the rest of
+[Part V](#part5) is built on.
 
 The two runs differ in **three** ways simultaneously. One is emulated and one is not. One is xv6
 and one is Linux. One is RISC-V and one is AArch64. A difference in the measurement could be
@@ -135,9 +135,9 @@ The answer both routes compute, on both targets, and the instructions each compi
 architectures — all of it reproducible, none of it a duration. The one figure this chapter is
 actually about — the cost of the two routes — has been measured on the board.
 
-What the earlier parts predict about
-these two functions does not depend on that measurement, and neither does the argument about
-confounds; the measurement supplies the size of the error and not its existence.
+What the earlier parts predict about these two functions does not depend on that measurement, and
+neither does the argument about confounds; the measurement supplies the size of the error and not
+its existence.
 
 ## What this cannot tell you
 

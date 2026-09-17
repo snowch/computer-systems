@@ -23,8 +23,8 @@ What do I need on my desk, and how do I know it works?
 Knowing it works matters as much as having it. Every later chapter rests on a claim about a
 machine — this compiler, this kernel, these counters — and a setup that is *almost* right fails
 three chapters later as something that looks like a bug in the material. So this chapter ends with
-a script that interrogates the machine you are sitting at and tells you which of the book's three
-targets it can currently run, and with measurements that record what those targets actually are.
+a script that interrogates the machine you are sitting at and says which of the book's three
+targets it can run, and with measurements that record what those targets actually are.
 
 ## The material
 
@@ -32,8 +32,8 @@ targets it can currently run, and with measurements that record what those targe
 
 The [preface](#preface) makes the case for the arrangement; here is what each target is in practice.
 
-**`bare`** is that same `qemu-system-riscv64` with no kernel under it at all — the machine on its
-own. [Part II](#part2) builds on it directly, and it shares xv6's cross-compiler and setup, so one
+**`bare`** is `qemu-system-riscv64` with no kernel under it at all — the machine on its own.
+[Part II](#part2) builds on it directly, and it shares xv6's cross-compiler and setup, so one
 check covers both.
 
 **`xv6`** is the MIT teaching kernel under `qemu-system-riscv64`: a complete operating system in
@@ -44,16 +44,16 @@ split, and [ch12](#what-a-computer-does-with-a-program) is where it crosses.
 **`host`** is a small Linux machine on the desk, reached over SSH — a Raspberry Pi 5 in this book.
 Everything about *what a program costs* is measured there, natively. [Part V](#part5) lives there.
 
-The one thing worth repeating from the [preface](#preface), because every later chapter depends on it: QEMU is
-a functional emulator. It computes what the instructions compute and models nothing else — no
-cache, no branch predictor, no store buffer, no pipeline, no memory latency. Ask it how long a loop
-took and it will answer, and the answer describes the laptop QEMU was running on and the
-translation strategy it happened to pick.
+QEMU is a functional emulator, and every later chapter depends on what that means. The
+[preface](#preface) says so too: QEMU computes what the instructions compute and models nothing
+else — no cache, no branch predictor, no store buffer, no pipeline, no memory latency. Ask it how
+long a loop took and it will answer, and the answer describes the laptop QEMU was running on and
+the translation strategy it happened to pick.
 
-Almost every convenient way to observe a program changes what you are observing, which is why this
-book teaches it first and why it matters well beyond QEMU. A debugger stops it. A
-profiler samples it. A print statement in a loop makes the loop something else. Knowing which of
-your tools is lying to you about which question is the discipline underneath all of this.
+Almost every convenient way to observe a program changes what you are observing. A debugger stops
+it. A profiler samples it. A print statement in a loop makes the loop something else. Knowing
+which of your tools is lying to you about which question is the discipline underneath all of this,
+and it holds well beyond QEMU, which is why the book starts here.
 
 So the repository enforces the split rather than trusting anyone to remember it. Every result
 file records where it was measured, and `scripts/verify-numbers.py` rejects two things outright:
@@ -68,11 +68,11 @@ contains a duration at all.
 
 ### What you need
 
-Two machines, and only one of them has to be bought: whatever you are reading this on, which runs
-both emulated targets, and a small Linux board for `host`. The reference is a **Raspberry Pi 5**,
-and the requirement is a capability rather than a part number — `perf` has to both count and
-sample, which [Appendix H](#appendix-h) states properly, along with how to check a machine you
-already own and what changes if yours differs from the reference. Read it before you spend
+Two machines, and only one of them has to be bought. Whatever you are reading this on runs both
+emulated targets; `host` needs a small Linux board. The reference board is a **Raspberry Pi 5**,
+but what matters is a capability rather than a part number: `perf` has to both count and sample.
+[Appendix H](#appendix-h) states that properly, and says how to check a machine you already own
+and what changes if yours differs from the reference. Read it before you spend
 anything — and then carry on here, because nothing in this chapter needs the board.
 [ch01](#setting-up-the-board) is where it gets set up, and twenty-two chapters go by before
 anything depends on it.
@@ -109,10 +109,10 @@ python3 -m pip install -r requirements.txt -r requirements-dev.txt
 `--recursive` matters: xv6 is a submodule, not a copy. If you have already cloned without it,
 `make submodule` fixes it.
 
-The submodule arrangement is deliberate. xv6 is MIT-licensed and copying it in would be perfectly
-legal, but it would also hide what this book changes about the kernel. Instead the submodule stays
-pristine — a test asserts that it is byte-identical to upstream — and the book's own material is
-kept separately and combined into a staging tree at build time:
+xv6 is MIT-licensed and copying it in would be perfectly legal, but a copy would hide what this
+book changes about the kernel. So the submodule stays pristine — a test asserts that it is
+byte-identical to upstream — and the book's own material is kept separately and combined into a
+staging tree at build time:
 
 ```
 xv6/xv6-riscv/   upstream, never modified
@@ -141,9 +141,9 @@ the session. You are stopping the emulator out from under a kernel that has no o
 which is the first of many small reminders that this is a teaching kernel and not a product.
 
 `Ctrl-A` then `C` switches the same terminal to QEMU's own monitor, where `quit` also exits and
-`info registers` works without a debugger attached. `Ctrl-A` then `C` again switches back. This is
-worth knowing before you need it: when [Appendix B](#appendix-b) has QEMU halted at reset waiting
-for a debugger, the terminal looks frozen, and the monitor is how you confirm it is not.
+`info registers` works without a debugger attached. `Ctrl-A` then `C` again switches back. Learn it
+now rather than later: when [Appendix B](#appendix-b) has QEMU halted at reset waiting for a
+debugger, the terminal looks frozen, and the monitor is how you confirm it is not.
 
 The same thing non-interactively, which is how the tests do it:
 
@@ -181,11 +181,11 @@ python3 scripts/verify-setup.py
 ```
 
 It reports each target separately, because most machines can run two of the three. On a laptop it
-confirms the cross compiler, QEMU, the submodule and a usable debugger, then explains that the
-`host` target is read-only here and says whether a cross-built correctness path is available. On
-the machine itself it reads the device tree and `/proc/cpuinfo`, prints whatever that kernel says
-identifies the core — an implementer and part number on ARM, an ISA string and three
-implementation IDs on RISC-V — and checks that `perf` reaches hardware.
+confirms the cross compiler, QEMU, the submodule and a usable debugger, then says that the `host`
+target is read-only here — no figure can be measured on this machine — and whether a cross-built
+correctness path is available. On the board itself it reads the device tree and `/proc/cpuinfo`,
+prints whatever that kernel says identifies the core — an implementer and part number on ARM, an
+ISA string and three implementation IDs on RISC-V — and checks that `perf` reaches hardware.
 
 It looks nothing up. Every fact it prints is read from the machine in front of it. A specification
 describes a product line; `/proc/cpuinfo` describes the silicon that is about to produce your
@@ -198,8 +198,8 @@ Two checks remain. The first produces this chapter's first real result.
 `sysfs/include/sysfs/probe.h` asks the machine a handful of questions it can answer without a
 library: how big is each scalar type, where may it start, what does the compiler do to a struct,
 which end of a word is the low byte. It is compiled twice from the same bytes, for two targets
-that disagree about what a C library is, and it says so itself — the first design decision in this
-book that exists entirely because of where the code has to run:
+that disagree about what a C library is, and the header says so at the top — the first design
+decision in this book that exists entirely because of where the code has to run:
 
 ```{literalinclude} ../sysfs/include/sysfs/probe.h
 :language: c
@@ -207,7 +207,7 @@ book that exists entirely because of where the code has to run:
 :end-before: #ifndef SYSFS_PROBE_H
 ```
 
-Everything else about the header follows from that. Asking the machine which end of a word it puts
+The rest of the header follows from that decision. Asking the machine which end of a word it puts
 the low byte at, rather than assuming, costs three instructions:
 
 ```{literalinclude} ../sysfs/include/sysfs/probe.h
@@ -258,7 +258,7 @@ Everything above is *structural*: sizes, offsets, byte order, which programs are
 many harts (independent hardware threads) announced themselves. Those are questions QEMU answers perfectly, because they are
 questions about what the instructions compute.
 
-None of them is a question about time, and that is the design rather than an accident of what this
+None of them is a question about time, and that is deliberate rather than an accident of what this
 chapter chose to measure. The xv6 target will never produce a timing in this book,
 because a timing produced there would be meaningless, and a meaningless number in a table is
 worse than a missing one — a missing number announces itself.
@@ -306,7 +306,7 @@ python3 -m pytest tests/prerequisites_and_setup/test_problem_1_trust.py
 alignment, and the offset of each member — *before* you compile it. The test then compiles that
 struct for whichever architecture this machine can execute, runs it, and tells you where you were
 wrong. The tables above give you the sizes and alignments of the scalar types; the rest follows
-from one rule — and it is the same rule on both architectures, which is the point.
+from one rule, and it is the same rule on both architectures.
 
 ```bash
 python3 -m pytest tests/prerequisites_and_setup/test_problem_2_abi.py
@@ -322,7 +322,7 @@ shell. If any link in that chain is missing you want to find out now, not in [ch
 python3 -m pytest tests/prerequisites_and_setup -q          # all three, including the ones you have not solved
 ```
 
-Note that these tests are marked `problem` and CI deliberately does not run them. What CI does
+These tests are marked `problem`, and CI deliberately does not run them. What CI does
 run is the scaffolding beside each one: that the puzzle compiles, that the kernel boots with your
 file staged into it, that the problem is answerable. The book is responsible for handing you a
 problem that works. Making it pass is yours.
@@ -345,12 +345,12 @@ caveat stands: where a document and a measurement disagree, the book prints the 
 says so.
 
 The study behind that decision is @riscv-pmu-profiling, and it is worth reading even if you never
-touch RISC-V — it is a good example of what it looks like to establish what a machine can actually
-do, rather than what its documentation says it has.
+touch RISC-V — it shows what it takes to establish what a machine can actually do, rather than
+what its documentation says it has.
 
 The xv6 source @xv6-riscv-source is worth browsing before [ch12](#what-a-computer-does-with-a-program), without trying to
-understand it. Its authors also wrote a commentary on it, which is excellent and which this book
-deliberately does not follow the structure of; if you want a second account of the same kernel
+understand it. Its authors also wrote a commentary on it, which is excellent and whose structure
+this book deliberately does not follow; if you want a second account of the same kernel
 after [Part IV](#part4), that is the one to read.
 
 [ch12](#what-a-computer-does-with-a-program) takes a single program and follows it from source text to a result on both targets,

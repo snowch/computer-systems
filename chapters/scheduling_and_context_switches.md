@@ -69,8 +69,8 @@ costing more instructions than the lock.
 ### Why did it switch?
 
 Every switch out of a process goes through one function, so counting them is easy. Attributing
-them is the interesting part, and the patch records which of three reasons applied: the timer took
-the CPU away, the process is waiting for something, or the process is not coming back.
+them takes more, and the patch records which of three reasons applied: the timer took the CPU
+away, the process is waiting for something, or the process is not coming back.
 
 ```{include} _generated/scheduling-and-context-switches-census.md
 ```
@@ -83,16 +83,16 @@ timer intervened is a statement about elapsed time, and a count of how often som
 depends on whether the thing it waited for had already happened. [ch19](#interrupts-and-drivers) established this
 for devices and it is the same argument.
 
-One observation is worth having even though it is not in the table. In this workload the timer
-**never** took the CPU away from anything: every switch was voluntary, because every process
-blocked or exited before its slice ran out. Preemption is what a scheduler is for, and a
-short-lived workload of blocking processes never needs it. Problem 21.3 is about what a policy
-decides when preemption does happen; running the census yourself and trying to make the timer
-intervene is a more instructive ten minutes than reading about it.
+One observation did not make the table. In this workload the timer **never** took the CPU away
+from anything: every switch was voluntary, because every process blocked or exited before its
+slice ran out. Preemption is what a scheduler is for, and a short-lived workload of blocking
+processes never needs it. Problem 21.3 is about what a policy decides when preemption does happen;
+running the census yourself and trying to make the timer intervene is a more instructive ten
+minutes than reading about it.
 
 ### Sleeping is not a state of the CPU
 
-[ch19](#interrupts-and-drivers)'s console driver slept, and this section says what that meant.
+[ch19](#interrupts-and-drivers)'s console driver slept, and the word has been unexplained ever since.
 
 Sleeping is not the hardware doing anything. It is a process marking itself not-runnable, noting
 what it is waiting for, and calling `sched` — after which some other thread's registers are in the
@@ -144,9 +144,8 @@ Three, in `tests/scheduling_and_context_switches/scheduling.c`.
 Given the register's role under [ch14](#machine-level-code-on-riscv)'s convention and whether the value is still needed,
 say whether `swtch` itself has to preserve it.
 
-The whole question is that a context switch is an ordinary call, so most of the answer is already
-in the calling convention. Getting it right is what makes the fourteen against thirty-one above
-obvious rather than surprising.
+A context switch is an ordinary call, so most of the answer is already in the calling convention.
+Getting it right is what makes the fourteen against thirty-one above obvious rather than surprising.
 
 ```bash
 python3 -m pytest tests/scheduling_and_context_switches/test_problem_1_save.py

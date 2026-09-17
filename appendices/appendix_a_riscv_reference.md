@@ -21,8 +21,8 @@ without spending encodings on them.
 
 The names on the left are the only ones you will see in this book's listings. The hardware has no
 opinion about them: the roles below are a *convention* @riscv-psabi, agreed between compilers, and
-the point [ch14](#machine-level-code-on-riscv) makes is that a convention is a contract and an interrupt is not a party
-to it.
+[ch14](#machine-level-code-on-riscv) shows that a convention is a contract an interrupt is not a
+party to.
 
 | Register | `x` number | Role | Preserved across a call? |
 |---|---|---|---|
@@ -39,7 +39,7 @@ to it.
 | `s2`–`s11` | `x18`–`x27` | Saved | Yes |
 | `t3`–`t6` | `x28`–`x31` | Temporaries | No |
 
-Two things worth carrying:
+Two consequences of that table:
 
 **Eight argument registers.** A call passing eight or fewer word-sized arguments touches no memory
 to do it, which is most of why [ch14](#machine-level-code-on-riscv)'s `-O2` listings have no stack frame at all.
@@ -67,9 +67,9 @@ kernel under it and runs in **machine** mode, so it uses the `m` registers direc
 | `mcause` | Why the trap happened, with the interrupt bit at the top | [ch06](#a-trap-with-nothing-else), [ch07](#interrupts-and-privilege) |
 | `mstatus` | Machine status: previous privilege in `MPP`, previous interrupt-enable in `MPIE` | [ch07](#interrupts-and-privilege) |
 
-**`mepc` points at the instruction, not past it.** That is the whole of [ch06](#a-trap-with-nothing-else)'s
-first problem and the reason a handler for `ecall` has to advance it and a handler for an
-interrupt must not.
+**`mepc` points at the instruction, not past it.** [ch06](#a-trap-with-nothing-else)'s first
+problem turns on that, and so does the rule that a handler for `ecall` has to advance it and a
+handler for an interrupt must not.
 
 | Supervisor-mode CSR | What it is | Where |
 |---|---|---|

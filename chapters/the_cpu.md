@@ -48,8 +48,8 @@ number would have been about something else entirely.
 That is [ch26](#optimising-code)'s lesson again, one chapter later and at this book's expense: what you wrote and
 what runs are different things, and the gap is exactly where a measurement goes wrong quietly.
 
-**The fix is to make the branch un-removable**, which means putting something in the taken case
-that the machine cannot speculatively not-do. A call will do it: the compiler cannot compute both
+**The fix is to make the branch un-removable**, by putting something in the taken case that the
+compiler cannot execute unconditionally. A call will do it: the compiler cannot compute both
 outcomes when one of them is "call a function that might do anything". `count_over_calling` is
 that loop, it keeps its branch, and the runner refuses to stamp a result in which these two stop
 differing.
@@ -75,10 +75,10 @@ can overlap them. The work is identical; what differs is how much of it can happ
 ```
 
 Problem 27.2 is the arithmetic: the critical path is each accumulator's share of the elements plus
-the tree that combines them. It is worth doing, and it is worth noticing what the model then
-predicts — that more accumulators are always better, right down to one element each. They are not,
-and what stops it is nowhere in the formula: accumulators live in registers, there is a fixed
-number of those, and past that point they spill to memory and [ch25](#the-memory-hierarchy) takes over.
+the tree that combines them. Do it, then notice what the model predicts — that more accumulators
+are always better, right down to one element each. They are not, and what stops it is nowhere in
+the formula: accumulators live in registers, there is a fixed number of those, and past that point
+they spill to memory and [ch25](#the-memory-hierarchy) takes over.
 
 ### Guessing, and what a wrong guess costs
 
@@ -125,7 +125,7 @@ discipline applies to every one of them.
 
 **Anything about an in-order core.** The header says this chapter assumes an out-of-order one,
 because that is what the reference machine has and because [Appendix H](#appendix-h) explains at length
-why the alternative could not be used. The consolation is real: every machine a reader is likely to
+why the alternative could not be used. Little is lost by it: every machine a reader is likely to
 optimise reorders, so attributing cycles on a core that reorders them is the skill that transfers.
 
 **How wide the machine is.** The accumulator experiment finds where adding chains stops helping,

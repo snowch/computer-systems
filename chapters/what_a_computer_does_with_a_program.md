@@ -41,7 +41,7 @@ of which leaves a file on disk that you are allowed to look at and normally neve
 Four programs, four handovers. Only one of them makes decisions.
 ```
 
-The book's walk through them is a shell script rather than a paragraph, so that you can run it
+Here is the walk through them, as a shell script rather than a paragraph, so you can run it
 yourself:
 
 ```{literalinclude} ../sysfs/tools/stages.sh
@@ -147,7 +147,7 @@ What each stage handed to the next:
 ```{include} _generated/what-a-computer-does-with-a-program-stage-sizes.md
 ```
 
-Read the two columns against each other, because they disagree in an instructive way.
+Read the two columns against each other, because bytes and lines do not move together.
 
 The preprocessed file is enormous compared with the source, and almost none of it is yours: one
 `#include <stdio.h>` drags in every declaration the C library wants you to have. The compiler
@@ -216,8 +216,8 @@ difference being the line markers naming one header. Nothing about the number
 could have given that away; a size is a size. It surfaced only because CI regenerates this result
 instead of trusting the committed copy, and the two disagreed. `stages.sh` now names every path
 relative to the repository root, and the runner refuses to stamp a result if any file the walk
-produced mentions where the repository lives. Worth knowing in its own right, because it shows
-exactly what stage 1 does: it pastes text, and the paths are part of the text.
+produced mentions where the repository lives. It shows exactly what stage 1 does: it pastes text,
+and the paths are part of the text.
 
 ## Problems
 

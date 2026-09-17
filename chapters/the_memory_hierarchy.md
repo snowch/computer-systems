@@ -56,8 +56,8 @@ The curve is flat, then steps, then flat, then steps again. Nothing in the progr
 those points except how much memory the cycle covers, so each step is the working set ceasing to
 fit in something — and the size at which it steps is the size of the thing it stopped fitting in.
 
-That is the whole measurement. The hierarchy is not inferred from a specification; it is read off
-a curve the machine produced when it was asked.
+Nothing else is needed to find the levels. The hierarchy is not inferred from a specification; it
+is read off a curve the machine produced when it was asked.
 
 Problem 25.1 is that reading, on synthetic curves whose answers are known by construction.
 
@@ -75,8 +75,8 @@ cost climbs a step at a time rather than jumping once.
 The naive reading is that the stride at which it first rises is the line size. On this machine that
 reading lands *below* what the vendor publishes, because the sharing thins out gradually: the curve
 is already moving before the last visit has a line to itself. That gap is what the vendor table below
-shows. It is worth understanding rather than trusting on sight — but what the line *explains* does
-not depend on reading it to the byte. Alignment and padding matter because memory
+shows. So read the curve knowing that, rather than trusting the first rise — but what the line
+*explains* does not depend on reading it to the byte. Alignment and padding matter because memory
 moves in lines, and a structure straddling two costs two fetches for one field, which is the
 question [ch13](#representing-information) raised and could not settle.
 
@@ -97,14 +97,13 @@ Touch one pointer per page, so the *data* comfortably fits in the last-level cac
 ```{include} _generated/the-memory-hierarchy-reach.md
 ```
 
-The reach of a TLB is its entries multiplied by the page size, and the last row is there to be
-read against the first two: it is far smaller than the cache behind it. Which produces the
-counter-intuitive result that a program can fit its data in cache entirely and still be limited by
-memory, because every access first costs a page-table walk that missed. [ch17](#virtual-memory)'s
+The reach of a TLB is its entries multiplied by the page size. Read the last row against the first
+two: it is far smaller than the cache behind it. So a program can fit its data in cache entirely
+and still be limited by memory, because every access first costs a page-table walk that missed. [ch17](#virtual-memory)'s
 three levels are three more memory accesses, and this is where that stops being a structural fact
 and becomes a cost.
 
-### And now, finally, the datasheet
+### Comparing the curve with the datasheet
 
 Every number above came out of a curve. Only now is it worth looking anything up.
 
@@ -132,9 +131,9 @@ The structural model saw one extra load and predicted a factor under two. What s
 not the load count. It is that one program can overlap its memory accesses and the other cannot,
 which is not visible in the instruction stream at all.
 
-That is the lesson [Part V](#part5) exists for, and it is worth stating in its general form: **the
-cost of a memory access is not a property of the access. It is a property of what else the machine
-was able to do at the same time.**
+That is the lesson [Part V](#part5) exists for, in its general form: **the cost of a memory access
+is not a property of the access. It is a property of what else the machine was able to do at the
+same time.**
 
 ## What we measured
 

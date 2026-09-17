@@ -31,8 +31,7 @@ of them made a promise the other did not.
 ### Two rules make every struct
 
 [ch00](#prerequisites-and-setup) measured two structs with the same three members in different orders and found one
-larger than the other. A table can say that. It cannot say where the extra bytes went, and that
-is the part worth seeing:
+larger than the other. A table can say that. It cannot say where the extra bytes went:
 
 ```{figure} _figures/representing-information-padding.svg
 :alt: Both structs drawn byte by byte, with the bytes no member uses marked.
@@ -91,10 +90,10 @@ one really is zero, so the comparison can be false and the compiler must ask. Si
 assume it never occurs, and from that assumption `x + 1 > x` follows for every `x` that exists as
 far as it is concerned.
 
-**Undefined behaviour is not a runtime hazard; it is a licence the optimiser holds.** That is the
-first appearance of something worth being permanently uneasy about. The danger is not that
-your program will crash when it overflows. The danger is that a branch you wrote to check for
-overflow will be deleted, because the compiler reasoned that the condition could not arise.
+**Undefined behaviour is not a runtime hazard; it is a licence the optimiser holds.** Stay uneasy
+about that for the rest of the book. The danger is not that your program will crash when it
+overflows. The danger is that a branch you wrote to check for overflow will be deleted, because
+the compiler reasoned that the condition could not arise.
 
 ### A division that is not a division
 
@@ -136,14 +135,14 @@ will use it, including in ways you did not intend.
 
 A number wider than a byte has to be laid out in memory somehow, and there are two sensible
 answers. Both of this book's machines choose little-endian: the lowest-addressed byte holds the
-least significant part. The probe asks the machine rather than asserting it, which is why the
-fact appears in [ch00](#prerequisites-and-setup)'s output and not in a footnote here.
+least significant part. [ch00](#prerequisites-and-setup)'s probe asks the machine rather than
+asserting it, which is why the fact appears in its output and not in a footnote here.
 
 It matters in exactly three places, and outside them you can forget it: when bytes cross a
 machine boundary (a file, a network, a device register), when you alias a value through a pointer
 of a different width, and when you are reading a memory dump by eye and the digits appear to be
-backwards. [ch19](#interrupts-and-drivers) meets the third kind for real, reading a device that does not agree with
-the CPU about byte order.
+backwards. The first kind is the one that bites: a device register or a file written by another
+machine is bytes somebody else laid out, and nothing warns you when their order is not yours.
 
 ### The operations worth writing once
 
@@ -176,9 +175,9 @@ first.
 
 ## What we measured
 
-The C implementation xv6 and host both present — sizes, alignments and byte order — is
-[ch00](#prerequisites-and-setup)'s table, measured by booting the kernel and asking it. It is not repeated here,
-because a figure printed twice is a figure that can disagree with itself.
+xv6 and host present the same C implementation — the same sizes, alignments and byte order — and
+[ch00](#prerequisites-and-setup)'s table measured it by booting the kernel and asking it. It is
+not repeated here, because a figure printed twice is a figure that can disagree with itself.
 
 What this chapter adds is the machine code above. Those listings are not timings, and nothing in
 this chapter is. They are what one compiler emitted for one source file at one optimisation
@@ -187,8 +186,8 @@ rather than the argument.
 
 Counting instructions is not measuring cost. A function with more instructions in it can be
 faster than one with fewer, and [ch27](#the-cpu) shows a case where that happens for reasons
-entirely outside the count. What the listings establish here is something weaker and more useful:
-that the two functions in each pair are *not the same program*, whatever the source looked like.
+entirely outside the count. The listings establish something weaker and more useful: the two
+functions in each pair are *not the same program*, whatever the source looked like.
 
 ## What this cannot tell you
 

@@ -25,7 +25,7 @@ produced from source you can read beside it. Three of them are in the next chapt
 asked to write assembly, and you are never asked to know every mnemonic; you are asked to say what
 the compiler did, which is a much smaller skill and takes one chapter to acquire.
 
-It is worth acquiring now rather than in passing, because the notation that carries most of the
+Acquire it now rather than in passing, because the notation that carries most of the
 weight — parentheses, which mean memory — is also the most likely to be read as something else.
 
 ## The material
@@ -105,8 +105,8 @@ answers and the labels were discarded. The same job, divided differently between
 the linker.
 
 The second thing is `sext.w`, which RISC-V emits on each path and AArch64 does not emit anywhere:
-one keeps a 32-bit `int` in a 64-bit register and has to say so, the other has a 32-bit view of the
-register and uses it. Neither is in the C. Both are the kind of thing [ch14](#machine-level-code-on-riscv) is for.
+RISC-V keeps a 32-bit `int` in a 64-bit register and has to say so, while AArch64 has a 32-bit view
+of the register and uses it. Neither is in the C. Both are the kind of thing [ch14](#machine-level-code-on-riscv) is for.
 
 :::{note} None of that was typed
 `bench/run_disasm.py` compiled `sysfs/lib/shapes.c` for each architecture, ran `objdump` on the

@@ -40,9 +40,9 @@ load between your load and your store, and then both of you store the same value
 where there should have been two. An interrupt can land in the same gap on a single hart, which is
 why this is not only a multiprocessor problem.
 
-That is the whole mechanism. Everything else in this chapter is about closing that gap, and the
-first thing worth noticing is that both architectures produce the same three instructions. The
-problem does not belong to an instruction set.
+That is the whole mechanism. Everything else in this chapter is about closing that gap. Both
+architectures produce the same three instructions, so the problem does not belong to an
+instruction set.
 
 ### One instruction instead of three
 
@@ -61,7 +61,7 @@ building for cannot use them directly; it emits a call to a routine that decides
 Whether the same C is one instruction or a function call is therefore not a property of the source
 or even of the architecture, but of what the compiler was told to assume.
 
-[ch26](#optimising-code) is where being told matters.
+[ch26](#optimising-code) is where telling the compiler what to assume matters.
 
 ### The ordering is not the atomicity
 
@@ -76,8 +76,8 @@ single instruction with two letters added: `.aqrl`, acquire and release. **Order
 instruction here at all** — the atomic instruction carries its own ordering, and what would be a
 separate fence on another machine is two bits of an opcode on this one.
 
-So "an atomic operation" and "an ordered operation" are different requests, and on RISC-V you can
-see that they are, because the spelling changes and the instruction count does not.
+So "an atomic operation" and "an ordered operation" are different requests, and RISC-V makes the
+difference visible: the spelling changes and the instruction count does not.
 
 ### Publishing something
 
@@ -155,10 +155,10 @@ executed and nothing was timed.
 The plan for this chapter promised contention counts per lock, and said the interleavings would be
 deterministic under QEMU. Neither survived contact. Contention is a statement about how long one
 hart made another wait, which is a duration this target cannot supply — and the interleavings are
-not deterministic either: [ch19](#interrupts-and-drivers) had already found the console's interrupt count varying
-between identical runs, which is the same emulator being the same amount of non-deterministic.
-The chapter measures what is actually there instead, and this paragraph is here because a plan
-that turned out to be wrong is worth more to a reader than a plan quietly rewritten.
+not deterministic either: [ch19](#interrupts-and-drivers) had already found the console's interrupt
+count varying between identical runs, on this same emulator. The chapter measures what is actually
+there instead, and this paragraph is here because a plan that turned out to be wrong is worth more
+to a reader than a plan quietly rewritten.
 
 ## What this cannot tell you
 

@@ -22,8 +22,8 @@ What is an address, and who decides what it means?
 
 Every chapter so far has treated an address as a number that names a place. [ch15](#linking-and-loading) watched
 a loader put a program at the address its linker chose, and [ch16](#traps-and-system-calls) left a promise: the
-trampoline page is mapped into two address spaces at once, which is only a sentence anybody can
-say if an address means different things to different programs. It does. This chapter is about the
+trampoline page is mapped into two address spaces at once. That sentence only makes sense if an
+address means different things to different programs, and it does. This chapter is about the
 page tables that arrange it, and about what they cost — not in time, which this target
 cannot tell you, but in the memory it takes to say where memory is.
 
@@ -44,8 +44,8 @@ answers, and the answer is looked up rather than computed.**
 
 ### Nine, nine, nine, twelve
 
-The scheme is called Sv39, and its layout is not an arbitrary fact to be memorised. Two decisions
-force all of it.
+The scheme is called Sv39, and two decisions force the whole of its layout. There is nothing
+arbitrary in it to memorise.
 
 Choose a page size, and choose how big an entry describing a page must be. Everything else
 follows: a table is one page of entries, so the number of entries per table is one divided by the
@@ -67,7 +67,7 @@ different number of bits.
 One virtual address, and the four things translation does with it.
 ```
 
-Two details in that figure repay attention.
+Two details in that figure are easy to miss.
 
 **The offset is not translated.** The bottom twelve bits are copied from the virtual address to
 the physical one, untouched. Translation moves pages about; it has no opinion about where in a
@@ -86,9 +86,8 @@ Follow the indices down and one of three things happens. An entry with its valid
 the walk. An entry with valid set and none of read, write or execute points at the next table
 down. An entry with valid set and any of them is a leaf, and the walk is over.
 
-The useful consequence is that **a failed translation has a location**. It is not "this address is
-wrong" but "the walk got this far and stopped", and which level it stopped at says something
-different each time. Stopping at the top level means nothing in that gigabyte of the address space
+So **a failed translation has a location**. It is not "this address is wrong" but "the walk got
+this far and stopped", and which level it stopped at says something different each time. Stopping at the top level means nothing in that gigabyte of the address space
 exists. Stopping at the bottom means the neighbourhood is mapped and this particular page is not —
 a stack that has grown one page too far, say, rather than a wild pointer. [ch18](#page-faults-as-a-feature) is about
 what a kernel can do with that distinction; problem 17.3 is about extracting it.
@@ -116,7 +115,7 @@ A chain is two pages whether it ends in one mapping or five hundred.
 
 ### The map costs memory
 
-The totals are worth putting side by side.
+Put the totals side by side.
 
 ```{include} _generated/virtual-memory-shape.md
 ```
@@ -128,11 +127,10 @@ in two tiny ones.
 
 Two of the kernel's regions account for nearly everything it maps. One is the whole of the RAM it
 manages, direct-mapped so that a physical address and a kernel virtual address are the same
-number — a deliberate decision, and one that makes the kernel's own pointers
-translatable without any bookkeeping at all. The other is a run of device registers so long that
-three separate devices, laid out end to end by the machine's designers, come out as a single
-region: the census cannot tell them apart, because as far as the page table is concerned they are
-not different things.
+number — a deliberate decision that makes the kernel's own pointers translatable without any
+bookkeeping at all. The other is a run of device registers so long that three separate devices,
+laid out end to end by the machine's designers, come out as a single region: the census cannot
+tell them apart, because as far as the page table is concerned they are not different things.
 
 Almost every remaining region is a single page, and they are kernel stacks. xv6
 leaves an unmapped page between every pair of them, so that a kernel stack which overflows hits
@@ -144,9 +142,9 @@ the lot, because they are all in the same two megabytes.
 
 Go back to init's five tables and ask which mapping is responsible for which.
 
-The four pages at the bottom need a chain of two — one middle table, one last — under the shared root. Three pages of
-table for four pages of program, and every further page the program allocates is free until it
-crosses two megabytes.
+The four pages at the bottom need a chain of two — one middle table, one last — under the shared
+root. Three pages of table for four pages of program, and every further page the program allocates
+is free until it crosses two megabytes.
 
 The two pages at the top need another middle table and another last table, because nothing else is
 within a gigabyte of them. Two pages of table for two pages of mapping, and every process in the
@@ -160,7 +158,7 @@ second one is invisible unless somebody counts it.
 
 ### The model and the kernel
 
-The numbers above were obtained twice over, by two independent routes, which is worth explaining.
+The numbers above were obtained twice over, by two independent routes.
 
 The kernel counts its own tables by walking them. Separately, `sysfs/lib/sv39.c` computes how
 many tables a set of mappings *requires*, from the addresses alone, with no machine involved:
@@ -171,7 +169,7 @@ many tables a set of mappings *requires*, from the addresses alone, with no mach
 :end-before: out[2] = 1;
 ```
 
-`sysfs/tools/sv39.c` puts a command line on that, so init's two clusters can be asked about
+`sysfs/tools/sv39.c` puts a command line on that, so you can ask about init's two clusters
 directly — four pages at the bottom of the address space, two at the top, and the answer this
 chapter spent a section arriving at:
 
@@ -179,10 +177,10 @@ chapter spent a section arriving at:
 ./run sv39 tables 0x0:4 0x3fffffe000:2
 ```
 
-The two are arrived at from opposite ends — one by inspecting a running system, the other from a
-specification — and the runner refuses to record a result in which they disagree. So the figures
-above are not merely a reproducible measurement: they are two derivations agreeing, and if a
-future xv6 changes its layout, CI will report the disagreement.
+The two answers come from opposite ends — one from inspecting a running system, the other from a
+specification — and the runner refuses to record a result in which they disagree. The figures
+above are therefore not merely a reproducible measurement: they are two derivations agreeing, and
+if a future xv6 changes its layout, CI will report the disagreement.
 
 ## What we measured
 
@@ -208,8 +206,8 @@ memory access, it is up to three, before the access you asked for.
 **Whether a bigger page would help.** Sv39 allows a leaf at the middle or top level — a two-
 megabyte or one-gigabyte mapping — and the census counts leaves by level precisely so that this
 would be visible. It counted none: xv6 never makes one. Whether that costs anything is a question
-about TLB reach, and this target has no TLB. The measurement above is honest about the format
-supporting superpages and says nothing about whether using them is a good idea.
+about TLB reach, and this target has no TLB. The measurement above records that the format
+supports superpages and says nothing about whether using them is a good idea.
 
 **Anything about permissions.** Every entry carries read, write, execute and user bits, and this
 chapter counted entries without looking at them. What those bits prevent, and what a kernel does
@@ -230,12 +228,11 @@ answer to any of them.
 **17.1 — Build a page table, and no more of one than the addresses require.**
 Write `walk_map`, allocating interior tables as you need them.
 
-The grading is the interesting part. The test does not compare your table with a stored one; it
-counts how many pages you took from the allocator and compares that with what this chapter's own
-model derives from the addresses. Three address spaces are used, each with the same number of
-pages arranged differently, and they cost three different amounts. An implementation that
-allocates eagerly maps everything correctly and still fails — which is this chapter's claim,
-turned into a check.
+The test does not compare your table with a stored one. It counts how many pages you took from the
+allocator and compares that with what this chapter's own model derives from the addresses. Three
+address spaces are used, each with the same number of pages arranged differently, and they cost
+three different amounts. An implementation that allocates eagerly maps everything correctly and
+still fails — which is this chapter's claim, turned into a check.
 
 ```bash
 python3 -m pytest tests/virtual_memory/test_problem_1_map.py
