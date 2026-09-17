@@ -31,9 +31,10 @@ This is where [Part I](#part1)'s claim — that everything is an index — arriv
 
 ### Two tables, and the difference between them
 
-A descriptor is an index into a table the kernel keeps for each process. What the table holds is
-not the file either: it holds *which open file*, and the open file is a separate thing in a
-separate table.
+A *descriptor* — the integer — is an index into a table the kernel keeps for each process; here,
+with no kernel, the machine-mode half of the program keeps it. What the table holds is not the
+file either: it holds *which open file*, and the open file is a separate thing in a separate
+table.
 
 ```{literalinclude} ../sysfs/bare/descriptors.c
 :language: c
@@ -48,9 +49,9 @@ chapter shows.
 ### Two things worth having a table for
 
 With one possible destination, an indirection demonstrates nothing: every descriptor would find the
-same thing and the table would be decoration. So there are two. One is a real device at a physical
-address; the other is an array of bytes with a cursor, which is about twenty lines and is not a
-file system and is not pretending to be one.
+same thing and the table would be decoration. So there are two *backends* — things a descriptor
+can find. One is a real device at a physical address; the other is an array of bytes with a
+cursor, which is a few lines long and is not a file system and is not pretending to be one.
 
 ```{literalinclude} ../sysfs/bare/descriptors.c
 :language: c
@@ -70,9 +71,9 @@ learns which backend it got.
 ```
 
 Two calls, identical but for one number, and they end up in completely unrelated places — one in a
-device register on a board, one in an array in memory. Neither the calling code nor the compiler
-knows the difference, which is how a shell can point a program's output at a file without the
-program being told.
+device register, one in an array in memory. Neither the calling code nor the compiler knows the
+difference, which is how a shell can point a program's output at a file without the program being
+told.
 
 Run it and watch:
 
@@ -119,7 +120,7 @@ first. `read` and `write` here are the same two lines apart from which direction
 
 ### What `dup` shares
 
-Now the reason the two tables had to be two:
+`dup` copies a descriptor onto another number, and it is the reason the two tables had to be two:
 
 ```{literalinclude} ../sysfs/bare/descriptors.c
 :language: c
@@ -150,8 +151,8 @@ off — a consequence of where the position already was, not a mode the write as
 
 ## What we measured
 
-Run it yourself before reading the table — the numbers below are what you should
-see, and a figure you have reproduced is worth more than one you have been shown:
+Run it yourself before reading the table — the rows below are what you should see, and a
+figure you have reproduced is worth more than one you have been shown:
 
 ```bash
 ./run descriptors
@@ -163,8 +164,8 @@ see, and a figure you have reproduced is worth more than one you have been shown
 ## What this cannot tell you
 
 **Anything about cost.** A `write` here is a function call behind a trap. On a real system it is a
-trap, a permission check, a copy between address spaces, and possibly a device. [ch29](#the-os-layers-cost)
-prices the real one.
+trap, a permission check, a copy from the program's memory into the kernel's, and possibly a
+device. [ch29](#the-os-layers-cost) prices the real one.
 
 **What an open file really contains.** A kind and a cursor is the smallest thing that shows the
 sharing. A real one has a mode, a reference count, a position that several processes may be
@@ -181,6 +182,8 @@ system 0, 1 and 2 are a convention held up by the program that started you, not 
 the convention is worth exactly as much as everyone's agreement to keep it.
 
 ## Problems
+
+Three, in `tests/a_small_integer_that_means_a_device/`.
 
 **10.1 — Duplicate onto a number in use.**
 `dup` here overwrites whatever was at the target. Decide what should happen when the target is

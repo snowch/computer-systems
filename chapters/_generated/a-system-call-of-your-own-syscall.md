@@ -11,4 +11,4 @@
 | Calls refused as unknown | 1 |
 | …by returning an error, not by stopping | yes |
 
-*Conditions: target `bare` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · no firmware, no kernel · riscv64-linux-gnu-gcc · `-march=rv64g -mabi=lp64 -mcmodel=medany -ffreestanding -nostdlib -fno-pic -fno-stack-protector -fno-builtin -O1 -g -Wall -Werror` · 2026-09-17 · Source: `bench/results/syscall-bare.json`, code hash `7c0170b64594504d`.*
+*Conditions: target `bare` · qemu virt (-machine virt -bios none) · QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18) · no firmware, no kernel · riscv64-linux-gnu-gcc · `-march=rv64g -mabi=lp64 -mcmodel=medany -ffreestanding -nostdlib -fno-pic -fno-stack-protector -fno-builtin -O1 -g -Wall -Werror` · 2026-09-17 · Source: `bench/results/syscall-bare.json`, code hash `acb9c60789cf0db5`.*

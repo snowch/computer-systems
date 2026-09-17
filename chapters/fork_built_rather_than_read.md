@@ -25,9 +25,10 @@ is not a riddle. It looks like one because it is normally met from the outside. 
 is a short function, and the two returns stop being mysterious once you can see that a return value
 is a word in a saved register set.
 
-Everything this chapter needs already exists. [ch08](#one-page-table-two-harts) built an address
-space; [ch09](#a-system-call-of-your-own) saved a caller's registers into a frame. A process is
-those two things kept together, and `fork` is a copy.
+Everything this chapter needs already exists. [ch08](#one-page-table-two-harts) built an
+*address space* — a page table, and so a private view of memory;
+[ch09](#a-system-call-of-your-own) saved a caller's registers into a frame. A process is those
+two things kept together, and `fork` is a copy.
 
 ## The material
 
@@ -45,8 +46,9 @@ a system call; keep it a little longer and it is a saved process.
 
 ### Mapping one page rather than one gigabyte
 
-[ch08](#one-page-table-two-harts) got away with three top-level leaf entries. A per-process page needs a real walk, because four
-kilobytes is a leaf at the bottom level, and the levels above it have to exist first:
+[ch08](#one-page-table-two-harts) got away with three top-level leaf entries. A per-process page
+needs a real walk — an entry at each of the three levels — because four kilobytes is a leaf at
+the bottom level, and the levels above it have to exist first:
 
 ```{literalinclude} ../sysfs/bare/fork.c
 :language: c
@@ -104,8 +106,8 @@ The scheduler is four lines, and calling it a scheduler is generous:
 ```
 
 Install the next process's address space, load its registers, `mret`. There is no policy, no
-priority and no preemption — it runs the other one when the first gives up. [ch21](#scheduling-and-context-switches)
-is where the interesting parts go back in.
+priority and no preemption — nothing takes the processor away from a process that has not given
+it up. [ch21](#scheduling-and-context-switches) is where the interesting parts go back in.
 
 ### The kernel cannot simply dereference what it is given
 
@@ -119,16 +121,17 @@ One detail here is a genuine trap, and it cost a confusing hour:
 
 The handler runs in machine mode, and [ch08](#one-page-table-two-harts) established that machine
 mode ignores `satp`. So an address the caller supplies is not an address the handler can use — and
-on this board the particular number involved lands in a PCI window that answers every read with
-ones, so the failure is not even a fault. It is a plausible-looking wrong answer.
+on this machine the particular number involved lands in a region QEMU reserves for PCI devices,
+which answers every read with ones, so the failure is not even a fault. It is a plausible-looking
+wrong answer.
 
 A real kernel walks the caller's page table to translate by hand. That function is called `copyin`,
 and this is why it exists.
 
 ## What we measured
 
-Run it yourself before reading the table — the numbers below are what you should
-see, and a figure you have reproduced is worth more than one you have been shown:
+Run it yourself before reading the table — the rows below are what you should see, and a
+figure you have reproduced is worth more than one you have been shown:
 
 ```bash
 ./run fork
@@ -164,6 +167,8 @@ face.
 
 ## Problems
 
+Three, in `tests/fork_built_rather_than_read/`.
+
 **11.1 — Make the child run first.**
 The parent continues and the child waits. Swap it, so the child runs to completion before the
 parent resumes, without changing what either prints. The test checks the order and that both still
@@ -183,7 +188,8 @@ python3 -m pytest tests/fork_built_rather_than_read/test_problem_2_full_table.py
 ```
 
 **11.3 — Count what a lazy fork would save.**
-Do not implement copy-on-write. Instead, say exactly which of this program's steps it would remove,
+Do not implement copy-on-write — sharing the parent's pages and copying one only when somebody
+writes to it. Instead, say exactly which of this program's steps it would remove,
 what it would add, and what new trap the handler would have to deal with. The test asks for the
 cause code of that trap and for which page-table bit changes, both of which you have met.
 

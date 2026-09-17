@@ -34,7 +34,8 @@ first.
 The six mechanisms do not all come from the same place, and that split shapes the part.
 [ch06](#a-trap-with-nothing-else)–[ch09](#a-system-call-of-your-own) are things the *hardware*
 hands you: a trap vector, a saved program counter and the instruction that returns from a trap are
-in the privileged specification, not in anybody's kernel.
+in the *privileged* specification — the half of the RISC-V manual that says what a kernel may do
+and a program may not — and not in anybody's kernel.
 [ch10](#a-small-integer-that-means-a-device) and [ch11](#fork-built-rather-than-read) are not.
 A descriptor table, and a second process made from the first, are inventions of software — no
 hardware has heard of either — and that is exactly why they are built here instead of read about
@@ -53,11 +54,11 @@ things you have built, rather than a wall of new ideas.
 Everything that makes a kernel a kernel. No scheduling policy, no file system, no device beyond the
 one serial port needed to see anything at all, no allocator beyond what a page table requires.
 
-What a descriptor *finds* — anything more than the two backends [ch10](#a-small-integer-that-means-a-device)
-needs to make the indirection visible. There is no disk here and nothing to open, so the table
-holds the serial port and a byte array with a cursor, which is enough to show that the calling
-code does not change and not enough to be a file system. The several kinds of open file that make
-a table of them worth keeping are [ch22](#the-file-system).
+**What a descriptor finds.** There is no disk here and nothing to open, so the table in
+[ch10](#a-small-integer-that-means-a-device) holds two things only — the serial port, and a byte
+array with a cursor — which is enough to show that the code calling `read` does not change when
+what it reaches does, and not enough to be a file system. The several kinds of open file that
+make a table of them worth keeping are [ch22](#the-file-system).
 
 **A pipe**, and the reason is worth more than the pipe would be. A pipe is not a buffer; it is a
 buffer plus what happens when the buffer is empty. The reader blocks, something else runs, and
@@ -68,9 +69,9 @@ a pipe and teaches the wrong thing by leaving out the half that defines it. Bloc
 scheduler that can switch both ways, which is [ch21](#scheduling-and-context-switches), and
 sleeping and waking are settled there.
 
-One omission is deliberate and needs saying plainly: **you will use a linker
-script and read assembly here, and neither is explained until [Part III](#part3).** Treat them as
-recipes. [ch14](#machine-level-code-on-riscv) covers the instructions and [ch15](#linking-and-loading) covers the script. This part needs
+One omission is deliberate and needs saying plainly: **you will use a linker script — a file
+telling the linker where in memory each piece of the program goes — and read assembly here, and
+neither is explained until [Part III](#part3).** Treat them as recipes. [ch14](#machine-level-code-on-riscv) covers the instructions and [ch15](#linking-and-loading) covers the script. This part needs
 them working rather than understood, and the alternative ordering — linkers before traps — puts
 three chapters of file format between you and the first interesting thing the machine does.
 

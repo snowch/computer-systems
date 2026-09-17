@@ -15,8 +15,8 @@ static volatile uint64 seen_epc;
 /* `interrupt("machine")` makes the compiler do two things a normal function does not: save every
  * register it touches, including the caller-saved ones an ordinary function may clobber, and end
  * with `mret` rather than `ret`. That is the whole difference between a function and a handler,
- * and the bare-metal system-call chapter is where you write it out by hand — once the caller is a stranger, the compiler can no
- * longer tell which registers matter. */
+ * and the bare-metal system-call chapter is where you write it out by hand, because a handler that
+ * has to read the caller's registers and change one needs them somewhere it can reach. */
 __attribute__((interrupt("machine"), aligned(4))) static void handler(void) {
     taken++;
     seen_cause = bare_csr_read(mcause);

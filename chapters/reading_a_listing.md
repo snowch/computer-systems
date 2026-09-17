@@ -83,9 +83,10 @@ argued about.
 ### What the two disagree about
 
 Read the second comparison in each. AArch64 settles it with `csel` — compute both candidates,
-select one, never branch. RV64GC — the particular set of RISC-V instructions that xv6 and every
-RISC-V example here are built for — has no conditional select @riscv-isa-unprivileged, so the same
-decision has to be a branch, and the function comes out with three separate exits.
+select one, never branch. RV64GC — the particular set of RISC-V instructions xv6 is built for,
+and the one every RISC-V listing in this book was compiled for — has no conditional select
+@riscv-isa-unprivileged, so the same decision has to be a branch, and the function comes out with
+three separate exits.
 
 That is a real difference, and it is not a difference in speed. Nothing above says which is
 faster, and *What this cannot tell you* below says why not.

@@ -29,14 +29,17 @@ more than one processor.
 
 ### An address is a number until something translates it
 
-Everything so far has used addresses that were what they said. `&marker` was where `marker`
-actually was; the UART (the console's serial device) was at the number the board's documentation gives. Translation makes that
-stop being true, and the whole of the mechanism is a table the program writes and a register that
-points at it.
+Everything so far has used addresses that were what they said. `&x` was where `x` actually was;
+the UART (the console's serial device) was at the number the machine's documentation gives.
+*Translation* — the hardware turning every address a program uses into the one memory actually
+sees — makes that stop being true, and the whole of the mechanism is a table the program writes
+and a register that points at it.
 
-Sv39 splits a thirty-nine-bit address into three nine-bit indexes and a twelve-bit offset, which
-means three levels of table. This program needs none of that, because an entry at the top level
-can be a *leaf* — covering a whole gigabyte at once:
+Sv39, RISC-V's translation scheme for 64-bit machines @riscv-isa-privileged, splits a
+thirty-nine-bit address into three nine-bit indexes and a twelve-bit offset, which means three
+levels of table. This program needs none of that, because an entry at the top level can be a
+*leaf* — one that maps memory directly instead of pointing at the next table down — covering a
+whole gigabyte at once:
 
 ```{literalinclude} ../sysfs/bare/paging.c
 :language: c
@@ -52,10 +55,11 @@ The entire table is three entries:
 :end-before: /* Runs with translation on.
 ```
 
-Two of them map memory to itself. They have to: the moment translation is switched on, the
-instruction after the switch is fetched through the table, and a table without the code in it
-would make the program vanish. The third points a different virtual address at the same physical
-memory, so that afterwards two addresses a gigabyte apart name one byte.
+Two of them map memory to itself — an *identity mapping*. They have to: the moment translation
+is switched on, the instruction after the switch is fetched through the table, and a table
+without the code in it would make the program vanish. The third points a different *virtual*
+address — the kind a program uses — at the same *physical* memory — the kind the chips have — so
+that afterwards two addresses a gigabyte apart name one byte.
 
 ```{figure} _figures/one-page-table-two-harts-alias.svg
 :alt: Three gigapage entries: two identity mappings and one alias into RAM.
@@ -65,7 +69,7 @@ Two entries send a gigabyte to itself, so the running program does not vanish th
 translation comes on. The third is the whole demonstration.
 ```
 
-Switching it on is one register and one instruction:
+Switching it on is one register — `satp`, which points at the table — and one instruction:
 
 ```{literalinclude} ../sysfs/bare/paging.c
 :language: c
@@ -81,6 +85,9 @@ And then the part that catches everyone: **machine mode ignores `satp` entirely*
 applies to supervisor and user mode; machine mode addresses are physical, always. So the program
 has to leave machine mode before any of this means anything, which is why [ch07](#interrupts-and-privilege)
 came first.
+
+The demonstration itself is then one variable read twice, by its own address and through the
+alias, before an `ecall` asks machine mode to take the program back:
 
 ```{literalinclude} ../sysfs/bare/paging.c
 :language: c
@@ -99,7 +106,8 @@ does: it makes lost updates look like weather. The useful claim is narrower:
 load and the store is enough.
 
 So this loses an update on purpose, identically every run, by holding those three instructions
-apart and letting the other hart finish entirely in the gap:
+apart and letting the other hart finish entirely in the gap. The two flags are the handshake that
+holds it open:
 
 ```{literalinclude} ../sysfs/bare/harts.c
 :language: c
@@ -110,8 +118,9 @@ apart and letting the other hart finish entirely in the gap:
 The other hart's whole increment happens inside one statement of this one. Both processors
 incremented; the counter went up once.
 
-Then the same shape with an instruction that cannot be interrupted part-way through, because it is
-one instruction:
+Then the same shape with an *atomic* instruction — one that cannot be interrupted part-way
+through, because it is one instruction. `__sync_fetch_and_add` asks the compiler for it, and on
+this machine it is `amoadd`, a load, an add and a store in a single step:
 
 ```{literalinclude} ../sysfs/bare/harts.c
 :language: c
@@ -132,8 +141,8 @@ its own chapter, and [ch28](#memory-ordering-on-real-hardware) is where it costs
 
 ## What we measured
 
-Run them yourself before reading the table — the numbers below are what you should
-see, and a figure you have reproduced is worth more than one you have been shown:
+Run them yourself before reading the tables — the rows below are what you should see, and a
+figure you have reproduced is worth more than one you have been shown:
 
 ```bash
 ./run paging
@@ -153,21 +162,24 @@ print, and still look convincing, while showing nothing at all.
 ## What this cannot tell you
 
 **How expensive any of this is.** A page-table walk costs something, a translation cache exists to
-avoid paying it, and two cores touching one cache line cost each other a great deal. None of that
-is visible here. [ch25](#the-memory-hierarchy) and [ch28](#memory-ordering-on-real-hardware) are
-those questions on hardware, and the second one is where the atomic instruction above stops
-looking free.
+avoid paying it, and two cores touching one *cache line* — the unit in which memory moves between
+them — cost each other a great deal. None of that is visible here.
+[ch25](#the-memory-hierarchy) and [ch28](#memory-ordering-on-real-hardware) are those questions
+on hardware, and the second one is where the atomic instruction above stops looking free.
 
 **What actually happens when two real cores race.** The lost update here was arranged. On real
-hardware the ordering is decided by store buffers, coherence traffic and a memory model, and the
-answer is neither deterministic nor as simple as one update going missing. What transfers from
-this chapter is the shape of the hazard, not its likelihood.
+hardware the ordering is decided by machinery this target has none of —
+[ch28](#memory-ordering-on-real-hardware) names it — and the answer is neither deterministic nor
+as simple as one update going missing. What transfers from this chapter is the shape of the
+hazard, not its likelihood.
 
 **Whether one atomic is enough.** It was here, for one counter. It is not a general answer: an
 operation that cannot be split is not the same as a sequence of them that cannot be reordered, and
 the second is what a lock needs.
 
 ## Problems
+
+Three, in `tests/one_page_table_two_harts/`.
 
 **8.1 — Map a page rather than a gigabyte.**
 Change the alias to cover four kilobytes instead of a gigabyte. You will need the two levels this

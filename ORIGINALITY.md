@@ -1044,10 +1044,11 @@ Easy Pieces*; the many "bare-metal RISC-V" tutorials that walk through `mtvec` a
 - **The `mepc` off-by-one is the centre, not a footnote.** That a handler returning without
   advancing `mepc` loops for ever is usually a warning in passing. Here it is the second section
   and a problem, because it is the one fact about traps a reader will actually be bitten by.
-- **The register question is framed as "what the compiler could see".** The usual framing is a
-  list of what to save. This chapter has the compiler doing it, explains that it could only do so
-  because both sides were compiled together, and uses the removal of that condition as the reason
-  ch07 exists.
+- **The register question is framed as "who needs to look at them".** The usual framing is a
+  list of what to save. This chapter has the compiler doing it, and explains that this is enough
+  only while the handler has nothing to say to the code it interrupted — a handler that must read
+  the caller's registers and change one needs them somewhere its C can reach, which is the reason
+  the system-call chapter's handler is written by hand.
 - **Its figure draws what the hardware does *not* do.** Every trap diagram consulted shows the
   jump and the saved state; this one gives equal space to the registers and the stack that are
   left untouched, because that absence is the chapter's argument and the thing a reader coming
@@ -1107,8 +1108,9 @@ material in the RISC-V psABI.
 **How this differs, and the care taken.**
 
 - **It is organised around what stops being true**, not around what a system call is. The four
-  things it adds are stated as missing from ch04's `ecall`, and the fifth — that the caller is now
-  a stranger — is presented as the expensive one.
+  things it adds are stated as missing from the trap chapter's `ecall`, and the fifth — that the
+  saved registers are now the interface, so every one of them has to be saved by hand — is
+  presented as the expensive one.
 - **The thirty-one stores are written out rather than generated.** That is deliberate: the count
   *is* the chapter's measurement, and a macro would hide the thing being counted.
 - **The error path is given equal weight to the success path**, on the stated grounds that
