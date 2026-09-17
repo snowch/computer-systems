@@ -23,26 +23,26 @@ What does the hardware do when a program asks the kernel for something?
 [Part III](#part3) ended with a program loaded into an address space and running. It cannot do anything
 useful on its own — it cannot read a file, write to the console, or obtain more memory — because
 none of those are things a user program is permitted to do. Everything interesting requires asking
-the kernel, and this chapter follows one such request through the mechanism, end to end.
+the kernel, and this chapter follows one such request all the way in and back out.
 
 ## The material
 
 ### A trap is not a call
 
 The instruction is `ecall`, and it is not a function call into the kernel, though it is easy to
-read it as one. Nearly every way the two differ matters.
+read it as one. They differ in nearly every respect, and the differences matter.
 
 A function call is an agreement. The caller knows it is calling, has arranged its registers
 accordingly, and the convention tells both sides who preserves what — that was [ch14](#machine-level-code-on-riscv).
 
 `ecall` is the one trap a program does agree to, and it gets nothing for agreeing, because
-**it has no path of its own.** One entry point serves it, an illegal instruction, a page fault and a
-timer interrupt alike, and three of those four arrive without being asked for: the interrupted
-code made no arrangements and has to find every register exactly as it left it. A path that must
-satisfy the worst of its callers has no calling convention to lean on.
+**it has no path of its own.** One entry point serves all four of `ecall`, an illegal instruction,
+a page fault and a timer interrupt, and three of those arrive without being asked for: the
+interrupted code made no arrangements and has to find every register exactly as it left it. The
+path has to satisfy the worst of its callers, so it has no calling convention to lean on.
 
 So the trap path cannot save "the callee-saved registers". It has to save **everything**, and put
-everything back. The census at the end of this chapter shows the same thing as a table: one
+everything back. The census at the end of this chapter shows the same point in a table: one
 counter, entered for several unrelated reasons.
 
 ### The hardware's half
@@ -54,8 +54,7 @@ kernel installed earlier.
 
 It does *not* save registers, switch stacks, or change the page table. The processor's contribution
 is to get control to a known address with the reason available, and everything else is software's
-problem. That division is worth holding on to, because it is the same on every architecture even
-where the names differ.
+problem. The same division holds on every architecture, even where the names differ.
 
 ### The software's half, and the page it lives in
 
@@ -66,10 +65,9 @@ where the names differ.
 The work you asked for is the box in the middle.
 ```
 
-There is a problem the diagram does not show and the code has to solve. The kernel runs with a
-different page table from the process, so at some point the address space must change — and the
-instant it changes, the code that is running must still be mapped, or the next instruction fetch
-faults. A page table cannot be swapped from code that is only in one of the two.
+The diagram leaves out a problem the code has to solve. The kernel runs with a different page
+table from the process, so at some point the address space must change — and the instant it
+changes, the code that is running must still be mapped, or the next instruction fetch faults. A page table cannot be swapped from code that is only in one of the two.
 
 xv6 solves it the way real kernels do: one page, the **trampoline**, mapped at the same virtual
 address in every address space, kernel and user alike. The switch happens inside that page, so
@@ -82,20 +80,20 @@ where a chapter has to promise that something later will make sense.
 ```{include} _generated/traps-and-system-calls-path-counts.md
 ```
 
-That is the whole of the state movement: the way in saves thirty-one registers, the way out
+Those counts are the state movement in full: the way in saves thirty-one registers, the way out
 restores them, and neither is doing anything you asked for. Before `usertrap` has looked at why it
 was entered — before any argument has been examined or any work begun — the machine has executed
 over forty instructions of pure bookkeeping, and it will execute nearly as many again on the way
 out, after the work is finished.
 
 `uservec` also does a handful of CSR operations, and one of them is the page-table switch.
-`userret` does fewer, because part of the return is `sret`, supervisor mode's `mret`, itself putting the privilege level and
+`userret` does fewer, because `sret` — supervisor mode's `mret` — puts the privilege level and
 the interrupt state back in one instruction.
 
-**This is a count and not a cost**, and the distinction is the whole reason it appears here rather
-than in [Part V](#part5). What an instruction costs depends on a pipeline and a cache, and this target has
-neither. What is true regardless of the machine is that the path is this long. [ch29](#the-os-layers-cost) takes
-the same shape to hardware and puts a price on it.
+**This is a count and not a cost**, which is why it appears here rather than in [Part V](#part5).
+What an instruction costs depends on a pipeline and a cache, and this target has neither. The path
+is this long on any machine. [ch29](#the-os-layers-cost) takes the same shape to hardware and puts
+a price on it.
 
 ### Counting what actually happens
 
@@ -158,14 +156,13 @@ A path length, read out of the built kernel, and a trap census, read out of a ru
 is a duration and this target could not produce one honestly.
 
 The census is reproducible because the workload is fixed and because only the deterministic half
-of it is recorded. CI re-runs it on every push and compares, which is a real check: a kernel patch
-that lost some of the workload's thousand calls, or that introduced a cause this list does not
-have, would move it, and moving it silently is exactly the failure the whole stamping scheme
-exists to prevent.
+of it is recorded. CI re-runs it on every push and compares. A kernel patch that lost some of the
+workload's thousand calls, or that introduced a cause this list does not have, would move the
+table — and moving it silently is exactly the failure the whole stamping scheme exists to prevent.
 
-What the check deliberately cannot catch is a change in how often the *shell* asks the kernel for
-anything, because that was never recorded. Giving up that number is what bought the rest of the
-table its reproducibility, and the section above is the argument.
+The check deliberately cannot catch a change in how often the *shell* asks the kernel for
+anything, because that was never recorded. Giving up that number bought the rest of the table its
+reproducibility, for the reasons the section above gives.
 
 ## What this cannot tell you
 

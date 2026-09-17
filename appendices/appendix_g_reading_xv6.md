@@ -58,7 +58,7 @@ Two of the blank rows share a reason: the cost of an interrupt, a file
 system and a driver on this machine is the cost of *this machine's* devices, and the reference
 board's storage is an SD card behind a bridge rather than anything a chapter could generalise
 from. [ch19](#interrupts-and-drivers) and [ch22](#the-file-system) say so in their own limitations sections. The third
-blank, operating-system interfaces, has no single price because the trace below is where it is paid, a layer at a time.
+blank, operating-system interfaces, has no single price: the trace below pays it a layer at a time.
 
 ## One call through every layer: `fork`
 
@@ -80,21 +80,22 @@ is a one-line wrapper. Older revisions of the commentary call it `fork`.
 | `filedup()` over the open files, and `idup()` on the working directory | reference counting | [ch22](#the-file-system) |
 | `np->state = RUNNABLE` makes it eligible to be chosen | scheduling | [ch21](#scheduling-and-context-switches) |
 
-**Why it returns twice** is the row that sets `a0` to zero, and the answer is that nothing
-returns twice. The child is a copy of the parent — including the saved register set the trap path
+**Nothing returns twice.** The row that sets `a0` to zero is where that illusion comes from. The
+child is a copy of the parent — including the saved register set the trap path
 will restore on the way out — with a single word changed: the register the calling convention uses
 for a return value. Both processes then resume at the instruction after the `ecall`, each reading
 its own `a0`. [ch16](#traps-and-system-calls) is where that saved register set is counted.
 
 **`uvmcopy` copies eagerly**, and the pinned tree is explicit about it: a `kalloc` and a `memmove`
-of a whole page, per page, with no sharing. That is a deliberate simplification and it is what
-makes [ch18](#page-faults-as-a-feature)'s copy-on-write material a change rather than an explanation — the mechanism
+of a whole page, per page, with no sharing. That is a deliberate simplification, and it lets
+[ch18](#page-faults-as-a-feature) add copy-on-write rather than merely explain it — the mechanism
 is absent here, so the chapter has somewhere to put it. A production kernel shares the pages and
 marks them read-only, and [ch29](#the-os-layers-cost) is where the difference in cost is measured.
 
-**The failure paths are the chapter's second problem, in the source.** `kfork` can fail in two
-places — no free slot, or no free page — and both return `-1` after undoing what they had done. A
-caller that does not look at the result has written the bug [ch04](#c-without-a-runtime) is about.
+**The failure paths are where [ch04](#c-without-a-runtime)'s second problem lives, in the
+source.** `kfork` can fail in two places — no free slot, or no free page — and both return `-1`
+after undoing what they had done. A caller that does not look at the result has written the bug
+[ch04](#c-without-a-runtime) is about.
 
 ## What this cannot tell you
 

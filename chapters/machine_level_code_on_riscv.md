@@ -22,7 +22,7 @@ What did the compiler actually emit, and how do I read it?
 
 [ch02](#reading-a-listing) taught you to read a line of one: which column is which, what an
 operand means, where the number in brackets comes from. This chapter is about what the lines say
-between them, which is a different skill and is the one the listings in [Part III](#part3) have
+between them, which is a different skill — and the one the listings in [Part III](#part3) have
 been quietly assuming. By the end of it you should be able to open an unfamiliar function, find
 where its arguments went, work out how much stack it wanted and why, and walk back up the chain of
 calls that reached it — by hand, and then in a debugger, and understand that these are the same
@@ -39,7 +39,8 @@ what was in them.
 There are only two ways to settle it, and a calling convention picks both. Either **the caller
 saves** a register before making the call and restores it afterwards, or **the callee saves** it
 on entry and puts it back before returning. Every register is assigned to one group or the other
-@riscv-psabi, and the assignment is the whole reason a prologue — the instructions that set up a function's stack frame — looks the way it does.
+@riscv-psabi, and that assignment is why a prologue — the instructions that set up a function's
+stack frame — looks the way it does.
 
 The consequence is about *lifetime*, not about register numbers:
 
@@ -154,9 +155,9 @@ And the one that calls:
 ```{include} _generated/machine-level-code-on-riscv-calls-out.md
 ```
 
-The shape here is worth learning because you will see it several thousand times: make room, put
-the return address in it, do the work, take the return address back, release the room, return. A
-prologue and an epilogue are a matched pair, and the number in both is the same number.
+You will see this shape several thousand times: make room, put the return address in it, do the
+work, take the return address back, release the room, return. A prologue and an epilogue are a
+matched pair, and the number in both is the same number.
 
 ### Control flow is a comparison and a branch
 
@@ -179,9 +180,9 @@ make xv6-gdb          # in one terminal: boots halted, waiting
 ```
 
 [Appendix B](#appendix-b) has the workflow — attaching, setting a breakpoint in a user program, stepping one
-instruction at a time, and printing the registers. The exercise worth doing at least once is to
-break on entry to a function, read the frame pointer, and find the return address yourself with
-`x/gx`, before typing `backtrace` and watching the debugger produce the same answer.
+instruction at a time, and printing the registers. Do this at least once: break on entry to a
+function, read the frame pointer, and find the return address yourself with `x/gx`, then type
+`backtrace` and watch the debugger produce the same answer.
 
 ## What we measured
 
@@ -210,7 +211,7 @@ names and a different number of argument registers. The *rule* transfers; the ta
 [Appendix F](#appendix-f) is the translation for the reader who meets it in [ch26](#optimising-code).
 
 **How the compiler chose.** Register allocation is an optimisation problem with a large literature
-and this chapter deliberately does not enter it. What it teaches is how to read the *result*,
+and this chapter deliberately does not enter it. It teaches how to read the *result* instead,
 which is the durable skill: allocators change, and prologues do not.
 
 ## Problems
@@ -259,9 +260,10 @@ The unprivileged specification @riscv-isa-unprivileged defines the instructions 
 instruction listing answers "what does `sd` actually do" faster than any tutorial.
 
 xv6's `kernel/swtch.S` @xv6-riscv-source is about thirty lines of assembly that saves fourteen
-registers into one context and restores fourteen from another, and it is the entire mechanism of a context switch.
-Read it now. You will not know *why* it is called or what a context is until [ch21](#scheduling-and-context-switches), but
-you can already read every instruction in it, which is a good way to find out that you can.
+registers into one context and restores fourteen from another, and that is the entire mechanism
+of a context switch. Read it now. You will not know *why* it is called or what a context is
+until [ch21](#scheduling-and-context-switches), but you can already read every instruction in it,
+which is a good way to find out that you can.
 
 [ch15](#linking-and-loading) asks where all this ends up: sections, segments, symbols, and what `exec` does with
 them.

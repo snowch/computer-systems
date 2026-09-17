@@ -47,8 +47,8 @@ Build it and point it at something:
 That is most of what an ELF file is: a header with a magic number, a handful of sizes, and the
 offsets of two arrays. Everything else is found by following one of those offsets. There is no
 `#include <elf.h>` anywhere in `sysfs/tools/elfdump.c`, deliberately — the structures are declared
-from the specification @elf-abi, because half the point is that they are a documented layout of
-bytes rather than something only a library may know.
+from the specification @elf-abi, so that they read as a documented layout of bytes rather than as
+something only a library may know.
 
 ### Two arrays, two audiences
 
@@ -100,9 +100,9 @@ the *cheapest* initial state, because it is the one the loader was going to prod
 ### What `exec` actually does
 
 The interface above is small enough that you can now read the kernel side of it. xv6's `exec`
-opens the file, checks the magic number, walks the program headers (the segment array), and for each loadable one
-allocates pages and copies bytes in @xv6-riscv-source. Then it builds a stack, puts the arguments
-on it, and switches the process to the new address space.
+opens the file, checks the magic number, walks the program headers — the segment array — and for
+each loadable one allocates pages and copies bytes in @xv6-riscv-source. Then it builds a stack,
+puts the arguments on it, and switches the process to the new address space.
 
 Everything it does is a consequence of what the file said. It has no idea what the program does,
 what language it was written in, or what its functions are called — the symbol table is not
@@ -114,16 +114,16 @@ prohibitions are enforced by the page table rather than by convention. [ch17](#v
 enforcement becomes a mechanism you can see and [ch18](#page-faults-as-a-feature) is where breaking it becomes a fault
 you can catch.
 
-### What is left over
+### The symbol table, which is not loaded
 
 The symbol table is not loaded and is not needed to run the program. It survives in the file for
 the benefit of debuggers and of anybody reading it, which is why stripping a binary makes it
 smaller without making it slower, and why a stripped binary produces a backtrace full of addresses
 and no names.
 
-That is worth knowing in both directions: the names in a backtrace are a convenience the file
-happens to carry, and a production binary that has been stripped has thrown them away
-permanently — which is why [ch30](#whole-machine-profiling) spends time on keeping symbols around for the profiler.
+It cuts both ways: the names in a backtrace are a convenience the file happens to carry, and a
+production binary that has been stripped has thrown them away permanently — which is why
+[ch30](#whole-machine-profiling) spends time on keeping symbols around for the profiler.
 
 ## What we measured
 
@@ -179,8 +179,8 @@ Five pairs of translation units. Predict whether each produces a program. The te
 them.
 
 One of the five links successfully and produces a program that is wrong, which is not a trick: it
-is the reason the C language has a reputation. Say whether it links; the chapter has already told
-you what to think about the fact that it does.
+is the reason the C language has a reputation. Say whether it links; the chapter has already said
+what to make of the fact that it does.
 
 ```bash
 python3 -m pytest tests/linking_and_loading/test_problem_2_resolve.py

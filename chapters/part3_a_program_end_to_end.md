@@ -58,13 +58,13 @@ know.
 
 Mostly `xv6`: compiled with the RISC-V cross-compiler, run under QEMU, disassembled and read.
 [ch12](#what-a-computer-does-with-a-program) compiles the same source on both targets, because the claim it makes — that the
-stages are a property of the toolchain and not of the machine — is only demonstrated by showing it
-twice.
+stages are a property of the toolchain and not of the machine — only holds up if you watch it
+happen twice.
 
 **Nothing in this part is timed.** Every figure here is structural: what a file contains, which
-instructions the compiler emitted, what a program printed. That is not a limitation of the chapters
-so much as the whole design — a stage boundary is a fact about the toolchain and survives being
-observed under emulation, whereas a duration does not survive it at all.
+instructions the compiler emitted, what a program printed. That costs the chapters nothing: a stage
+boundary is a fact about the toolchain and survives being observed under emulation, whereas a
+duration does not survive it at all.
 
 ## Where this leaves you
 

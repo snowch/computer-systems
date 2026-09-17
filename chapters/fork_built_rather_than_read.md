@@ -64,7 +64,7 @@ its own table was installed — plus one page of its own at the same virtual add
 ```
 
 Same address in both processes, different physical page behind it. That is what "its own memory"
-means, mechanically, and it is the whole reason an address space is a useful thing to have.
+means, mechanically, and it is why an address space is worth having.
 
 ### fork
 
@@ -74,15 +74,15 @@ means, mechanically, and it is the whole reason an address space is a useful thi
 :end-before: uint64 bare_syscall
 ```
 
-The frame is copied wholesale and then one slot is changed. That single line is the famous
-behaviour: the child is going to resume by having its frame loaded back into the registers, and
-slot ten is `a0`, which is where a system call's return value lives. Two frames, identical but for
-one word, produce two returns with different answers.
+The frame is copied wholesale and then one slot is changed, and that one line is why `fork` returns
+twice. Slot ten is `a0`, where a system call's return value lives, and the child resumes by having
+its frame loaded back into the registers. Two frames, identical but for one word, produce two
+returns with different answers.
 
-Note what else is copied and what is not. The page is copied — a fresh page and a byte-for-byte
-duplicate, so the child begins with everything the parent had and can then diverge. This is the
-eager version, and it is what xv6's `uvmcopy` does too: a fresh page and a copy, per page, at the
-moment of the call. [ch18](#page-faults-as-a-feature) is where that stops being necessary.
+The page is copied too — a fresh page and a byte-for-byte duplicate, so the child begins with
+everything the parent had and can then diverge. This is the eager version, and it is what xv6's
+`uvmcopy` does too: a fresh page and a copy, per page, at the moment of the call.
+[ch18](#page-faults-as-a-feature) is where that stops being necessary.
 
 ### Putting a process back on the processor
 
@@ -150,9 +150,9 @@ Linux actually does is most of the answer.
 
 **What the child should inherit.** The child here gets the address space and nothing else, because
 there is nothing else. A real `fork` has to decide about descriptors, the working directory,
-signal handlers, resource limits and more — and [ch10](#a-small-integer-that-means-a-device) built
-the two tables that make the descriptor half of that question askable: the table is copied, the
-open files it refers to are shared.
+signal handlers, resource limits and more. [ch10](#a-small-integer-that-means-a-device)'s two
+tables answer the descriptor half: the descriptor table is copied, the open files it refers to are
+shared.
 
 **Whether two processes really run concurrently.** They do not. One runs, gives up, and the other
 starts. Nothing here preempts anything, and both are on one hart.

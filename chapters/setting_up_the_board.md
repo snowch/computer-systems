@@ -47,8 +47,9 @@ you would spend an afternoon finding that out.
 
 It also has to be an image whose **device tree describes the PMU**, and not every image does. The
 counters are in every Pi 5's silicon; whether Linux is told about them depends on the `.dtb` your
-image ships. Reading the sources @rpi-dt-bcm2712: the Raspberry Pi kernel carries an `arm-pmu`
-node for the Cortex-A76, with one overflow interrupt per core, and every Pi 5 variant inherits it. Mainline Linux's own BCM2712 tree carries no such node at all.
+image ships. In the sources @rpi-dt-bcm2712, the Raspberry Pi kernel carries an `arm-pmu` node for
+the Cortex-A76, with one overflow interrupt per core, and every Pi 5 variant inherits it. Mainline
+Linux's own BCM2712 tree carries no such node at all.
 
 So prefer an image built on the Raspberry Pi kernel, which is what Raspberry Pi OS and the
 Raspberry Pi builds of other distributions use. A general-purpose distribution running a mainline
@@ -56,12 +57,12 @@ kernel with mainline device trees on the same board may have no hardware PMU exp
 whatever — not because the chip lacks one, but because nothing told the kernel it was there. One
 command settles it either way, and it is the next section.
 
-**2. Boot it, wired if you can.** Not because the link speed matters — nothing in [Part V](#part5) touches
-the network, so bandwidth, latency and the grade of cable are all irrelevant to every number in
-this book. A radio makes the machine do work you did not ask for: its driver takes interrupts and
-runs softirqs on the same cores your benchmark is running on, and a lossy link adds `sshd` wakeups
-on top. [ch28](#memory-ordering-on-real-hardware) and [ch29](#the-os-layers-cost), which measure small per-operation costs,
-are where that is most likely to show.
+**2. Boot it, wired if you can.** A radio makes the machine do work you did not ask for: its
+driver takes interrupts and runs softirqs on the same cores your benchmark is running on, and a
+lossy link adds `sshd` wakeups on top. Link speed has nothing to do with it — nothing in
+[Part V](#part5) touches the network, so bandwidth, latency and the grade of cable are all
+irrelevant to every number in this book. [ch28](#memory-ordering-on-real-hardware) and [ch29](#the-os-layers-cost), which measure small per-operation costs,
+are where the interference is most likely to show.
 
 That is a prediction, not a measurement. This book has not put a number on it, so treat the advice
 as hygiene rather than as a result — and [ch24](#measuring) will hand you the tools to settle it
@@ -121,8 +122,8 @@ broken tool. If nothing packaged matches, build it from the kernel source tree w
 
 ### Proving the counters are real
 
-This is the one capability [Part V](#part5) cannot work around, and it is worth being suspicious about,
-because `perf` reports a failure to reach hardware in a way that is easy to skim past.
+Counting is the one capability [Part V](#part5) cannot work around, and `perf` reports a failure
+to reach hardware in a way that is easy to skim past. So be suspicious of it.
 
 Ask:
 
@@ -177,7 +178,8 @@ interrupts the program thousands of times a second to ask where it is, and build
 where the time went from those interruptions. Sampling needs the counters to raise an interrupt
 when they overflow, and that is a separate hardware feature from counting.
 
-Test it with a program that is actually running. This matters more than it looks:
+Test it with a program that is actually running. The first of these commands looks like a test and
+is not:
 
 ```bash
 perf record -F 999 -e cycles -o /tmp/perf.data -- sleep 2    # proves nothing
@@ -219,8 +221,8 @@ riscv-pmu-sbi: Perf sampling/filtering is not supported as sscof extension is no
 nothing to measure. `verify-setup.py` reports the two capabilities separately, precisely so you
 find out now rather than three hundred pages in.
 
-A profiler that samples answers a different question, with different failure modes, from a counter
-that totals, and the distinction generalises well beyond RISC-V. [ch24](#measuring) takes that
+A profiler that samples answers a different question from a counter that totals, and it fails in
+different ways. That distinction generalises well beyond RISC-V. [ch24](#measuring) takes it
 apart properly and [ch30](#whole-machine-profiling) depends on it.
 
 ## What we measured
@@ -272,7 +274,7 @@ python3 -m pytest tests/setting_up_the_board/test_problem_2_sampling.py
 
 ## Where to go next
 
-[Appendix H](#appendix-h) is the requirements this chapter assumes, and `hardware/README.md` is
-the same thing as a checklist. The counter-overflow interrupt that sampling needs is the Sscofpmf
-extension @riscv-sscofpmf on RISC-V and a standard part of the PMU on ARM; the reference board's
-SoC is documented by its vendor @rpi-bcm2712.
+[Appendix H](#appendix-h) states the requirements this chapter assumes, and `hardware/README.md`
+is the same thing as a checklist. The counter-overflow interrupt that sampling needs is the
+Sscofpmf extension @riscv-sscofpmf on RISC-V and a standard part of the PMU on ARM; the reference
+board's SoC is documented by its vendor @rpi-bcm2712.

@@ -58,8 +58,8 @@ file system and is not pretending to be one.
 :end-before: struct open_file {
 ```
 
-The dispatch is a `switch`, and a third kind of backend would be one more case. That is the point
-of the table: the caller never learns which it got.
+The dispatch is a `switch`, and a third kind of backend would be one more case. The caller never
+learns which backend it got.
 
 ### The same call, twice
 
@@ -71,8 +71,8 @@ of the table: the caller never learns which it got.
 
 Two calls, identical but for one number, and they end up in completely unrelated places — one in a
 device register on a board, one in an array in memory. Neither the calling code nor the compiler
-knows the difference. That is the entire value of the abstraction, and it is why a shell can point
-a program's output at a file without the program being told.
+knows the difference, which is how a shell can point a program's output at a file without the
+program being told.
 
 Run it and watch:
 
@@ -172,8 +172,9 @@ contending over, and a pointer to something that knows how to be read. [ch22](#t
 that, in a kernel.
 
 **How the table gets entries.** There is no `open` here, because there is nothing to open: the two
-backends are set up before the program starts. Which means the most interesting question about
-descriptors — how a name becomes a number — is entirely absent, and is [ch22](#the-file-system)'s.
+backends are set up before the program starts. So the most interesting question about
+descriptors — how a name becomes a number — is entirely absent, and [ch22](#the-file-system)
+answers it.
 
 **What the numbers 1 and 2 mean.** They mean what the two lines in `main` say they mean. On a real
 system 0, 1 and 2 are a convention held up by the program that started you, not by the kernel, and

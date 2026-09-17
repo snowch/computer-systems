@@ -39,7 +39,7 @@ The two runs are the same program making the same calls, differing in a single `
 column is therefore the byte's and nothing else: the file is created in both, removed in both, and
 the shell forks and execs the program in both.
 
-Written as the question was asked:
+The same cost in bytes rather than blocks:
 
 ```{include} _generated/the-file-system-cost.md
 ```
@@ -91,8 +91,9 @@ their homes — which is safe whether or not step 3 had already done it, because
 block to the same place twice is the same as copying it once.
 
 **There is no moment at which half a transaction is visible.** That is what the log is for, and it
-is bought with exactly one thing: writing the header after the log and before the homes. Problem 22.3 asks you to check the other five orderings, and the ones that fail are the
-ones that look reasonable.
+is bought with exactly one thing: writing the header after the log and before the homes. Problem
+22.3 asks you to check the other five orderings, and the ones that fail are the ones that look
+reasonable.
 
 ### Idempotence is doing the real work
 
@@ -133,9 +134,9 @@ disk, and writing a byte read three blocks.
 
 That is the buffer cache from the list above, doing the only thing a cache does. A block already
 in memory is not fetched, and a short workload touches the same handful of blocks — the
-superblock, the log header, the inode block, the bitmap — over and over. Reads are the operation a cache can eliminate entirely; writes are the
-operation it can only delay, and a log is a design that deliberately declines to delay them very
-much.
+superblock, the log header, the inode block, the bitmap — over and over. Reads are the operation a
+cache can eliminate entirely; writes are the operation it can only delay, and a log is a design
+that deliberately declines to delay them very much.
 
 ## What we measured
 
@@ -143,10 +144,10 @@ Blocks reaching the disk for two runs of one program that differ by a single `wr
 difference between them. Nothing was timed: what a block write *costs* is a property of a disk,
 and the disk here is a file on a laptop.
 
-The measurement is a difference for a reason worth repeating. A single run would have charged the
-byte for the shell forking, for the kernel reading the program, and for the directory lookup that
-found it — all of which happen whether a byte is written or not, and all of which are larger than
-the thing being measured.
+The measurement is a difference because a single run would have charged the byte for the shell
+forking, for the kernel reading the program, and for the directory lookup that found it — all of
+which happen whether a byte is written or not, and all of which are larger than the thing being
+measured.
 
 ## What this cannot tell you
 
@@ -185,8 +186,8 @@ python3 -m pytest tests/the_file_system/test_problem_1_writes.py
 ```
 
 **22.2 — What must recovery do after a crash at each stage?**
-Five stages; the answer changes exactly once on the way up and once on the way down. Finding where
-is the design.
+Five stages; the answer changes exactly once on the way up and once on the way down. Finding those
+two points is the exercise.
 
 ```bash
 python3 -m pytest tests/the_file_system/test_problem_2_crash.py

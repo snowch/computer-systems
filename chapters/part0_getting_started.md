@@ -27,7 +27,7 @@ timing may be measured — and nothing needs it until [ch24](#measuring).
 
 So the two chapters are in that order, and they are separate on purpose: you can finish
 [ch00](#prerequisites-and-setup) this afternoon on a laptop, and do
-[ch01](#setting-up-the-board) whenever the hardware turns up. It is the next chapter, but
+[ch01](#setting-up-the-board) whenever the hardware turns up. The board chapter comes next, but
 twenty-two chapters sit between finishing the first and *needing* the second.
 
 ## What it leaves out
@@ -52,18 +52,17 @@ point which targets your machines can currently run.
 ## Which machine, and what it cannot tell you
 
 Both, which is what makes this a part rather than a chapter. The emulated targets answer questions
-about what a program *does* and **nothing here or in Parts I to IV is ever timed** —
+about what a program *does*, and **nothing here or in Parts I to IV is ever timed**:
 QEMU models no cache, no branch predictor and no memory latency, so a duration measured inside it
 describes the laptop and the translation strategy rather than the machine being emulated. The
-board answers questions about cost and is the only place in the book a timing may be taken.
+board answers questions about cost, and is the only place in the book a timing may be taken.
 
-What neither can tell you yet is whether any of it is *worth* measuring. Setting a machine up
+Neither can tell you yet whether any of it is *worth* measuring. Setting a machine up
 proves it runs; it does not prove a number coming out of it means anything, and
 [ch24](#measuring) is the chapter that takes that apart.
 
 ## Where this leaves you
 
-Two machines that work, and a script that says so — which is a smaller claim than it sounds and
-exactly the right one. You will not have learned anything about computers yet. You will have the
-apparatus the rest of the book measures with, and a way to check at any point that it is still
-telling the truth.
+Two machines that work, and a script that says so. You will not have learned anything about
+computers yet. You will have the apparatus the rest of the book measures with, and a way to check
+at any point that it is still telling the truth.

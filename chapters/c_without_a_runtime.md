@@ -32,8 +32,8 @@ What goes wrong is not syntax. [ch03](#memory-is-one-array) is the syntax.
 ### One fact, and everything else follows from it
 
 **There is nothing underneath you.** An application runs on a library, which runs on a kernel,
-which runs on hardware. A kernel runs on hardware. Every difference in this chapter is a
-consequence of removing those two layers, and it is worth reading that way rather than as a list.
+which runs on hardware. A kernel runs on hardware. Every difference in this chapter follows from
+removing those two layers; read it that way rather than as a list.
 
 Here is what removing them costs, counted from the kernel that is checked in.
 
@@ -44,10 +44,10 @@ Three of those rows are what the rest of this chapter is about.
 
 ### No heap
 
-There is no `malloc`, and the table says so rather than the chapter asserting it: nothing in the
-kernel defines one. The reason is an ordering problem rather than an omission. `malloc` is built on
-a kernel's memory management, and this *is* the memory management. It cannot call itself into
-existence.
+There is no `malloc` — nothing in the kernel defines one, and the row in the table above is a
+count rather than a claim. The reason is an ordering problem rather than an omission. `malloc` is
+built on a kernel's memory management, and this *is* the memory management. It cannot call itself
+into existence.
 
 So where do objects come from? Two places, and a kernel of this size uses both.
 
@@ -62,10 +62,10 @@ slot, `fork` fails — and *that* is what the limit means. A reader used to allo
 succeeds or raises has to get used to allocation that returns a null pointer and expects to be
 asked about it.
 
-**A free list made of the free memory itself.** The other source is whole pages, and their
-bookkeeping is worth meeting once. A list of free pages needs a node per page, which
-would need memory, which is what we are trying to allocate. The kernel resolves it by writing the
-link *into the free page*, because a free page by definition holds nothing anybody wants.
+**A free list made of the free memory itself.** The other source is whole pages. A list of free
+pages needs a node per page, which would need memory, which is what we are trying to allocate.
+The kernel resolves it by writing the link *into the free page*, because a free page by definition
+holds nothing anybody wants.
 
 ```{literalinclude} ../xv6/xv6-riscv/kernel/kalloc.c
 :language: c
@@ -78,15 +78,15 @@ That is [ch03](#memory-is-one-array)'s self-referential struct doing real work, 
 the free list's bookkeeping. Freeing a page casts its address to a `struct run *`, writes the
 current head of `kmem.freelist` into the page's first bytes, and makes the page the new head;
 allocating takes the head and follows the link it finds there. Four lines of pointer arithmetic
-that would be undefined behaviour in an application and are the allocator here. [ch18](#page-faults-as-a-feature) is the chapter that measures what it costs.
+that would be undefined behaviour in an application and are the allocator here.
+[ch18](#page-faults-as-a-feature) measures what it costs.
 
-*Undefined behaviour* is worth being precise about, because it is not a figure of speech. C is defined in
-terms of an abstract machine in which a pointer points at an *object* — something created by a
-declaration, or by an allocator, with a lifetime the standard describes. `pa` is none of those. It
-is an integer the linker script and the hardware agree is the address of usable memory, cast to a
-pointer, and the abstract machine has no concept that would make the cast meaningful. Writing
-through it is undefined not because it is dangerous but because the standard has nothing to say
-about it.
+*Undefined behaviour* is not a figure of speech here. C is defined in terms of an abstract machine
+in which a pointer points at an *object* — something created by a declaration, or by an allocator,
+with a lifetime the standard describes. `pa` is none of those. It is an integer the linker script
+and the hardware agree is the address of usable memory, cast to a pointer, and the abstract
+machine has no concept that would make the cast meaningful. Writing through it is undefined not
+because it is dangerous but because the standard has nothing to say about it.
 
 It works anyway because the compiler is not the last word on this program. The
 declaration, the object model and the lifetime rules exist to let a compiler optimise without
@@ -123,8 +123,8 @@ not make it yours — it makes it invisible to other *files*, and every hart run
 
 ### No floating point, on purpose
 
-Zero instructions in the whole kernel name a floating-point register. That is a decision, and it
-is a good example of the kind of decision a kernel gets to make.
+Zero instructions in the whole kernel name a floating-point register. That is a decision rather
+than an oversight, and it is the kind of decision a kernel gets to make.
 
 Floating-point registers are part of a process's state. Saving and restoring them on every context
 switch costs time on every switch, whether or not the process ever used one. xv6 declines: it does
@@ -132,22 +132,22 @@ not save them, so the kernel may not use them either, because a kernel that used
 whichever process it interrupted. The cost of the feature is paid by everyone and the benefit
 accrues to few, so the feature is not offered.
 
-That is the trade in miniature, and it is worth recognising because real kernels make the same one
-differently — usually by saving the registers lazily, the first time a process touches one, which
-is [ch18](#page-faults-as-a-feature)'s mechanism used for something other than memory.
+Real kernels make the same trade differently — usually by saving the registers lazily, the first
+time a process touches one, which is [ch18](#page-faults-as-a-feature)'s mechanism used for
+something other than memory.
 
 ### Almost no library, so the kernel writes its own
 
 The table counts the functions this kernel reimplements because nothing supplies them: the string
 and memory routines, and a formatted-print routine for the console. They are a hundred lines
-between them and they are worth reading early, because they are the shortest complete C in the
-tree and they are written in exactly the style [ch03](#memory-is-one-array)'s second problem asked for — pointers
-that move, no subscripts, a length passed alongside every buffer.
+between them, the shortest complete C in the tree, and written in exactly the style
+[ch03](#memory-is-one-array)'s second problem asked for — pointers that move, no subscripts, a
+length passed alongside every buffer. Read them early.
 
-The kernel's string copy is a warning rather than a convenience: it takes a size and always
-terminates, where the standard one it is named after takes a size but does not reliably terminate. When a kernel
-reimplements something the library already has, the reimplementation usually differs on purpose,
-and the difference is usually about a failure the library was willing to tolerate.
+The kernel's string copy differs from the standard one it is named after: it takes a size and
+always terminates, where the standard one takes a size and does not reliably terminate. When a
+kernel reimplements something the library already has, the reimplementation usually differs on
+purpose, and the difference is usually about a failure the library was willing to tolerate.
 
 ### Failure returns, it does not raise
 
@@ -157,12 +157,12 @@ returns something you must look at, and a caller that does not look has written 
 This is the habit that takes longest to acquire, because in an application ignoring a failure is
 usually survivable — something above you will notice. Here, nothing is above you. Problem 4.2 is
 deciding which of several plausible kernel functions can fail at all, which is a question about
-where their memory comes from, and that is the whole of this chapter in one exercise.
+where their memory comes from — this chapter in one exercise.
 
 ### What the language lets you do and you must not
 
-C will not stop you. Neither will the hardware, until [ch18](#page-faults-as-a-feature). The three that cost the most
-time, all of which compile without a word of complaint:
+C will not stop you. Neither will the hardware, until [ch18](#page-faults-as-a-feature). The three mistakes that cost
+the most time, all of which compile without a word of complaint:
 
 - **A pointer to a local, after the function returned.** The bytes are still there and still
   readable, right up until the next call writes over them, which is why this produces a bug that
@@ -235,7 +235,7 @@ python3 -m pytest tests/c_without_a_runtime/test_problem_3_volatile.py
 ## Where to go next
 
 `kernel/string.c` and `kernel/kalloc.c` are the two files to read after this chapter — a hundred
-and eighty lines between them, and between them they contain every idea above. [Appendix D](#appendix-d)
+and eighty lines between them, containing every idea above. [Appendix D](#appendix-d)
 says what else is in the tree and which chapter reads it.
 
 [ch05](#c-for-people-who-will-read-a-kernel) is the last chapter of this part and the one that puts a compiler behind the claims.

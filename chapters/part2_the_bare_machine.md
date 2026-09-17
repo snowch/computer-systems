@@ -31,7 +31,7 @@ mechanism to a machine that has none — a trap, an interrupt, a page table, a s
 descriptor table with `read` and `write` over it, and finally a second process made from the
 first.
 
-They do not all come from the same place, and the division is the part's shape.
+The six mechanisms do not all come from the same place, and that split shapes the part.
 [ch06](#a-trap-with-nothing-else)–[ch09](#a-system-call-of-your-own) are things the *hardware*
 hands you: a trap vector, a saved program counter and the instruction that returns from a trap are
 in the privileged specification, not in anybody's kernel.
@@ -63,12 +63,12 @@ a table of them worth keeping are [ch22](#the-file-system).
 buffer plus what happens when the buffer is empty. The reader blocks, something else runs, and
 somebody wakes them — and this machine's entire scheduler is *when a process leaves, put the next
 one on*. It moves one way and never comes back, so a process here cannot wait for another and then
-continue. What could be built is a shared array with a cursor, which is the easy half of a pipe and
-teaches the wrong thing by leaving out the half that defines it. Blocking needs a scheduler that
-can switch both ways, which is [ch21](#scheduling-and-context-switches), and sleeping and waking
-are settled there.
+continue. A shared array with a cursor is all this machine could support, which is the easy half of
+a pipe and teaches the wrong thing by leaving out the half that defines it. Blocking needs a
+scheduler that can switch both ways, which is [ch21](#scheduling-and-context-switches), and
+sleeping and waking are settled there.
 
-And one thing it leaves out on purpose, which is worth saying plainly: **you will use a linker
+One omission is deliberate and needs saying plainly: **you will use a linker
 script and read assembly here, and neither is explained until [Part III](#part3).** Treat them as
 recipes. [ch14](#machine-level-code-on-riscv) covers the instructions and [ch15](#linking-and-loading) covers the script. This part needs
 them working rather than understood, and the alternative ordering — linkers before traps — puts
@@ -83,8 +83,8 @@ program extended. Skipping ahead means reading code that assumes work you have n
 ## Which machine, and what it cannot tell you
 
 `qemu-system-riscv64` with no firmware and no kernel: your program is the first thing the processor
-executes. That is the right instrument for this part, because what it is faithful about is
-*semantics* — a trap either lands where the vector register says it does or it does not, and QEMU
+executes. That is the right instrument for this part, because it is faithful about
+*semantics*: a trap either lands where the vector register says it does or it does not, and QEMU
 is exact about that.
 
 **Nothing here is timed, and nothing in it may be**, for the reason [Part I](#part1) gives. There

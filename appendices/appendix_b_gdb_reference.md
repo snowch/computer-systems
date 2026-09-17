@@ -98,8 +98,8 @@ which prints, on the first system call of the boot:
 scause=0x8 sepc=0x392 stval=0
 ```
 
-`scause` 8 is an environment call from user mode; `sepc` is a user-mode address, which is the
-thing worth noticing — you are in the kernel, and the register holding "where we were" holds an
+`scause` 8 is an environment call from user mode. `sepc` is a user-mode address: you are in the
+kernel, and the register holding "where we were" holds an
 address in a different address space. `stval` is zero because a system call has no faulting
 address; [ch18](#page-faults-as-a-feature) is where it stops being zero.
 
@@ -134,8 +134,8 @@ $1 = 0x80007000
 ```
 
 That is where the linker put it. It is not where it executes. The trampoline page is mapped a
-second time, at the top of every address space, and the trap path runs from *that* mapping — which
-is the whole point of it existing, since the page table changes in the middle. Break on the symbol
+second time, at the top of every address space, and the trap path runs from *that* mapping. That
+second mapping is why the page survives the page table changing underneath it. Break on the symbol
 and you will wait for ever.
 
 Break on the address it actually runs at instead:

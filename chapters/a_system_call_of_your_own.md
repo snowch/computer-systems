@@ -41,11 +41,10 @@ of them:
 A system call on a real machine goes from *user* mode to *supervisor* mode. This one goes from
 supervisor to machine, which is one level up from where you are expecting it.
 
-That is deliberate, and it is not a simplification of the mechanism — the mechanism is identical,
-because `ecall` traps to the level above wherever it was executed and the level above decides what
-to do about it. What it avoids is having to build a user mode, a process and an address space
-before the boundary itself can be shown, which would put this chapter after
-[ch11](#fork-built-rather-than-read) rather than before it.
+The mechanism is identical either way: `ecall` traps to the level above wherever it was executed,
+and that level decides what to do about it. Going supervisor-to-machine avoids having to build a
+user mode, a process and an address space before the boundary itself can be shown, which would put
+this chapter after [ch11](#fork-built-rather-than-read) rather than before it.
 [ch16](#traps-and-system-calls) is the same four ingredients at the level a reader expects.
 :::
 
@@ -68,9 +67,8 @@ registers" are the same thing, and the handler reads them as an array:
 :end-before:     if (cause != CAUSE_ECALL_FROM_S)
 ```
 
-`a7` holds the number and `a0` the first argument because those two lines say so. That is the
-entire status of the calling convention at this point — a convention is an agreement, and here you
-are both parties.
+`a7` holds the number and `a0` the first argument because those two lines say so, and nothing else
+enforces it. A convention is an agreement, and here you are both parties.
 
 ### The dispatch
 
@@ -83,7 +81,7 @@ are both parties.
 Writing to `frame[10]` is how a result gets back: the epilogue restores `a0` from that slot, so the
 caller finds it in the register the convention promised. Nothing returns anything in the C sense.
 
-The default case is worth as much as the others:
+The default case decides what a call number nobody implemented does:
 
 ```{literalinclude} ../sysfs/bare/syscall.c
 :language: c

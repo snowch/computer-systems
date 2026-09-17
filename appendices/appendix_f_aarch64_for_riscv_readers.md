@@ -23,7 +23,7 @@ PMU that can raise an interrupt on counter overflow, and no affordable RISC-V co
 using two architectures pays off: a reader shown one weak memory model concludes that model *is*
 memory ordering.
 
-So the crossing is deliberate, and this page is the cost of it, paid in one place.
+So the crossing is deliberate, and this page is where you pay for it, once.
 
 ## Registers
 

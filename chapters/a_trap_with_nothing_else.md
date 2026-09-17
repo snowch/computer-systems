@@ -50,9 +50,9 @@ will: there is no loader to interpret program headers, and no runtime to call be
 ```
 
 And the console is two device registers. Writing a byte to one sends it; the other says whether
-the device is ready for the next. That is the whole driver, and it is worth seeing at this size
-once, because the kernel's version in [ch19](#interrupts-and-drivers) is these same two registers
-underneath a great deal of machinery about sleeping and waking.
+the device is ready for the next. That is the whole driver. The kernel's version in
+[ch19](#interrupts-and-drivers) is these same two registers underneath a great deal of machinery
+about sleeping and waking.
 
 ```{literalinclude} ../sysfs/bare/console.c
 :language: c
@@ -62,8 +62,8 @@ underneath a great deal of machinery about sleeping and waking.
 
 ### Where the processor goes
 
-A trap is a jump the processor makes without being asked. What makes it a jump to somewhere useful
-is one register: `mtvec`, the machine trap vector, which holds the address to go to.
+A trap is a jump the processor makes without being asked. One register decides where it lands:
+`mtvec`, the machine trap vector, holds the address to go to.
 
 ```{literalinclude} ../sysfs/bare/trap.c
 :language: c
@@ -78,9 +78,9 @@ Build it and boot it on a machine with nothing on it:
 ```
 
 That is the installation, complete. There is no table of handlers, no registration, and nothing to
-tell the processor which kinds of trap this handler wants — it gets all of them, and sorting out
-which is which is the handler's problem, which is `mcause`'s job and [ch07](#interrupts-and-privilege)'s
-subject.
+tell the processor which kinds of trap this handler wants — it gets all of them. Sorting out which
+is which is the handler's job, and it reads `mcause` to do it —
+[ch07](#interrupts-and-privilege)'s subject.
 
 ### Where it was, and the mistake that loops for ever
 
@@ -107,11 +107,11 @@ The machine does not consider this an error. It is doing exactly what it was tol
 is a program that prints nothing and never finishes.
 
 Whether four is the right number to add is not obvious either. [ch02](#reading-a-listing)
-pointed out that instructions on this architecture are not all the same length, which
-ought to make adding a fixed four look reckless — and it would be, except that the programs in this
-part are built for `rv64g`, without the compressed extension, so every instruction in them really
-is four bytes. That is a property of the build, not of the processor, and the first problem below
-is about what happens when it stops holding.
+pointed out that instructions on this architecture are not all the same length, so adding a fixed
+four ought to look reckless. It is safe here only because the programs in this part are built for
+`rv64g`, without the compressed extension, so every instruction in them really is four bytes. That
+is a property of the build, not of the processor, and the first problem below is about what happens
+when it stops holding.
 
 ### What a trap does not do
 
@@ -128,8 +128,8 @@ Here the compiler covers for us:
 :end-before: __attribute__((interrupt
 ```
 
-It can only do that because it can see both sides. The handler and the code it interrupts were
-compiled together, so the compiler knows which registers are live and saves those. Take that away
+The compiler can only do that because it can see both sides. The handler and the code it interrupts
+were compiled together, so it knows which registers are live and saves those. Take that away
 — make the caller a program the compiler has never seen — and there is nobody left to work it out.
 That is [ch09](#a-system-call-of-your-own), and it is why its handler saves all thirty-one by hand.
 
@@ -162,10 +162,10 @@ describing a different processor.
 
 ## What this cannot tell you
 
-**How long a trap takes.** Nothing on this target may be timed, and the reason is the reason the
-whole book has two targets: QEMU models no cache, no branch predictor, no store buffer and no
-memory latency, so a duration measured here is a fact about the laptop running the emulator. What
-a trap *costs* is [ch29](#the-os-layers-cost), on hardware.
+**How long a trap takes.** Nothing on this target may be timed, for the reason the whole book has
+two targets: QEMU models no cache, no branch predictor, no store buffer and no memory latency, so a
+duration measured here is a fact about the laptop running the emulator. What a trap *costs* is
+[ch29](#the-os-layers-cost), on hardware.
 
 **What a real board does before your code runs.** QEMU with `-bios none` hands the processor over
 at the reset address with the machine in a defined state. A physical board has firmware that has

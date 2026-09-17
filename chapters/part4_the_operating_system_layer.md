@@ -38,7 +38,7 @@ scheduling because a scheduler is largely the thing that needed them.
 ## What it leaves out
 
 Cost. Every question of the form *how long does this take* is refused here and asked again in
-[Part V](#part5), where there is hardware that can answer it. The reason is that a timing taken
+[Part V](#part5), where there is hardware that can answer it. A timing taken
 under emulation is a fact about the emulator, so a chapter that produced one would be teaching you
 to trust the wrong instrument.
 
@@ -66,12 +66,12 @@ exactly which register held the faulting address and in what order the stores ha
 program's own view; it models no cache, no branch predictor, no store buffer and no memory latency,
 so it cannot tell you what any of it cost or what a second hart really does to the first.
 
-The sharper limit is that **it is a poor liar rather than an obvious one.** A duration measured
+The sharper limit is that **QEMU lies convincingly.** A duration measured
 here is a real number, reproducible, and about the host machine and the translation strategy rather
 than about RISC-V — and once written into a table it is indistinguishable from a measurement. That
 is why the rule is absolute and why a check enforces it rather than a convention.
 
 ## Where this leaves you
 
-Knowing what the mechanisms are and where they live, and therefore able to ask the only question
-left, which is what they cost.
+Knowing what the mechanisms are and where they live, and therefore able to ask what they cost —
+the only question left.

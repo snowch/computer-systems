@@ -41,15 +41,15 @@ Control flow, operators and functions. You already have these, and C spells them
 language does. Where it differs the chapters say so and move on.
 
 The standard library, which is [ch04](#c-without-a-runtime)'s subject from the opposite direction: a kernel has
-almost none of it, and the interesting question is what it does instead. Floating point, for the
+almost none of it, and that chapter asks what it does instead. Floating point, for the
 same reason — the kernel does not use it, and why it does not is a better question than how it
 works.
 
 And the craft of C as a language you would *build something in*: ownership discipline, API design,
 build systems, the long list of ways to invoke undefined behaviour. The problems in this book ask
 you to change a program that exists and predict what the change does — which needs the model and
-almost none of the craft. That is not a soft option; it is the whole of what the rest of the book
-needs, and it is reachable in three chapters, which the craft is not.
+almost none of the craft. That is not a soft option. It is everything the rest of the book
+needs, and three chapters can reach it, where the craft would take far longer.
 
 ## Where to start
 
@@ -78,6 +78,6 @@ answer it.
 
 ## Where this leaves you
 
-Not a C programmer. Able to read one, and to change one and say what the change will do — which is
-the thing the rest of the book actually requires, and [Part II](#part2) starts requiring it
+Not a C programmer. Able to read a C program, and to change one and say what the change will do —
+which is what the rest of the book requires, and [Part II](#part2) starts requiring it
 immediately.

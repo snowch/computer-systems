@@ -21,9 +21,9 @@ short_title: "03 · Memory Is One Array"
 If memory is one array of bytes, what is a C declaration saying about it?
 
 A declaration is not read left to right, and every piece of one turns into something concrete — an
-amount of storage, a width to step by, an instruction the compiler emits. The chapter takes them a
-few at a time and checks each answer against what was actually compiled, rather than against a rule
-about how to read them.
+amount of storage, a width to step by, an instruction the compiler emits. This chapter takes
+declarations a few at a time and checks what each one means against what the compiler emitted,
+rather than against a rule for reading them.
 
 Change the program as you go. `./run firstc` builds and runs it, and the fastest way to find out
 whether you have the model is to predict what an edit will print before you make it.
@@ -70,8 +70,8 @@ The rest of the chapter explains why those four numbers are what they are.
 
 The language you already use has named things that hold values, and a runtime that knows where
 they are. C has one array of bytes, numbered from zero, and everything you declare is a stretch of
-it. That is the whole model rather than a simplification for teaching, and every difficulty later
-in the book is a difficulty about it.
+it. That is the model, not a simplification for teaching, and every difficulty later in the book
+is a difficulty about it.
 
 Three questions follow, and they are the ones worth asking of any C you read:
 
@@ -90,8 +90,8 @@ index, and nothing else.
 Two operators, and they are inverses.
 
 `&x` gives the index of where `x` lives. `*p` goes to the index held in `p` and reads what is
-there. So `*&x` is `x` again, which is the second row of that table, printed by a program rather
-than asserted by a paragraph.
+there. So `*&x` is `x` again, which is the second row of the table above, printed by a program
+rather than asserted by a paragraph.
 
 **The program never prints an address**, because an address is different every time the program
 runs and means nothing by itself; there is no fact in it. What is the same every time — and what is
@@ -209,8 +209,8 @@ subject. What matters here is that the offsets are fixed at compile time and the
 ### Casts, and the two kinds of arithmetic
 
 A cast says "treat these bytes as this type instead". Between pointer types it changes nothing
-about the bytes and everything about what arithmetic on them means, for the reason two sections
-back.
+about the bytes and everything about what arithmetic on them means, because the type is what sets
+the step size.
 
 A kernel casts constantly between a pointer and a plain integer, because an address genuinely *is*
 a number there — a physical page is a number, a device register is a number — and the two kinds of
@@ -244,10 +244,10 @@ out of the free memory itself.
 
 Nothing here is a cost. Two things, and they are the same fact seen from two sides.
 
-What the first program printed, which is the chapter's claims in a form the reader can reproduce:
-that `*&x` is `x`, and that consecutive elements are one element apart rather than one byte. The
-runner refuses to stamp a run where either stops holding, because both are things the chapter asks
-the reader to take on trust for exactly as long as it takes to run the program.
+First, what the program printed — the chapter's claims in a form you can reproduce: that `*&x` is
+`x`, and that consecutive elements are one element apart rather than one byte. The runner refuses
+to stamp a run where either stops holding, because the chapter asks the reader to take both on
+trust for exactly as long as it takes to run the program.
 
 Then three listings, captured by the machinery [ch12](#what-a-computer-does-with-a-program) explains and re-captured by CI on
 every push, showing the same two facts from underneath: that `p + 1` compiles to a different
@@ -289,8 +289,8 @@ python3 -m pytest tests/memory_is_one_array/test_problem_1_declarations.py
 
 **3.2 — Walk a buffer without an index.**
 Reimplement three of the routines the kernel supplies for itself, using pointers that move rather
-than a subscript. The versions in `kernel/string.c` are written this way, and this is so you can
-read them.
+than a subscript. The versions in `kernel/string.c` are written this way, and the exercise is so
+that you can read them.
 
 ```bash
 python3 -m pytest tests/memory_is_one_array/test_problem_2_walking.py

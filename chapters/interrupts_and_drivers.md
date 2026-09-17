@@ -29,7 +29,7 @@ processor finished doing something, at a moment decided by that thing, while the
 the middle of work with no relationship to it at all. The instruction it lands between is
 arbitrary. The process it lands on is very probably not the one that asked.
 
-That difference is why device drivers are shaped the way they are, and this chapter asks whether
+That difference is why device drivers are shaped the way they are, and this chapter asks which of
 its consequences can be counted.
 
 ## The material
@@ -46,8 +46,8 @@ nothing to do with the I/O and is not consulted. A process that performs no I/O 
 for every interrupt that arrives while it holds a core, and it pays in exactly the currency
 [ch16](#traps-and-system-calls) measured.
 
-So the obvious question is how many of these there are. It has an answer for one kind of device
-and not for the other, which is the useful part of this chapter.
+So the obvious question is how many of these there are. One kind of device has an answer and the
+other does not.
 
 ### A workload that decides its own numbers
 
@@ -75,7 +75,7 @@ The kernel counts interrupts by source, and counts two extra facts about the con
 :end-before: +// Printed on Ctrl-N
 ```
 
-### Only one of them is a number
+### Three interrupt sources, one countable
 
 ```{figure} _figures/interrupts-and-drivers-sources.svg
 :alt: Three interrupt sources, and which of them a fixed workload gives a fixed count for.
@@ -90,14 +90,14 @@ Three sources. Same workload, repeated: one count came back identical every time
 The disk count is in the table. The console count is not, and its absence is the finding rather
 than an omission.
 
-So is a second absence, arrived at later and the harder of the two. The table used to carry a row
-for how many characters the writing process handed to the device itself, which reads like a
-companion to the row above it and is not one: the counter behind it is incremented for every
-character *the kernel* sends, so it counts the boot log, the shell's prompt and the echo of what
-was typed as well as the workload's output. It reported more characters than the workload had
-asked for, which is what gave it away, and it came back one different between identical runs often
-enough to fail the check that re-runs this measurement. The same argument that keeps the console's
-interrupt count out of the table keeps that row out of it.
+A second row is missing too, and it took longer to find. The table used to carry a count of how
+many characters the writing process handed to the device. It reads like a companion to the row
+above it and is not one: the counter behind it is incremented for every character *the kernel*
+sends, so it counts the boot log, the shell's prompt and the echo of what was typed as well as the
+workload's output. It reported more characters than the workload had asked for, which is what gave
+it away, and it came back one different between identical runs often enough to fail the check that
+re-runs this measurement. The same argument that keeps the console's interrupt count out of the
+table keeps that row out of it.
 
 Run the identical workload five times and the disk raises the same number of interrupts every
 time. Run it five times and the console raises a different number every time. Nothing about the
@@ -156,9 +156,9 @@ regenerates the measurement on every push, so a change is reported rather than a
 ## What we measured
 
 Interrupts raised by the disk for a fixed number of block operations, and what the console driver
-did with a fixed number of characters. The two counts the census prints and this book does not
-record are named in the result itself rather than quietly dropped, and problem 19.3 asks the reader
-to work out which they are before being told.
+did with a fixed number of characters. The census prints two counts this book does not record; the
+result names them rather than quietly dropping them, and problem 19.3 asks the reader to work out
+which they are before being told.
 
 ## What this cannot tell you
 
@@ -168,10 +168,10 @@ innocent process that was running — and this target models none of the last pa
 prices it.
 
 **How often the timer really fires.** The census counts timer interrupts and the book does not
-print the number, for [ch16](#traps-and-system-calls)'s reason. It is worth knowing that this count is *steady* here
-over repeated runs and still must not be published: steady on one machine for one short workload
-is not the same as determined by the workload, and the difference is exactly the mistake this book
-is trying not to make.
+print the number, for [ch16](#traps-and-system-calls)'s reason. The count is *steady* here over
+repeated runs and still must not be published: steady on one machine for one short workload is not
+the same as determined by the workload, and the difference is exactly the mistake this book is
+trying not to make.
 
 **Why the driver is split in two.** The structure is here and the pressure that produced it is
 not, because the emulated transmitter is never busy. A reader who wants to see the asynchronous

@@ -48,36 +48,37 @@ Someone who has spent years around computers and programs fluently — a scripti
 Java, or anything else with a runtime underneath it — and who has never had a reason to write C or
 read a kernel.
 
-**You do not need to know C.** Three of [Part I](#part1)'s four chapters are about exactly that,
+**You do not need to know C.** Three of [Part I](#part1)'s four chapters teach it,
 and none of them is a C tutorial: control flow, functions and operators are assumed from whatever
-language you already use. What it teaches is the part your language was built to hide — that memory is one array of
-bytes and everything in it has an index — and then the assumptions that stop holding when there is
-no runtime underneath you. [ch02](#reading-a-listing) comes first and is for everyone — it teaches reading what the compiler
-produced, which every later chapter asks you to do. Then [ch03](#memory-is-one-array) is the
-on-ramp; [ch04](#c-without-a-runtime) is the unlearning;
-[ch05](#c-for-people-who-will-read-a-kernel) sorts C's constructs by a single question, *has the machine heard of this?*
+language you already use. They teach the part your language was built to hide — that memory is one
+array of bytes and everything in it has an index — and then the assumptions that stop holding when
+there is no runtime underneath you. [ch02](#reading-a-listing) comes first and is for everyone —
+it teaches reading what the compiler produced, which every later chapter asks you to do. Then
+[ch03](#memory-is-one-array) gets you on to that model; [ch04](#c-without-a-runtime) takes away
+what the runtime was doing for you; [ch05](#c-for-people-who-will-read-a-kernel) sorts C's
+constructs by a single question, *has the machine heard of this?*
 
-**You do not need OS internals.** That is [Part IV](#part4), and it is the point of using a kernel small
-enough to read rather than one that has to be described.
+**You do not need OS internals.** [Part IV](#part4) teaches them, and that is why the book uses a
+kernel small enough to read rather than one that has to be described.
 
 **You do not need any hardware background.** No digital logic, and no pipeline diagram.
 [Part II](#part2) starts at a bare machine and adds one mechanism at a time, so nothing about the
-hardware is assumed before it is built. [ch27](#the-cpu) does the same for the pipeline, on the
-grounds that a reader who has seen a five-stage diagram in a lecture still has no idea what a real
-core does with a branch.
+hardware is assumed before it is built. [ch27](#the-cpu) does the same for the pipeline, because a
+reader who has seen a five-stage diagram in a lecture still has no idea what a real core does with
+a branch.
 
 ### Where this is meant to deliver you
 
-This book is an on-ramp. The destination it was written against is *Systems Performance*
-@gregg-sysperf — a book that assumes you already know what a system call costs, what a cache miss
-is, why a profiler can blame the wrong line, and what a context switch moves. This one establishes
-exactly that substrate, by measuring it on a machine you own.
+This book is an on-ramp to *Systems Performance*
+@gregg-sysperf, which assumes you already know what a system call costs, what a cache miss
+is, why a profiler can blame the wrong line, and what a context switch moves. This book teaches you
+those things by measuring them on a machine you own.
 
 What it deliberately does **not** cover, and what you should read that book for: tracing and BPF,
 flame graphs, the network and storage stacks, containers and cloud, and observability across many
-machines. There is no overlap to speak of. The relationship is one-way — this is the layer
-underneath, and the reason to read it first is that those tools all report quantities whose
-meaning is what this book establishes.
+machines. There is no overlap to speak of. This is the layer underneath, and you should read it
+first, because the tools in that book all report quantities — cache misses, faults, context
+switches — whose meaning this book establishes.
 
 ## What this book is
 
@@ -102,7 +103,7 @@ All thirty-two chapters are written, and eight of the eight appendices.
 
 Zero figures are marked *pending*: the reference machine has reported and every `host` measurement
 has been taken, and [Appendix C](#appendix-c) — the perf events this board exposes — is generated
-from it rather than drafted from a desk, which is the one thing it could never have been.
+from the board, which is the only place that list could honestly have come from.
 
 **[Download the whole book as a PDF](/systems-from-scratch.pdf)** — every chapter and appendix in
 one file, built from the same source as this site, so the two cannot disagree about what a
@@ -130,9 +131,9 @@ program is and who finishes what the compiler left undone; [ch15](#linking-and-l
 `exec`, which is where [Part IV](#part4) begins. [Part IV](#part4) puts the entanglement back, and
 it turns out to be most of what an operating system is.
 
-[Getting started](#part0) sits before all of it: [ch00](#prerequisites-and-setup) is the emulated
-targets and a script that says what your machine can currently run, and
-[ch01](#setting-up-the-board) is the board, whenever it arrives.
+[Getting started](#part0) sits before all of it: [ch00](#prerequisites-and-setup) sets up the
+emulated targets and gives you a script that says what your machine can currently run, and
+[ch01](#setting-up-the-board) sets up the board, whenever it arrives.
 
 [Part IV](#part4) reads a real kernel, and that kernel has a book of its own: *xv6: a simple,
 Unix-like teaching operating system* @xv6-book, written by its authors and free from MIT. The two
@@ -144,7 +145,7 @@ every layer it touches.
 ## Three targets on two machines, on purpose
 
 Almost every book on this subject picks one target and lives with its limitations. This one uses
-three, because the question has halves that need different instruments.
+three, because *what does a program do* and *what does it cost* need different instruments.
 
 ```{figure} chapters/_figures/prerequisites-and-setup-targets.svg
 :alt: The bare, xv6 and host targets side by side, with what each can and cannot answer.
@@ -162,7 +163,7 @@ reading this on, and need one cross-compiler between them. Only the third has to
 [Part III](#part3) works on both sides of the split, and
 [ch12](#what-a-computer-does-with-a-program) is where it crosses.
 
-The split is not a compromise; it is the argument. QEMU will happily answer a question about
+The split is not a compromise. QEMU will happily answer a question about
 nanoseconds and the answer will be meaningless, because it models no cache, no branch predictor
 and no pipeline. Watching a program in a debugger tells you what it *does*. Only real hardware
 tells you what it *costs*. [ch23](#the-same-program-on-both-targets) puts the same program through both and makes
@@ -193,13 +194,12 @@ firmware that has broken `perf` between distribution releases. A Raspberry Pi co
 
 ### What the split buys
 
-It would be easy to present that as a regrettable compromise. It is not, and the honest version is
-more interesting.
+That reads like a regrettable compromise. It is not: the two architectures buy more than they cost.
 
 This book's argument is *use the instrument that can answer your question, and know what each
 instrument cannot tell you*. Chapter after chapter applies that to caches, to profilers, to
-emulators. Applying it to the book's own construction gives exactly this arrangement. Three things
-follow that a single-architecture book could not offer.
+emulators. Applying it to the book's own construction gives exactly this arrangement, and it buys
+three things a single-architecture book could not offer.
 
 **The concepts are visibly not about an instruction set.** A book that stays on one architecture
 has to *assert* that its ideas generalise. This one demonstrates it, by having them survive a
@@ -217,8 +217,9 @@ another, one instruction set against another. Attributing a difference to the wr
 commonest way to be confidently wrong about performance, and that chapter is where you practise
 separating them.
 
-Reading disassembly is a small part of the book, and this is the whole of what the split costs
-you. After that, in Parts I and III it is RISC-V: [ch03](#memory-is-one-array),
+The split costs you one thing: you read disassembly in two instruction sets instead of one, and
+reading disassembly is a small part of the book. In Parts I and III it is RISC-V:
+[ch03](#memory-is-one-array),
 [ch05](#c-for-people-who-will-read-a-kernel), [ch12](#what-a-computer-does-with-a-program),
 [ch13](#representing-information) and [ch14](#machine-level-code-on-riscv). In
 [Part V](#part5) it is AArch64: [ch26](#optimising-code), [ch27](#the-cpu),
@@ -226,7 +227,7 @@ you. After that, in Parts I and III it is RISC-V: [ch03](#memory-is-one-array),
 the comparison is the content — [ch20](#locks-and-memory-ordering) on what an atomic looks like
 either way, and [ch23](#the-same-program-on-both-targets) on one program compiled for each.
 [ch02](#reading-a-listing) is the third, and comes first: it shows one small function both ways so
-the difference is concrete rather than promised. [Appendix F](#appendix-f) is a translation
+the difference is concrete rather than promised. [Appendix F](#appendix-f) translates
 between the two for the reader who meets the second having learned the first. Everything else is
 method, and method does not have an architecture.
 
@@ -257,8 +258,8 @@ The stamped result behind each figure is a JSON file under `bench/results/`, and
 target, the board or QEMU version, the kernel, the compiler, its flags, and a hash of the code
 that produced the number.
 
-The consequence worth stating plainly is what happens when a machine cannot answer a question at
-all. The chapter says so, shows the reasoning it used instead, and does not quietly substitute a
+When a machine cannot answer a question at all, the chapter says so, shows the reasoning it used
+instead, and does not quietly substitute a
 number from somewhere else. The chapters whose reading depends on something specific about the
 reference machine say so in their own headers rather than letting you discover it two hundred
 pages in.

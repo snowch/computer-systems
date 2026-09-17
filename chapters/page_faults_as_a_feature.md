@@ -43,17 +43,17 @@ when a particular byte is used, and everything in this chapter is built on that 
 
 ### The instruction runs again
 
-The difference from [ch16](#traps-and-system-calls) that makes it work is one line of the kernel.
+The difference from [ch16](#traps-and-system-calls) is one line of the kernel.
 
 After a system call, `usertrap` advances the saved program counter past the `ecall` before
 returning, because the call has been made and the program should carry on with the next
 instruction. After a page fault it does not. The saved program counter still points at the load or
 store that faulted, so returning from the handler **runs that instruction again**.
 
-That is exactly what you want, and its significance is easy to miss. The handler does not
-emulate the access, does not need to know what the instruction was, and does not have to put a
-value anywhere. It makes the address work and returns, and the hardware does the rest. A fault
-handler is therefore allowed to be ignorant of almost everything about the program it is rescuing.
+That is exactly what you want. The handler does not emulate the access, does not need to know what
+the instruction was, and does not have to put a value anywhere. It makes the address work and
+returns, and the hardware does the rest. A fault handler is therefore allowed to be ignorant of
+almost everything about the program it is rescuing.
 
 ```{figure} _figures/page-faults-as-a-feature-decision.svg
 :alt: A page fault, the one test that decides what happens, and the two outcomes.
@@ -69,11 +69,11 @@ asked for this memory and has not touched it yet, so the right answer is to allo
 it, and return. At or above it, the process is using an address it never requested, and the right
 answer is to kill it.
 
-There is a second test beside it that is easier to leave out. If the page is *already* mapped, the
-fault cannot be a first touch — the entry is there and valid, so the walk did not stop for lack of
-one. It stopped because a permission was refused. Allocating a fresh page for that case would map
-a blank page over one the program was in the middle of using, and the program would not crash; it
-would get the wrong answer. Problem 18.2 is about exactly these edges.
+A second test sits beside it, and it is the one that gets left out. If the page is *already*
+mapped, the fault cannot be a first touch — the entry is there and valid, so the walk did not stop
+for lack of one. It stopped because a permission was refused. Allocating a fresh page for that
+case would map a blank page over one the program was in the middle of using, and the program would
+not crash; it would get the wrong answer. Problem 18.2 is about exactly these edges.
 
 ### Both policies are already here
 
@@ -111,8 +111,8 @@ Build it into the kernel, boot, and run it:
 
 Three phases, chosen to bracket the trade rather than to demonstrate a win. A large lazy request
 barely touched; a smaller lazy request touched in full; an eager request of the same size as the
-first. The two lazy requests appear in the table summed rather than separately, because the census counts per process
-and not per call.
+first. The two lazy requests appear in the table summed rather than separately, because the census
+counts per process and not per call.
 
 ```{include} _generated/page-faults-as-a-feature-exchange.md
 ```
@@ -121,15 +121,15 @@ Read the first four rows as one sentence. Most of what was asked for lazily was 
 and the pages that were allocated each cost one entry into the kernel — the whole of [ch16](#traps-and-system-calls)'s
 trap path, plus a walk, plus an allocation, for every one of them.
 
-That is the exchange rate, and it is the thing usually left out. Laziness is nearly always
+That is the exchange rate, and the half usually left out is the price. Laziness is nearly always
 described by its saving, and the saving here is real and large. The price is real too: a number of
 kernel entries equal to the number of pages the program actually uses. Which of those matters
 depends entirely on the ratio between them, and that ratio is a property of the program rather
 than of the policy.
 
-The last row is a different kind of fact. Before `main` ran at all, `exec` had
-already allocated pages for the program's text, its data and its stack. Every process pays that,
-and it is the baseline everything else in the table sits on top of.
+The last row is a different kind of fact: before `main` ran at all, `exec` had already allocated
+pages for the program's text, its data and its stack. Every process pays that, and it is the
+baseline everything else in the table sits on top of.
 
 ### Which fault, and what this kernel does about it
 
@@ -152,8 +152,8 @@ sharing*. Same hook, same handler, one more test.
 
 ### What laziness costs that is not faults
 
-There is a second price, and it is not pages or faults: it is when a program finds out it has run
-out of memory.
+There is a second price, and it is not pages or faults: laziness changes when a program finds out
+it has run out of memory.
 
 An eager request that cannot be satisfied fails at the call. The program gets a return value it
 can test, and can do something sensible — free a cache, use a smaller buffer, report a clear
@@ -210,8 +210,8 @@ decides nothing.
 **18.1 — How many faults will these accesses cause?**
 You are given runs of bytes a program touches and asked for the number of first-touch faults.
 
-The trap is the one the whole chapter rests on: a program thinks in bytes and the machine charges
-pages. Two accesses in one page cost one fault; an access of two bytes can cost two. The runs
+A program thinks in bytes and the machine charges pages, which is the trap the whole chapter rests
+on. Two accesses in one page cost one fault; an access of two bytes can cost two. The runs
 overlap, repeat and arrive in no order.
 
 ```bash

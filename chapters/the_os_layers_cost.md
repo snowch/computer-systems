@@ -84,9 +84,9 @@ that reads the clock on both sides of every call is charging the instrument to e
 number of iterations divides it away — it is added, not amortised. Read the clock once before the
 loop and once after, and the same overhead is divided by however many iterations there were.
 
-Problem 29.1 is that arithmetic, and it is arithmetic rather than a rule for a reason: at a single
-iteration the two arrangements give the same answer. Putting the clock outside the loop does not
-remove the overhead. It divides it, and dividing by one is not a saving.
+Problem 29.1 is that arithmetic, and arithmetic rather than a rule because at a single iteration
+the two arrangements give the same answer. Putting the clock outside the loop does not remove the
+overhead. It divides it, and dividing by one is not a saving.
 
 The cost of this mistake is not a slightly wrong number. It is a confident, stable, reproducible
 measurement of `clock_gettime`, which will look exactly like a measurement of whatever was in the
@@ -113,18 +113,18 @@ cost me".
 ```
 
 [ch18](#page-faults-as-a-feature) counted faults and made the case that a fault is a feature — the mechanism by which
-a page arrives only when it is wanted. It counted them because that target could not price them,
-and it could not price them because the interesting difference between two faults is where the
-data came from, and QEMU's storage is a host file.
+a page arrives only when it is wanted. It counted them because that target could not price them:
+the interesting difference between two faults is where the data came from, and QEMU's storage is a
+host file.
 
 Both faults in that table enter the kernel by exactly the path [ch16](#traps-and-system-calls) traced, and leave it
 the same way. Nothing about the trap differs. What differs is whether the kernel could answer
 from memory it already had or had to go and ask storage, and problem 29.3 is the classification:
 four facts about an address, and the order the rules apply in.
 
-The order is where the difficulty is. A page the process never asked for is fatal however good it
-looks; a translation that already exists costs nothing whatever else is true; and only then does
-the minor-against-major question arise at all.
+The order is where the difficulty is. A page the process never asked for is fatal whatever the
+other facts say; a translation that already exists costs nothing whatever else is true; and only
+then does the minor-against-major question arise at all.
 
 ### The call that does not trap
 
@@ -141,9 +141,9 @@ things with *because* of this mechanism; a clock that trapped would be an instru
 order as much of what [Part V](#part5) measures, and most of this book's timings would be impossible to
 take in the form they are taken.
 
-It is the listing above, now with a price on it: two calls, indistinguishable in C, one of which
-crosses a privilege boundary and one of which does not. You cannot read that off the page. You
-can only measure it.
+That puts a price on the listing above: two calls, indistinguishable in C, one of which crosses a
+privilege boundary and one of which does not. You cannot read that off the page. You can only
+measure it.
 
 ## What we measured
 
@@ -153,8 +153,8 @@ one figure here that CI regenerates and diffs on every push.
 
 Everything with a duration in it was measured on the machine: what the three services
 cost against their baselines, what separates a minor fault from a major one, and what the vDSO
-saves. The counts they are compared against are already in the book, taken in [Part IV](#part4), which
-is the point of having spent it counting.
+saves. The counts they are compared against are already in the book, taken in [Part IV](#part4) —
+which is what all that counting was for.
 
 ## What this cannot tell you
 
@@ -178,9 +178,9 @@ prices the kernel that the reader can stop mid-trap, because the machine it runs
 that is the trade the two targets were chosen to make.
 
 **Whether the model explains the cost.** The bound in problem 29.2 says what the call cannot beat.
-If the measurement is far above it, this chapter has established that [Part IV](#part4)'s account is
-incomplete without establishing what is missing — and the instruction count is not where the
-answer will be found.
+If the measurement is far above it, this chapter has shown that [Part IV](#part4)'s account is
+incomplete without showing what is missing — and the instruction count is not where the answer will
+be found.
 
 ## Problems
 

@@ -51,8 +51,8 @@ interrupts a program is interested in, and the global bit is what a critical sec
 ```
 
 The loop asks for nothing. It reads no device, executes no `ecall`, touches no memory it does not
-own, and left alone it would run until the machine was switched off. The interrupt is what stops
-it, and that is the whole difference from the previous chapter.
+own, and left alone it would run until the machine was switched off. The interrupt stops it anyway,
+and unlike the previous chapter's trap, nothing in the loop asked for it.
 
 ### Two kinds of cause, one register
 
@@ -65,10 +65,10 @@ be one function:
 :end-before:     if (phase == PHASE_SUPERVISOR)
 ```
 
-Note what is missing: the `mepc + 4` from [ch06](#a-trap-with-nothing-else). An interrupt's `mepc` is wherever the program
-happened to be — no instruction caused it, so there is nothing to advance past, and advancing
-would skip an instruction that had not run yet. The same register, read two different ways,
-depending on one bit.
+The `mepc + 4` from [ch06](#a-trap-with-nothing-else) is gone. An interrupt's `mepc` is wherever
+the program happened to be — no instruction caused it, so there is nothing to advance past, and
+advancing would skip an instruction that had not run yet. The same register, read two different
+ways, depending on one bit.
 
 ### What a privilege level refuses
 
@@ -121,9 +121,10 @@ and points `mepc` at the address the program recorded before it left:
 :end-before:     /* An exception nobody planned for.
 ```
 
-`mret` restores no registers at all. That is what makes crossing back genuinely awkward, and
-`bare_enter_supervisor()` handles it in one place. [ch11](#fork-built-rather-than-read)
-is where that stops being an inconvenience and becomes the subject.
+`mret` restores no registers at all, so anything the program wants back after the round trip has to
+be saved and reloaded by hand. `bare_enter_supervisor()` does that in one place, and
+[ch11](#fork-built-rather-than-read) is where it stops being an inconvenience and becomes the
+subject.
 
 ## What we measured
 
@@ -145,8 +146,8 @@ measurable under any emulator: interrupt latency is a property of a pipeline, an
 
 **How real interrupt sources behave.** One timer is the simplest possible case: one source, no
 routing, no priority, no sharing. A real machine has an interrupt controller deciding which device
-may interrupt which core, which is [ch19](#interrupts-and-drivers) — and the controller is exactly
-the part this chapter leaves out.
+may interrupt which core. That controller is exactly the part this chapter leaves out, and
+[ch19](#interrupts-and-drivers) is where it arrives.
 
 **What the other privilege level does.** There is a user mode below supervisor, and this chapter
 never enters it. Nothing here needed it, and a demonstration with a level that made no difference
@@ -156,8 +157,8 @@ would have taught that levels make no difference.
 
 **7.1 — Interrupt an interrupt.**
 Arrange for the timer to fire while the handler is still running, and say what happens and why.
-Then make it happen. The test checks both your prediction and a run, and the interesting part is
-that the default answer is *nothing*, for a reason in one bit of `mstatus`.
+Then make it happen. The test checks both your prediction and a run. The default answer is
+*nothing*, for a reason in one bit of `mstatus`.
 
 ```bash
 python3 -m pytest tests/interrupts_and_privilege/test_problem_1_nested.py

@@ -21,9 +21,9 @@ short_title: "26 · Optimising Code"
 
 What will the compiler do for me, and what will it never do?
 
-[ch25](#the-memory-hierarchy) ended by saying that a memory access costs what it costs because of what else the
-machine could do at the same time. Given that, what is worth changing in the source? The first
-thing to establish is which changes the compiler is going to make anyway.
+[ch25](#the-memory-hierarchy) ended by saying that what a memory access costs depends on what else
+the machine could do at the same time. Given that, what is worth changing in the source? Start with
+the changes the compiler is going to make anyway.
 
 ## The material
 
@@ -50,15 +50,14 @@ instructions.** The compiler hoisted the bound. The compiler reduced the strengt
 Both hand-optimisations were correct, both were unnecessary, and the code they produced was the
 code the compiler was going to produce from the obvious source.
 
-This is the most common thing that happens when people optimise C by hand, and it is worth being
-precise about what it costs. Not run time — those three are the same program. What it costs is
-that the source is now harder to read, harder to change, and no faster, and that a reader who
-does not know this will preserve the hand-optimisation through every future edit because it looks
-load-bearing.
+This is the most common thing that happens when people optimise C by hand, and what it costs is not
+run time — those three are the same program. It costs a source that is now harder to read, harder
+to change, and no faster, and a reader who does not know this will preserve the hand-optimisation
+through every future edit because it looks load-bearing.
 
-At `-O0` they are not identical, which is worth noticing too: the hand-optimisations *do*
-something to unoptimised code. Measuring at `-O0` and concluding that a transformation helps is a
-reliable way to make a program worse.
+At `-O0` they are not identical: the hand-optimisations *do* something to unoptimised code.
+Measuring at `-O0` and concluding that a transformation helps is a reliable way to make a program
+worse.
 
 ### And one of them backfired
 
@@ -67,14 +66,14 @@ substantially longer, and at `-O3` the gap widens rather than closes.
 
 The hand-unrolled source is a **different, larger program** than the one the compiler would have
 produced. Its four bodies with explicit indices are harder to analyse than one body with a clean
-induction variable, so the transformations the compiler would have applied — including its own
-unrolling and vectorisation (doing several array elements per instruction, [ch31](#vectors)'s subject), which is what `-O3` turns up — have less to work with. The
+induction variable, so the compiler has less to work with — less for its own unrolling, and less
+for vectorisation (doing several array elements per instruction, [ch31](#vectors)'s subject), which is what `-O3` turns up. The
 optimisation was applied by hand, so it could not also be applied by the compiler, and the
 compiler's version was better.
 
-That is the general shape of the answer to this chapter's question. **The compiler will do the
-local, mechanical transformations better than you will. What it will not do is change your
-algorithm, your data layout, or your memory access pattern** — and those are the things
+So, the answer to this chapter's question. **The compiler will do the local, mechanical
+transformations better than you will. What it will not do is change your algorithm, your data
+layout, or your memory access pattern** — and those are the things
 [ch25](#the-memory-hierarchy) showed dominate.
 
 ### The benchmark that measured nothing
@@ -134,7 +133,7 @@ different data layout removes most of the work, which is the change that usually
 one no compiler will make.
 
 **Whether `-O3` is worth it.** The table shows `-O3` producing more instructions than `-O2` for
-two variants and the same for three, and says nothing about the outcome. `-O3` trades size for
+two variants and the same for three, and says nothing about which runs faster. `-O3` trades size for
 speculation about what will help; whether the trade pays is a property of the program and the
 machine together.
 
