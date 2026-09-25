@@ -23,6 +23,7 @@ from bench.tables import render_table  # noqa: F401  — imported so a broken ta
 BOARD_RUNNERS = {
     "setup-host": "bench.run_setup",
     "measuring-host": "bench.run_measuring",
+    "distribution-host": "bench.run_distribution",
     "hierarchy-host": "bench.run_hierarchy",
     "bridge-host": "bench.run_bridgecost",
     "loops-host": "bench.run_loopcost",

@@ -99,10 +99,13 @@ tell you* is mandatory, and it is where the tools ran out — what could not be 
 shown. It is usually the most useful part of the chapter.
 
 :::{note} Where this book is
-All thirty-two chapters are written, and all eight of the eight appendices. Every measurement has
-been taken — zero figures are marked *pending* — and [Appendix C](#appendix-c), which lists what
-the reference machine's processor can count, was generated on that machine, the only place the list
-could honestly have come from.
+All thirty-two chapters are written, and all eight of the eight appendices. [Appendix
+C](#appendix-c), which lists what the reference machine's processor can count, was generated on
+that machine, the only place the list could honestly have come from. Four figures are marked
+*pending*: [ch24](#measuring) has just grown a second instrument — a confidence interval and a
+rule for deciding that one thing is faster than another — and the board has not yet been asked
+for those four. They render as a warning containing no numbers, which is what this book does
+instead of estimating.
 
 **[Download the whole book as a PDF](/systems-from-scratch.pdf)** — every chapter and appendix in
 one file, built from the same source as this site, so the two cannot disagree about what a

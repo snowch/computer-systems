@@ -680,16 +680,39 @@ Performance* — and the pointer-chase microbenchmark, which is folklore and app
 
 ## ch24 · Measuring
 
-**Closest in subject.** *Performance Analysis and Tuning on Modern CPUs* and *Systems Performance*
-both open with measurement methodology; Mytkowicz et al. on measurement bias; the benchmarking
-advice in the Google Benchmark and Criterion documentation; and "how to benchmark" blog posts
-without number.
+**Closest in subject.** This is the most heavily covered topic in the book, and the list is long:
+Jain's *The Art of Computer Systems Performance Analysis*; Gregg's *Systems Performance*,
+including its benchmarking chapter and its "active benchmarking" material; Kounev, Lange and von
+Kistowski's *Systems Benchmarking*; Hoefler and Belli's SC15 paper on reporting rules for
+performance results; *Performance Analysis and Tuning on Modern CPUs*; Mytkowicz et al. on
+measurement bias; the benchmarking advice in the Google Benchmark and Criterion documentation; and
+"how to benchmark" blog posts without number.
 
 **How this differs, and the care taken.**
 
-- **The chapter is placed and shaped by this book's own argument.** It exists because ch20 has just
-  shown the structural model failing, and it measures the instrument before anything is measured
-  with it. Its four sections are the four ways this book's own figures could be wrong.
+- **The chapter is placed and shaped by this book's own argument.** It exists because the
+  two-targets chapter has just shown the structural model failing, and it measures the instrument
+  before anything is measured with it. Its sections are the ways this book's own figures could be
+  wrong, in the order this book found them.
+- **Nothing here is a checklist restated.** The works above all offer rules for benchmarking, and
+  several offer them as numbered lists; this chapter offers none. What it has instead is a
+  harness the reader builds and then calibrates, and every claim in it is a reading of a table
+  that harness produced on this book's own board. Where a rule appears — a measured region must
+  be many times the instrument, a threshold is fixed before the run — it is derived from a figure
+  on the page rather than asserted, and the reader is given the arithmetic rather than the number.
+- **The bootstrap is written out rather than imported.** Fifteen lines of standard library, shown
+  in the chapter, because the point is that an interval on a median needs no assumption about the
+  shape of a distribution and the reader should be able to see that there is nowhere for one to
+  hide. The alternative — calling a library's `bootstrap` — would make the chapter about a tool.
+- **The decision rule is this book's, and is stated as two halves.** Evidence and significance:
+  the interval on the difference must exclude zero *and* the difference must clear a threshold
+  fixed in advance. Hoefler and Belli argue for reporting intervals and against a single number,
+  which this chapter agrees with and cites as further reading; the two-part rule, the three
+  outcomes, and the insistence that "cannot tell" is a result rather than a failure are how this
+  book decided to spend that argument, and every later chapter is held to it.
+- **The limits section is about this experiment, not about benchmarking in general.** It says
+  which of its own assumptions the board breaks — exchangeable runs against a board that warms
+  up — rather than listing hazards a reader might meet somewhere.
 - **Measurement bias is demonstrated rather than cited**, by an experiment the reader runs: the
   same binary, the same work, three answers, differing only in how many bytes of stack were
   claimed first. The paper is credited for the finding and the experiment here is this book's.

@@ -13,7 +13,7 @@ NATIVE = HostTarget(name="native-other", cc="cc", flags=PORTABLE_FLAGS)
 
 
 def build(build_dir: Path) -> Path:
-    return compile_program([MEASURING], build_dir / "ch21measuring", NATIVE).path
+    return compile_program([MEASURING], build_dir / "measuring", NATIVE).path
 
 
 def ask(program: Path, commands: list[str]) -> dict:

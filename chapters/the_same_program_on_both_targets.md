@@ -81,8 +81,11 @@ it was arrived at correctly, and [Part V](#part5) exists because of how wrong it
 ```{include} _generated/the-same-program-on-both-targets-cost.md
 ```
 
-That table came from the board and could have come from nowhere else. A duration measured under
-QEMU would describe the laptop that ran the emulator: it has no cache to miss, no prefetcher to
+That table came from the board and could have come from nowhere else — and it is the one place in
+this book where a duration appears before you have been given any way to judge one. Take the two
+numbers on trust for exactly one chapter: [ch24](#measuring) is next precisely because it is about
+how much to trust them, and it comes back to put a spread and an interval around figures like
+these. A duration measured under QEMU would describe the laptop that ran the emulator: it has no cache to miss, no prefetcher to
 defeat, no store buffer to fill, and no memory that takes time. It would produce a number, the
 number would look like the others in this book, and it would mean nothing at all. So until the
 board answered, this table was a box saying so.

@@ -1,4 +1,4 @@
-"""Problem 14.3 — how many leading samples are warm-up?
+"""Problem 24.3 — how many leading samples are warm-up?
 
 Derived from the sample sequences, which are written to separate warm-up from interference: one
 has a slow start, one has a slow sample in the middle and no warm-up at all, and one has both.

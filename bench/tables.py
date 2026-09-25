@@ -1328,3 +1328,80 @@ def bare_claims_table(name: str) -> str:
 
     body = [[label, cell(field, kind)] for field, label, kind in rows if field in run]
     return render_table([heading, "Observed"], body)
+
+
+# -- the measurement chapter's distribution figures ------------------------------------------
+
+
+def _interval(block: dict) -> str:
+    low, high = block["ci_median"]
+    return f"[{low:,.0f}, {high:,.0f}]"
+
+
+def harness_table(name: str) -> str:
+    """What the instrument costs, beside what is being measured with it.
+
+    Two rows and a ratio, because the rule the chapter derives is a ratio: a measured region has
+    to be many times the harness before the harness stops being most of the answer.
+    """
+    summary = load_result(name)["summary"]
+    empty, work = summary["harness"], summary["plain"]
+    rows = [
+        ["An empty measured region", f"{empty['median']:,.0f} ns", _interval(empty)],
+        ["…and its own spread, p5 to p95", f"{empty['p95'] - empty['p5']:,.0f} ns", "—"],
+        ["The workload", f"{work['median']:,.0f} ns", _interval(work)],
+        ["The workload, in harnesses", f"{work['median'] / empty['median']:,.0f}x", "—"],
+    ]
+    return render_table(["", "Median", "Interval on the median"], rows)
+
+
+def cold_warm_table(name: str) -> str:
+    """Two experiments, not one experiment with noise in it."""
+    summary = load_result(name)["summary"]
+    rows = []
+    for label, block in (("Warm", summary["plain"]), ("Cold", summary["cold"])):
+        rows.append(
+            [
+                label,
+                f"{block['median']:,.0f} ns",
+                f"{block['p5']:,.0f} ns",
+                f"{block['p95']:,.0f} ns",
+                _interval(block),
+            ]
+        )
+    warm, cold = summary["plain"], summary["cold"]
+    rows.append(["Cold over warm", f"{cold['median'] / warm['median']:.2f}x", "—", "—", "—"])
+    return render_table(["Mode", "Median", "p5", "p95", "Interval on the median"], rows)
+
+
+def narrowing_table(name: str) -> str:
+    """How much the interval buys per run, and where it stops buying anything."""
+    summary = load_result(name)["summary"]
+    rows = [
+        [
+            f"{entry['runs']}",
+            _interval(entry),
+            f"{entry['width']:,.0f} ns",
+        ]
+        for entry in summary["narrowing"]
+    ]
+    return render_table(["Runs used", "Interval on the median", "Width"], rows)
+
+
+def verdict_table(name: str) -> str:
+    """The decision rule, with both halves shown rather than the conclusion alone."""
+    summary = load_result(name)["summary"]
+    decision = summary["verdict"]
+    low, high = decision["ci_difference"]
+    rows = [
+        ["Baseline median (plain)", f"{decision['baseline_median']:,.0f} ns"],
+        ["Candidate median (unrolled)", f"{decision['candidate_median']:,.0f} ns"],
+        ["Difference", f"{decision['difference']:,.0f} ns"],
+        ["Interval on the difference", f"[{low:,.0f}, {high:,.0f}] ns"],
+        ["…excludes zero", "yes" if decision["excludes_zero"] else "no"],
+        ["Difference, relative", f"{decision['relative']:.1%}"],
+        ["Threshold, fixed in advance", f"{decision['threshold']:.1%}"],
+        ["…exceeded", "yes" if decision["over_threshold"] else "no"],
+        ["**Verdict**", f"**{decision['verdict']}**"],
+    ]
+    return render_table(["", "Measured"], rows)
