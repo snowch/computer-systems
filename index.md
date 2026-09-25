@@ -42,6 +42,23 @@ machine that produced it — not to every machine of that model, and not to Arm 
 general — and the line under each figure says which machine, which compiler and what day. What
 carries to your machine is the method, and the list above is a list of methods.
 
+## What it does not cover
+
+Every measurement here is one program, on one machine, kept deliberately idle. That setup answers
+what a piece of code costs and whether a change to it helped. It does not answer what a system does
+under load, and that question needs different equipment.
+
+So there is nothing here on throughput, on saturation, on the tail of a latency distribution, or on
+benchmarking a file system, a database or a service under a workload. Those need at least two
+machines — a load generator sharing a core with the system it is driving ends up measuring itself —
+and they need queueing, which this book does not teach.
+[ch22](#the-file-system) is the closest it comes: it counts the disk blocks a one-byte write costs,
+on the teaching kernel, where a duration would mean nothing.
+[ch24](#measuring) and [ch30](#whole-machine-profiling) each say where their own method stops.
+
+No GPUs and no distributed systems either, and this is not a tuning cookbook: the subject is how to
+find out, not a list of tricks.
+
 ## Who it is for
 
 Someone who programs fluently — in a scripting language, or Java, or anything else with a

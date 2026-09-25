@@ -56,6 +56,10 @@ Four things, and each has a mechanism in the repository behind it rather than a 
   follow its structure ([§10](#10-originality-and-citation-policy)).
 - **Not a survey of architectures.** One board, measured properly, beats four described.
 - **Not a tuning cookbook.** The subject is how to find out, not a list of tricks.
+- **Not a systems-benchmarking book.** Everything here measures one program on one machine kept
+  idle. Load, throughput, saturation, tail latency and benchmarking a file system or a database
+  under a workload are a different method, and [§13](#13-decisions--settled).12 records why they
+  are a different book.
 - **No GPUs, no distributed systems.** Out of scope, and the author has written elsewhere about
   the first.
 
@@ -1023,6 +1027,27 @@ Recorded so they are not relitigated.
 10. **British English, and the book's voice is the author's.**
 11. **Split licence**: CC-BY-NC-4.0 for prose, Apache-2.0 for code, MIT retained for xv6 and for
     patches against it.
+12. **System benchmarking is a separate book, not a Part VI.** Three reasons, in order of weight.
+    The hardware requirement changes: driving a system under load needs a second machine, because
+    a load generator sharing a core with the thing it is driving measures itself, and a Part VI
+    would therefore rewrite [ch00](#prerequisites-and-setup)'s buying advice for every reader of
+    the other thirty-one chapters. The question changes: the unit of analysis moves from the loop
+    to the service, and the governing arithmetic from cycle counting to queueing, which this book
+    does not teach. And the size is wrong for a part — load generation, open against closed loop,
+    coordinated omission, saturation, tail latency, storage under load and a worked database case
+    is six to eight chapters, as long as [Part V](#part5).
+
+    What is shared travels as a dependency rather than as duplication. [ch24](#measuring) is the
+    foundation for both books, and the thing that passes between them is one artefact: a stamped
+    distribution with its uncertainty attached. Cycles here, service in the second book, cost in
+    *sizing-and-tco* — and the middle book is what would make the third one honest, because
+    nothing currently produces throughput at saturation or a tail latency for it to model.
+
+    The boundary is stated where a reader meets it rather than only here: the preface has a *What
+    it does not cover* section, [ch24](#measuring) says a quiet board is the wrong instrument for
+    what a program does in service, and [ch30](#whole-machine-profiling) says a cycle-sampled
+    profile of a program waiting on a disk or a socket is a picture of the part that was not
+    waiting.
 
 ---
 

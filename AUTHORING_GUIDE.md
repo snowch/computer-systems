@@ -70,7 +70,7 @@ edit above them, and `tests/test_book.py` fails a chapter that uses them.
 be quoted from the tree, because it does not exist there until a compiler runs — so it is captured
 as a stamped result instead, exactly like a measurement:
 
-1. put the function in a real source file (`sysfs/lib/shapes.c` is the one ch00 uses);
+1. put the function in a real source file (`sysfs/lib/shapes.c` is the one [ch00](#prerequisites-and-setup) uses);
 2. add its name to `SYMBOLS` in `bench/run_disasm.py`;
 3. `make bench-listings` to capture it and commit the result;
 4. declare a `Listing` figure in `bench/figures.py` naming the symbol and the results to show;
@@ -114,7 +114,8 @@ instruction set, different memory model — say so and draw the correspondence e
 correspondence *is* the content; a chapter that quietly pretends both halves are the same
 architecture is worse than one that makes the translation.
 
-Three Part V chapters have no counterpart by design (ch22, ch28, ch29). Any other unpaired one
+Three Part V chapters have no counterpart by design ([ch24](#measuring),
+[ch30](#whole-machine-profiling) and [ch31](#vectors)). Any other unpaired one
 fails a test, because it is far more likely to be an oversight than a decision.
 
 ### Never let a chapter depend on the reference hardware silently
@@ -125,7 +126,7 @@ If yours does — it assumes a cache shape, a core count, an in-order pipeline, 
 absence of an extension — record it as that chapter's `assumes` field in `bench/outline.py`.
 
 That one edit puts an **Assumes** row in the chapter header and makes `tests/test_book.py` insist
-the chapter also appears in ch00's list of hardware-sensitive chapters. Prose saying the same
+the chapter also appears in appendix H's list of hardware-sensitive chapters. Prose saying the same
 thing gets dropped the first time the chapter is rewritten; data does not.
 
 State what *changes* on other hardware, not merely that something does. "Assumes four cores" is a
@@ -214,7 +215,7 @@ A problem is a stub the reader edits and a test that passes only when they are r
 
 ## Cross-references and citations
 
-Chapters carry a label matching their number, so refer to them as `[ch16](#page-faults-as-a-feature)` and to
+Chapters carry a label matching their number, so refer to them as `[ch18](#page-faults-as-a-feature)` and to
 appendices as `[Appendix B](#appendix-b)`. MyST resolves these at build time and the build fails on
 a broken reference, which is the point.
 

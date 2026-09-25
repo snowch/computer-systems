@@ -38,7 +38,22 @@ BY_ANCHOR = {chapter.anchor: chapter for chapter in CHAPTERS}
 #: too: they are not published, but they are read constantly while writing, and a plan that names
 #: the wrong chapter is worse than one that names none.
 PAGES = (
-    [ROOT / "index.md", ROOT / "PLAN.md", ROOT / "ORIGINALITY.md", ROOT / "CHECKPOINTS.md"]
+    [
+        ROOT / "index.md",
+        ROOT / "PLAN.md",
+        ROOT / "ORIGINALITY.md",
+        ROOT / "CHECKPOINTS.md",
+        # Not published, and that is exactly why they were wrong. `hardware/README.md` is
+        # excluded from the book and read straight from the repository, so nothing checked it:
+        # its table of hardware-sensitive chapters was stale by two the whole way down, and four
+        # of its requirement rows named a chapter that does something else entirely. The others
+        # are read constantly while writing, and an authoring guide whose worked example pairs
+        # the wrong number with an anchor teaches the mistake it exists to prevent.
+        ROOT / "README.md",
+        ROOT / "hardware" / "README.md",
+        ROOT / "AUTHORING_GUIDE.md",
+        ROOT / "ERRATA.md",
+    ]
     + sorted((ROOT / "chapters").glob("*.md"))
     + sorted((ROOT / "appendices").glob("*.md"))
 )
@@ -71,10 +86,14 @@ def sync_titles(text: str) -> str:
     checkpoint list — wherever the title is right there, the title is the identity and the number
     beside it is derived. A bare ``ch14`` with nothing to disambiguate it is left alone: there is
     no way to tell this book's from another book's, and guessing is worse than leaving it.
+
+    A dash counts as a separator as well as a middle dot, because ``hardware/README.md`` writes the
+    pairing as ``ch23 — The Memory Hierarchy`` and that spelling was invisible to this pass for as
+    long as the file went unscanned. Every row of that table was two chapters out.
     """
     for chapter in CHAPTERS:
         text = re.sub(
-            rf"(?<![#\w])ch\d\d(\s*·\s*|\s+){re.escape(chapter.title)}",
+            rf"(?<![#\w])ch\d\d(\s*[·—–]\s*|\s+){re.escape(chapter.title)}",
             lambda m, c=chapter: f"{c.label}{m.group(1)}{c.title}",
             text,
         )

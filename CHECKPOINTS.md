@@ -60,7 +60,7 @@ has been generated from the board, and `ERRATA.md` has nothing outstanding.
 
 ```bash
 ./scripts/ci-check.sh                     # must be clean
-git tag -a virtual-memory -m "ch15 — Virtual Memory"
+git tag -a virtual-memory -m "ch17 — Virtual Memory"
 git push origin virtual-memory
 ```
 

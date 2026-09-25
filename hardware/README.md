@@ -20,12 +20,12 @@ works too.
 | Storage | microSD, or NVMe via the M.2 HAT |
 | `perf` | Counts and samples. `armv8_cortex_a76` PMU, events under `/sys/bus/event_source/devices/` |
 
-Those are the vendor's figures @rpi-bcm2712. The book does not repeat them: ch23 measures that
+Those are the vendor's figures @rpi-bcm2712. The book does not repeat them: [ch25](#the-memory-hierarchy) measures that
 cache hierarchy and compares what it finds against them, which is more useful than either number
 alone.
 
 **The cooler matters.** A Pi 5 throttles under sustained load, and a benchmark whose clock changes
-part-way through is not slow, it is wrong. ch22 treats throttling as a measurement hazard and
+part-way through is not slow, it is wrong. [ch24](#measuring) treats throttling as a measurement hazard and
 shows how to catch it; a cooler means you meet it deliberately rather than in every single run.
 
 That is a change from an earlier plan, and the reason is worth a section of its own, because it is
@@ -57,7 +57,7 @@ A 2025 study measured the three RISC-V cores you can actually buy @riscv-pmu-pro
 > overflow interrupt support, severely limiting traditional performance analysis approaches."
 
 Read down that table and no column wins. The U74 counts but cannot sample and has no vectors —
-so ch30 and ch31 become unmeasurable. The C910 can sample but needs a vendor kernel and is
+so [ch30](#whole-machine-profiling) and [ch31](#vectors) become unmeasurable. The C910 can sample but needs a vendor kernel and is
 out-of-order. The X60 has the vectors and struggles with `cycles` and `instructions` themselves,
 exposing non-standard counters such as `u_mode_cycle` instead. Even SiFive's own flagship P550 is
 reported not to support `core_clock_cycles`. On top of that, a VisionFive 2 Ubuntu release
@@ -67,11 +67,11 @@ So staying on RISC-V would have cost **two of Part V's eight chapters**, plus a 
 plus tooling that breaks between distro releases. A Raspberry Pi costs none of those things.
 
 **What it costs instead** is instruction-set continuity between Part IV and Part V — and only
-in the Part V chapters that actually read disassembly: ch26, ch27, ch29, ch30 and ch31 — while
-ch02, ch20 and ch23 print both instruction sets side by side, which is the point rather than the
+in the Part V chapters that actually read disassembly: [ch26](#optimising-code), [ch27](#the-cpu), [ch29](#the-os-layers-cost), [ch30](#whole-machine-profiling) and [ch31](#vectors) — while
+[ch02](#reading-a-listing), [ch20](#locks-and-memory-ordering) and [ch23](#the-same-program-on-both-targets) print both instruction sets side by side, which is the point rather than the
 cost. The rest is method, and method does not have an architecture. Appendix F is the translation, written for the
-reader who learned RISC-V in ch14 and is about to read AArch64 in ch26. A reader who learned RISC-V assembly in Part III
-and then reads AArch64 in ch26 is not being failed by the book; they are being shown that the
+reader who learned RISC-V in [ch14](#machine-level-code-on-riscv) and is about to read AArch64 in [ch26](#optimising-code). A reader who learned RISC-V assembly in Part III
+and then reads AArch64 in [ch26](#optimising-code) is not being failed by the book; they are being shown that the
 concepts were never about RISC-V. That is worth more than the tidiness it replaces.
 
 ## What the machine has to do
@@ -80,18 +80,18 @@ concepts were never about RISC-V. That is worth more than the tidiness it replac
 |---|---|---|
 | **Must** | AArch64 or RV64 running Linux, reachable over SSH | |
 | **Must** | `perf stat -e cycles,instructions -- true` returns real counts | Part V is not possible without it |
-| **Must** | `perf record` can sample | ch28 is entirely sampling. Counting and sampling are different capabilities |
-| **Must** | 4 GB RAM, 4 cores | ch26 measures what cores cost each other |
-| **Nice** | NVMe or a fast SSD | Builds and ch20 are much less tedious |
-| **Nice** | A SIMD unit the compiler targets — NEON, or RVV 1.0 | ch29 measures vectorisation |
-| **Nice** | An in-order core | Not required, and the reference is out-of-order. In-order cores make ch27 and ch28 easier to read |
+| **Must** | `perf record` can sample | [ch30](#whole-machine-profiling) is entirely sampling. Counting and sampling are different capabilities |
+| **Must** | 4 GB RAM, 4 cores | [ch28](#memory-ordering-on-real-hardware) measures what cores cost each other |
+| **Nice** | NVMe or a fast SSD | Builds and [ch22](#the-file-system) are much less tedious |
+| **Nice** | A SIMD unit the compiler targets — NEON, or RVV 1.0 | [ch31](#vectors) measures vectorisation |
+| **Nice** | An in-order core | Not required, and the reference is out-of-order. In-order cores make [ch27](#the-cpu) and [ch28](#memory-ordering-on-real-hardware) easier to read |
 
 ## If you already own a RISC-V board
 
 Keep it — everything before Part V is RISC-V and it is a perfectly good machine for the rest.
 For Part V
-it will run everything that counts (ch24 through ch29), and the two chapters it cannot do say so
-in their own headers: ch30 needs sampling and ch31 needs a vector unit. Your figures will differ
+it will run everything that counts ([ch24](#measuring) through [ch29](#the-os-layers-cost)), and the two chapters it cannot do say so
+in their own headers: [ch30](#whole-machine-profiling) needs sampling and [ch31](#vectors) needs a vector unit. Your figures will differ
 from the committed ones either way, which is expected.
 
 ## Finding something else
@@ -142,15 +142,20 @@ of specification says otherwise.
 
 ## Which chapters depend on the reference machine
 
-Most do not. Five do, and each says so in its own header:
+Most do not. Five chapters of Part V do, and each says so in its own header:
 
 | Chapter | Assumes | On different hardware |
 |---|---|---|
-| ch23 — The Memory Hierarchy | A particular cache hierarchy | The numbers change entirely. Measuring your own is the exercise |
-| ch25 — The CPU | An out-of-order, 4-wide Cortex-A76 | Width, predictor and event names differ. An in-order core is *easier* to read |
-| ch26 — Memory Ordering on Real Hardware | Four cores, and this interconnect | The scaling curve moves, the mechanism does not |
-| ch28 — Whole-Machine Profiling | That `perf` can **sample** | Works on any mainline ARM machine. The chapter most RISC-V boards cannot run |
-| ch29 — Vectors | A vector unit — NEON here | On a RISC-V board without RVV 1.0 it reverts to reasoning |
+| [ch25](#the-memory-hierarchy) — The Memory Hierarchy | A particular cache hierarchy | The numbers change entirely. Measuring your own is the exercise |
+| [ch27](#the-cpu) — The CPU | An out-of-order, 4-wide Cortex-A76 | Width, predictor and event names differ. An in-order core is *easier* to read |
+| [ch28](#memory-ordering-on-real-hardware) — Memory Ordering on Real Hardware | Four cores, and this interconnect | The scaling curve moves, the mechanism does not |
+| [ch30](#whole-machine-profiling) — Whole-Machine Profiling | That `perf` can **sample** | Works on any mainline ARM machine. The chapter most RISC-V boards cannot run |
+| [ch31](#vectors) — Vectors | A vector unit — NEON here | On a RISC-V board without RVV 1.0 it reverts to reasoning |
+
+[ch01](#setting-up-the-board) declares an assumption as well, and it is this page's subject: a
+board whose `perf` cannot both count and sample fails at the setup step rather than four chapters
+later. Appendix H carries the same table inside the book, and `tests/test_book.py` checks that one
+against `bench/outline.py`; this one is here for a reader who is standing in a shop.
 
 ## The reference machine, and why no kernel version is pinned
 

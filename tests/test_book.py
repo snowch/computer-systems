@@ -1065,6 +1065,50 @@ def test_a_chapter_reference_in_prose_is_a_link(path):
     )
 
 
+#: The repository's own documents, which a reader or a new contributor meets without the book
+#: open. They are not published, which is exactly how they rotted: nothing rendered them, nothing
+#: linted them, and `scripts/sync-labels.py` did not scan them, so every `chNN` typed into one
+#: stayed as typed. `hardware/README.md` was the worst of it — its table of hardware-sensitive
+#: chapters was two out on every row, and four of its shopping requirements named a chapter that
+#: does something else: "`perf record` can sample" was justified by ch28, which is memory
+#: ordering, and the SIMD row by ch29, which is the OS layer's cost.
+REPOSITORY_DOCS = (
+    Path("README.md"),
+    Path("hardware/README.md"),
+    Path("AUTHORING_GUIDE.md"),
+    Path("ERRATA.md"),
+)
+
+
+@pytest.mark.parametrize("path", REPOSITORY_DOCS, ids=[str(p) for p in REPOSITORY_DOCS])
+def test_a_repository_document_links_the_chapters_it_names(path):
+    """The same rule as the prose pages, applied to the documents nobody was checking.
+
+    These are the pages that tell a reader what to buy and an author what the conventions are, so
+    a wrong number here costs money or teaches the mistake. Writing the reference as a link puts
+    it inside `sync-labels.py`'s reach, where the anchor says which chapter is meant and the
+    number is derived from it.
+    """
+    text = (ROOT / path).read_text()
+    body = re.sub(r"```.*?```", "", text, flags=re.S)
+    body = re.sub(r"`[^`\n]+`", "", body)
+    bare = sorted({m.group(0) for m in BARE_CHAPTER.finditer(body)})
+    assert not bare, (
+        f"{path} names a chapter without linking it: {', '.join(bare)} — write it as "
+        f"[chNN](#anchor); nothing else in this repository can keep that number right"
+    )
+
+
+@pytest.mark.parametrize("path", REPOSITORY_DOCS, ids=[str(p) for p in REPOSITORY_DOCS])
+def test_a_repository_document_is_scanned_by_sync_labels(path):
+    """Linking them only helps while `sync-labels.py` is looking at them."""
+    pages = {p.relative_to(ROOT) for p in _script("sync-labels").PAGES}
+    assert path in pages, (
+        f"{path} names chapters but scripts/sync-labels.py does not scan it, so its labels "
+        "will drift exactly as they did before"
+    )
+
+
 APPENDIX_LINK = re.compile(r"\[Appendix ([A-Z])\]\(#([\w-]+)\)")
 
 

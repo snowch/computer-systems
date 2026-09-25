@@ -62,8 +62,13 @@ not a spec sheet.
 **The emulated targets and the real one do not share an instruction set, and that is
 deliberate.** The kernel small
 enough to read in an afternoon is a RISC-V kernel; the hardware whose counters work is an ARM
-one. `hardware/README.md` shows the evidence. Reading disassembly is confined to ch03, ch05 and
-ch12–ch14 (RISC-V) and ch26, ch27, ch29, ch30 and ch31 (AArch64), with ch02, ch20 and ch23
+one. `hardware/README.md` shows the evidence. Reading disassembly is confined to
+[ch03](#memory-is-one-array), [ch05](#c-for-people-who-will-read-a-kernel) and
+[ch12](#what-a-computer-does-with-a-program)–[ch14](#machine-level-code-on-riscv) (RISC-V) and
+[ch26](#optimising-code), [ch27](#the-cpu), [ch29](#the-os-layers-cost),
+[ch30](#whole-machine-profiling) and [ch31](#vectors) (AArch64), with
+[ch02](#reading-a-listing), [ch20](#locks-and-memory-ordering) and
+[ch23](#the-same-program-on-both-targets)
 printing both and Appendix F translating between them; the rest is
 method, and method does not have an architecture.
 
