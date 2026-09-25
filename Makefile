@@ -116,6 +116,7 @@ bench-board:  ## Re-run every host-target measurement. ON THE MACHINE BEING MEAS
 	  "measurements, and the book does not print them. See ch00.", file=sys.stderr) or sys.exit(1))'
 	$(PYTHON) -m bench.run_setup --target host
 	$(PYTHON) -m bench.run_measuring
+	$(PYTHON) -m bench.run_distribution
 	$(PYTHON) -m bench.run_hierarchy
 	$(PYTHON) -m bench.run_bridgecost
 	$(PYTHON) -m bench.run_loopcost

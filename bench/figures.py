@@ -355,6 +355,29 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
         render=tables.clock_table,
         result="measuring-host",
     ),
+    # The chapter's second half. Every one of these needs the board, because an interval is a
+    # statement about a distribution and a distribution measured under emulation is a statement
+    # about the laptop.
+    "measuring-harness": Table(
+        render=tables.harness_table,
+        result="distribution-host",
+        pending=f"what the harness itself costs, and what the workload costs beside it: {BOARD}",
+    ),
+    "measuring-cold-warm": Table(
+        render=tables.cold_warm_table,
+        result="distribution-host",
+        pending=f"the same work with the caches evicted and left alone: {BOARD}",
+    ),
+    "measuring-runs": Table(
+        render=tables.narrowing_table,
+        result="distribution-host",
+        pending=f"how the interval on the median narrows with the run count: {BOARD}",
+    ),
+    "measuring-verdict": Table(
+        render=tables.verdict_table,
+        result="distribution-host",
+        pending=f"the decision rule applied to two variants of one loop: {BOARD}",
+    ),
     "measuring-spread": Table(
         render=tables.spread_table,
         result="measuring-host",

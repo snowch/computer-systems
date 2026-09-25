@@ -169,7 +169,34 @@ it depends on. Record raw samples in the result where they are small enough to b
 distribution someone can re-examine is worth far more than a summary they have to trust.
 
 `CORE_SOURCES` in `bench/stamp.py` invalidates **every** result when it changes. Treat it as
-frozen. ch22 adds the timing library to it once, deliberately.
+frozen. The measurement chapter adds the timing library to it once, deliberately.
+
+### A timing is a distribution, and is stamped as one
+
+**No duration may be reported as a single number.** The measurement chapter establishes why and
+`bench/distribution.py` is the machinery; every `host` timing taken from that chapter onwards
+carries a block built by `distribution()`, and `stamp_problems()` says what is missing from one.
+
+| Field | What it records |
+|---|---|
+| `median`, `p5`, `p95` | the middle and the spread, never the median alone |
+| `ci_median`, `ci_method`, `resamples`, `seed` | the bootstrap interval, and enough to reproduce it |
+| `runs`, `warmup_runs`, `mode` | how many samples, how many discarded, cold or warm |
+| `environment` | governor, frequency, pinning, background load, temperature where readable |
+| `raw` | a path to every per-run value, so the figure can be re-analysed rather than re-measured |
+
+Two rules for the prose that quotes one:
+
+- **Give the spread.** A chapter that prints a median without one is reporting a figure with its
+  uncertainty deleted. The table renderers in `bench/tables.py` put them side by side.
+- **A "faster" needs the rule.** Any claim that one variant beats another cites the measurement
+  chapter's decision rule and states the threshold it used — which is fixed before the run, not
+  after it. `bench.distribution.decide()` applies it and `why()` explains which half settled it.
+
+Results stamped before this rule existed do not carry the block. They are not retrospectively
+wrong — they were taken honestly under the older rule — and they are listed in NEXT_STEPS to be
+re-measured next time the board is attached. Anything *new* is held to the rule, which is what
+`test_a_distribution_block_is_complete` checks.
 
 ## Problems
 

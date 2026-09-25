@@ -16,9 +16,10 @@ mid-trap, then measured on hardware whose performance counters actually work.
 
 ## Status
 
-**All thirty-two chapters are written, and eight of the eight appendices.** Zero figures are
-marked *pending*: the reference machine has reported and every `host` measurement has been taken,
-and Appendix C — the perf events this board exposes — is generated from it.
+**All thirty-two chapters are written, and eight of the eight appendices.** Four figures are
+marked *pending*, all of them the measurement chapter's new distribution work, which needs a board
+run that has not happened yet. The reference machine has otherwise reported, and Appendix C — the
+perf events this board exposes — is generated from it.
 
 - **[NEXT_STEPS.md](NEXT_STEPS.md)** — what is left, in the order it is worth doing, with the
   commands. Start here.

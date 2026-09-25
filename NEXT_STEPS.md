@@ -132,6 +132,72 @@ Three more the editorial pass over Part V turned up, each needing the board rath
 
 ---
 
+## 1a. The measurement chapter's distribution work needs the board
+
+The chapter now builds a second instrument — a bootstrap interval on the median, and a rule for
+deciding that one variant is faster than another — and four figures are `pending=` until the board
+runs it. One command:
+
+```bash
+make bench-board          # run_distribution is in it, right after run_measuring
+```
+
+That writes `bench/results/distribution-host.json` and the raw samples under `bench/raw/`. The
+runner refuses to stamp a result in which the workload is not many times the harness, because that
+would be a figure about the clock.
+
+**Then read the prose against the numbers.** Four sentences describe a shape the board has not yet
+confirmed:
+
+- the empty measured region "has a spread of its own" — true on a laptop; the board may be tighter;
+- the interval "narrows and then stops" — the run counts in `COUNTS` may need extending if it has
+  not flattened by four hundred;
+- cold against warm is presented as two experiments rather than one — if the board shows no
+  difference, the section says so instead;
+- the unrolled variant is not claimed to be faster anywhere, deliberately. Whatever the rule
+  returns is what the chapter reports, including "cannot tell".
+
+### The fifteen timings taken before the rule existed
+
+Every `host` result stamped before this chapter carries a bare summary rather than a distribution
+block — a median with no interval, no run count, no environment record, no raw samples. They are
+not wrong; they were taken honestly under the older rule, and `test_a_distribution_block_is_complete`
+skips a result that has no block rather than failing it.
+
+Re-measuring them under the new rule is a board session, not a code change: each runner calls
+`bench.distribution.distribution()` instead of storing a scalar, and the chapters that quote them
+gain a spread. Worth doing in one sitting, because until it is done the book reports two kinds of
+timing and only one of them can be judged.
+
+| Result | Quoted by |
+|---|---|
+| `bridge-host` | the two-targets chapter |
+| `hierarchy-host` | the memory chapter |
+| `loops-host` | the optimisation chapter |
+| `pipeline-host` | the CPU chapter |
+| `sharing-host` | the ordering chapter |
+| `oscost-host`, `faultcost-host`, `vdso-host` | the OS-cost chapter |
+| `vectors-host` | the vectors chapter |
+| `profile-host` | the profiling chapter |
+| `measuring-host`, `interference-host` | the measurement chapter itself |
+
+---
+
+## 1b. Problem numbers in test docstrings are stale, all of them
+
+Every `tests/<chapter>/test_problem_*.py` opens with a docstring naming the problem it grades, and
+almost none of the numbers survived the last renumbering: the measurement chapter's said
+"Problem 14.1" while the chapter is 24, the vectors chapter's said 21.1 while it is 31, and the
+memory chapter's said 1.1 while it is 03. The measurement chapter's were corrected in passing
+because that directory gained new files; the rest were left, because a thirty-file sweep does not
+belong in a chapter's commit.
+
+It is mechanical — the chapter number is derivable from the directory name via `bench.outline` —
+and it wants a guard afterwards, since `scripts/sync-labels.py` scans chapters and not tests. That
+is why the numbers went stale without anything noticing.
+
+---
+
 ## 2. Chapter numbers in code comments — 535 of them, and they are stale
 
 **This does not need the board.** Every runner except the ten above works off-board; the

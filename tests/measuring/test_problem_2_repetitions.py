@@ -1,4 +1,4 @@
-"""Problem 14.2 — how many repetitions before the instrument stops dominating?
+"""Problem 24.2 — how many repetitions before the instrument stops dominating?
 
 Every answer follows from the inequality in the stub, so the key is computed. The case worth
 noticing is the one where the work is already far larger than the clock and the answer is one:

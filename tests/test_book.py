@@ -7,6 +7,7 @@ place and not the other, a chapter whose header claims a target the plan does no
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -2008,3 +2009,43 @@ def test_the_deploy_workflow_injects_the_icon_links():
         "the injection has to run after the build and before check-built-links, which is what "
         "verifies the files those tags point at were published"
     )
+
+
+# -- the distribution stamp -------------------------------------------------------------------
+
+
+def test_a_distribution_block_is_complete():
+    """Any result carrying a distribution must carry all of it.
+
+    The measurement chapter's amendment: a timing is reported as a median with a spread, an
+    interval, the conditions it was taken under and a path to the raw samples. A block with some
+    of those is worse than none, because it looks like a figure that can be judged and is not.
+
+    Results stamped before the rule existed have no block at all and are skipped here; they are
+    tracked in NEXT_STEPS for the next board session. What this catches is a *new* one written
+    incomplete.
+    """
+    from bench.distribution import stamp_problems  # noqa: PLC0415
+
+    broken = []
+    for path in sorted(RESULTS_DIR.glob("*.json")):
+        summary = json.loads(path.read_text()).get("summary", {})
+        for key, block in summary.items():
+            if isinstance(block, dict) and "ci_median" in block:
+                broken += [f"{path.name}:{key}: {why}" for why in stamp_problems(block)]
+    assert not broken, "an incomplete distribution stamp: " + "; ".join(broken)
+
+
+def test_every_pending_figure_names_what_would_take_it():
+    """A pending figure is a promise, so it has to say what to run.
+
+    `pending` renders as a warning with no numbers in it, which is the right thing to print for a
+    measurement nobody has taken. It is only useful if it says whose job it is — a warning that
+    says a figure is missing and not how to get it is a defect with a nice presentation.
+    """
+    vague = [
+        name
+        for name, figure in FIGURES.items()
+        if getattr(figure, "pending", None) and "bench-board" not in figure.pending
+    ]
+    assert not vague, f"these pending figures do not say what to run: {vague}"

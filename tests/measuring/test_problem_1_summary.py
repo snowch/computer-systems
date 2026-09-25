@@ -1,4 +1,4 @@
-"""Problem 14.1 — report the distribution rather than a number.
+"""Problem 24.1 — report the distribution rather than a number.
 
 The expected answers are computed from the sample sets by the same definitions the stub states, so
 the key is derived rather than written down. The even-length cases are the ones that matter: the
