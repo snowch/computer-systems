@@ -1,9 +1,17 @@
 /* Systems From Scratch — minimal overrides on top of the MyST book theme. */
 
-/* The chapter header table (target / prerequisites / what it measures) appears on every
-   chapter. Keep it compact and visually distinct from body tables. */
+/* Keep the prerequisites visible without giving them the weight of a result table. */
 .chapter-header table {
   font-size: 0.9rem;
+  margin-block: 0.25rem;
+}
+
+.chapter-header table thead {
+  display: none;
+}
+
+.chapter-header td {
+  vertical-align: top;
 }
 
 /* Result tables are wide and numeric; never let them break the page layout. */
@@ -11,6 +19,23 @@ table {
   display: block;
   overflow-x: auto;
   max-width: 100%;
+}
+
+/* Let long chapter titles wrap inside the previous/next links on phones. */
+.myst-footer-link-prev,
+.myst-footer-link-next {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  /* Reserve room for the permalink in the heading line, including when it has keyboard focus. */
+  .content :is(h2, h3, h4, h5, h6) > a[aria-label="Link to this Section"] {
+    transform: none;
+    translate: none;
+    width: auto;
+    margin-inline-start: 0.25em;
+  }
 }
 
 /* Tabular figures so measured columns line up down the page. */

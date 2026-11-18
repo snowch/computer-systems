@@ -1,19 +1,19 @@
 ---
-title: "Interrupts and Privilege Levels"
+title: "07 · Interrupts and Privilege Levels"
 short_title: "07 · Interrupts and Privilege Levels"
 ---
 
 (interrupts-and-privilege)=
 # 07 · Interrupts and Privilege Levels
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
-| **Target** | `bare` — the same machine under QEMU with no operating system on it |
+| **Target** | `bare` — a RISC-V machine in QEMU without an operating system |
 | **Prerequisites** | [ch06](#a-trap-with-nothing-else) |
-| **What it measures** | A timer interrupt taken with no kernel present, and an access refused because the program had dropped a privilege level. |
+| **Evidence** | The reported causes of a timer interrupt and a denied register access. |
 :::
 
 ## The question
@@ -26,7 +26,8 @@ kind, an *interrupt*, which no instruction causes and which would arrive if the 
 nothing at all. It is also about privilege levels: what "allowed" means in hardware is a two-bit
 field and a refusal.
 
-## The material
+(interrupts-and-privilege-example)=
+## Distinguish interrupts from exceptions
 
 ### Something that arrives on its own
 
@@ -132,12 +133,15 @@ subject.
 
 ## What we measured
 
-Run it yourself before reading the table — the rows below are what you should see, and a
-figure you have reproduced is worth more than one you have been shown:
+From the repository root, run the two demonstrations in the supplied program:
 
 ```bash
 ./run privilege
 ```
+
+Find `cause_is_asynchronous` and `interrupt_code` for the timer. Compare them with the
+`refusal_code` and `refusal_is_illegal_instruction` for the supervisor-mode access. Which
+event arrived while unrelated code ran? Which did the current instruction cause?
 
 ```{include} _generated/interrupts-and-privilege-privilege.md
 ```
@@ -159,29 +163,32 @@ would have taught that levels make no difference.
 
 ## Problems
 
-Three, in `tests/interrupts_and_privilege/`.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **7.1 — Interrupt an interrupt.**
-Arrange for the timer to fire while the handler is still running, and say what happens and why.
-Then make it happen. The test checks both your prediction and a run. The default answer is
-*nothing*, for a reason in one bit of `mstatus`.
+Open `tests/interrupts_and_privilege/problem_1_nested.py`. Record which bit prevents a second
+timer interrupt by default. Copy `sysfs/bare/privilege.c` to
+`tests/interrupts_and_privilege/answer_nested.c` and arrange a second interrupt while the
+handler runs. The stub names the output fields the test reads.
 
 ```bash
 python3 -m pytest tests/interrupts_and_privilege/test_problem_1_nested.py
 ```
 
 **7.2 — Advance `mepc` on an interrupt.**
-Make the handler treat the interrupt as [ch06](#a-trap-with-nothing-else) treated the trap, and add four. Say exactly what goes
-wrong and produce a run where the damage is visible in the output rather than inferred.
+Open `tests/interrupts_and_privilege/problem_2_wrong_epc.py`. Describe what goes wrong when
+the handler advances `mepc` on an interrupt. Copy `sysfs/bare/privilege.c` to
+`tests/interrupts_and_privilege/answer_skip.c` and make the output show which instruction is
+skipped.
 
 ```bash
 python3 -m pytest tests/interrupts_and_privilege/test_problem_2_wrong_epc.py
 ```
 
 **7.3 — Find another refusal.**
-`csrr t0, mhartid` is one instruction supervisor mode may not execute. Find a second, of a
-different kind — not another machine-mode register — and demonstrate it, reporting its cause. The
-test checks the cause differs from 2 and that your program really did run in supervisor mode.
+Open `tests/interrupts_and_privilege/problem_3_another_refusal.py`. Fill in a different
+operation supervisor mode refuses, its cause code and the reason for the refusal. The test
+checks your answer against the constraints in the stub.
 
 ```bash
 python3 -m pytest tests/interrupts_and_privilege/test_problem_3_another_refusal.py

@@ -1,4 +1,4 @@
-"""Problem 9.1 — how many characters does the console lose?
+"""Problem 19.1 — how many characters does the console lose?
 
 Every answer follows from the event string the test wrote, so nothing is stored. The buffer size
 is xv6's own, so a reader who wants to check an answer against the real kernel can.

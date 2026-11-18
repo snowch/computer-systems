@@ -1,19 +1,19 @@
 ---
-title: "Kernel C Is Not Application C"
+title: "04 · Kernel C Is Not Application C"
 short_title: "04 · Kernel C Is Not Application C"
 ---
 
 (c-without-a-runtime)=
 # 04 · Kernel C Is Not Application C
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch03](#memory-is-one-array) |
-| **What it measures** | What the kernel as built does not have: `bench/results/kernelc-xv6.json` |
+| **Evidence** | Symbols and facilities present in the xv6 build. |
 :::
 
 ## The question
@@ -27,7 +27,8 @@ in any language, and none of them holds here.
 
 What goes wrong is not syntax; [ch03](#memory-is-one-array) covered that.
 
-## The material
+(c-without-a-runtime-example)=
+## Work with the facilities xv6 provides
 
 ### One fact, and everything else follows from it
 
@@ -224,28 +225,28 @@ conformance mode.
 
 ## Problems
 
-Three, in `tests/c_without_a_runtime/runtime.c`.
+Edit `tests/c_without_a_runtime/runtime.c` in your checkout. Run each test command from the
+repository root.
 
 **4.1 — Hand out objects from a pool, and take them back.**
-No allocator. A fixed array, a way to find an unused entry, and a way to return one. Getting the
-"none left" case right is most of the exercise, because it is the case an application programmer
-has never had to write.
+Complete the pool functions `r_pool_reset`, `r_pool_alloc` and `r_pool_free`. Use the fixed
+array. The test checks allocation, release and the return value when every entry is in use.
 
 ```bash
 python3 -m pytest tests/c_without_a_runtime/test_problem_1_pool.py
 ```
 
 **4.2 — Which of these can fail?**
-Several kernel functions described by where their memory comes from. Say which can fail and what
-each must return when it does. The answer is never "it throws".
+Complete `r_failure_mode`. Use each example’s storage source and return convention to decide
+how a failed operation is reported.
 
 ```bash
 python3 -m pytest tests/c_without_a_runtime/test_problem_2_failure.py
 ```
 
 **4.3 — What does a missing `volatile` cost?**
-Given several loops over an address, say which the compiler may reduce and to what. One of them is
-a driver that receives one character for ever.
+Complete `r_permitted_reads`. Given whether a read is qualified `volatile` and whether its
+value is used, predict the number of reads the compiler must keep in the examples.
 
 ```bash
 python3 -m pytest tests/c_without_a_runtime/test_problem_3_volatile.py

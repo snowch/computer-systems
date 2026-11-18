@@ -9,13 +9,14 @@ reader to expect one frame per call.
 from __future__ import annotations
 
 import shutil
+import subprocess
+import sys
 
 import pytest
 
-from bench.measure import HostTarget, compile_program, flags_for
+from bench.measure import ToolchainMissingError
 from bench.run_disasm import target_for
-
-SOURCE = "sysfs/tools/framewalk.c"
+from bench.stamp import ROOT
 
 #: main → outer → middle → inner → walk. The walk starts inside `walk` itself, so it can climb
 #: four frames before reaching main's caller.
@@ -23,19 +24,22 @@ EXPECTED_FRAMES = 3
 
 
 @pytest.fixture(scope="module")
-def walked(build_dir) -> list[str]:
+def walked() -> list[str]:
     runner = shutil.which("qemu-riscv64-static") or shutil.which("qemu-riscv64")
     if not runner:
         pytest.skip("no user-mode QEMU to run RV64 with (see the setup chapter)")
-    base = target_for("riscv64")
-    target = HostTarget(
-        name="framewalk",
-        cc=base.cc,
-        flags=(*flags_for("riscv64"), "-fno-omit-frame-pointer", "-static"),
-        runner=(runner,),
+    try:
+        target_for("riscv64")
+    except ToolchainMissingError as error:
+        pytest.skip(str(error))
+    run = subprocess.run(
+        [sys.executable, "./run", "framewalk"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
     )
-    built = compile_program([SOURCE], build_dir / "framewalk", target, includes=["sysfs/include"])
-    return built.run().stdout.splitlines()
+    return run.stdout.strip().splitlines()
 
 
 @pytest.mark.hostcode

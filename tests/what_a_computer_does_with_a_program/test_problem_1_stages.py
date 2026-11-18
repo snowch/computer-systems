@@ -1,4 +1,4 @@
-"""Checks Problem 1.1. There is no answer key — this file is the answer key, and it runs."""
+"""Checks Problem 12.1. There is no answer key — this file is the answer key, and it runs."""
 
 from __future__ import annotations
 

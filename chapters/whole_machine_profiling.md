@@ -1,20 +1,20 @@
 ---
-title: "Whole-Machine Profiling"
+title: "30 · Whole-Machine Profiling"
 short_title: "30 · Whole-Machine Profiling"
 ---
 
 (whole-machine-profiling)=
 # 30 · Whole-Machine Profiling
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
-| **Target** | `host` — the reference machine, natively |
+| **Target** | `host` — native Linux on real hardware |
 | **Prerequisites** | [ch29](#the-os-layers-cost) |
-| **Assumes** | that `perf` can sample. ARM PMUs support counter-overflow interrupts as standard, so this works on the reference machine — but most affordable RISC-V cores do not, and a reader following [Part V](#part5) on one will find this the chapter they cannot run. |
-| **What it measures** | What the program under the profiler does, counted before anyone times it: `bench/results/tally-census.json`; and where the samples landed, before and after: `bench/results/profile-host.json` |
+| **Assumes** | `perf` can take hardware samples. Check this on your machine in [ch01](#setting-up-the-board). |
+| **Evidence** | A workload’s operation counts and the locations sampled by the hardware profiler. |
 :::
 
 ## The question
@@ -26,7 +26,8 @@ one mechanism, with the answer known before the machine was asked. That is the r
 learning what a cache is. It is the wrong shape for the situation this is all for: a program you
 did not write, doing something you do not fully understand, too slowly.
 
-## The material
+(whole-machine-profiling-example)=
+## Interpret samples from the reference workload
 
 ### The program, and what it is about to do
 
@@ -199,27 +200,28 @@ a measurement with the same measurement is circular.
 
 ## Problems
 
-Three, in `tests/whole_machine_profiling/profiler.c`.
+Edit `tests/whole_machine_profiling/profiler.c` in your checkout. Run each test command from
+the repository root.
 
 **30.1 — Flat to inclusive.**
-Given a call tree and the profiler's exclusive counts, work out what each function cost including
-everything it called. The symbol you can change is never the one at the top of the flat list.
+Complete `p_inclusive`. Add the samples attributed directly to a function to those attributed
+to its descendants in the call tree. The test checks the total at every node.
 
 ```bash
 python3 -m pytest tests/whole_machine_profiling/test_problem_1_inclusive.py
 ```
 
 **30.2 — How many samples is a claim?**
-Derive the closed form for the number of samples a share needs before it is worth believing. It is
-small enough to do in your head with a profile on the screen, which is the point of deriving it.
+Complete `p_samples_needed`. Use the share and requested resolution to find a sample count
+under the model in the stub. The test checks the model’s required count.
 
 ```bash
 python3 -m pytest tests/whole_machine_profiling/test_problem_2_noise.py
 ```
 
 **30.3 — Why the period is random.**
-A fixed sampling period over a fixed loop visits only some positions. Work out how many, and the
-reason real profilers jitter will follow from the formula rather than from being told.
+Complete `p_distinct_positions`. Determine how many positions a fixed sampling period visits
+in a repeating loop. The test checks periods with and without a common divisor.
 
 ```bash
 python3 -m pytest tests/whole_machine_profiling/test_problem_3_aliasing.py

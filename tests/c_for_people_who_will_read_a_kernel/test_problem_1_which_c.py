@@ -1,4 +1,4 @@
-"""Checks Problem 3.1 by compiling every candidate and disassembling it.
+"""Checks Problem 5.1 by compiling every candidate and disassembling it.
 
 No listings are stored. The test builds each candidate, captures what the compiler emitted, and
 hands the reader those listings under opaque names — so the puzzle is generated from the same
@@ -38,7 +38,7 @@ def listings(tmp_path_factory) -> dict[str, str]:
 
 @pytest.mark.problem
 def test_the_reader_answered_every_listing(listings):
-    assert ANSWERS, "Problem 3.1: ANSWERS is still empty"
+    assert ANSWERS, "Problem 5.1: ANSWERS is still empty"
     assert set(ANSWERS) == set(listings), (
         f"answer every listing exactly once. They are: {sorted(listings)}"
     )
@@ -48,7 +48,7 @@ def test_the_reader_answered_every_listing(listings):
 @pytest.mark.problem
 @pytest.mark.parametrize("candidate", sorted(CANDIDATES))
 def test_the_reader_matched_the_right_listing(candidate: str, listings):
-    assert ANSWERS, "Problem 3.1: ANSWERS is still empty"
+    assert ANSWERS, "Problem 5.1: ANSWERS is still empty"
     chosen = [label for label, name in ANSWERS.items() if name == candidate]
     assert chosen == [_label(candidate)], (
         f"you matched {candidate!r} to {chosen or 'nothing'}. Compile it and compare:\n"

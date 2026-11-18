@@ -1,4 +1,4 @@
-"""Problem 9.2 — how many interrupts will this cost, and when is that not a question?
+"""Problem 19.2 — how many interrupts will this cost, and when is that not a question?
 
 The arithmetic cases follow from the numbers the test supplies. The last case is the chapter: a
 device that interrupts to say it is ready rather than to say it is finished gives a count that the

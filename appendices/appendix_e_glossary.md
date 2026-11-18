@@ -1,22 +1,15 @@
 ---
-title: "Appendix E — Glossary"
+title: "Appendix E · Glossary"
 short_title: "Appendix E"
 ---
 
 (appendix-e)=
 # Appendix E · Glossary
 
-An appendix in this book is a reference, not a chapter: no argument, no narrative, and everything
-in it either cites a primary source or comes from a stamped result under `bench/results/`.
-
-Assembled from the chapters after they were written, which is the only order that works: a
-glossary drafted first defines the words the prose did not end up using. Every entry names the
-chapter that establishes it, and the definition here is deliberately shorter than the chapter's —
-this page is for recognising a term, not for learning it.
+Look up a term you encounter in the book. Each definition links to the chapter where it is
+introduced or used in an example.
 
 ## The book's own vocabulary
-
-These four are used throughout and mean something specific here.
 
 | Term | What it means in this book |
 |---|---|
@@ -31,9 +24,9 @@ These four are used throughout and mean something specific here.
 |---|---|---|
 | **disassembly** | A compiled function printed back as instructions. What the compiler produced, not what you wrote. | [ch02](#reading-a-listing) |
 | **mnemonic** | The name of an instruction, as distinct from the bytes that encode it. | [ch02](#reading-a-listing) |
-| **operand** | What an instruction acts on. In both of this book's syntaxes the destination comes first. | [ch02](#reading-a-listing) |
-| **address** | A number naming a byte. Memory is one array and an address is an index into it. | [ch03](#memory-is-one-array) |
-| **pointer** | A variable holding an address, with a type saying what to assume is there. | [ch03](#memory-is-one-array) |
+| **operand** | What an instruction acts on. In the examples that write a destination register, it usually comes first. | [ch02](#reading-a-listing) |
+| **address** | A value that identifies a location in an address space. The book’s byte-array model treats it as a byte index. | [ch03](#memory-is-one-array) |
+| **pointer** | A value that can refer to an object or function. Its type determines how code may use it. | [ch03](#memory-is-one-array) |
 | **freestanding** | The standard's word for C with no library underneath it. [ch04](#c-without-a-runtime) deliberately does not use it, on the grounds that what matters is which specific things are missing. | [ch04](#c-without-a-runtime) |
 | **free list** | An allocator that keeps its bookkeeping inside the memory it is not currently handing out. | [ch04](#c-without-a-runtime) |
 | **storage duration** | How long an object lives: automatic, static, or allocated. The distinction a garbage-collected language does not make you make. | [ch05](#c-for-people-who-will-read-a-kernel) |
@@ -49,7 +42,7 @@ These four are used throughout and mean something specific here.
 | **hart** | A RISC-V hardware thread: one instruction stream with its own registers, sharing memory with the others. | [ch08](#one-page-table-two-harts) |
 | **identity mapping** | A page table in which a virtual address translates to the same physical address, so translation can be switched on without anything moving. | [ch08](#one-page-table-two-harts) |
 | **dispatch** | Turning a number a caller supplied into the function that serves it, which is all a system-call table is. | [ch09](#a-system-call-of-your-own) |
-| **file descriptor** | A small integer that means a device, because a table in the process turns it into one. | [ch10](#a-small-integer-that-means-a-device) |
+| **file descriptor** | An integer used to refer to an open file, device or other resource through the process’s descriptor table. | [ch10](#a-small-integer-that-means-a-device) |
 | **process table** | The kernel's fixed array of processes, and the reason running out of them is a number rather than a shortage of memory. | [ch11](#fork-built-rather-than-read) |
 
 ## [Part III](#part3) — the machine underneath a program
@@ -61,9 +54,9 @@ These four are used throughout and mean something specific here.
 | **relocation** | A note in an object file saying "this address is not known yet", resolved at link time. | [ch12](#what-a-computer-does-with-a-program), [ch15](#linking-and-loading) |
 | **object file** | Compiled code with unresolved references, not yet a program. | [ch12](#what-a-computer-does-with-a-program) |
 | **padding** | Bytes a compiler inserts inside a struct so each member lands on an address it can be accessed at. | [ch13](#representing-information) |
-| **alignment** | The requirement that an object's address be a multiple of its size, or of its widest member. | [ch13](#representing-information) |
+| **alignment** | The byte boundary on which an object of a given type can start. | [ch13](#representing-information) |
 | **undefined behaviour** | A program the standard makes no promises about, which a compiler may therefore assume never happens. | [ch13](#representing-information), [ch05](#c-for-people-who-will-read-a-kernel) |
-| **`volatile`** | A promise not to cache a value in a register and not to reorder accesses to it relative to each other. Not a threading tool. | [ch05](#c-for-people-who-will-read-a-kernel) |
+| **`volatile`** | A qualifier for accesses the compiler must treat as observable according to its rules. It supplies no thread synchronisation. | [ch05](#c-for-people-who-will-read-a-kernel) |
 | **calling convention** | The agreement about which registers carry arguments, which are preserved, and who cleans up. A contract between compiled code, not a hardware rule. | [ch14](#machine-level-code-on-riscv) |
 | **caller-saved / callee-saved** | Whether the code making a call or the code being called is responsible for preserving a register across it. | [ch14](#machine-level-code-on-riscv) |
 | **stack frame** | The region a function owns on the stack. At `-O2` many functions have none. | [ch14](#machine-level-code-on-riscv) |

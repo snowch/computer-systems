@@ -1,20 +1,20 @@
 ---
-title: "Vectors"
+title: "31 · Vectors"
 short_title: "31 · Vectors"
 ---
 
 (vectors)=
 # 31 · Vectors
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
-| **Target** | `host` — the reference machine, natively |
+| **Target** | `host` — native Linux on real hardware |
 | **Prerequisites** | [ch30](#whole-machine-profiling) |
-| **Assumes** | a vector unit — NEON on the reference core. This chapter became measurable when [Part V](#part5) moved to AArch64; on a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run. |
-| **What it measures** | Which of five loops the compiler widens, at three sets of flags: `bench/results/vectors-census.json`; and what the widening bought: `bench/results/vectors-host.json` |
+| **Assumes** | A vector unit the compiler targets. The reference runs use AArch64 NEON. See [Appendix H](#appendix-h) for other machines. |
+| **Evidence** | Which loops the compiler widens and native timings for the resulting code. |
 :::
 
 ## The question
@@ -25,7 +25,8 @@ What does vectorising actually buy, and when will the compiler do it for me?
 read. This chapter is what you do to that loop once you have found it, and it asks the narrowest
 question in the book: the unit can do four of these at once, so what became of the other three?
 
-## The material
+(vectors-example)=
+## Compare scalar and vectorised loops
 
 ### Five loops, three builds
 
@@ -166,27 +167,27 @@ of the running time, has bought you well under one per cent.
 
 ## Problems
 
-Three, in `tests/vectors/lanes.c`.
+Edit `tests/vectors/lanes.c` in your checkout. Run each test command from the repository root.
 
 **31.1 — What the tail costs.**
-Speedup from a lane count and a trip count. The case to get right is the loop shorter than one
-vector, which gains nothing and pays for all the code.
+Complete `v_speedup_x100`. Count complete vectors and leftover scalar elements under the
+exercise’s cost model. The test includes a loop that is shorter than one vector.
 
 ```bash
 python3 -m pytest tests/vectors/test_problem_1_tail.py
 ```
 
 **31.2 — The same numbers, two orders.**
-Write the sequential sum and the lane-wise one, and watch them disagree. This is the refusal
-above, reproduced rather than described.
+Complete `v_sum_sequential` and `v_sum_lanewise` in the orders described in the stub. Run the
+test and compare the two sums for the same input. Which operations change order?
 
 ```bash
 python3 -m pytest tests/vectors/test_problem_2_reassociation.py
 ```
 
 **31.3 — The speedup you were allowed.**
-A measured speedup as a fraction of the arithmetic bound. Do not clamp it: the value over a
-hundred is the one that tells you something.
+Complete `v_of_bound_x100`. Compare the measured speedup with the bound from the number of
+lanes. Keep values above the bound so you can recognise a result the model does not explain.
 
 ```bash
 python3 -m pytest tests/vectors/test_problem_3_bound.py

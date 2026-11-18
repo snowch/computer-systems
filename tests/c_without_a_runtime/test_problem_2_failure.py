@@ -1,4 +1,4 @@
-"""Problem 2.2 — which of these can fail, and how it says so.
+"""Problem 4.2 — which of these can fail, and how it says so.
 
 Every combination of where the memory comes from and what the function hands back, because the
 interesting cell is the one that only exists when you enumerate: something that can run out and

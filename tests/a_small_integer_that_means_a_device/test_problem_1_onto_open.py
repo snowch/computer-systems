@@ -1,4 +1,4 @@
-"""Checks Problem 8.1 by running the reader's program: consistent, and not a blanket refusal."""
+"""Checks Problem 10.1 by running the reader's program: consistent, and not a blanket refusal."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ def test_the_chapters_dup_returned_its_target():
 def test_the_choice_is_consistent_and_not_a_blanket_refusal(tmp_path):
     if bare.problems():
         pytest.skip("; ".join(bare.problems()))
-    assert ANSWER.exists(), f"Problem 8.1: put your program in {ANSWER.name} beside this test"
+    assert ANSWER.exists(), f"Problem 10.1: put your program in {ANSWER.name} beside this test"
 
     image = bare.build_from([ANSWER], "problem_onto", build_dir=tmp_path)
     fields = bare.run("descriptors", image=image, timeout=30).fields()
@@ -36,5 +36,5 @@ def test_the_choice_is_consistent_and_not_a_blanket_refusal(tmp_path):
 @pytest.mark.problem
 def test_the_reader_justified_it():
     assert len(YOUR_CHOICE_AND_WHY.split()) >= 10, (
-        "Problem 8.1: YOUR_CHOICE_AND_WHY wants a sentence with a reason in it"
+        "Problem 10.1: YOUR_CHOICE_AND_WHY wants a sentence with a reason in it"
     )

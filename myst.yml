@@ -4,10 +4,8 @@ project:
   id: systems-from-scratch
   title: Systems From Scratch
   description: >-
-    From bits to cycles, measured on RISC-V. A self-study text on computer systems and
-    performance — data representation, machine code, the operating system layer and CPU
-    microarchitecture — built on the xv6 teaching kernel and measured natively on hardware
-    whose performance counters actually work.
+    A self-study book on computer systems and performance. Explore RISC-V and xv6
+    in an emulator and measure program costs on native Linux hardware.
   keywords:
     - computer systems
     - performance
@@ -119,10 +117,12 @@ project:
         - file: appendices/appendix_h_choosing_the_machine.md
 
 site:
-  template: book-theme
+  # 1.4.1 is the theme release compatible with MyST 1.10.1, pinned in package.json.
+  template: https://github.com/jupyter-book/myst-theme/releases/download/myst-to-react%401.4.1/book-theme.zip
   title: Systems From Scratch
   options:
     style: ./custom.css
+    outline_maxdepth: 3
     logo_text: Systems From Scratch
     # Without this the theme still emits <link rel="icon" href="…/favicon.ico"> and serves its
     # own default, so the book shipped with MyST's logo in the browser tab.

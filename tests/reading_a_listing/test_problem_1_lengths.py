@@ -1,4 +1,4 @@
-"""Checks Problem 1.1. There is no answer key — this file is the answer key, and it runs."""
+"""Checks Problem 2.1. There is no answer key — this file is the answer key, and it runs."""
 
 from __future__ import annotations
 
@@ -37,7 +37,7 @@ def test_each_instruction_is_as_long_as_the_gap(description, addresses, end, exp
     try:
         answer = instruction_lengths(list(addresses), end)
     except NotImplementedError:
-        pytest.fail("Problem 1.1 is not solved — see tests/reading_a_listing/problem_1_lengths.py")
+        pytest.fail("Problem 2.1 is not solved — see tests/reading_a_listing/problem_1_lengths.py")
     assert answer == expected, (
         f"{description}: an instruction is as long as the distance to the next address, and the "
         f"last one reaches `end`. You said {answer}, the listing says {expected}"

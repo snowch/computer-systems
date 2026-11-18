@@ -20,6 +20,8 @@ a program and running it here is meant to be free, and does not touch anything c
 from __future__ import annotations
 
 import argparse
+import platform
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -28,7 +30,9 @@ ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 
 from bench import bare  # noqa: E402
+from bench.measure import ToolchainMissingError, flags_for  # noqa: E402
 from bench.programs import PROGRAMS, find, libraries_for  # noqa: E402
+from bench.run_disasm import target_for  # noqa: E402
 
 BUILD = ROOT / "sysfs" / "build" / "run"
 
@@ -62,23 +66,43 @@ def run_host(program, keep: bool, args: list[str]) -> int:
     BUILD.mkdir(parents=True, exist_ok=True)
     binary = BUILD / program.name
     sources = [program.source, *libraries_for(program)]
+    cc = "cc"
+    flags = ("-O2", "-g", "-Wall")
+    runner = []
+    if program.name == "framewalk":
+        # The walker reads slots defined by the RISC-V ABI.
+        try:
+            cc = target_for("riscv64").cc
+        except ToolchainMissingError:
+            print(
+                "framewalk needs a RISC-V Linux C compiler (gcc-riscv64-linux-gnu)", file=sys.stderr
+            )
+            return 2
+        if platform.machine() != "riscv64":
+            emulator = shutil.which("qemu-riscv64-static") or shutil.which("qemu-riscv64")
+            if emulator is None:
+                print(
+                    "framewalk needs qemu-riscv64 (from the user-mode QEMU package)",
+                    file=sys.stderr,
+                )
+                return 2
+            runner.append(emulator)
+        flags = (*flags_for("riscv64"), "-fno-omit-frame-pointer", "-static")
     command = [
-        "cc",
-        "-O2",
-        "-g",
-        "-Wall",
+        cc,
+        *flags,
         f"-I{ROOT / 'sysfs' / 'include'}",
         *[str(s) for s in sources],
         "-o",
         str(binary),
         "-lm",
     ]
-    print("# " + " ".join(str(c) for c in command) + "\n")
+    print("# " + " ".join(str(c) for c in command) + "\n", flush=True)
     built = subprocess.run(command, capture_output=True, text=True)
     if built.returncode != 0:
         print(built.stderr, file=sys.stderr)
         return 1
-    finished = subprocess.run([str(binary), *args])
+    finished = subprocess.run([*runner, str(binary), *args])
     if keep:
         print(f"\n# binary kept at {binary}")
     return finished.returncode
@@ -93,9 +117,17 @@ def run_xv6(program, args: list[str]) -> int:
     typed = " ".join([program.name, *args])
     print(f"# booting xv6, then typing: {typed}\n")
     booted = xv6.boot([typed])
+    if booted.timed_out:
+        print(f"xv6 timed out before returning to the shell after `{typed}`.", file=sys.stderr)
+        print(booted.transcript, file=sys.stderr)
+        return 1
     # The program's own output, not the whole boot transcript: a reader who wanted to watch the
     # kernel start would run `make xv6-qemu`.
-    print(booted.output_of(typed) or booted.transcript)
+    output = booted.output_of(typed)
+    if f"exec {program.name} failed" in output.splitlines():
+        print(f"xv6 could not start `{program.name}`.", file=sys.stderr)
+        return 1
+    print(output or "The program returned to the xv6 shell without printing anything.")
     return 0
 
 

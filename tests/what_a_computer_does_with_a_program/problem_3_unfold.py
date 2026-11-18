@@ -20,7 +20,7 @@ from __future__ import annotations
 #: Keep the signature. Everything between the braces is yours.
 UNFOLDABLE_SUM = """
 unsigned long reader_sum(unsigned long span) {
-  /* Problem 1.3 — see the Problems section of the whole-program chapter.
+  /* Problem 12.3 — see the Problems section of the whole-program chapter.
    *
    * Return the sum of every integer below `span`, using a loop the compiler leaves alone. */
   return 0;

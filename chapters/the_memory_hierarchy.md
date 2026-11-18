@@ -1,21 +1,21 @@
 ---
-title: "The Memory Hierarchy"
+title: "25 · The Memory Hierarchy"
 short_title: "25 · The Memory Hierarchy"
 ---
 
 (the-memory-hierarchy)=
 # 25 · The Memory Hierarchy
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
-| **Target** | `host` — the reference machine, natively |
+| **Target** | `host` — native Linux on real hardware |
 | **Answers the cost of** | [ch13](#representing-information), [ch17](#virtual-memory) |
 | **Prerequisites** | [ch24](#measuring) |
-| **Assumes** | A particular cache hierarchy. The numbers are this board's; the method is not. |
-| **What it measures** | The hierarchy, by asking the machine rather than reading its datasheet: `bench/results/hierarchy-host.json` |
+| **Assumes** | The reference board’s cache layout for the reported measurements. Your cache sizes can differ. |
+| **Evidence** | Native access times as the amount and placement of data change. |
 :::
 
 ## The question
@@ -27,7 +27,8 @@ load, so the structural model says the slower one costs somewhat under twice the
 chapter has the equipment to say what actually separates them, and it does not start by
 looking anything up.
 
-## The material
+(the-memory-hierarchy-example)=
+## Infer cache behaviour from access times
 
 ### Measuring a cache instead of reading about it
 
@@ -190,27 +191,28 @@ all, or something else — is a question for the board rather than for this page
 
 ## Problems
 
-Three, in `tests/the_memory_hierarchy/hierarchy.c`, graded against curves the tests construct with known answers.
+Edit `tests/the_memory_hierarchy/hierarchy.c` in your checkout. Run each test command from the
+repository root.
 
 **25.1 — Where does the curve step?**
-Four curves, including one that drifts upward without stepping. A threshold that calls that a step
-finds levels in every machine, including ones that do not have them.
+Complete `h_steps`. Identify abrupt increases that meet the stated threshold. The test uses
+synthetic curves, including a gradual slope that should produce no step.
 
 ```bash
 python3 -m pytest tests/the_memory_hierarchy/test_problem_1_steps.py
 ```
 
 **25.2 — What is the line size?**
-The stride at which consecutive visits stop sharing. One of the curves is flat throughout, and the
-right answer there is that there is no answer.
+Complete `h_line_size`. Find the stride at which the supplied curve indicates that consecutive
+visits stop sharing a line. Report no estimate when the curve gives no such signal.
 
 ```bash
 python3 -m pytest tests/the_memory_hierarchy/test_problem_2_line.py
 ```
 
 **25.3 — How many lines does this loop touch?**
-The arithmetic behind the curve, including the ceiling: past one line per element, a larger stride
-buys the machine nothing back.
+Complete `h_lines_touched`. Given the element size, stride and line size, count the distinct
+lines touched for the assumptions in the stub.
 
 ```bash
 python3 -m pytest tests/the_memory_hierarchy/test_problem_3_lines.py

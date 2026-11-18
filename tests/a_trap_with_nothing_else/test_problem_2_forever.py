@@ -1,4 +1,4 @@
-"""Checks Problem 4.2 by running what the reader wrote and watching it fail to finish.
+"""Checks Problem 6.2 by running what the reader wrote and watching it fail to finish.
 
 Nothing about the answer is stored. The loop is demonstrated rather than asserted: the harness
 gives up on a program that does not stop, and that giving up is the check.
@@ -29,7 +29,7 @@ def test_the_working_program_stops_on_its_own():
 def test_the_readers_program_never_finishes(tmp_path):
     if bare.problems():
         pytest.skip("; ".join(bare.problems()))
-    assert ANSWER.exists(), f"Problem 4.2: put your program in {ANSWER.name} beside this test"
+    assert ANSWER.exists(), f"Problem 6.2: put your program in {ANSWER.name} beside this test"
 
     image = bare.build_from([ANSWER], "problem_forever", build_dir=tmp_path)
     with pytest.raises(RuntimeError) as raised:
@@ -43,9 +43,9 @@ def test_the_readers_program_never_finishes(tmp_path):
 @pytest.mark.problem
 def test_the_reader_named_the_instruction_and_explained_the_silence():
     assert THE_INSTRUCTION_THAT_REPEATS.strip(), (
-        "Problem 4.2: THE_INSTRUCTION_THAT_REPEATS is still empty"
+        "Problem 6.2: THE_INSTRUCTION_THAT_REPEATS is still empty"
     )
     assert THE_INSTRUCTION_THAT_REPEATS.strip().lower() not in {"loop", "handler", "trap"}, (
         "name the instruction, not what it does"
     )
-    assert len(WHY_NO_ERROR.split()) >= 8, "Problem 4.2: WHY_NO_ERROR wants a sentence"
+    assert len(WHY_NO_ERROR.split()) >= 8, "Problem 6.2: WHY_NO_ERROR wants a sentence"

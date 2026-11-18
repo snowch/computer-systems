@@ -1,4 +1,4 @@
-"""Problem 17.2 — how long is the critical path?
+"""Problem 27.2 — how long is the critical path?
 
 Computed from the parameters. The number of additions does not change with the accumulator count;
 this does, and it is the one the machine's throughput follows.

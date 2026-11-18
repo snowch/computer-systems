@@ -1,19 +1,19 @@
 ---
-title: "Interrupts and Drivers"
+title: "19 · Interrupts and Drivers"
 short_title: "19 · Interrupts and Drivers"
 ---
 
 (interrupts-and-drivers)=
 # 19 · Interrupts and Drivers
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch18](#page-faults-as-a-feature) |
-| **What it measures** | What a fixed amount of I/O costs in interrupts, for the device where that question has an answer: `bench/results/interrupts-xv6.json` |
+| **Evidence** | Interrupt counts for controlled console and disk workloads. |
 :::
 
 ## The question
@@ -32,7 +32,8 @@ arbitrary. The process it lands on is very probably not the one that asked.
 That difference is why device drivers are shaped the way they are, and this chapter asks which of
 its consequences can be counted.
 
-## The material
+(interrupts-and-drivers-example)=
+## Count interrupts for fixed device workloads
 
 ### Getting attention costs someone else's time
 
@@ -58,15 +59,16 @@ other does not.
 :end-before: printf("intrload
 ```
 
-Build it into the kernel, boot, and run it:
+Run the supplied workload from your local checkout. The wrapper stages it and starts xv6:
 
 ```bash
 ./run intrload
 ```
 
-Two devices, deliberately. The console takes characters one at a time; the disk takes blocks. Both
-amounts are constants this program chose, so anything that varies between runs is varying for a
-reason that is not the workload.
+Look for the `intrload chars ... blocks ...` line after the console output. It reports input
+workload sizes: characters sent and disk blocks requested. The saved kernel census below
+counts interrupts separately. Does sending more than one character necessarily imply the
+same number of console interrupts?
 
 The kernel counts interrupts by source, and counts two extra facts about the console driver:
 
@@ -186,39 +188,31 @@ settings are the difference between a measurement and a puzzle, and [ch30](#whol
 
 ## Problems
 
-Three. The first two are in `tests/interrupts_and_drivers/console.c`; the third is a Python stub you fill in with an
-opinion and are graded against the machine.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **19.1 — How many characters does the console lose?**
-Given a string of arrivals and drains, and a buffer of xv6's own size, say how many are dropped.
-
-A handler cannot block, cannot allocate and has nobody to return an error to, so a character
-arriving at a full buffer is simply gone and nothing anywhere is told. This is why a terminal
-loses characters when you paste into it, and it is not a bug in anything.
+Open `tests/interrupts_and_drivers/console.c`. Complete `console_lost`. Simulate arrivals and
+drains in the fixed-size console buffer. The test compares the number of characters dropped
+for each sequence.
 
 ```bash
 python3 -m pytest tests/interrupts_and_drivers/test_problem_1_lost.py
 ```
 
 **19.2 — How many interrupts will this cost?**
-Given a number of operations and how many the device reports at once, predict the count — and
-return "undecidable" for the device where the workload does not determine it.
-
-The last case is the only one that matters. Being able to say *this question has no answer* is
-worth more than any number, and it is a skill this book keeps asking for.
+Open `tests/interrupts_and_drivers/console.c`. Complete `console_interrupts_for`. Use the
+completion count and the number reported per interrupt. Use the stub’s undecidable result when
+the workload does not fix the count.
 
 ```bash
 python3 -m pytest tests/interrupts_and_drivers/test_problem_2_interrupts.py
 ```
 
 **19.3 — Which of these counts is a property of the workload?**
-Six counters; mark each reproducible or not, before running anything.
-
-You are not being graded against what this book decided. The test boots xv6 several times and
-compares the censuses, so a counter you called reproducible had better come back the same every
-time. Where the experiment cannot settle one — a varying counter that happened not to vary — you
-are told so rather than failed, because a test that occasionally fails a correct answer is worse
-than one that occasionally proves less than it hoped to.
+Open `tests/interrupts_and_drivers/problem_3_attribute.py`. Fill in `ANSWER` with your
+predictions of which counts will repeat. The test boots xv6 several times and compares them. A
+counter that happened to stay constant during the sampled runs can leave the result
+inconclusive.
 
 ```bash
 python3 -m pytest tests/interrupts_and_drivers/test_problem_3_attribute.py

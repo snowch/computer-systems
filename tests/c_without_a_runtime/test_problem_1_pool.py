@@ -1,4 +1,4 @@
-"""Problem 2.1 — allocation with nothing underneath it.
+"""Problem 4.1 — allocation with nothing underneath it.
 
 The scripts are chosen so the exhaustion case cannot be avoided: one of them asks for more entries
 than the pool has, which is the case an application programmer has never had to write and the one

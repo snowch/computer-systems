@@ -1,19 +1,19 @@
 ---
-title: "The File System"
+title: "22 · The File System"
 short_title: "22 · The File System"
 ---
 
 (the-file-system)=
 # 22 · The File System
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch21](#scheduling-and-context-switches) |
-| **What it measures** | What one byte costs the disk, as a difference between two runs: `bench/results/blocks-xv6.json` |
+| **Evidence** | Disk writes counted in xv6 with small and block-sized file writes. |
 :::
 
 ## The question
@@ -26,7 +26,8 @@ A file system cannot assume any of that. The power can fail between any two inst
 is on the platter afterwards is whatever had reached it — so the only tool available is *the order
 things are written in*, and the whole design follows from that one constraint.
 
-## The material
+(the-file-system-example)=
+## Track the writes in one file operation
 
 ### One byte
 
@@ -178,28 +179,28 @@ what makes a real journalling file system hard.
 
 ## Problems
 
-Three, in `tests/the_file_system/filesystem.c`.
+Edit `tests/the_file_system/filesystem.c` in your checkout. Run each test command from the
+repository root.
 
 **22.1 — How many block writes does a transaction cost?**
-Derive the formula. It is graded partly against this chapter's own measurement: whatever you
-arrive at has to turn the blocks the book logged into the writes the book counted, or one of the
-two is wrong.
+Complete `fs_writes_for`. Give the total disk writes for the given number of logged blocks.
+The test compares it with the writes counted for this chapter’s recorded transactions.
 
 ```bash
 python3 -m pytest tests/the_file_system/test_problem_1_writes.py
 ```
 
 **22.2 — What must recovery do after a crash at each stage?**
-Five stages; the answer changes exactly once on the way up and once on the way down. Finding those
-two points is the exercise.
+Complete `fs_after_crash`. For each interruption point, choose what recovery should do with
+the log and the file system. The test checks the state the model predicts.
 
 ```bash
 python3 -m pytest tests/the_file_system/test_problem_2_crash.py
 ```
 
 **22.3 — Which orderings are safe?**
-Six orderings of the same three writes. Exactly one is safe at every point a crash could happen,
-and the question is not which produces the right end state — all six do, if nothing goes wrong.
+Complete `fs_ordering_safe`. For each ordering of the writes, reason about the state after a
+crash between any two operations. The test checks whether recovery stays safe at every point.
 
 ```bash
 python3 -m pytest tests/the_file_system/test_problem_3_ordering.py

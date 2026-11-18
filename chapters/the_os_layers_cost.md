@@ -1,20 +1,20 @@
 ---
-title: "The OS Layer's Cost on Real Hardware"
+title: "29 · The OS Layer's Cost on Real Hardware"
 short_title: "29 · The OS Layer's Cost on Real Hardware"
 ---
 
 (the-os-layers-cost)=
 # 29 · The OS Layer's Cost on Real Hardware
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
-| **Target** | `host` — the reference machine, natively |
+| **Target** | `host` — native Linux on real hardware |
 | **Answers the cost of** | [ch16](#traps-and-system-calls), [ch18](#page-faults-as-a-feature), [ch21](#scheduling-and-context-switches) |
 | **Prerequisites** | [ch28](#memory-ordering-on-real-hardware) |
-| **What it measures** | The trap instruction and the call that hides it: `bench/results/oscalls-aarch64.json`; and what the three services, the two kinds of fault and the two routes cost: `bench/results/oscost-host.json`, `bench/results/faultcost-host.json`, `bench/results/vdso-host.json` |
+| **Evidence** | Native costs of system calls, page faults and switches, and the code for two ways to read the clock. |
 :::
 
 ## The question
@@ -26,7 +26,8 @@ what each one moved. It could not do anything else: the target has no cache, no 
 memory latency, so a duration measured there describes a laptop. Here those three things meet a
 machine with a clock, and the counts become a model that can be wrong.
 
-## The material
+(the-os-layers-cost-example)=
+## Measure Linux calls, faults and switches
 
 ### What Part IV left
 
@@ -211,27 +212,28 @@ answer will be found, which is most of what this chapter establishes.
 
 ## Problems
 
-Three, in `tests/the_os_layers_cost/oscost.c`.
+Edit `tests/the_os_layers_cost/oscost.c` in your checkout. Run each test command from the
+repository root.
 
 **29.1 — Where does the clock go?**
-Two harnesses, identical except for where they read the clock, and what each reports. Do this
-before writing any timing code in the chapters that follow.
+Complete `o_reported_ns`. Predict the reported cost when the timer is read inside or outside
+the loop. The test checks how the overhead changes the result.
 
 ```bash
 python3 -m pytest tests/the_os_layers_cost/test_problem_1_instrument.py
 ```
 
 **29.2 — What can it not be cheaper than?**
-Turn [ch16](#traps-and-system-calls)'s instruction count into a floor, given an IPC and a clock. Divide once at the
-end: a bound that has been rounded twice is an estimate.
+Complete `o_lower_bound_ns`. Use the instruction count, instructions per cycle and clock
+frequency to compute the lower bound in nanoseconds. Use the rounding rule in the stub.
 
 ```bash
 python3 -m pytest tests/the_os_layers_cost/test_problem_2_bound.py
 ```
 
 **29.3 — Which fault is this?**
-Four facts about an address and a stated precedence. The minor-against-major split is the one
-worth the largest factor in this chapter, and it is not a fact about the fault.
+Complete `o_fault_kind`. Apply the case order in the stub to decide which faults can be
+resolved without disk access. The test checks cases where more than one condition holds.
 
 ```bash
 python3 -m pytest tests/the_os_layers_cost/test_problem_3_faults.py

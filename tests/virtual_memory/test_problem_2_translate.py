@@ -1,4 +1,4 @@
-"""Problem 7.2 — follow the page table your 7.1 built.
+"""Problem 17.2 — follow the page table your 7.1 built.
 
 The expected answers are the mappings the test itself asked for, so nothing is stored: the target
 is whatever the reader's mapper was told to arrange. An address deliberately left unmapped must

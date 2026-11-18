@@ -1,19 +1,19 @@
 ---
-title: "Page Faults as a Feature"
+title: "18 · Page Faults as a Feature"
 short_title: "18 · Page Faults as a Feature"
 ---
 
 (page-faults-as-a-feature)=
 # 18 · Page Faults as a Feature
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch17](#virtual-memory) |
-| **What it measures** | Pages allocated and faults taken for one workload, under each of the kernel's two allocation policies: `bench/results/faults-xv6.json` |
+| **Evidence** | Pages allocated and faults counted under two xv6 allocation policies. |
 :::
 
 ## The question
@@ -26,7 +26,8 @@ But a walk stops whenever an entry is absent, and **the kernel decides which ent
 So a kernel can arrange to be told, by hardware, at the exact moment a particular address is
 touched — and the question stops being what went wrong and becomes what to do about it.
 
-## The material
+(page-faults-as-a-feature-example)=
+## Compare eager and lazy page allocation
 
 ### The hardware will call you
 
@@ -103,16 +104,21 @@ The workload asks for memory both ways and touches a known amount of it:
 :end-before: printf("faultload
 ```
 
-Build it into the kernel, boot, and run it:
+Run the supplied workload from your local checkout. The wrapper stages it and runs it in xv6:
 
 ```bash
 ./run faultload
 ```
 
-Three phases, chosen to bracket the trade rather than to demonstrate a win. A large lazy request
-barely touched; a smaller lazy request touched in full; an eager request of the same size as the
-first. The two lazy requests appear in the table summed rather than separately, because the census
-counts per process and not per call.
+Compare `asked_lazy`, `touched_lazy` and `asked_eager` in the `faultload` line. They describe the
+workload. The table adds recorded kernel counts, with the two lazy requests combined because the
+census counts per process. Which pages did lazy allocation leave unallocated, and how many
+first-touch faults followed?
+
+For a second run, open `xv6/apps/faultload.c` in your checkout and change
+`#define SYSFS_SPARSE_TOUCHED 1` to `#define SYSFS_SPARSE_TOUCHED 5`. Rerun
+`./run faultload`, then check whether `touched_lazy` changed while `asked_lazy` and
+`asked_eager` stayed fixed. The table remains a record of the original workload.
 
 ```{include} _generated/page-faults-as-a-feature-exchange.md
 ```
@@ -157,10 +163,10 @@ it has run out of memory.
 
 An eager request that cannot be satisfied fails at the call. The program gets a return value it
 can test, and can do something sensible — free a cache, use a smaller buffer, report a clear
-error. A lazy request always succeeds, because nothing has been allocated and there is nothing to
-fail. The shortage is discovered later, by a store instruction, in the middle of code that has no
-idea it is allocating anything. There is no return value to check at that point, and nothing the
-kernel can do but kill the process.
+error. A valid lazy request can succeed before the kernel reserves physical pages. A later
+access can fail when the kernel cannot supply a page. That failure occurs at the access rather
+than as a return value from the allocation call. Size and address-range validation can still
+reject a lazy request at the call.
 
 So laziness moves a failure from a place where the program can handle it to a place where it
 cannot. That is the whole reason an operating system which *overcommits* — promises more memory
@@ -203,37 +209,28 @@ and no measurement here would notice.
 
 ## Problems
 
-Three, in `tests/page_faults_as_a_feature/policy.c`. They are the three decisions the handler is really making, taken
-out of the kernel so that being right about them is separable from getting a kernel to boot.
-Neither this chapter's patch nor anything in `sysfs/` answers any of them: the patch counts and
-decides nothing.
+Edit `tests/page_faults_as_a_feature/policy.c` in your checkout. Run each test command from
+the repository root.
 
 **18.1 — How many faults will these accesses cause?**
-You are given runs of bytes a program touches and asked for the number of first-touch faults.
-
-A program thinks in bytes and the machine charges pages, which is the trap the whole chapter rests
-on. Two accesses in one page cost one fault; an access of two bytes can cost two. The runs
-overlap, repeat and arrive in no order.
+Complete `policy_faults_for`. Count the distinct pages touched by the given runs of bytes. The
+test includes overlapping, repeated and unaligned accesses.
 
 ```bash
 python3 -m pytest tests/page_faults_as_a_feature/test_problem_1_faults.py
 ```
 
 **18.2 — What should the handler do about this fault?**
-Allocate, kill, or refuse to have an opinion. Nine cases, and three of them are the ones a handler
-written from the happy path gets wrong: the exact boundary, a page that is already mapped, and a
-cause that is not a page fault at all.
+Complete `policy_action`. Use the cause, range and existing mapping to choose the handler’s
+response. Inspect the failing case for boundary addresses, mapped pages and other trap causes.
 
 ```bash
 python3 -m pytest tests/page_faults_as_a_feature/test_problem_2_action.py
 ```
 
 **18.3 — When does a program that asks for too much find out?**
-For each policy, say where the shortage becomes visible: at the request, at the touch, or never.
-
-This is the section above, turned into a function. Getting it right means you can predict which
-of two programs — identical apart from one argument — dies in a way its author can do something
-about.
+Complete `policy_failure_observed`. For each policy, identify whether the shortage becomes
+visible when memory is requested, when it is touched or at neither point in the case.
 
 ```bash
 python3 -m pytest tests/page_faults_as_a_feature/test_problem_3_observed.py

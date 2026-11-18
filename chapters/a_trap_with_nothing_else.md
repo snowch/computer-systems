@@ -1,32 +1,32 @@
 ---
-title: "A Trap, With Nothing Else in the Machine"
+title: "06 · A Trap, With Nothing Else in the Machine"
 short_title: "06 · A Trap, With Nothing Else in the Machine"
 ---
 
 (a-trap-with-nothing-else)=
 # 06 · A Trap, With Nothing Else in the Machine
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
-| **Target** | `bare` — the same machine under QEMU with no operating system on it |
+| **Target** | `bare` — a RISC-V machine in QEMU without an operating system |
 | **Prerequisites** | [Part II](#part2), [ch05](#c-for-people-who-will-read-a-kernel) |
-| **What it measures** | The whole of a trap in one program: where the handler was, where the interrupted instruction was, and that execution resumed after it. |
+| **Evidence** | The handler address, saved instruction address and return from one deliberate trap. |
 :::
 
 ## The question
 
 What is a trap, when nothing else is going on?
 
-A trap is a jump the processor makes without being asked, to an address it was given in
-advance. [Part II](#part2) said why a kernel is a hard place to learn that: almost nothing on the
-page is the mechanism. Here there is nothing else — no kernel, no library, no loader, and no
-operating system. One handler, one deliberate trap, and every question about it answered by the
-machine.
+A trap transfers control to a handler when an instruction raises an exception or an interrupt
+arrives. This example deliberately executes a trap instruction and runs its handler on a RISC-V
+machine in QEMU. Follow where the processor saves the instruction address and how the
+handler resumes the program.
 
-## The material
+(a-trap-with-nothing-else-example)=
+## Follow one trap and return
 
 ### The whole machine
 
@@ -76,16 +76,9 @@ modes appear.
 :end-before:     /* s2 is set before the trap
 ```
 
-Build it and boot it on a machine with nothing on it:
-
-```bash
-./run trap
-```
-
-That is the installation, complete. There is no table of handlers, no registration, and nothing to
-tell the processor which kinds of trap this handler wants — it gets all of them. Sorting out which
-is which is the handler's job, and it reads `mcause` to do it —
-[ch07](#interrupts-and-privilege)'s subject.
+This example installs one machine-mode handler. The handler reads `mcause` to find why the
+trap occurred. [ch07](#interrupts-and-privilege) compares causes from an interrupt and an
+exception.
 
 ### Where it was, and the mistake that loops for ever
 
@@ -112,12 +105,10 @@ moving it re-executes the same instruction, which traps again, into the same han
 The machine does not consider this an error. It is doing exactly what it was told, and the symptom
 is a program that prints nothing and never finishes.
 
-Whether four is the right number to add is not obvious either. [ch02](#reading-a-listing)
-pointed out that instructions on this architecture are not all the same length, so adding a fixed
-four ought to look reckless. It is safe here only because the programs in this part are built
-for `rv64g`, without the compressed extension — the short forms [ch02](#reading-a-listing)
-mentioned — so every instruction in them really is four bytes. That is a property of the build,
-not of the processor, and the first problem below is about what happens when it stops holding.
+`ecall` occupies four bytes @riscv-isa-unprivileged, so the handler adds four to resume at the
+next instruction in this example. [ch02](#reading-a-listing) shows RISC-V builds with shorter
+compressed instructions. A handler that skips a trapping instruction has to account for that
+instruction’s length and the reason for the trap.
 
 ### What a trap does not do
 
@@ -159,12 +150,16 @@ removing them.
 
 ## What we measured
 
-Run it yourself before reading the table — the rows below are what you should see, and a
-figure you have reproduced is worth more than one you have been shown:
+From your repository root, run the original example. The script builds `sysfs/bare/trap.c` and
+starts it in QEMU without an operating system.
 
 ```bash
 ./run trap
 ```
+
+Find `mepc_is_the_ecall`, `mepc_advance`, `resumed` and `taken` in the terminal output. The
+boolean fields use `1` for true. Which fields show where the processor recorded the trap and
+which show that it returned after a single trap? Compare them with the book’s recorded run.
 
 ```{include} _generated/a-trap-with-nothing-else-trap.md
 ```
@@ -191,31 +186,31 @@ interrupted, the saving is yours to write.
 
 ## Problems
 
-Three, and the second one is the one that catches people.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **6.1 — Why four, and when is it not?**
-The handler adds four to `mepc`. Say what that four actually is, and give a case in this
-instruction set where adding four would resume in the wrong place. The test asks for both, and
-checks the second against an assembled instruction rather than against a claim.
+Open `tests/a_trap_with_nothing_else/problem_1_advance.py`. Fill in the meaning of the offset
+added to `mepc`, an instruction for which that offset would be wrong, and the instruction’s
+byte length. The test assembles your instruction and checks the length.
 
 ```bash
 python3 -m pytest tests/a_trap_with_nothing_else/test_problem_1_advance.py
 ```
 
 **6.2 — Make it loop, then explain it.**
-Remove the line that advances `mepc` and run the program. Record how the harness reports what
-happens, and say precisely which instruction executes how many times. The test checks that your
-description matches a run it performs itself, so "it hangs" does not pass.
+Open `tests/a_trap_with_nothing_else/problem_2_forever.py`. Copy `sysfs/bare/trap.c` to `tests/a_trap_with_nothing_else/answer_forever.c`. In your copy,
+remove `bare_csr_write(mepc, seen_epc + 4);`. In the Python stub, name the instruction that repeats and explain why the
+processor keeps executing it. The test boots your copy and expects a timeout. That timeout is
+the observation for this problem.
 
 ```bash
 python3 -m pytest tests/a_trap_with_nothing_else/test_problem_2_forever.py
 ```
 
 **6.3 — Take the compiler's help away.**
-Rewrite the handler without `interrupt("machine")`, as an ordinary function, and make the program
-still print `register_survived yes`. You will need to say what `mret` is and where it has to go.
-The test compiles your handler, boots it, and checks both the output and that the attribute is
-genuinely absent.
+Copy `sysfs/bare/trap.c` to `tests/a_trap_with_nothing_else/answer.c`. Implement the handler
+in the copy without the `interrupt("machine")` attribute. The test checks for `mret` and for
+`register_survived` with value `1` in the console output.
 
 ```bash
 python3 -m pytest tests/a_trap_with_nothing_else/test_problem_3_by_hand.py

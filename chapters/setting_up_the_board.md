@@ -1,276 +1,157 @@
 ---
-title: "Setting Up the Board"
+title: "01 · Setting Up the Board"
 short_title: "01 · Setting Up the Board"
 ---
 
 (setting-up-the-board)=
 # 01 · Setting Up the Board
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `host` — Linux on real hardware, natively, over SSH |
 | **Prerequisites** | [ch00](#prerequisites-and-setup) |
 | **Assumes** | A Linux board whose `perf` can both count and sample |
-| **What it measures** | What the board says about itself once it is working: `bench/results/setup-host.json` |
+| **Evidence** | Machine details and whether `perf` can count events and sample where they occur. |
 :::
 
 ## The question
 
-Is this machine telling me the truth about itself?
+Can your native Linux machine count hardware events and sample where they occur?
 
-[ch00](#prerequisites-and-setup) got the emulated targets working, and they are enough for
-everything up to [Part V](#part5). This chapter sets up the other machine: the one every number in
-the book is measured on, and therefore the one whose word has to be good.
+A hardware performance counter records processor events such as cycles and retired instructions.
+Counting and sampling use different capabilities. Check both on the machine that will run the
+performance experiments. The recorded table below shows what those checks returned on the
+reference board.
 
-A counter can be present, be readable, return a number, and still be a software estimate rather
-than a count of anything. Most of this chapter is spent establishing that
-the machine in front of you is not doing that, because a figure produced by a fake counter is
-indistinguishable from a real one once it is in a table.
+(setting-up-the-board-example)=
+## Set up the board and check its counters
 
-[Appendix H](#appendix-h) covers the decision that comes first — what the board has to be able to
-do, and how to tell whether the one you own qualifies. This chapter assumes it is on your desk.
+### Connect to the board
 
-## The material
+[Appendix H](#appendix-h) describes the board requirements. If you are setting up a Raspberry
+Pi, select Raspberry Pi OS (64-bit) in Raspberry Pi Imager and configure the hostname, user and
+SSH key before you write the image. Boot the board. Use Ethernet if available, so the board's
+Wi-Fi driver contributes less activity during measurements.
 
-A Pi is a well-trodden path and the Raspberry Pi documentation is the authority on it. What
-follows is the shape of the task and the parts this book depends on.
+From your computer, connect with SSH using the hostname and user you configured. For example,
+if you chose host name `raspberrypi` and user `bench`, run:
 
-**1. Write a 64-bit image.** Raspberry Pi OS (64-bit), written with Raspberry Pi Imager, which
-will also set the hostname, your SSH key and your Wi-Fi while it writes. Use its advanced options
-— it saves the whole "find it on the network and change the default password" dance.
-
-It has to be a **64-bit** image. A 32-bit userspace on ARMv7 does not get you the ARMv8 PMU — the
-performance monitoring unit, the block of hardware the counters live in — and you would spend an
-afternoon finding that out.
-
-It also has to be an image whose **device tree describes the PMU**, and not every image does. The
-device tree is the file the kernel is handed at boot saying what hardware is present; the counters
-are in every Pi 5's silicon, but whether Linux is told about them depends on the compiled device
-tree, the `.dtb`, your image ships. In the sources @rpi-dt-bcm2712, the Raspberry Pi kernel
-carries an `arm-pmu` node for the Cortex-A76, with one overflow interrupt per core, and every Pi 5
-variant inherits it. Mainline Linux's own BCM2712 tree carries no such node at all.
-
-So prefer an image built on the Raspberry Pi kernel, which is what Raspberry Pi OS and the
-Raspberry Pi builds of other distributions use. A general-purpose distribution running a mainline
-kernel with mainline device trees on the same board may have no hardware PMU exposed to it
-whatever — not because the chip lacks one, but because nothing told the kernel it was there. One
-command settles it either way, and it is in *Proving the counters are real* below.
-
-**2. Boot it, wired if you can.** A radio makes the machine do work you did not ask for: its
-driver runs on the same cores your benchmark is running on, waking up for every packet and doing
-its deferred work there, and a lossy link adds `sshd` wakeups on top. Link speed has nothing to do
-with it — nothing in [Part V](#part5) touches the network, so bandwidth, latency and the grade of
-cable are all irrelevant to every number in this book.
-
-That is a mechanism, and [ch24](#measuring) measures what it does: the same fixed workload run
-many times over, with the radio off and then with it on, because "the same benchmark, one thing
-changed that should not matter" is exactly that chapter's subject. What it found is worth
-carrying here as advice rather than as a number — the radio never made the fastest run slower, and
-it made the typical one less predictable. Wire the board, and run it both ways yourself when you
-get there.
-
-Only the machine being measured needs the cable. Your laptop can stay on Wi-Fi: its radio
-interrupts its own cores, not the ones running the benchmark. So for most people this costs a
-cable to the nearest router or switch port and nothing else — the machine gets an address and a
-route without being asked, and both ends are on the same network, so everything below works.
-
-If no router port is within reach, a cable straight into a laptop's Ethernet port — a dock's,
-usually, or a cheap USB-C adapter — works too, and is arguably quieter, since nothing else on a
-two-host link is broadcasting at it. But that link has
-no DHCP server and no route out, so the machine comes up with a link-local address and no
-internet, and the first `apt install` fails in a way that looks like a broken image. Turn on your
-laptop's internet sharing (macOS: Settings → General → Sharing → Internet Sharing, from Wi-Fi to
-the Ethernet adapter; Linux: set the connection to *Shared to other computers*) and both problems
-go away at once — it hands out the lease and routes the traffic. `.local` names resolve over a
-direct cable either way, so step 3 works unchanged.
-
-**3. Give it a name.** In `~/.ssh/config` on your laptop:
-
-```
-Host bench
-    HostName raspberrypi.local
-    User pi
-    ServerAliveInterval 30
+```bash
+ssh bench@raspberrypi.local
 ```
 
-Now `ssh bench` works, `make bench-board` over SSH works, and VS Code's Remote-SSH extension can
-open it as a workspace — *Remote-SSH: Connect to Host…*, pick `bench`, and the editor runs its
-file operations and its terminal there while the interface stays on your laptop. That is the
-arrangement the rest of the book assumes: you edit on the laptop, and everything that touches a
-counter happens on the machine being measured.
+Once the shell opens, the following commands run on the board. You can also use a terminal
+attached to the board.
 
-### The toolchain on the machine
+### Install the native tools
+
+On Raspberry Pi OS, run:
 
 ```bash
 sudo apt update
-sudo apt install -y build-essential gdb git python3 python3-pip
-```
-
-`perf` is the awkward one. It ships as part of the kernel's own tooling, so the package that
-provides it is tied to the running kernel. On Raspberry Pi OS:
-
-```bash
-sudo apt install -y linux-perf
+sudo apt install -y build-essential git python3-venv linux-perf
 perf --version
 ```
 
-On Ubuntu, `linux-tools-$(uname -r)` or `linux-tools-raspi`. If the version `perf` reports does
-not match `uname -r` it will still run, and will quietly fail to open some events — which is the
-worst of the available outcomes, because it looks like the events do not exist rather than like a
-broken tool. If nothing packaged matches, build it from the kernel source tree with
-`make -C tools/perf` against the source for your running kernel.
+On Ubuntu, use the package that supplies `perf` for the running kernel, such as
+`linux-tools-$(uname -r)` or `linux-tools-raspi`. Check `uname -m` for `aarch64` on a 64-bit Pi.
 
-### Proving the counters are real
+Use [ch00](#prerequisites-and-setup) to create a checkout and Python environment on the board.
+Install the RISC-V cross tools there only if you intend to run the emulated examples there too.
+Run the following checks in the board's terminal.
 
-Counting is the one capability [Part V](#part5) cannot work around, and `perf` reports a failure
-to reach hardware in a way that is easy to skim past. So be suspicious of it.
-
-Ask:
+(proving-the-counters-are-real)=
+### Check hardware event counts
 
 ```bash
 perf stat -e cycles,instructions -- true
 ```
 
-A working setup prints two counts. A broken one prints `<not supported>`, which means the event
-never reached hardware — and if you are not reading carefully, a line saying `<not supported>` in
-a column of numbers looks like a number. Worse, some configurations report a count of zero rather
-than an error, and a zero is a number that will happily propagate into a table.
+Find the lines labelled `cycles` and `instructions`. Both should show positive hardware counts.
+If `perf` reports `<not supported>`, `<not counted>`, zero, or a permission error, it has not
+established that both counters work. Check the error text before interpreting the figures.
 
-`bench/run_setup.py` therefore treats "counted" and "counted something greater than zero" as
-different questions:
+:::{note} Troubleshoot missing hardware counters
+:class: dropdown
 
-```{literalinclude} ../bench/run_setup.py
-:language: python
-:start-at: def perf_capability
-:end-before:     if not shutil.which("perf")
-```
+The *device tree* tells the Linux kernel what hardware is available. On a Pi, look for the
+processor's *performance monitoring unit* (PMU) in the boot messages and event source devices:
 
-If nothing is counted, the usual cause on ARM is the missing device-tree node described above.
-Ask the kernel directly:
-
-```bash
-dmesg | grep -i perfevents
+```{code-block} bash
+sudo dmesg | grep -i perfevents
 ls /sys/bus/event_source/devices/
 ```
 
-A machine whose PMU registered says so at boot, naming the driver it bound:
+On the reference Pi, the kernel announces an `armv8_cortex_a76` driver. Whether Linux exposes that
+PMU depends on the device tree supplied with the image @rpi-dt-bcm2712. On RISC-V, the firmware
+must provide the SBI PMU interface @riscv-sbi and the kernel must include
+`CONFIG_RISCV_PMU_SBI`. [Appendix H](#appendix-h) explains why two images can report different
+counter availability on the same hardware.
+:::
 
-```text
-hw perfevents: enabled with armv8_cortex_a76 PMU driver, 7 counters available
-```
+(counting-is-not-sampling)=
+### Check hardware event sampling
 
-and `/sys/bus/event_source/devices/` contains a matching entry. No such line, or no such entry,
-and no amount of care in `perf`'s arguments will help: there is nothing underneath it. On a RISC-V
-machine the failure is usually further down — the counters are machine-mode CSRs reached through
-the firmware's SBI PMU extension @riscv-sbi, so check for `CONFIG_RISCV_PMU_SBI` and a firmware
-that provides it.
-
-Until `perf stat` prints real counts, [Part V](#part5) cannot start, and nothing in the later chapters
-substitutes for it.
-
-### Counting is not sampling
-
-There is a second capability, sampling, and it is the reason this book's `host` target is an ARM
-machine.
-
-`perf stat` **counts**: it totals events over a whole run. `perf record` **samples**: it
-interrupts the program thousands of times a second to ask where it is, and builds a picture of
-where the time went from those interruptions. Sampling needs the counters to raise an interrupt —
-to stop the program and hand control to the kernel — when they overflow, and that is a separate
-hardware feature from counting.
-
-Test it with a program that is actually running. The first of these commands looks like a test and
-is not:
+`perf stat` reports event totals over a run. `perf record` collects samples, which record where
+execution was when a configured counter triggered a sample. Use a workload that runs on the CPU
+so the recorder has activity to sample:
 
 ```bash
-perf record -F 999 -e cycles -o /tmp/perf.data -- sleep 2    # proves nothing
-perf report --stats -i /tmp/perf.data | grep SAMPLE
-```
-
-A sleeping process is off the CPU, so it retires no instructions and burns no cycles, and a
-perfectly working PMU returns almost nothing. The command succeeds, the sample count is near
-zero, and you have learned nothing about the machine. Give it something to sample instead:
-
-```bash
-perf record -F 999 -e cycles -o /tmp/perf.data -- \
+recording=$(mktemp)
+perf record -F 999 -e cycles -o "$recording" -- \
     python3 -c 'x = 0
 for _ in range(4_000_000): x += 1'
-perf report --stats -i /tmp/perf.data | grep SAMPLE
+perf report --stats -i "$recording" | grep SAMPLE
 ```
 
-Now the sample count is the answer, and `bench/run_setup.py` asks exactly this question the same
-way — because the first version of it ran `perf record -- true`, believed the zero exit status,
-and would have declared a board capable of something it had never been asked to do:
+Check for a positive **SAMPLE events** count. A successful command with no samples leaves the
+sampling capability unchecked. The counter needs to interrupt the processor when it overflows.
+On RISC-V that capability is provided by the Sscofpmf extension @riscv-sscofpmf.
 
-```{literalinclude} ../bench/run_setup.py
-:language: python
-:start-at: def perf_can_sample
-:end-before:     if not shutil.which("perf")
-```
-
-An exit status is not evidence. It is the same mistake as believing a counter that reads zero,
-and it is worth meeting twice in one chapter.
-
-On ARM, overflow interrupts are a standard PMU feature. On RISC-V they are the **Sscofpmf**
-extension @riscv-sscofpmf, and a kernel on a core without it says so at boot and then declines:
-
-```text
-riscv-pmu-sbi: Perf sampling/filtering is not supported as sscof extension is not available
-```
-
-[ch30](#whole-machine-profiling) is entirely about sampling, so on a machine that cannot do it that chapter has
-nothing to measure. `verify-setup.py` reports the two capabilities separately, precisely so you
-find out now rather than three hundred pages in.
-
-A profiler that samples answers a different question from a counter that totals, and it fails in
-different ways. That distinction generalises well beyond RISC-V. [ch24](#measuring) takes it
-apart properly and [ch30](#whole-machine-profiling) depends on it.
+From the board checkout, run `python3 scripts/verify-setup.py` to see the two checks summarised.
+If it can count but cannot sample, you can still use the counting examples. Read
+[ch30](#whole-machine-profiling)'s recorded runs for the examples that need samples.
 
 ## What we measured
 
-The board's own account of itself, taken on the board: what it is, what its counters do, and
-whether `perf` can both count and sample. Every figure in [Part V](#part5) is measured on the
-machine this describes, which is why it is recorded rather than assumed.
+This is the saved setup report for the reference board. Compare **Kernel**, **Cores online**,
+**perf stat reads hardware counters**, and **Samples collected in the capability check** with
+your machine. Which parts of the setup can you reproduce, and which depend on the board?
 
 ```{include} _generated/setting-up-the-board-report.md
 ```
 
 ## What this cannot tell you
 
-**Whether your numbers will match the book's.** They will not, exactly, and they are not meant
-to. The committed figures came from one board with one kernel and one firmware; yours differs in
-at least the last two. What should match is the *shape* — which of two things is faster, and by
-roughly how much — and where it does not, the chapter that prints the figure says what it
-depended on.
+The setup checks establish that these events can count and sample under the test conditions.
+[Appendix C](#appendix-c) describes the reference board's event names and multiplexing. Interpret
+a specific event using the processor and kernel documentation for your machine.
 
-**Whether a counter counts what its name says.** `perf` reports the name the kernel gives an
-event, and the kernel takes that from a table it was told. This chapter establishes that counting
-and sampling work at all; whether a given event means what you think is a question for
-[Appendix C](#appendix-c), which is generated from the board rather than written.
-
-**Anything about the board under load.** Everything here is a single quiet measurement on an idle
-machine. Thermal throttling, a busy neighbour and a governor that changes frequency mid-run are
-all real, all capable of moving a number more than the thing being measured, and all
-[ch24](#measuring)'s subject.
+The checks do not establish how a workload will behave under sustained load. Frequency changes,
+interrupts and competing processes can change a timing. [ch24](#measuring) shows how to record
+those conditions and compare runs.
 
 ## Problems
 
-Two, in `tests/setting_up_the_board/`. Both are Python stubs: this chapter comes before any C.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **1.1 — Is this counter real?**
-Six `perf stat` outcomes. Say which of them are counts of something the hardware did, and which
-are the kernel estimating or declining.
+Open `tests/setting_up_the_board/problem_1_counters.py`. Complete `counts_hardware_events`.
+Decide which `perf stat` reports contain actual hardware counts. The test gives a report for
+each case, including estimated and unsupported events.
 
 ```bash
 python3 -m pytest tests/setting_up_the_board/test_problem_1_counters.py
 ```
 
 **1.2 — Can this machine sample?**
-Counting and sampling are different capabilities and a machine can have the first without the
-second. Given what a machine reports, say which of the book's parts it can finish.
+Open `tests/setting_up_the_board/problem_2_sampling.py`. Complete
+`parts_this_machine_can_finish`. Use the reported counting, sampling and native-execution
+capabilities to identify which parts can be run. The test checks cases with and without
+sampling.
 
 ```bash
 python3 -m pytest tests/setting_up_the_board/test_problem_2_sampling.py

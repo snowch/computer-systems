@@ -1,4 +1,4 @@
-"""Problem 20.1 — a flat profile is not the profile you act on.
+"""Problem 30.1 — a flat profile is not the profile you act on.
 
 The trees here are shaped like the finding they are for: the hottest symbol by exclusive samples
 is a leaf called from several places, and no single caller looks expensive until the callers'

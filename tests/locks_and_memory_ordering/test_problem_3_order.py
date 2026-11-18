@@ -1,4 +1,4 @@
-"""Problem 10.3 — do these two paths disagree about the order locks are taken in?
+"""Problem 20.3 — do these two paths disagree about the order locks are taken in?
 
 Every answer follows from the two strings, so nothing is stored. The cases include the two that
 look alike and are not: paths that share every lock and agree, and paths that share only two and

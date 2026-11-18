@@ -1,19 +1,19 @@
 ---
-title: "Linking and Loading"
+title: "15 · Linking and Loading"
 short_title: "15 · Linking and Loading"
 ---
 
 (linking-and-loading)=
 # 15 · Linking and Loading
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch14](#machine-level-code-on-riscv) |
-| **What it measures** | Sections, segments and symbol counts for xv6's own binaries, read by this book's reader: `bench/results/elf-xv6.json` |
+| **Evidence** | Sections, segments and symbols read from xv6 program files. |
 :::
 
 ## The question
@@ -25,7 +25,8 @@ opens the file it produced. By the end you should be able to say what is in an e
 parts of it will exist at run time and which will not, and what `exec` has to do to turn one into
 a running program — and you should have written enough of a reader to believe it.
 
-## The material
+(linking-and-loading-example)=
+## Read ELF files and follow loading in xv6
 
 ### Write the reader
 
@@ -39,11 +40,18 @@ tool.
 :end-before: #define PH_TYPE
 ```
 
-Build it and point it at something:
+From your checkout, build an xv6 program file for the local reader to inspect. The first
+command creates `xv6/stage/user/_sameanswer` if it is missing. The second parses it using
+your native C compiler.
 
 ```bash
+make xv6-build
 ./run elfdump xv6/stage/user/_sameanswer
 ```
+
+Find the `section` and `segment` lines. A `segment` line gives the virtual address, file
+size, memory size, flags and alignment. Which segment takes more space in memory than it
+takes in the file?
 
 That is most of what an ELF file is: a header with a magic number — a few fixed bytes that say
 *this is ELF* — a handful of sizes, and the offsets of two arrays. Everything else is found by
@@ -161,39 +169,31 @@ no opinion about.
 
 ## Problems
 
-Three, and the first is the one that makes the format stop being magic.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **15.1 — Finish the reader.**
-Two functions `sysfs/tools/elfdump.c` does not contain: how much memory a program occupies once
-loaded, and which section covers a given address. The second one requires the indirection this
-chapter describes — a section header does not hold its own name.
-
-The expected answers are not stored. The test runs the book's finished reader on the same binary
-and compares, so the target moves with the file rather than going stale the next time xv6 is
-rebuilt.
+Open `tests/linking_and_loading/reader.c`. Complete `reader_memory_footprint` and
+`reader_section_covering`. Use the ELF headers to count loaded memory and find the named
+section covering a given address. The test compares both answers with the reference reader on
+the same binary.
 
 ```bash
 python3 -m pytest tests/linking_and_loading/test_problem_1_reader.py
 ```
 
 **15.2 — Which of these links?**
-Five pairs of C files. Predict whether each produces a program. The test actually links them.
-
-One of the five links successfully and produces a program that is wrong, which is not a trick: it
-is the reason the C language has a reputation. Say whether it links; the chapter has already said
-what to make of the fact that it does.
+Open `tests/linking_and_loading/problem_2_resolve.py`. Fill in `LINKS` with a prediction for
+each pair of files. Run the test to see which files the linker accepts. A successful link
+shows that symbols resolved for this case.
 
 ```bash
 python3 -m pytest tests/linking_and_loading/test_problem_2_resolve.py
 ```
 
 **15.3 — Read the error, name the cause.**
-Four link failures, with the messages a linker really produced during the test run. Name the cause
-of each.
-
-Linker errors are terse, they name symbols rather than files, and they come from a program that
-knows nothing about your intentions. Reading one is a skill, and it is the difference between
-twenty minutes and ten seconds.
+Open `tests/linking_and_loading/problem_3_diagnose.py`. Run the test to see the linker
+messages. Fill in `DIAGNOSES` using the causes listed in the stub. Run it again and check the
+case and symbol named in any remaining failure.
 
 ```bash
 python3 -m pytest tests/linking_and_loading/test_problem_3_diagnose.py

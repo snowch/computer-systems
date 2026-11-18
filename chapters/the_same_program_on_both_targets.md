@@ -1,20 +1,20 @@
 ---
-title: "The Same Program on Both Targets"
+title: "23 · The Same Program on Both Targets"
 short_title: "23 · The Same Program on Both Targets"
 ---
 
 (the-same-program-on-both-targets)=
 # 23 · The Same Program on Both Targets
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | both — `xv6` and `host`, the same source compiled and run on each |
 | **Answers the cost of** | [ch14](#machine-level-code-on-riscv), [ch16](#traps-and-system-calls), [ch17](#virtual-memory) |
 | **Prerequisites** | [ch22](#the-file-system) |
-| **What it measures** | Everything the two targets agree about: `bench/results/bridge-both.json`; and what the two routes cost on the board, which is not among them: `bench/results/bridge-host.json` |
+| **Evidence** | Results on both targets and native timings for the two ways to compute them. |
 :::
 
 ## The question
@@ -28,7 +28,8 @@ obtained on a target chosen precisely because you can stop it anywhere and look.
 
 None of it is a duration, and this chapter is about what that leaves out.
 
-## The material
+(the-same-program-on-both-targets-example)=
+## Compare the same workload on the two targets
 
 ### One program, two routes
 
@@ -165,30 +166,29 @@ ratio, and knowing which questions your model answers is worth more than a bette
 
 ## Problems
 
-Three, in `tests/the_same_program_on_both_targets/crossing.c`. All three are graded against a table of six configurations that
-the tests read for themselves, so there is no key to find.
+Edit `tests/the_same_program_on_both_targets/crossing.c` in your checkout. Run each test
+command from the repository root.
 
 **23.1 — What does comparing these two configurations isolate?**
-All thirty-six pairs. A comparison isolates a variable only when it is the single thing that
-differs; otherwise it confounds, and the pair this book's own two targets form confounds all
-three.
+Complete `crossing_isolates`. Compare each pair’s instruction set, kernel and execution
+environment. The test checks whether a single factor changes.
 
 ```bash
 python3 -m pytest tests/the_same_program_on_both_targets/test_problem_1_isolates.py
 ```
 
 **23.2 — Which configuration would test this claim?**
-Somebody says the difference is caused by the emulator, or the kernel, or the instruction set.
-Given where you are, name the configuration that would settle it — or say that none of the six
-will, which happens and is the right answer when it does.
+Complete `crossing_pair_for`. Choose the configuration that changes only the factor named in
+the claim. Use the stub’s result for cases where none of the available configurations isolates
+it.
 
 ```bash
 python3 -m pytest tests/the_same_program_on_both_targets/test_problem_2_pair.py
 ```
 
 **23.3 — Does this observation transfer?**
-Six things you could observe about the program. Sorting them into structure and cost gets two of
-them wrong.
+Complete `crossing_transfers`. For each observation, use the requirements in the stub to
+decide whether it transfers from one target to the other.
 
 ```bash
 python3 -m pytest tests/the_same_program_on_both_targets/test_problem_3_transfers.py

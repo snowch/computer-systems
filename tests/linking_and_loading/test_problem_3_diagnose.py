@@ -1,4 +1,4 @@
-"""Checks Problem 5.3 against messages produced by a real linker in this test run.
+"""Checks Problem 15.3 against messages produced by a real linker in this test run.
 
 The messages are generated rather than quoted, so they are the ones the reader's own toolchain
 produces. What the reader supplies is the cause; the test knows it because it constructed the
@@ -101,7 +101,7 @@ def messages(tmp_path_factory) -> dict[str, str]:
 @pytest.mark.problem
 @pytest.mark.parametrize("key", sorted(_FAULTS))
 def test_the_reader_diagnosed_it(key: str, messages):
-    assert DIAGNOSES, "Problem 5.3: DIAGNOSES is still empty"
+    assert DIAGNOSES, "Problem 15.3: DIAGNOSES is still empty"
     assert DIAGNOSES.get(key) in CAUSES, f"{key}: choose one of {CAUSES}"
     assert DIAGNOSES[key] == _FAULTS[key][1], (
         f"{key}: you said {DIAGNOSES[key]!r}. The linker said:\n{messages[key]}"

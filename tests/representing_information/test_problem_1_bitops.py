@@ -1,4 +1,4 @@
-"""Checks Problem 2.1 against properties rather than against a table of answers.
+"""Checks Problem 13.1 against properties rather than against a table of answers.
 
 A property is a statement that has to hold for every input, so it cannot be satisfied by
 memorising cases. Reversing the bytes twice must give back what you started with; the bit the

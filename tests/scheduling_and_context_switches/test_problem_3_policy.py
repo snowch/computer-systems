@@ -1,4 +1,4 @@
-"""Problem 11.3 — what order does each policy actually run them in?
+"""Problem 21.3 — what order does each policy actually run them in?
 
 The expected orders follow from the burst lengths the test chose and from the rules in the stub,
 so there is nothing to look up. The same three jobs under three policies give three answers, which

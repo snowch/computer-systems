@@ -1,20 +1,20 @@
 ---
-title: "Optimising Code"
+title: "26 · Optimising Code"
 short_title: "26 · Optimising Code"
 ---
 
 (optimising-code)=
 # 26 · Optimising Code
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
-| **Target** | `host` — the reference machine, natively |
+| **Target** | `host` — native Linux on real hardware |
 | **Answers the cost of** | [ch14](#machine-level-code-on-riscv) |
 | **Prerequisites** | [ch25](#the-memory-hierarchy) |
-| **What it measures** | What the compiler makes of five hand-optimisations: `bench/results/loops-aarch64.json`; and what each then costs on the board: `bench/results/loops-host.json` |
+| **Evidence** | Compiler output and native timings for five versions of a loop. |
 :::
 
 ## The question
@@ -25,7 +25,8 @@ What will the compiler do for me, and what will it never do?
 the machine could do at the same time. Given that, what is worth changing in the source? Start with
 the changes the compiler is going to make anyway.
 
-## The material
+(optimising-code-example)=
+## Compare compiler output for five loop variants
 
 ### Five ways to write one loop
 
@@ -45,36 +46,27 @@ what the compiler made of it:
 
 ### Three of them were the same program
 
-Read the `-O2` column first. **Plain, hoisted and reduced compile to identical numbers of
-instructions.** The compiler hoisted the bound. The compiler reduced the strength of the multiply.
-Both hand-optimisations were correct, both were unnecessary, and the code they produced was the
-code the compiler was going to produce from the obvious source.
+Compare the plain, hoisted and reduced rows in the `-O2` column. The recorded compiler emits
+the same number of instructions for these three variants. That count is evidence about the
+size of these compiled functions. Use the native timing table below to compare the cost of
+running them.
 
-This is the most common thing that happens when people optimise C by hand, and what it costs is not
-run time — those three are the same program. It costs a source that is now harder to read, harder
-to change, and no faster, and a reader who does not know this will preserve the hand-optimisation
-through every future edit because it looks load-bearing.
-
-At `-O0` they are not identical: the hand-optimisations *do* something to unoptimised code.
-Measuring at `-O0` and concluding that a transformation helps is a reliable way to make a program
-worse.
+Compare the same rows under `-O0`. Different instruction counts at that level tell you how
+these variants compile with optimisation disabled. Test with the flags your application will
+use before relying on a benefit.
 
 ### And one of them backfired
 
 Now the unrolled rows. At `-O2` the hand-unrolled loop is not shorter than the plain one. It is
 substantially longer, and at `-O3` the gap widens rather than closes.
 
-The hand-unrolled source is a **different, larger program** than the one the compiler would have
-produced. Its four bodies with explicit indices are harder to analyse than one body with a clean
-loop counter, so the compiler has less to work with — less for its own unrolling, and less
-for vectorisation (doing several array elements per instruction, [ch31](#vectors)'s subject), which is what `-O3` turns up. The
-optimisation was applied by hand, so it could not also be applied by the compiler, and the
-compiler's version was better.
+The hand-unrolled version has more compiled instructions with the flags in this table. The
+compiler's transformations depend on the loop shape and flags. Check **Measured** in the native
+timing table before attributing a runtime cost to a longer listing.
 
-So, the answer to this chapter's question. **The compiler will do the local, mechanical
-transformations better than you will. What it will not do is change your algorithm, your data
-layout, or your memory access pattern** — and those are the things
-[ch25](#the-memory-hierarchy) showed dominate.
+Use this comparison to decide which changes are worth carrying into a benchmark. Changes to
+the data layout, algorithm or access pattern can also change what the processor has to do.
+[ch25](#the-memory-hierarchy) gives examples from the memory hierarchy.
 
 ### The benchmark that measured nothing
 
@@ -142,28 +134,26 @@ machine together.
 
 ## Problems
 
-Three. The first two are predictions about this book's own stamped result; the third is graded by
-compiling.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **26.1 — Which variants does the compiler equalise?**
-From the source alone, group the five by whether they come out the same at `-O2`. Graded against
-`bench/results/loops-aarch64.json`, which CI regenerates — so a future compiler that changes its
-mind changes the right answer rather than making the book wrong.
+Open `tests/optimising_code/problem_1_equalised.py`. Fill in `EQUALISED_AT_O2` with the groups
+of versions that you predict compile to the same instructions. Give your prediction before
+looking at the recorded comparison.
 
 **26.2 — Which hand-optimisation backfired, and what does `-O3` do to it?**
-Name the variant that costs more instructions than writing the loop plainly, and say whether
-raising the level helps.
-
-These two are answered in one stub and graded by one command, because they are two readings of
-the same table:
+In the same stub, fill in `BACKFIRED` and `BACKFIRED_AT_O3`. Identify the version with a
+higher instruction count than the plain loop and say what happens at `-O3`. Run one command
+for both predictions and compare with the captured AArch64 listings.
 
 ```bash
 python3 -m pytest tests/optimising_code/test_problem_1_equalised.py
 ```
 
 **26.3 — Which benchmark loops survive the compiler?**
-Five functions, identical arithmetic, differing only in what becomes of the result. Two are
-removed. Two of the five are traps and they are traps in opposite directions.
+Open `tests/optimising_code/problem_3_escapes.py`. Fill in `SURVIVES` to predict which
+compiled functions still contain the loop. Read the candidates in
+`tests/optimising_code/escapes.c`. The test builds and disassembles each one.
 
 ```bash
 python3 -m pytest tests/optimising_code/test_problem_3_escapes.py

@@ -1,4 +1,4 @@
-"""Checks Problem 4.2 by compiling each function and reading its prologue.
+"""Checks Problem 14.2 by compiling each function and reading its prologue.
 
 Both facts come out of the disassembly: a frame is a prologue that moves the stack pointer, and
 saving the return address is a store of `ra`. Nothing is stored here, so a compiler that decides
@@ -35,7 +35,7 @@ def observed(tmp_path_factory) -> dict[str, tuple[bool, bool]]:
 @pytest.mark.problem
 @pytest.mark.parametrize("name", sorted(FUNCTIONS))
 def test_the_reader_predicted_the_prologue(name: str, observed):
-    assert ANSWERS, "Problem 4.2: ANSWERS is still empty"
+    assert ANSWERS, "Problem 14.2: ANSWERS is still empty"
     assert name in ANSWERS, f"no answer for {name!r}"
     frame, saved = observed[name]
     assert ANSWERS[name] == (frame, saved), (

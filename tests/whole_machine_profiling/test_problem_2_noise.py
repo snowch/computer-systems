@@ -1,4 +1,4 @@
-"""Problem 20.2 — the number of samples a claim needs.
+"""Problem 30.2 — the number of samples a claim needs.
 
 The key is the closed form, derived here rather than stored, and the scaffolding asserts the two
 properties that make it worth knowing: halving the width you want costs four times the samples,

@@ -1,19 +1,19 @@
 ---
-title: "A Small Integer That Means a Device"
+title: "10 · A Small Integer That Means a Device"
 short_title: "10 · A Small Integer That Means a Device"
 ---
 
 (a-small-integer-that-means-a-device)=
 # 10 · A Small Integer That Means a Device
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
-| **Target** | `bare` — the same machine under QEMU with no operating system on it |
+| **Target** | `bare` — a RISC-V machine in QEMU without an operating system |
 | **Prerequisites** | [ch09](#a-system-call-of-your-own) |
-| **What it measures** | One `write` call reaching two unrelated destinations through one table, and the table itself printed before and after a descriptor is duplicated. |
+| **Evidence** | Which devices receive `write`, and what changes in the descriptor table after `dup`. |
 :::
 
 ## The question
@@ -27,7 +27,8 @@ not point at the file, and means nothing outside the program holding it.
 
 This is where [Part I](#part1)'s claim — that everything is an index — arrives one level up.
 
-## The material
+(a-small-integer-that-means-a-device-example)=
+## Follow a descriptor to an open file
 
 ### Two tables, and the difference between them
 
@@ -75,14 +76,15 @@ device register, one in an array in memory. Neither the calling code nor the com
 difference, which is how a shell can point a program's output at a file without the program being
 told.
 
-Run it and watch:
+From your repository root, build and run the unedited descriptor demonstration:
 
 ```bash
 ./run descriptors
 ```
 
-The `hello` on the first line of output is the console write arriving. Everything after it is the
-program reporting on the other one.
+The console write prints `hello`. Then compare `cursor_after_writing`, `read_without_rewinding`
+and `read_after_rewinding`. Which field shows where the memory write left the cursor? What
+happens when a read begins at that position?
 
 ### The position is not a record of what you last did
 
@@ -151,12 +153,9 @@ off — a consequence of where the position already was, not a mode the write as
 
 ## What we measured
 
-Run it yourself before reading the table — the rows below are what you should see, and a
-figure you have reproduced is worth more than one you have been shown:
-
-```bash
-./run descriptors
-```
+These are the observations from the original program. Compare `dup_shares_the_open_file`
+and `cursor_after_dup_write` with the earlier cursor position. Which observation shows that
+the two descriptors share a position?
 
 ```{include} _generated/a-small-integer-that-means-a-device-descriptors.md
 ```
@@ -183,30 +182,34 @@ the convention is worth exactly as much as everyone's agreement to keep it.
 
 ## Problems
 
-Three, in `tests/a_small_integer_that_means_a_device/`.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **10.1 — Duplicate onto a number in use.**
-`dup` here overwrites whatever was at the target. Decide what should happen when the target is
-already open, implement it, and justify the choice. The test checks your behaviour is consistent
-and that you did not simply refuse every duplicate.
+Open `tests/a_small_integer_that_means_a_device/problem_1_onto_open.py`. State your policy for
+duplicating onto an open descriptor. Apply it in
+`tests/a_small_integer_that_means_a_device/answer_onto.c`, starting from
+`sysfs/bare/descriptors.c`. The test checks the reported target and asks you to justify the
+result.
 
 ```bash
 python3 -m pytest tests/a_small_integer_that_means_a_device/test_problem_1_onto_open.py
 ```
 
 **10.2 — Add a third backend.**
-Add a destination that discards everything written to it and reads back as nothing. Show that the
-calling code does not change. The test checks the caller is byte-identical across all three
-descriptors.
+Open `tests/a_small_integer_that_means_a_device/problem_2_third_backend.py`. Add the backend
+in `tests/a_small_integer_that_means_a_device/answer_third.c`, starting from
+`sysfs/bare/descriptors.c`. The new destination discards writes and returns no data on a read.
+Report the fields specified in the stub for each destination.
 
 ```bash
 python3 -m pytest tests/a_small_integer_that_means_a_device/test_problem_2_third_backend.py
 ```
 
 **10.3 — Put the cursor in the wrong place.**
-Move the cursor into the descriptor table and produce a program in which that change is visible in
-the output. Say in one sentence which real-world behaviour would break. The test checks the shared
-cursor claim now fails, and that your program shows it failing rather than asserting it.
+Open `tests/a_small_integer_that_means_a_device/problem_3_wrong_place.py`. Explain what breaks
+when each descriptor has its own cursor. Make the change to a copy of
+`sysfs/bare/descriptors.c` at `tests/a_small_integer_that_means_a_device/answer_cursor.c`. The
+test checks the positions printed after duplicating and reading.
 
 ```bash
 python3 -m pytest tests/a_small_integer_that_means_a_device/test_problem_3_wrong_place.py

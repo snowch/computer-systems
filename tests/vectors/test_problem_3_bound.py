@@ -1,4 +1,4 @@
-"""Problem 21.3 — the speedup as a fraction of the one the width allowed.
+"""Problem 31.3 — the speedup as a fraction of the one the width allowed.
 
 The scaffolding asserts the two readings the chapter cares about: a result near the bound means
 the width was the constraint, and a result over it means something else changed and the comparison

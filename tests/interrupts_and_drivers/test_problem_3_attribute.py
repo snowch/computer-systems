@@ -1,4 +1,4 @@
-"""Checks Problem 9.3 against the machine rather than against a stored key.
+"""Checks Problem 19.3 against the machine rather than against a stored key.
 
 The test boots the same workload several times and sees for itself which counters came back
 identical. A reader who said a counter was reproducible is graded against whether it was.

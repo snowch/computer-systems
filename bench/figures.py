@@ -10,13 +10,12 @@ longer matches what the results say.
 
 Part V is measured on hardware that is not attached to CI and never will be. A figure whose
 measurement has not been taken yet is declared here with a ``pending`` reason, and renders as a
-warning naming the command that would produce it. That is deliberately not the same thing as a
-placeholder number:
+note describing which readings are missing. The chapter provides the command that produces
+them:
 
 * nothing is invented — the fragment contains no figures at all, so a draft can never be mistaken
   for a measurement, in the site or in the PDF;
-* the prose around it is written as though the numbers were there, so landing them is a
-  one-command change rather than a rewrite;
+* the prose names the fields to compare and states the question the measurement can answer;
 * ``verify-numbers.py`` **fails** if a pending figure's result file exists, so a measurement that
   has landed cannot be left marked as missing.
 """
@@ -54,7 +53,7 @@ class Table:
     result: str
     #: None means "take the conditions line from `result`"; a name overrides it.
     conditions_from: str | None = None
-    #: Why this has not been measured, and what to run. None means it has been.
+    #: What still needs to be recorded. None means the measurement exists.
     pending: str | None = None
 
     @property
@@ -110,10 +109,6 @@ class Listing:
     def sources(self) -> tuple[str, ...]:
         return self.results
 
-
-#: The board runs Part V. Repeating the instruction in every pending reason would be noise, so
-#: it lives here and each entry says what specifically is missing.
-BOARD = "run `make bench-board` on the reference machine and commit the result"
 
 FIGURES: dict[str, Table | Diagram | Listing] = {
     # -- Prerequisites and Setup---------------------------------------------------------------------------
@@ -361,22 +356,22 @@ FIGURES: dict[str, Table | Diagram | Listing] = {
     "measuring-harness": Table(
         render=tables.harness_table,
         result="distribution-host",
-        pending=f"what the harness itself costs, and what the workload costs beside it: {BOARD}",
+        pending="The reference board has yet to record the empty-region and workload timings.",
     ),
     "measuring-cold-warm": Table(
         render=tables.cold_warm_table,
         result="distribution-host",
-        pending=f"the same work with the caches evicted and left alone: {BOARD}",
+        pending="The reference board has yet to record the cold and warm distributions.",
     ),
     "measuring-runs": Table(
         render=tables.narrowing_table,
         result="distribution-host",
-        pending=f"how the interval on the median narrows with the run count: {BOARD}",
+        pending="The reference board has yet to record the intervals at each run count.",
     ),
     "measuring-verdict": Table(
         render=tables.verdict_table,
         result="distribution-host",
-        pending=f"the decision rule applied to two variants of one loop: {BOARD}",
+        pending="The reference board has yet to record the plain and unrolled loop comparison.",
     ),
     "measuring-spread": Table(
         render=tables.spread_table,

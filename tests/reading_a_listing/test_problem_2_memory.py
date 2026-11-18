@@ -1,4 +1,4 @@
-"""Checks Problem 1.2. There is no answer key — this file is the answer key, and it runs."""
+"""Checks Problem 2.2. There is no answer key — this file is the answer key, and it runs."""
 
 from __future__ import annotations
 
@@ -39,7 +39,7 @@ def test_only_the_bracketed_forms_reach_memory(operand):
     try:
         answer = reaches_memory(operand)
     except NotImplementedError:
-        pytest.fail("Problem 1.2 is not solved — see tests/reading_a_listing/problem_2_memory.py")
+        pytest.fail("Problem 2.2 is not solved — see tests/reading_a_listing/problem_2_memory.py")
     assert answer is CASES[operand], (
         f"{operand!r}: you said {answer}, the notation says {CASES[operand]}"
     )

@@ -40,11 +40,8 @@ def render_table(name: str, figure: Table) -> str:
             [
                 BANNER,
                 "",
-                ":::{warning} Not measured yet — this needs the board",
+                ":::{note} Recorded results pending",
                 figure.pending,
-                "",
-                "Nothing is estimated in its place: the book prints measurements or it prints",
-                "nothing.",
                 ":::",
                 "",
             ]

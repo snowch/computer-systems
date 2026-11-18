@@ -1,4 +1,4 @@
-"""Checks Problem 6.2 by comparing the reader's prediction with their own run.
+"""Checks Problem 8.2 by comparing the reader's prediction with their own run.
 
 The right answer is never stored here: it comes out of the machine, and the test only insists
 that the reader committed to a figure first and that the figure matched.
@@ -20,8 +20,8 @@ ANSWER = Path(__file__).parent / "answer_broken.c"
 def test_the_prediction_matched_the_machine(tmp_path):
     if bare.problems():
         pytest.skip("; ".join(bare.problems()))
-    assert ANSWER.exists(), f"Problem 6.2: put your program in {ANSWER.name} beside this test"
-    assert YOUR_PREDICTION >= 0, "Problem 6.2: YOUR_PREDICTION is still unset"
+    assert ANSWER.exists(), f"Problem 8.2: put your program in {ANSWER.name} beside this test"
+    assert YOUR_PREDICTION >= 0, "Problem 8.2: YOUR_PREDICTION is still unset"
 
     image = bare.build_from([ANSWER], "problem_broken", build_dir=tmp_path)
     fields = bare.run("paging", image=image, timeout=30).fields()

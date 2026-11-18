@@ -1,4 +1,4 @@
-"""Problem 9.3 — which of these counts is a property of the workload?
+"""Problem 19.3 — which of these counts is a property of the workload?
 
 The drivers chapter records two of the numbers the kernel's census prints and declines the rest. Decide for
 yourself, before running anything, which is which.

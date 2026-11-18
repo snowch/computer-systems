@@ -1,4 +1,4 @@
-"""Checks Problem 5.3 by assembling the instruction and refusing the chapter's own answer."""
+"""Checks Problem 7.3 by assembling the instruction and refusing the chapter's own answer."""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ def test_the_chapters_refusal_was_cause_two():
 @pytest.mark.problem
 @pytest.mark.skipif(shutil.which(AS) is None, reason=f"needs {AS}")
 def test_the_instruction_assembles_and_is_not_the_chapters(tmp_path):
-    assert THE_INSTRUCTION.strip(), "Problem 5.3: THE_INSTRUCTION is still empty"
+    assert THE_INSTRUCTION.strip(), "Problem 7.3: THE_INSTRUCTION is still empty"
     assert "mhartid" not in THE_INSTRUCTION, "that is the one the chapter already used"
 
     source = tmp_path / "probe.s"
@@ -44,5 +44,5 @@ def test_the_cause_differs_from_the_chapters():
         "cause 2 is illegal instruction, which is what the chapter already showed — the problem "
         "asks for a refusal of a different kind"
     )
-    assert ITS_CAUSE > 0, "Problem 5.3: ITS_CAUSE is still unset"
-    assert len(WHY.split()) >= 4, "Problem 5.3: WHY wants a phrase"
+    assert ITS_CAUSE > 0, "Problem 7.3: ITS_CAUSE is still unset"
+    assert len(WHY.split()) >= 4, "Problem 7.3: WHY wants a phrase"

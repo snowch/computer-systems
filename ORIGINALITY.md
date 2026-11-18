@@ -13,6 +13,10 @@ expression is; same concepts, own structure, own examples, own figures; never a 
 sequence, section headings, figures, example programs or problem sets. If a sequence or an example
 feels like "the standard way to present this", that is the signal to design a different one.
 
+The learner instructions refer to the book's own programs, result records and problem stubs.
+The changed-value runs for the first C program and lazy allocation use variations of those
+existing examples.
+
 ---
 
 ## ch01 · Setting Up the Board

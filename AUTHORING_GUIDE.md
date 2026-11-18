@@ -147,12 +147,13 @@ For a `host` figure that needs the board, declare it `pending=` with the command
 "the-memory-hierarchy-cache-latency": Table(
     render=tables.latency_table,
     result="cache-latency",
-    pending=f"Cache latencies are not measured yet: {BOARD} (`bench/results/cache-latency.json`).",
+    pending="The reference board has yet to record cache latencies.",
 ),
 ```
 
-It renders as a warning box containing no numbers at all, and **you write the prose around it as
-though the numbers were there**, so that landing them is a one-command change and not a rewrite.
+It renders as a note containing no numbers. Name the fields to compare and the question the
+result will answer. Give the run command once in the chapter, even if the run supplies several
+figures.
 When the measurement arrives, remove the marker in the same commit —
 `scripts/verify-numbers.py` fails if a pending figure's result file exists.
 

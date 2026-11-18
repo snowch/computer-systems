@@ -1,4 +1,4 @@
-"""Problem 18.2 — what does the scaling curve look like before you measure it?
+"""Problem 28.2 — what does the scaling curve look like before you measure it?
 
 Amdahl's law, computed by the test from the same parameters. The case worth sitting with is a
 quarter of the work being serial: four cores then buy a speedup of about two and a quarter, and a

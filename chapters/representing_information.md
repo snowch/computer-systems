@@ -1,19 +1,19 @@
 ---
-title: "Representing Information"
+title: "13 · Representing Information"
 short_title: "13 · Representing Information"
 ---
 
 (representing-information)=
 # 13 · Representing Information
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch12](#what-a-computer-does-with-a-program) |
-| **What it measures** | Type sizes, alignments and struct layouts, and what signed and unsigned arithmetic actually compile to: `bench/results/setup-xv6.json`, `bench/results/signedness-riscv64.json` |
+| **Evidence** | Type sizes, alignments, struct layouts and signed and unsigned arithmetic instructions. |
 :::
 
 ## The question
@@ -26,7 +26,8 @@ in production. So this chapter is organised around the places the representation
 where two things that look identical in C turn out not to be, and the reason is always that one
 of them made a promise the other did not.
 
-## The material
+(representing-information-example)=
+## Read byte layouts and arithmetic instructions
 
 ### Two rules make every struct
 
@@ -215,36 +216,30 @@ on a machine whose kernel does save those registers.
 
 ## Problems
 
-Three, and none of their answers is anywhere in this repository.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **13.1 — Two operations the library does not have.**
-`tests/representing_information/bitops.c` asks for a byte-order swap and the index of the lowest set bit. Neither is
-in `sysfs/lib/bits.c`, so there is nothing to copy. The test checks *properties* rather than
-cases: swapping twice must give back what you started with, and the bit you name must be set with
-nothing set below it. A property holds for every input, so it cannot be satisfied by memorising.
+Open `tests/representing_information/bitops.c`. Complete `reader_swap_bytes` and
+`reader_lowest_set_bit`. The test checks that swapping twice returns the original value and
+that the bit you identify is set with no lower bit set.
 
 ```bash
 python3 -m pytest tests/representing_information/test_problem_1_bitops.py
 ```
 
 **13.2 — Pack the struct.**
-Five members, declared in an order that wastes space. Give the order that wastes least. The test
-compiles your arrangement and compares it against the best that arrangement of those types can
-do — it does not tell you the number, and the two rules at the top of this chapter are enough to
-work it out.
+Open `tests/representing_information/problem_2_reorder.py`. Reorder the member names in
+`ORDER` to minimise padding. The test compiles the structure with your order and compares its
+size with the smallest layout for those members.
 
 ```bash
 python3 -m pytest tests/representing_information/test_problem_2_reorder.py
 ```
 
 **13.3 — Find the input that makes it wrong.**
-A bounds check that looks correct and is not. Find one triple of values where it says a read fits
-and the read would run off the end.
-
-Nothing in it is undefined: the type is `unsigned`, so the machine does exactly what it was told,
-and the result is still wrong. That is the uncomfortable half of this chapter — undefined
-behaviour is dramatic and rare, and *defined* behaviour that does not match your intention is
-quiet and everywhere.
+Open `tests/representing_information/problem_3_break_it.py`. Fill in `COUNTER_EXAMPLE` with an
+offset, length and limit for which the unsigned bounds check accepts a read that extends past
+the limit. The test compares the two bounds checks on that input.
 
 ```bash
 python3 -m pytest tests/representing_information/test_problem_3_break_it.py

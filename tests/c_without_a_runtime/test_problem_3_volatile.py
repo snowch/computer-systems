@@ -1,4 +1,4 @@
-"""Problem 2.3 — how many reads the compiler is allowed to leave.
+"""Problem 4.3 — how many reads the compiler is allowed to leave.
 
 The three answers are a constant, one, and zero, and the scaffolding pins what separates them: only
 the volatile case grows with the number of reads in the source.

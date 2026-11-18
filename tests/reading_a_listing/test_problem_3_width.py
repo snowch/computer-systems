@@ -1,4 +1,4 @@
-"""Checks Problem 1.3. There is no answer key — this file is the answer key, and it runs."""
+"""Checks Problem 2.3. There is no answer key — this file is the answer key, and it runs."""
 
 from __future__ import annotations
 
@@ -38,7 +38,7 @@ def test_the_offset_is_the_width_times_the_steps(description, offset, steps, exp
     try:
         answer = element_width(offset, steps)
     except NotImplementedError:
-        pytest.fail("Problem 1.3 is not solved — see tests/reading_a_listing/problem_3_width.py")
+        pytest.fail("Problem 2.3 is not solved — see tests/reading_a_listing/problem_3_width.py")
     assert answer == expected, (
         f"{description}: the compiler multiplied the width by the steps to get {offset}. "
         f"You said {answer}, it was {expected}"

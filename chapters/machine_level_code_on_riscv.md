@@ -1,19 +1,19 @@
 ---
-title: "Machine-Level Code on RISC-V"
+title: "14 · Machine-Level Code on RISC-V"
 short_title: "14 · Machine-Level Code on RISC-V"
 ---
 
 (machine-level-code-on-riscv)=
 # 14 · Machine-Level Code on RISC-V
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch05](#c-for-people-who-will-read-a-kernel) |
-| **What it measures** | Frame sizes and instruction mix for four functions at `-O0` and `-O2`: `bench/results/framesizes-riscv64.json` |
+| **Evidence** | Stack frame sizes and instructions at `-O0` and `-O2`. |
 :::
 
 ## The question
@@ -28,7 +28,8 @@ unfamiliar function, find where its arguments went, work out how much stack it w
 and walk back up the chain of calls that reached it — by hand, and then in a debugger, and
 understand that these are the same operation.
 
-## The material
+(machine-level-code-on-riscv-example)=
+## Follow calls, frames and returns in RISC-V
 
 ### There are two kinds of register, and that is most of the convention
 
@@ -80,13 +81,18 @@ list, and walking it is a loop:
 :end-before: printf("frame %d bytes
 ```
 
-Build it and run it here:
+Run this example from your local checkout. It needs a RISC-V Linux compiler such as
+`riscv64-linux-gnu-gcc`. On other processors, install user-mode QEMU with the
+`qemu-riscv64` command. The runner builds with frame pointers enabled because the walker
+reads RISC-V frame slots directly.
 
 ```bash
 ./run framewalk
 ```
 
-Check it against the expected frames:
+Read `walk from`, then the `frame` lines. `bytes` is the distance between frame pointers.
+`returns_to` is a return address and can change between runs. The following checks exercise
+the original walk with the flags specified by the test:
 
 ```bash
 python3 -m pytest tests/test_framewalk.py -q
@@ -219,34 +225,30 @@ which is the durable skill: allocators change, and prologues do not.
 
 ## Problems
 
-Three, and the first is the hardest thing in [Part III](#part3) so far.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **14.1 — Write the C that produced this.**
-A listing, and you write a C function that compiles to the same instructions. Not similar ones —
-the same ones, in order. The test compiles your attempt with the same toolchain and compares
-mnemonic by mnemonic, so a function that gets the right answer another way does not pass.
-
-Reconstructing the behaviour is the easy half. Reconstructing the compiler's route to it means
-asking why *that* instruction and not the obvious one, which is the question this chapter has
-been teaching you to ask.
+Open `tests/machine_level_code_on_riscv/problem_1_reconstruct.py`. Edit `RECONSTRUCTION`,
+keeping the provided function signature. Compile your attempt through the test. It compares
+the sequence of instruction names with the target listing.
 
 ```bash
 python3 -m pytest tests/machine_level_code_on_riscv/test_problem_1_reconstruct.py
 ```
 
 **14.2 — Which of these needs a frame?**
-Four functions. For each, predict whether it gets a frame at `-O2` and whether it saves the return
-address. The test compiles each one and reads the prologue, so you are predicting a compiler
-rather than reciting a rule — and the reasoning that explains the table above explains all four.
+Open `tests/machine_level_code_on_riscv/problem_2_frames.py`. Fill in `ANSWERS` with a pair
+for each function. Predict whether the compiler allocates a stack frame and whether it saves
+the return address at `-O2`. The test reads both from the generated prologue.
 
 ```bash
 python3 -m pytest tests/machine_level_code_on_riscv/test_problem_2_frames.py
 ```
 
 **14.3 — Who saves what?**
-Name one register a function writes without saving, and one it saves before using. The test checks
-both against the actual disassembly *and* against which half of the convention each belongs to, so
-an answer that is mechanically true but comes from the wrong group fails and tells you so.
+Open `tests/machine_level_code_on_riscv/problem_3_who_saves.py`. Fill in `USED_FREELY` and
+`SAVED_FIRST` with one register each. The test checks both how the compiled function uses the
+registers and how the calling convention classifies them.
 
 ```bash
 python3 -m pytest tests/machine_level_code_on_riscv/test_problem_3_who_saves.py

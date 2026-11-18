@@ -1,4 +1,4 @@
-"""Problem 11.1 — must the switch save this register?
+"""Problem 21.1 — must the switch save this register?
 
 The answers follow from the machine-code chapter's calling convention, which the reader already has, applied to
 the fact that a context switch is an ordinary call. Nothing here is a property of xv6.

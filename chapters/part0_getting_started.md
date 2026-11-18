@@ -6,64 +6,39 @@ short_title: "Introduction"
 (part0)=
 # Getting started
 
-:::{note} Part header
-:class: dropdown
+:::{note} Part prerequisites and target
+:class: chapter-header
 
 | | |
 |---|---|
 | **Chapters** | [ch00](#prerequisites-and-setup)–[ch01](#setting-up-the-board) |
-| **Target** | all three, which is the point |
-| **Assumes** | nothing |
+| **Target** | `bare` and `xv6` on your computer. `host` on native Linux for timings. |
+| **Assumes** | You can program in another language. |
 :::
 
 ## What this part is for
 
-Two machines to get working, and a script that says what each one can currently run.
-
-The book uses three targets on two machines, and the two machines are not equally urgent. The
-computer you are reading this on runs `bare` and `xv6` under QEMU, needs one cross compiler, and
-covers everything up to [Part V](#part5). The board is a second machine — the only place a
-timing may be measured — and nothing needs it until [ch24](#measuring).
-
-So the two chapters are in that order, and they are separate on purpose: you can finish
-[ch00](#prerequisites-and-setup) this afternoon on a laptop, and do
-[ch01](#setting-up-the-board) whenever the hardware turns up. The board chapter is the next one
-in the book, but twenty-two chapters sit between finishing the first and *needing* the second.
+Check the programming tools on your computer first. You can use the QEMU emulator there to run
+both `bare` and `xv6`. Set up a separate native Linux machine when you are ready to run timing
+experiments.
 
 ## What it leaves out
 
-**The decision about what to buy.** That is [Appendix H](#appendix-h), because it is read once,
-before you own anything, and then only to settle an argument with a spec sheet. This part assumes
-the machines exist.
-
-**Any reason for the arrangement.** The [preface](#preface) argues for three targets on two machines and for
-the instruction sets not matching. These chapters take that as settled and get it working.
+[Appendix H](#appendix-h) explains the hardware requirements and how to check a machine you
+already have.
 
 ## Where to start
 
-[ch00](#prerequisites-and-setup), on whatever you are reading this on. It ends with one program
-compiled for two targets and run on both, agreeing about every answer, which is how you know the
-setup is real rather than merely installed.
-
-Then [ch01](#setting-up-the-board) when the board arrives — or later. Nothing before
-[Part V](#part5) depends on it, and [ch00](#prerequisites-and-setup)'s script will tell you at any
-point which targets your machines can currently run.
+Open [ch00](#prerequisites-and-setup). Clone the repository, run the setup check and boot xv6.
+If you have suitable native Linux hardware, use [ch01](#setting-up-the-board) to check its
+performance counters before starting [Part V](#part5).
 
 ## Which machine, and what it cannot tell you
 
-Both, which is what makes this a part rather than a chapter. The emulated targets answer questions
-about what a program *does*, and **nothing here or in Parts I to IV is ever timed**:
-QEMU models no cache, no branch predictor and no memory latency, so a duration measured inside it
-describes the laptop, and how the emulator translates instructions, rather than the machine being
-emulated. The board answers questions about cost, and is the only place in the book a timing may be
-taken.
-
-Neither can tell you yet whether any of it is *worth* measuring. Setting a machine up
-proves it runs; it does not prove a number coming out of it means anything, and
-[ch24](#measuring) is the chapter that takes that apart.
+The `bare` and `xv6` examples are never timed for the book. Use their output to see what code
+does. Hardware timings come from the native `host` target.
 
 ## Where this leaves you
 
-Two machines that work, and a script that says so. You will not have learned anything about
-computers yet. You will have the apparatus the rest of the book measures with, and a way to check
-at any point that it is still telling the truth.
+You can identify which examples your setup can run and tell a missing tool from a program that
+built and produced an unexpected result.

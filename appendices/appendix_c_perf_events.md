@@ -1,17 +1,18 @@
 ---
-title: "Appendix C — The perf Events This Board Has"
+title: "Appendix C · The perf Events This Board Has"
 short_title: "Appendix C"
 ---
 
 (appendix-c)=
 # Appendix C · The perf Events This Board Has
 
-An appendix here is a reference, not a chapter: no argument, no narrative, and everything in it
-either cites a primary source or comes from a stamped result. This one is generated from the
-reference machine, because which events a core exposes is a property of its silicon, its kernel and
-its firmware together and cannot be read off a datasheet. The Cortex-A76 manual @arm-a76-trm says
-what each event *means*; `bench/results/perfevents-host.json` says which events exist *here*.
-Regenerate it on your own board with `python3 -m bench.run_perfevents`.
+Use the tables below to see which events the reference board exposes to `perf`. The names
+reflect its processor, kernel and firmware. The Cortex-A76 manual @arm-a76-trm defines the
+hardware events. The tables are recorded from `bench/results/perfevents-host.json`.
+
+To inspect a comparable native Linux board, use `python3 -m bench.run_perfevents --check` from
+your checkout on that machine. It compares the events and counts reported by the new run with
+the saved report without writing a result file.
 
 ## What this machine has
 

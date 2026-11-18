@@ -1,4 +1,4 @@
-"""Problem 10.1 — a lock that is merely usually right is not a lock.
+"""Problem 20.1 — a lock that is merely usually right is not a lock.
 
 Four threads take it eight hundred thousand times between them and increment an ordinary,
 deliberately non-atomic counter inside it. If the lock works the total is exactly what was asked

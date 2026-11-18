@@ -1,4 +1,4 @@
-"""Problem 10.2 — which reorderings does each kind of barrier actually prevent?
+"""Problem 20.2 — which reorderings does each kind of barrier actually prevent?
 
 The four cases that matter are the two where the annotation is on the operation it does not help:
 an acquire on the second operation, and a release on the first. Both are ordinary mistakes and

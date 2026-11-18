@@ -1,4 +1,4 @@
-"""Problem 1.3 — rounding an address, which is arithmetic on a number and not on a pointer.
+"""Problem 3.3 — rounding an address, which is arithmetic on a number and not on a pointer.
 
 The cases include every boundary the kernel's own allocator crosses: an address already aligned,
 one byte either side of one, and zero.

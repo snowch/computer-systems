@@ -1,4 +1,4 @@
-"""Problem 7.3 — say where the walk stopped, which is what a fault actually tells you.
+"""Problem 17.3 — say where the walk stopped, which is what a fault actually tells you.
 
 Every expected answer here follows from how the test built the address space rather than from a
 stored constant: a probe in an untouched gigabyte can only fail at the top level, one in a mapped

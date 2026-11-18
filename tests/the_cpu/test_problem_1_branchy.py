@@ -1,4 +1,4 @@
-"""Checks Problem 17.1 against the compiler's own output, as recorded by this chapter's runner."""
+"""Checks Problem 27.1 against the compiler's own output, as recorded by this chapter's runner."""
 
 from __future__ import annotations
 

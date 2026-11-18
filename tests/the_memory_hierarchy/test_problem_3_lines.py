@@ -1,4 +1,4 @@
-"""Problem 15.3 — how many lines does this loop touch?
+"""Problem 25.3 — how many lines does this loop touch?
 
 Computed from the parameters, so the key is derived. The two cases that matter are a stride below
 a line, where elements share, and a stride at or above one, where they cannot — and where making

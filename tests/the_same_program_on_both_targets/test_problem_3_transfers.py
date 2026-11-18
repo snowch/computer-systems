@@ -1,4 +1,4 @@
-"""Problem 13.3 — does this observation transfer between the two targets?
+"""Problem 23.3 — does this observation transfer between the two targets?
 
 Six things you could observe. Two of them are less obvious than they look, and sorting the list
 into "structure" and "cost" gets both of them wrong.

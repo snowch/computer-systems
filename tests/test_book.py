@@ -15,7 +15,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from bench.figures import FIGURES
+from bench.figures import FIGURES, Table
 from bench.outline import (
     APPENDICES,
     CHAPTERS,
@@ -471,7 +471,7 @@ def test_the_question_is_answered_by_more_than_itself(chapter: Chapter):
     who arrived there from the profiling chapter was told nothing about why.
     """
     text = (ROOT / chapter.path).read_text()
-    block = text[text.index("## The question") : text.index("## The material")]
+    block = text[text.index("## The question") : text.index(f"({chapter.anchor}-example)=")]
     paragraphs = [p for p in block.split("\n\n") if p.strip() and not p.startswith("## ")]
     assert len(paragraphs) >= 2, (
         f"{chapter.path} asks its question and says nothing about why — every other chapter "
@@ -1127,7 +1127,7 @@ def test_a_part_header_names_its_own_first_and_last_chapter(part: Part):
 
 CHAPTER_SECTIONS = (
     "## The question",
-    "## The material",
+    "({anchor}-example)=",
     "## What we measured",
     "## What this cannot tell you",
     "## Problems",
@@ -1146,10 +1146,11 @@ def test_chapter_has_the_seven_part_shape(chapter: Chapter):
     break the shape the other thirty-one keep.
     """
     text = (ROOT / chapter.path).read_text()
-    found = [section for section in CHAPTER_SECTIONS if section in text]
-    assert found == list(CHAPTER_SECTIONS), (
-        f"{chapter.path} is missing or reorders: {[s for s in CHAPTER_SECTIONS if s not in found]}"
-    )
+    sections = [section.format(anchor=chapter.anchor) for section in CHAPTER_SECTIONS]
+    missing = [section for section in sections if section not in text]
+    assert not missing, f"{chapter.path} is missing: {missing}"
+    positions = [text.index(section) for section in sections]
+    assert positions == sorted(positions), f"{chapter.path} reorders its sections"
 
 
 @pytest.mark.parametrize("chapter", CHAPTERS, ids=CHAPTER_IDS)
@@ -1161,11 +1162,15 @@ def test_a_chapters_body_sits_under_the_material(chapter: Chapter):
     what moving them usually needs.
     """
     text = (ROOT / chapter.path).read_text()
-    body = text[text.index("## The material") + 1 : text.index("## What we measured")]
+    heading = re.search(rf"^\({chapter.anchor}-example\)=\n## (.+)$", text, re.M)
+    assert heading and heading.group(1) != "The material", (
+        f"{chapter.path} needs a heading that describes its example"
+    )
+    body = text[heading.end() : text.index("## What we measured")]
     stray = [line for line in body.split("\n") if line.startswith("## ")]
     assert not stray, (
         f"{chapter.path} has a top-level heading inside the body — it belongs under "
-        f"*The material*: {stray}"
+        f"the main heading: {stray}"
     )
 
 
@@ -1380,7 +1385,7 @@ def test_the_hardware_appendix_counts_that_list_correctly():
     part = next(p for p in PART_PAGES if p.number == 5)
     expected = sum(1 for c in HARDWARE_SENSITIVE if c.part == part.title)
     page = (ROOT / CHOOSING_THE_MACHINE.path).read_text()
-    said = re.search(r"Most do not\. (\w+) chapters of", page)
+    said = re.search(r"(\w+) chapters of \[Part V\]\(#part5\) list", page)
     assert said, "appendix H no longer says how many chapters depend on the hardware"
     assert NUMBER_WORDS.get(said.group(1).lower()) == expected, (
         f"appendix H says {said.group(1)} chapters of Part V depend on the hardware; "
@@ -1552,7 +1557,7 @@ def test_the_preface_shows_the_pairing(chapter: Chapter):
     if chapter.anchor == "the-same-program-on-both-targets":
         pytest.skip("the crossing chapter is the crossing itself, not a row in the table")
     preface = (ROOT / "index.md").read_text()
-    section = preface[preface.index("### One argument, not two tutorials") :]
+    section = preface[preface.index("(one-argument-not-two-tutorials)=") :]
     assert chapter.label in section, (
         f"{chapter.label} pairs with an earlier chapter but the preface's table omits it"
     )
@@ -2037,15 +2042,20 @@ def test_a_distribution_block_is_complete():
 
 
 def test_every_pending_figure_names_what_would_take_it():
-    """A pending figure is a promise, so it has to say what to run.
+    """A chapter gives the run command once, even when one run fills several figures."""
+    from tests.test_board import BOARD_RUNNERS  # noqa: PLC0415
 
-    `pending` renders as a warning with no numbers in it, which is the right thing to print for a
-    measurement nobody has taken. It is only useful if it says whose job it is — a warning that
-    says a figure is missing and not how to get it is a defect with a nice presentation.
-    """
+    pages = [path.read_text() for path in PROSE_FILES]
     vague = [
         name
         for name, figure in FIGURES.items()
-        if getattr(figure, "pending", None) and "bench-board" not in figure.pending
+        if isinstance(figure, Table)
+        and figure.pending
+        and not any(
+            f"_generated/{name}.md" in page and f"python3 -m {BOARD_RUNNERS[figure.result]}" in page
+            for page in pages
+        )
     ]
-    assert not vague, f"these pending figures do not say what to run: {vague}"
+    assert not vague, (
+        f"the chapters containing these pending figures do not say what to run: {vague}"
+    )

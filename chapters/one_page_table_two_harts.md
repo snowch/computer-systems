@@ -1,19 +1,19 @@
 ---
-title: "One Page Table, Two Harts"
+title: "08 · One Page Table, Two Harts"
 short_title: "08 · One Page Table, Two Harts"
 ---
 
 (one-page-table-two-harts)=
 # 08 · One Page Table, Two Harts
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
-| **Target** | `bare` — the same machine under QEMU with no operating system on it |
+| **Target** | `bare` — a RISC-V machine in QEMU without an operating system |
 | **Prerequisites** | [ch07](#interrupts-and-privilege) |
-| **What it measures** | One mapping installed by hand and an address that means something else afterwards; and a counter two harts disagree about. |
+| **Evidence** | The value read through a new mapping and the totals from two hardware threads sharing a counter. |
 :::
 
 ## The question
@@ -25,7 +25,8 @@ together would teach neither. Both are the hardware changing what memory does be
 back: translation does it deliberately and usefully; a second core does it simply because there is
 more than one processor.
 
-## The material
+(one-page-table-two-harts-example)=
+## Translate an address and share a counter
 
 ### An address is a number until something translates it
 
@@ -141,16 +142,23 @@ its own chapter, and [ch28](#memory-ordering-on-real-hardware) is where it costs
 
 ## What we measured
 
-Run them yourself before reading the tables — the rows below are what you should see, and a
-figure you have reproduced is worth more than one you have been shown:
+From your checkout, run the mapping and two-hart examples:
 
 ```bash
 ./run paging
 ./run harts
 ```
 
+In the paging output, find `alias_reads_the_same` and `alias_distance_gigabytes`. Can the two
+virtual addresses be far apart and still return the same physical byte? The first table
+records the mapping observed in QEMU.
+
 ```{include} _generated/one-page-table-two-harts-paging.md
 ```
+
+In the counter output, compare `increments_attempted` with `counter_after`, then
+`atomic_increments_attempted` with `atomic_counter_after`. Which run preserves both increments?
+The second table records the original run with the program’s explicit handshake.
 
 ```{include} _generated/one-page-table-two-harts-harts.md
 ```
@@ -179,30 +187,33 @@ the second is what a lock needs.
 
 ## Problems
 
-Three, in `tests/one_page_table_two_harts/`.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **8.1 — Map a page rather than a gigabyte.**
-Change the alias to cover four kilobytes instead of a gigabyte. You will need the two levels this
-chapter skipped. The test checks that the alias still reads the same byte *and* that the entry at
-the top level is no longer a leaf.
+Open `tests/one_page_table_two_harts/problem_1_four_kilobytes.py`. Describe what makes a page-
+table entry a leaf. Copy `sysfs/bare/paging.c` to
+`tests/one_page_table_two_harts/answer_page.c` and map a single page for the alias. The test
+checks the value read through the alias and whether the top-level entry is still a leaf.
 
 ```bash
 python3 -m pytest tests/one_page_table_two_harts/test_problem_1_four_kilobytes.py
 ```
 
 **8.2 — Break it on purpose.**
-Remove one of the two identity mappings and predict, before running it, exactly which instruction
-the machine fails on and with what cause. Then run it. The test compares your prediction with the
-run.
+Open `tests/one_page_table_two_harts/problem_2_no_identity.py`. Predict the cause code when
+one identity mapping is missing. Copy `sysfs/bare/paging.c` to
+`tests/one_page_table_two_harts/answer_broken.c` and remove the mapping in your copy. Compare
+your prediction with the fault reported by the test.
 
 ```bash
 python3 -m pytest tests/one_page_table_two_harts/test_problem_2_no_identity.py
 ```
 
 **8.3 — Lose an update the other way round.**
-The program loses the second hart's increment. Rearrange the handshake so it loses the first
-hart's instead, without changing the counter's final value. Say which of the three instructions
-moved. The test checks the value, the loss, and that you did not simply swap the two harts' code.
+Open `tests/one_page_table_two_harts/problem_3_other_way.py`. Name the instruction whose order
+must change. Copy `sysfs/bare/harts.c` to `tests/one_page_table_two_harts/answer_other.c` and
+change the order so the first hart’s increment is lost. The test checks the ordering and the
+final total.
 
 ```bash
 python3 -m pytest tests/one_page_table_two_harts/test_problem_3_other_way.py

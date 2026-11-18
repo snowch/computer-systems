@@ -1,4 +1,4 @@
-"""Problem 12.3 — is this ordering safe at every point a crash could happen?
+"""Problem 22.3 — is this ordering safe at every point a crash could happen?
 
 Only one of the six orderings is, and the unsafe ones are the ones that look reasonable. The test
 asks about all of them at once, because a rule that gets one right by luck is not a rule.

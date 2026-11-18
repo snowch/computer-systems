@@ -1,4 +1,4 @@
-"""Checks Problem 2.2 by compiling the reader's ordering and asking the compiler how big it is.
+"""Checks Problem 13.2 by compiling the reader's ordering and asking the compiler how big it is.
 
 The target to beat is computed, not stored: the test builds the arrangement that alignment theory
 says is optimal, measures it, and requires the reader's to match. So a compiler with different
@@ -40,13 +40,13 @@ def best(host_target, build_dir) -> int:
 
 @pytest.mark.problem
 def test_the_reader_kept_every_member(best):
-    assert ORDER, "Problem 2.2: ORDER is still empty"
+    assert ORDER, "Problem 13.2: ORDER is still empty"
     assert sorted(ORDER) == sorted(DECLARED), "same five members, reordered — none added or lost"
 
 
 @pytest.mark.problem
 def test_the_reader_ordering_wastes_nothing(host_target, build_dir, best):
-    assert ORDER, "Problem 2.2: ORDER is still empty"
+    assert ORDER, "Problem 13.2: ORDER is still empty"
     measured = _sizeof(ORDER, host_target, build_dir, "reader")
     assert measured == best, (
         f"your ordering is {measured} bytes; these members fit in {best}. "

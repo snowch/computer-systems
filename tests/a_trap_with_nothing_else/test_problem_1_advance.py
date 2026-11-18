@@ -1,4 +1,4 @@
-"""Checks Problem 4.1 by assembling the reader's instruction and measuring it.
+"""Checks Problem 6.1 by assembling the reader's instruction and measuring it.
 
 Nothing about the answer is stored here. The instruction is assembled with the same toolchain the
 chapter uses and its length read out of the object file, so the check is against the assembler
@@ -60,14 +60,14 @@ def test_the_toolchain_can_tell_a_short_instruction_from_a_long_one(tmp_path):
 
 @pytest.mark.problem
 def test_the_reader_named_what_the_four_is():
-    assert WHAT_THE_FOUR_IS.strip(), "Problem 4.1: WHAT_THE_FOUR_IS is still empty"
+    assert WHAT_THE_FOUR_IS.strip(), "Problem 6.1: WHAT_THE_FOUR_IS is still empty"
 
 
 @pytest.mark.problem
 @pytest.mark.skipif(shutil.which(AS) is None, reason=f"needs {AS}")
 def test_the_instruction_really_is_not_four_bytes(tmp_path):
     assert AN_INSTRUCTION_THAT_BREAKS_IT.strip(), (
-        "Problem 4.1: AN_INSTRUCTION_THAT_BREAKS_IT is still empty"
+        "Problem 6.1: AN_INSTRUCTION_THAT_BREAKS_IT is still empty"
     )
     measured = assemble_one(AN_INSTRUCTION_THAT_BREAKS_IT, tmp_path)
     assert measured != 4, (

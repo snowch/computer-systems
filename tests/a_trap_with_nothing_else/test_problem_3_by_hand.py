@@ -1,4 +1,4 @@
-"""Checks Problem 4.3 by building and booting whatever the reader wrote.
+"""Checks Problem 6.3 by building and booting whatever the reader wrote.
 
 Same compiler, same flags, same linker script as the chapter's own programs, so the machine the
 answer runs on is the machine the chapter describes.
@@ -26,7 +26,7 @@ def test_the_chapters_own_program_still_builds_and_runs():
 def test_the_readers_handler_saves_the_register_itself(tmp_path):
     if bare.problems():
         pytest.skip("; ".join(bare.problems()))
-    assert ANSWER.exists(), f"Problem 4.3: write your program in {ANSWER.name} beside this test"
+    assert ANSWER.exists(), f"Problem 6.3: write your program in {ANSWER.name} beside this test"
 
     source = ANSWER.read_text()
     assert "interrupt(" not in source, (

@@ -1,4 +1,4 @@
-"""Checks Problem 4.3 by reading the prologue and the body of a compiled function.
+"""Checks Problem 14.3 by reading the prologue and the body of a compiled function.
 
 Two mechanical facts settle it: whether the register is written anywhere, and whether it is stored
 to the stack in the prologue. The ABI class is not consulted to *grade* the answer — it is
@@ -56,7 +56,7 @@ def test_the_freely_used_register_is_never_saved(compiled):
     from tests.machine_level_code_on_riscv.problem_3_who_saves import USED_FREELY  # noqa: PLC0415
 
     written, saved = compiled
-    assert USED_FREELY is not None, "Problem 4.3: USED_FREELY is still None"
+    assert USED_FREELY is not None, "Problem 14.3: USED_FREELY is still None"
     assert USED_FREELY in written, f"{USED_FREELY} is not written by this function at all"
     assert USED_FREELY not in saved, f"{USED_FREELY} *is* saved to the stack here"
     assert USED_FREELY in CALLER_SAVED, (
@@ -70,7 +70,7 @@ def test_the_saved_register_had_to_be(compiled):
     from tests.machine_level_code_on_riscv.problem_3_who_saves import SAVED_FIRST  # noqa: PLC0415
 
     written, saved = compiled
-    assert SAVED_FIRST is not None, "Problem 4.3: SAVED_FIRST is still None"
+    assert SAVED_FIRST is not None, "Problem 14.3: SAVED_FIRST is still None"
     assert SAVED_FIRST in saved, f"{SAVED_FIRST} is not stored to the stack by this function"
     assert SAVED_FIRST in CALLEE_SAVED or SAVED_FIRST == "ra", (
         f"{SAVED_FIRST} is caller-saved, so saving it would be this function doing somebody "

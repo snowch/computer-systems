@@ -1,21 +1,21 @@
 ---
-title: "Memory Ordering on Real Hardware"
+title: "28 · Memory Ordering on Real Hardware"
 short_title: "28 · Memory Ordering on Real Hardware"
 ---
 
 (memory-ordering-on-real-hardware)=
 # 28 · Memory Ordering on Real Hardware
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
-| **Target** | `host` — the reference machine, natively |
+| **Target** | `host` — native Linux on real hardware |
 | **Answers the cost of** | [ch20](#locks-and-memory-ordering) |
 | **Prerequisites** | [ch27](#the-cpu) |
-| **Assumes** | Four cores and this interconnect's coherence. The scaling curve moves elsewhere; the mechanism does not. |
-| **What it measures** | Which counters share a cache line: `bench/results/sharing-layout.json`; and what that sharing, and an atomic, cost on four cores: `bench/results/sharing-host.json` |
+| **Assumes** | Four cores. The measured scaling reflects how this machine keeps their caches in sync. |
+| **Evidence** | Cache-line layouts, timings for shared counters and instructions for atomic operations. |
 :::
 
 ## The question
@@ -27,7 +27,8 @@ contention, which that target had no way to express. This chapter has four real 
 also where the reader meets a second memory model — which is the reason this book uses two
 architectures.
 
-## The material
+(memory-ordering-on-real-hardware-example)=
+## Compare shared and separate cache lines
 
 ### A cost with no shared data
 
@@ -158,27 +159,29 @@ nobody has yet.
 
 ## Problems
 
-Three, in `tests/memory_ordering_on_real_hardware/sharing.c`.
+Edit `tests/memory_ordering_on_real_hardware/sharing.c` in your checkout. Run each test
+command from the repository root.
 
 **28.1 — Which fields will two cores fight over?**
-Given offsets and writers, count the contending pairs. Two fields on one line written by the same
-thread are not one of them.
+Complete `s_contended_pairs`. Use the listed offsets and their writers to count pairs that
+share a cache line and are written by different threads.
 
 ```bash
 python3 -m pytest tests/memory_ordering_on_real_hardware/test_problem_1_pairs.py
 ```
 
 **28.2 — What does the curve look like before you measure it?**
-Amdahl's law, applied. Do this before the board reports: a prediction you fail to reach is
-information, and a measurement with nothing to compare it against is much less.
+Complete `s_speedup_x100` using Amdahl’s law. Use the predicted scaling as a comparison for
+the board results. The test checks the model’s prediction for different serial fractions and
+thread counts.
 
 ```bash
 python3 -m pytest tests/memory_ordering_on_real_hardware/test_problem_2_scaling.py
 ```
 
 **28.3 — Same requirement, two architectures.**
-Give the spelling each one uses. The table is small; the observation that one of them has no
-separate instruction at all is the reason the problem exists.
+Complete `s_spelling`. Give the RISC-V and AArch64 instruction forms for the requested
+ordering. The test checks where the order comes from for each architecture.
 
 ```bash
 python3 -m pytest tests/memory_ordering_on_real_hardware/test_problem_3_spelling.py
