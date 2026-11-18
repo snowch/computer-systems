@@ -1,4 +1,4 @@
-"""Problem 17.1 — which of these loops still contains a branch?
+"""Problem 27.1 — which of these loops still contains a branch?
 
 `sysfs/lib/pipeline.c` has two functions that count how many values exceed a threshold. Both are
 written with an `if`. Decide, before compiling anything, whether each still contains a branch the

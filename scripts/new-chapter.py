@@ -42,7 +42,7 @@ def by_anchor(anchor: str) -> Chapter:
 #: nine host chapters until it was caught.
 TARGET_LABEL = {
     "xv6": "`xv6` — the teaching kernel under QEMU",
-    "bare": "`bare` — the same machine under QEMU with no operating system on it",
+    "bare": "`bare` — a RISC-V machine in QEMU without an operating system",
     "host": "`host` — Linux on real hardware, natively ([hardware](#prerequisites-and-setup))",
     "both": "`xv6` and `host` — every example says which",
 }
@@ -68,21 +68,21 @@ def chapter_stub(chapter: Chapter, previous: Chapter | None) -> str:
         else ""
     )
     return f"""---
-title: "{chapter.title} [DRAFT]"
+title: "{chapter.display} · {chapter.title} [DRAFT]"
 short_title: "{chapter.label} {chapter.title}"
 ---
 
 ({chapter.anchor})=
 # {chapter.label} · {chapter.title} [DRAFT]
 
-:::{{note}} Chapter header
-:class: dropdown
+:::{{note}} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | {TARGET_LABEL[chapter.target]} |
 | **Prerequisites** | {prerequisites} |
-| **What it measures** | {owes} |{answers}{assumes}
+| **Evidence** | {owes} |{answers}{assumes}
 :::
 
 ## The question
@@ -92,9 +92,10 @@ short_title: "{chapter.label} {chapter.title}"
 [To write: one paragraph. State the question this chapter answers and why the previous chapter
 leaves it open. No summary of what is to come — the reader can see the headings.]
 
-## The material
+({chapter.anchor}-example)=
+## {chapter.title} in practice
 
-[To write: the body. Short sections. Code is quoted from the working tree with
+[To write: give this section a heading that says what the learner will do or observe. Short sections. Code is quoted from the working tree with
 `{{literalinclude}}` and text anchors, never pasted. See AUTHORING_GUIDE.md.]
 
 ## What we measured
@@ -130,7 +131,7 @@ def appendix_stub(appendix: Appendix) -> str:
     somebody runs the board.
     """
     return f"""---
-title: "Appendix {appendix.letter} — {appendix.title} [DRAFT]"
+title: "Appendix {appendix.letter} · {appendix.title} [DRAFT]"
 short_title: "Appendix {appendix.letter}"
 ---
 
@@ -170,15 +171,15 @@ def part_stub(part: Part, previous: Part | None) -> str:
         else "[ch00](#prerequisites-and-setup), and fluency in some other language"
     )
     return f"""---
-title: "{part.title}"
+title: "{part.name} · {part.subtitle}"
 short_title: "Introduction"
 ---
 
 ({part.label})=
 # {part.name} · {part.subtitle}
 
-:::{{note}} Part header
-:class: dropdown
+:::{{note}} Part prerequisites and target
+:class: chapter-header
 
 | | |
 |---|---|

@@ -1,4 +1,4 @@
-"""Problem 20.3 — why a fixed sampling period produces a confident, repeatable, wrong answer.
+"""Problem 30.3 — why a fixed sampling period produces a confident, repeatable, wrong answer.
 
 The cases are chosen so that the answer ranges from the whole loop down to a single position, and
 the scaffolding asserts the worst case explicitly: a period that divides the loop samples one

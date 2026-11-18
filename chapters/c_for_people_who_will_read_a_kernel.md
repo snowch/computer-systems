@@ -1,43 +1,41 @@
 ---
-title: "Reading C as Machine Code"
+title: "05 · Reading C as Machine Code"
 short_title: "05 · Reading C as Machine Code"
 ---
 
 (c-for-people-who-will-read-a-kernel)=
 # 05 · Reading C as Machine Code
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch04](#c-without-a-runtime) |
-| **What it measures** | What the compiler emits for each construct: `bench/results/addresses-riscv64.json` |
+| **Evidence** | RISC-V instructions emitted for reads, `volatile`, array parameters and indirect calls. |
 :::
 
 ## The question
 
-Which parts of C are really about addresses, and how do I read them without flinching?
+Which C constructs change the instructions, and which give information only to the compiler?
 
-This is not a C tutorial and it does not cover the language. It covers the subset that becomes
-visible in machine code, sorted by a single question: **has the machine heard of this?** Some of
-C's most-argued-about constructs are instructions to the compiler that leave no trace at all.
-`volatile` is a prohibition that survives into every single load. Telling those apart makes kernel
-source readable, because a kernel is mostly the second kind.
+Compare pairs of C functions with their generated RISC-V instructions. Look for the difference
+between reading memory, following a pointer and determining a name's visibility.
 
-## The material
+(c-for-people-who-will-read-a-kernel-example)=
+## Compare C expressions with compiler output
 
-### Everything here is an address
+(everything-here-is-an-address)=
+### What a pointer designates
 
-A pointer is an integer that happens to be the number of a byte, carrying a type that says how
-many bytes to take from there and how to read them. That is the whole idea, and almost every
-difficulty with pointers is really a difficulty about one of the questions below.
-[ch03](#memory-is-one-array) asked three questions of any declaration — *where does this live*,
-*how long does it stay there*, *how big is it*. A kernel needs a fourth, and it runs through
-this chapter: **who else can reach it**, and what the language lets you say about that.
+A pointer is a typed value that can designate an object or function, or can be null. Here,
+a pointer to an object holds its address in byte-addressed memory. Its type tells the compiler,
+for example, how to interpret the bytes of an integer at that address. [ch03](#memory-is-one-array)
+introduces pointers and the limits on where they can point.
 
-### `volatile` — the one qualifier the machine has heard of
+(volatile-the-one-qualifier-the-machine-has-heard-of)=
+### Which reads does `volatile` preserve?
 
 Two functions, identical but for one word — a *qualifier*, one of the words C lets you attach to
 a type — each adding up four reads of the same address:
@@ -61,25 +59,17 @@ The `volatile` one:
 ```{include} _generated/c-for-people-who-will-read-a-kernel-volatile-reads.md
 ```
 
-Four loads, in order, none of them removed.
+Find the load instruction in the plain listing and compare it with the four loads in the
+`volatile` listing. Each loop iteration evaluates a separate read. In this example C treats
+the volatile reads as observable and preserves the sequence of those evaluated accesses.
 
-`volatile` means one thing: **every access in the source must appear in the output, and in this
-order.** It does not mean *shared*, it does not mean *atomic*, and it is not a
-threading primitive — [ch20](#locks-and-memory-ordering) is emphatic about that.
+A device register can report a new value each time it is read. That is a reason to preserve
+separate reads when the target defines a volatile interface for the device. C's `volatile`
+qualifier provides neither atomic operations nor ordering between threads. Use the memory
+ordering rules in [ch20](#locks-and-memory-ordering) for communication between hardware threads.
 
-It matters when reading an address is not merely reading memory. A device register that returns
-the next byte of a serial port gives a different answer each time it is read, and a compiler that
-reads it once and reuses the value has turned your driver into a program that receives one
-character for ever. [ch19](#interrupts-and-drivers) writes that driver.
-
-**If you arrived from Java, this is the trap.** Java's `volatile` *is* a threading primitive: it
-orders accesses between threads, and the language spells out what that guarantees. C's does none
-of that. It constrains the compiler and says nothing whatever to the hardware, so two harts can
-still see one another's writes in a different order from the one they were made in. The keyword
-is spelled the same and does a different job, and the instructions that do the other job are
-[ch20](#locks-and-memory-ordering)'s.
-
-### An array parameter is a promise nobody keeps
+(an-array-parameter-is-a-promise-nobody-keeps)=
+### What the function receives for an array parameter
 
 ```{literalinclude} ../sysfs/lib/addresses.c
 :language: c
@@ -226,39 +216,31 @@ does not use.
 
 ## Problems
 
-Three, and all three are about the loop this chapter is really teaching: change the source, look
-at the output.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **5.1 — Which C produced this?**
-Four listings and four candidate functions, matched up. The listings are not stored in the
-repository: the test compiles each candidate with your toolchain and hands you what came out, so
-the puzzle is generated rather than transcribed. Solving it by eye is possible. Solving it by
-compiling each candidate and comparing is the point.
+Open `tests/c_for_people_who_will_read_a_kernel/problem_1_which_c.py`. Fill in `ANSWERS` to
+match each listing to one source function. The test compiles the candidates locally. Compare
+their loads, calls and returns with the listing when a match is wrong.
 
 ```bash
 python3 -m pytest tests/c_for_people_who_will_read_a_kernel/test_problem_1_which_c.py
 ```
 
 **5.2 — A function that works until it is called twice.**
-`tests/c_for_people_who_will_read_a_kernel/scratchpad.c` turns a number into text and is correct in isolation. Called twice
-before either answer is used, it is not. Fix it so both answers survive, changing anything you
-like about the function and nothing about `main`.
-
-The C library did exactly this for years, and some of it still does — which is why several
-standard functions have an `_r` on the end.
+Open `tests/c_for_people_who_will_read_a_kernel/scratchpad.c`. Change `describe` so both
+returned strings survive two calls made before either string is used. Keep `main` as provided.
+The test compares the two printed strings.
 
 ```bash
 python3 -m pytest tests/c_for_people_who_will_read_a_kernel/test_problem_2_scratchpad.py
 ```
 
 **5.3 — Build the table.**
-Four device operations and four functions that implement them. Put each function in the right
-slot; the test builds a dispatch table from your answer, calls through it, and checks the
-results. Read what the functions in `tests/c_for_people_who_will_read_a_kernel/devices.c` *do* rather than what they are called,
-because one of the names is a trap.
-
-Getting the declaration of a table of function pointers right is most of the exercise, and it
-reads badly the first several times. That is not you.
+Open `tests/c_for_people_who_will_read_a_kernel/problem_3_dispatch.py`. Fill in `TABLE`,
+mapping each operation to its implementation in
+`tests/c_for_people_who_will_read_a_kernel/devices.c`. Read the function bodies. The test
+builds the table and checks each call’s result.
 
 ```bash
 python3 -m pytest tests/c_for_people_who_will_read_a_kernel/test_problem_3_dispatch.py

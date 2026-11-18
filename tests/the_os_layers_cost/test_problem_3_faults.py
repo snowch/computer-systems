@@ -1,4 +1,4 @@
-"""Problem 19.3 — none, minor, major, fatal, from four facts and a stated precedence.
+"""Problem 29.3 — none, minor, major, fatal, from four facts and a stated precedence.
 
 All sixteen combinations, because the precedence is the content: fatal overrides everything, a
 translation that already exists costs nothing, and only then does the minor/major split arise —

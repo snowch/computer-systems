@@ -1,17 +1,14 @@
 ---
-title: "Appendix D — An xv6 File Map"
+title: "Appendix D · An xv6 File Map"
 short_title: "Appendix D"
 ---
 
 (appendix-d)=
 # Appendix D · An xv6 File Map
 
-An appendix in this book is a reference, not a chapter: no argument, no narrative, and everything
-in it either cites a primary source or comes from a stamped result under `bench/results/`.
-
-This one is walked from the submodule at its pinned commit rather than written, so every line
-count here is one that `wc -l` will agree with on the tree you have checked out — and a file renamed
-upstream fails CI rather than quietly making this page wrong.
+Use the file map to find the xv6 source for a mechanism you have seen in the book. The table
+was generated from the pinned xv6 checkout under `xv6/xv6-riscv/`. The book's additions are
+stored separately. Look in `xv6/patches/` for kernel changes and `xv6/apps/` for added programs.
 
 ## How much kernel there is
 

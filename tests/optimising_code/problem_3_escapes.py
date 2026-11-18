@@ -1,4 +1,4 @@
-"""Problem 16.3 — which of these benchmark loops survives the compiler?
+"""Problem 26.3 — which of these benchmark loops survives the compiler?
 
 `tests/optimising_code/escapes.c` has five functions doing identical arithmetic and differing only in what
 becomes of the result. For each, set `True` if you expect the loop to still be there after

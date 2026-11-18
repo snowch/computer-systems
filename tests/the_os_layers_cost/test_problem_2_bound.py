@@ -1,4 +1,4 @@
-"""Problem 19.2 — what Part IV's instruction count says the call cannot beat.
+"""Problem 29.2 — what Part IV's instruction count says the call cannot beat.
 
 Two things are being checked. The arithmetic, which is a bound rather than an estimate and so has
 to round once at the end; and the shape, which is that halving the IPC doubles the floor.

@@ -1,4 +1,4 @@
-"""Problem 21.1 — the tail, and where vectorising stops being worth the code.
+"""Problem 31.1 — the tail, and where vectorising stops being worth the code.
 
 The cases run from a loop long enough for the tail to disappear down to one shorter than the
 vector, where widening buys exactly nothing and the compiler has emitted a great deal of code to

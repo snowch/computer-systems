@@ -1,4 +1,4 @@
-"""Problem 15.2 — what is the line size?
+"""Problem 25.2 — what is the line size?
 
 Synthetic stride curves whose flat region the test chose, so the answer is known by construction.
 The curve with no rise at all has no answer, and saying so is the right answer.

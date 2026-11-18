@@ -1,4 +1,4 @@
-"""Problem 15.1 — where does the curve step?
+"""Problem 25.1 — where does the curve step?
 
 The curves are synthetic and their steps are therefore known by construction: the test builds a
 three-level machine with boundaries it chose, and asks the reader to find them back.

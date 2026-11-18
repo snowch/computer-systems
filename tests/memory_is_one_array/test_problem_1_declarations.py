@@ -1,4 +1,4 @@
-"""Problem 1.1 — read a declaration from the name outwards.
+"""Problem 3.1 — read a declaration from the name outwards.
 
 The pairs that differ only by a parenthesis are the whole exercise, and the scaffolding asserts
 that the set actually contains them: a table where every entry is distinguishable by its

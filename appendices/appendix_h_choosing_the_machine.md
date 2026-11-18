@@ -1,191 +1,107 @@
 ---
-title: "Appendix H — Choosing the Machine"
+title: "Appendix H · Choosing the Machine"
 short_title: "Appendix H"
 ---
 
 (appendix-h)=
 # Appendix H · Choosing the Machine
 
-An appendix in this book is a reference, not a chapter. This one is read once, before you spend
-any money, and then only to settle an argument with a spec sheet.
+Use this page to decide whether a native Linux machine can run the experiments in [Part V](#part5).
+Check whether its hardware performance counters can count events and sample where they occur.
+[ch01](#setting-up-the-board) gives both tests. You can read the figures and work through the
+emulated examples without a native timing machine.
 
-[Part V](#part5) is the only part that needs hardware of its own: it is where every number in the
-book is measured, and [ch01](#setting-up-the-board) is where you make it work. This appendix covers
-the decision before that: what the `host` target has to be able to do, how to check a machine you
-already own, and what changes if yours differs from the reference. The *argument* for a second
-machine at all is in the [preface](#preface); this is the shopping and the checking.
+The reference results were recorded on a Raspberry Pi 5 with an active cooler. It is one
+configuration that passed the book's checks. The kernel, firmware and device tree affect which
+counters Linux exposes.
 
-A **Raspberry Pi 5 with 4 GB or more**, and an active cooler. That is the whole decision. Every Pi
-5 has the counters this book needs — same SoC, same four cores, no variant where they are missing
-— so there is no specification to compare and nothing to get wrong except the RAM, and only
-because [ch28](#memory-ordering-on-real-hardware) wants four cores with room to work.
+If you are buying a board, check the seller's return policy and warranty. Run the counters and
+sampling checks while the return window is open.
 
-| | What | Why this one |
+| Item | Reference setup | Why it matters |
 |---|---|---|
-| **Board** | Raspberry Pi 5, 4 GB or 8 GB | Four identical Cortex-A76 cores whose performance counters work. See below |
-| **Cooling** | The official active cooler, or a case with a fan | **Not optional here.** A Pi 5 under sustained load throttles |
-| **Power** | The official 27 W USB-C supply, or one rated for the board | Underpowering a Pi produces instability that reads exactly like a kernel bug |
-| **Storage** | A microSD card that is not the cheapest on the shelf | An NVMe drive on a PCIe HAT is nicer and not required |
-| **Network** | An Ethernet cable — any working one | Wi-Fi works. Wired keeps the radio's driver from doing interrupt work on the cores you are measuring |
+| Board | Raspberry Pi 5 with 4 GB or more | Four Cortex-A76 cores, with a configuration that exposes hardware counters |
+| Cooling | Active cooler or a case with a fan | Helps hold a stable clock under sustained load |
+| Power | A USB-C power supply rated for the board | The voltage must remain stable under load |
+| Storage | A microSD card or SSD | Holds Linux, the checkout and recorded data |
+| Network | Ethernet for remote access | Keeps Wi-Fi driver activity out of quiet timing runs |
 
-You also need a development machine for Parts I to IV — anything that runs Homebrew or apt and
-holds an SSH key. It never measures anything.
+(why-a-separate-board-and-not-the-laptop-you-are-reading-this-on)=
+## Why use a separate board?
 
-**The cooler earns its line in the table.** A Pi 5 that throttles is running a benchmark at one
-clock speed and finishing it at another, which is not a slow measurement but a wrong one, and one
-of the more instructive ways to be wrong. [ch24](#measuring) treats throttling as a measurement hazard
-and shows how to catch it happening; a cooler means you meet it deliberately rather than in every
-run you ever take.
+A dedicated measurement machine makes it easier to control what else runs during the experiment.
+The reference Pi has identical cores. A different machine can have different core types,
+shared execution resources, clock settings or scheduler behaviour. Each can change a result
+independently of the program you meant to compare.
 
-## Why a separate board, and not the laptop you are reading this on
+The supplied timing runners accept a native AArch64 or RISC-V Linux board with a hardware device
+tree. You can use the methods on other native machines, such as an x86-64 Linux laptop, by
+adapting the commands and choosing appropriate counters. The supplied runners refuse to record
+that setup as a book measurement.
 
-A laptop can almost certainly count and sample — `perf` on x86-64 is mature, and on Linux you
-could start [Part V](#part5) this afternoon. Do not, because a laptop is too complicated to
-learn on. A current laptop has cores of two different kinds, a clock that moves constantly, two
-threads sharing one core's execution units, and a scheduler migrating your benchmark across all of
-it. Each of those makes a measurement harder to attribute. The Pi 5 is four identical cores with
-one cache hierarchy and no hyper-threading: when a number moves, something you did moved it.
+(it-is-an-arm-machine-and-everything-before-part-v-is-risc-v)=
+## Why the reference board uses AArch64
 
-That is the book's own argument applied to its own tooling — use the instrument that can answer
-the question. A laptop is a *faster* machine and a *worse* instrument. If a Pi is genuinely not
-possible, [Part V](#part5) still runs on a Linux laptop, and every chapter whose reading depends on the
-core's shape says so in its own header.
+The emulated kernel uses RISC-V. The reference board uses AArch64 because its counters can
+both count and sample, and its vector instructions allow the experiment in [ch31](#vectors).
+A published comparison of three RISC-V cores reported the following capabilities
+@riscv-pmu-profiling. Check the **Counter-overflow interrupt** and **Vector extension** rows
+to see how those particular cores differ.
 
-The Pi is not the *most* legible instrument. An **in-order** core — short pipeline, no out-of-order
-execution, no register renaming — makes microarchitecture plainer still: a dependent load that
-misses in cache stalls, visibly, for as long as the miss takes. The A76 reorders, so the connection
-between an instruction you wrote and a cycle that got spent runs through enough machinery that a
-small experiment occasionally comes out backwards.
-
-Two reasons that is the right trade anyway. The in-order RISC-V option could not sample, which
-cost more than legibility bought. And **every machine you are likely to care about optimising
-reorders**, so learning to attribute cycles on one is the skill that transfers.
-[ch27](#the-cpu) is harder for it, says so in its own header, and is more useful as a result. If you
-want the clean version too, an in-order Cortex-A53 — a Pi 3 or Pi Zero 2 W — costs very little,
-and running [ch24](#measuring)'s experiments on both is an instructive afternoon.
-
-## It is an ARM machine, and everything before Part V is RISC-V
-
-That is deliberate. The kernel small enough to read in an afternoon is a RISC-V kernel; the
-hardware whose counters actually work is an ARM one. Those are different machines, and pretending
-otherwise would mean lying about one of them.
-
-[Part V](#part5) needs `perf` to do two separate things: **count** events over a run, and
-**sample** — interrupt the program thousands of times a second to ask where it is. Sampling needs
-the counters to raise an interrupt when they overflow. On ARM that is a standard part of the
-performance monitoring unit. On RISC-V it is an optional extension, and a 2025 study of the three
-RISC-V cores you can actually buy @riscv-pmu-profiling found that none of them wins:
-
-| | SiFive U74 | T-Head C910 | SpacemiT X60 |
+| Capability | SiFive U74 | T-Head C910 | SpacemiT X60 |
 |---|---|---|---|
-| Out-of-order | No | Yes | No |
-| Vector extension | **None** | 0.7.1 (draft) | RVV 1.0 |
-| **Counter-overflow interrupt** | **No** | Yes | Limited |
-| Upstream Linux support | Yes | Partial | **No** |
+| Out-of-order execution | No | Yes | No |
+| Vector extension | None | 0.7.1 draft | RVV 1.0 |
+| Counter-overflow interrupt | No | Yes | Limited |
+| Upstream Linux support | Yes | Partial | No |
 
-Read down the columns. Choosing RISC-V for [Part V](#part5) would have made two of its eight
-chapters unmeasurable — one needs sampling, one needs a vector unit — on boards that are hard to
-buy, with firmware that has broken `perf` between distribution releases. A Raspberry Pi costs none
-of that.
+[Appendix F](#appendix-f) compares AArch64 and RISC-V instruction syntax. For a different
+comparison, read the Pi's specified cache sizes below alongside the measurements in
+[ch25](#the-memory-hierarchy). A cache size in a specification describes the product. An
+increase in measured access time is evidence about the workload and machine used for that run.
 
-The [preface](#preface) says what that costs a reader. Everything outside the disassembly is
-method, and method does not have an architecture.
-
-% number-ok: SoC specification from @rpi-bcm2712; every figure in this book comes from the machine itself
-Its SoC is a BCM2712: four Arm Cortex-A76 cores at 2.4 GHz, 64 kB of L1 instruction and data
-cache each, 512 kB of L2 per core, and 2 MB of L3 shared between them @rpi-bcm2712. Those are the
-vendor's numbers, and the book does not repeat them anywhere else — [ch25](#the-memory-hierarchy) measures that
-hierarchy rather than quoting it, and comparing what it finds against this paragraph is one of the
-more satisfying results in [Part V](#part5).
-
-Three levels with a private L2 and a shared L3 is a genuinely good shape to learn on. The private
-level shows you locality; the shared one is where [ch28](#memory-ordering-on-real-hardware)'s cores collide.
+% number-ok: SoC specification from @rpi-bcm2712
+The BCM2712 specification lists four Cortex-A76 cores, 64 kB each of L1 instruction and data
+cache per core, 512 kB of L2 per core and 2 MB of shared L3 @rpi-bcm2712.
 
 ## If you already own something else
 
-The book recommends one machine because one machine is enough, not because the rest of [Part V](#part5)
-is about Raspberry Pis. What a machine actually has to do is short:
+On the machine you plan to measure, open a terminal at the repository root and run:
 
-| | Requirement | Why |
-|---|---|---|
-| **Must** | 64-bit Linux, reachable over SSH | |
-| **Must** | `perf stat -e cycles,instructions -- true` returns real counts | **The one requirement with no workaround.** [Part V](#part5) does not exist without it |
-| **Must** | `perf record` can sample | [ch30](#whole-machine-profiling) is entirely sampling. A different capability from counting |
-| **Must** | 4 GB RAM, 4 cores | [ch28](#memory-ordering-on-real-hardware) measures what cores cost each other |
-| **Nice** | NVMe or a fast SSD | Builds and [ch22](#the-file-system) are far less tedious |
-| **Nice** | A SIMD unit the compiler targets — NEON, or RVV 1.0 | [ch31](#vectors) measures vectorisation |
-| **Nice** | Few kinds of core, and a clock that holds still | Not required. It is why the reference is a Pi rather than a laptop |
+```bash
+python3 scripts/verify-setup.py
+```
 
-An old laptop, a spare desktop, a Rock 5B, another single-board computer you have in a drawer: run
-`scripts/verify-setup.py` on it and it will tell you. `hardware/README.md` has the same list in a
-form you can hand to a search tool, for readers somewhere Raspberry Pis are hard to get.
+In **Target `host`**, check whether both `cycles` and `instructions` can be counted. Then check
+whether `perf record` collected samples. [ch01](#setting-up-the-board) shows how to run each step.
+If sampling is unavailable, you can still run the supported counting examples and read the
+recorded profiling examples. Check the **Assumes** row of each chapter before reproducing a run.
 
-:::{caution} The purchase is yours
-This book does not sell hardware, has no relationship with any vendor, and has tested nothing but
-its own reference machine. Prices, availability and listings change; nothing here is a warranty
-that a given machine will work for you.
+(the-requirement-to-be-suspicious-about)=
+## Why the operating system image matters
 
-In practice: **the requirement you cannot check before it arrives is the one that
-matters most.** No product listing can honestly promise you working performance counters, because
-they depend on the image as much as on the board. Buy somewhere with a return policy, and run
-`scripts/verify-setup.py` on day one rather than the week you reach [Part V](#part5).
-:::
+The kernel learns which devices it can use from the device tree. The Raspberry Pi kernel's
+6.12 branch had a regression that omitted the PMU node for the Pi 5 @rpi-pmu-dt-6507. The counters
+were present in the chip, but the kernel did not register the `armv8_cortex_a76` driver or expose
+them to `perf`. On RISC-V, firmware also has to expose the counters through the SBI PMU
+extension @riscv-sbi.
 
-## The requirement to be suspicious about
+Run the capability checks on the image you plan to use. Compare remembered or listed kernel
+versions with the actual availability of event counts and samples. Each reference result
+records its kernel and board, so a reader can tell which configuration produced it.
 
-The counters. Everything else is printed on the box; whether `perf` can read the hardware is not,
-and it is the one that stops the book dead.
+(the-reference-machine-and-why-your-numbers-will-differ)=
+## Compare the conditions before comparing numbers
 
-On ARM the PMU is reached directly, but the kernel still has to be told it is there, and this is
-not hypothetical: the Raspberry Pi kernel's own 6.12 branch shipped a device tree for the Pi 5
-with the `arm-pmu` node missing @rpi-pmu-dt-6507. The 6.6 tree had it. On the affected images the
-hardware was perfectly capable, the `armv8_cortex_a76` driver never registered, and `perf` saw no
-hardware counters at all — quietly, because that is how this fails.
-
-On RISC-V there is an extra layer: the counters are machine-mode CSRs, the kernel runs in
-supervisor mode, and the firmware bridges them through the SBI PMU extension @riscv-sbi, so the
-answer depends on the firmware as much as on the silicon.
-
-Read that regression as the general case rather than a Raspberry Pi anecdote. **Whether your
-counters work is a property of the configuration, not of the board** — silicon, device tree,
-kernel, firmware and `perf` build all have to agree, and four of those five change under you
-without the box changing at all.
-
-:::{important} The book does not tell you which kernel to run
-Ending this section with an image and a version number would be worse advice than it looks. A
-pinned version is wrong within a year, cannot be re-verified on every release, and teaches you to
-check a string instead of a machine — while the failure it is meant to prevent stays perfectly
-possible on the version that was correct when it was written.
-
-A *minimum* version would be worse still. What
-went wrong on the Pi 5 was a **regression**, so the node was present in the older kernel and
-absent in the newer one; a floor selects for the broken configurations rather than against them.
-A range would work and would need maintaining forever — and it would still have to be written
-once per kernel tree, because the Raspberry Pi kernel and mainline are different trees that
-disagree about this today @rpi-dt-bcm2712. The version number is not what decides it. The device
-tree in `/boot/firmware/` is, and your machine will read it out for you.
-
-So the book records the machine instead. Every `host` result stamps the board, the operating
-system, the kernel and whether `perf` could count and sample; the reference machine's own account
-is printed in [ch01](#setting-up-the-board). It tells you what produced the book's numbers; it is
-not a requirement for yours. The only requirement is that `verify-setup.py` passes on the machine
-in front of you, which is a question about that machine and not about a version string.
-:::
-
-## The reference machine, and why your numbers will differ
-
-Every figure in [Part V](#part5) of this repository was measured on the machine that its result names —
-each one stamps the model, the core and the kernel that produced it, so no figure is ambiguous
-about where it came from.
-
-So your numbers will not match, and that is expected rather than a problem. The book is about
-ratios, mechanisms and method, and those transfer.
+The values in [Part V](#part5) come from specific workloads on the reference board. Read the
+**Conditions** under the figure before comparing your results with it. Changing the cache sizes,
+compiler, frequency or background work can change the comparison. [ch24](#measuring) explains
+how to decide whether an observed change reflects a version of the program or the test setup.
 
 ## Which chapters actually depend on the hardware
 
-Most do not. Five chapters of [Part V](#part5) do, and rather than let you discover that two
-hundred pages in, here they are up front. Each of these says the same thing in its own header, so you cannot open one without
-being told.
+Five chapters of [Part V](#part5) list particular hardware assumptions in their headers.
+Use the table to see which results you can compare on another machine.
 
 | Chapter | What it assumes | What changes on a different machine |
 |---|---|---|
@@ -195,24 +111,12 @@ being told.
 | [ch30](#whole-machine-profiling) | That `perf` can **sample**, not only count | Standard on a mainline ARM kernel. Most affordable RISC-V cores cannot, so this is the chapter a RISC-V reader will find they cannot run |
 | [ch31](#vectors) | A vector unit — NEON here | On a RISC-V board without RVV 1.0 it reverts to reasoning about code the compiler emits but the hardware cannot run |
 
-A chapter's *mechanism* survives a change of hardware; its *numbers* do not, which is the same
-split the two targets follow. That is why the book insists on stamping every figure with the
-machine that produced it, and why [ch25](#the-memory-hierarchy) is written as an instruction
-rather than a table — a cache hierarchy you measured is worth more than one you read.
-
-If none of your numbers resemble the committed ones and you want to know whether that is your
-board or your method: it is almost always your board, and [ch24](#measuring) is where you learn to
-tell the difference.
-
-`hardware/README.md` has the requirements, the prompt and the verification step in one place, for
-when you are standing in front of a shop rather than reading a chapter.
+The repository's `hardware/README.md` has a setup checklist and the tool to check hardware.
 
 ## The reference machine's own account of itself
 
-Every figure in [Part V](#part5) was measured on one board, and what that board says about itself
-is printed in [ch01](#setting-up-the-board) rather than here — it is the measurement that chapter
-takes, and a statement about one piece of silicon rather than about a product line. Read it beside
-the requirements above if you are comparing a machine you already own.
+The recorded report in [ch01](#setting-up-the-board) lists the reference model, kernel and
+capabilities. Compare its **perf stat** and **perf record** rows with the checks on your machine.
 
 ## Where to go next
 

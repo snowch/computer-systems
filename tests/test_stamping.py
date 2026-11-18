@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from bench.figures import FIGURES, KINDS, Table, cited_results, pending_results
+from bench.figures import FIGURES, KINDS, cited_results, pending_results
 from bench.stamp import (
     REQUIRED_STAMPS,
     RESULTS_DIR,
@@ -218,12 +218,14 @@ def test_pending_figures_have_no_result_yet():
         )
 
 
-def test_pending_figures_name_the_command_that_fixes_them():
-    for name, figure in FIGURES.items():
-        if isinstance(figure, Table) and figure.pending:
-            assert "make bench-board" in figure.pending, (
-                f"{name}'s pending reason should tell the author what to run"
-            )
+def test_bench_board_collects_pending_results():
+    """The author can collect every pending reading with the aggregate board command."""
+    from tests.test_board import BOARD_RUNNERS  # noqa: PLC0415
+
+    makefile = (ROOT / "Makefile").read_text()
+    recipe = makefile.split("\nbench-board:", 1)[1].split("\n\n", 1)[0]
+    for result in pending_results():
+        assert f"-m {BOARD_RUNNERS[result]}" in recipe, f"bench-board cannot collect {result}"
 
 
 def test_every_figure_is_a_kind_something_renders():

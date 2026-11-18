@@ -1,4 +1,4 @@
-"""Checks Problem 5.2 by asking a linker.
+"""Checks Problem 15.2 by asking a linker.
 
 Nothing is stored. Each pair is compiled and linked, and whether the link succeeded is the answer.
 The last case is the interesting one and the test does not say why — it records what happened, and
@@ -41,7 +41,7 @@ def observed(tmp_path_factory) -> dict[str, bool]:
 @pytest.mark.problem
 @pytest.mark.parametrize("case", sorted(CASES))
 def test_the_reader_predicted_the_link(case: str, observed):
-    assert LINKS, "Problem 5.2: LINKS is still empty"
+    assert LINKS, "Problem 15.2: LINKS is still empty"
     assert case in LINKS, f"no answer for {case!r}"
     assert LINKS[case] == observed[case], (
         f"{case}: you said it would {'link' if LINKS[case] else 'fail'} and it "

@@ -1,4 +1,4 @@
-"""Checks Problem 9.2 by running the reader's program: a failure that is not a successful fork."""
+"""Checks Problem 11.2 by running the reader's program: a failure that is not a successful fork."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ ANSWER = Path(__file__).parent / "answer_full.c"
 def test_the_table_filled_and_the_machine_survived(tmp_path):
     if bare.problems():
         pytest.skip("; ".join(bare.problems()))
-    assert ANSWER.exists(), f"Problem 9.2: put your program in {ANSWER.name} beside this test"
+    assert ANSWER.exists(), f"Problem 11.2: put your program in {ANSWER.name} beside this test"
 
     image = bare.build_from([ANSWER], "problem_full", build_dir=tmp_path)
     fields = bare.run("fork", image=image, timeout=30).fields()
@@ -31,4 +31,4 @@ def test_the_table_filled_and_the_machine_survived(tmp_path):
 
 @pytest.mark.problem
 def test_the_reader_ruled_out_zero():
-    assert len(WHY_NOT_ZERO.split()) >= 5, "Problem 9.2: WHY_NOT_ZERO wants a phrase"
+    assert len(WHY_NOT_ZERO.split()) >= 5, "Problem 11.2: WHY_NOT_ZERO wants a phrase"

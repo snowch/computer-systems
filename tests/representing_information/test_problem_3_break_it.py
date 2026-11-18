@@ -1,4 +1,4 @@
-"""Checks Problem 2.3 by running the broken function and comparing it with honest arithmetic."""
+"""Checks Problem 13.3 by running the broken function and comparing it with honest arithmetic."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ def fits_truthfully(start: int, length: int, size: int) -> bool:
 
 @pytest.mark.problem
 def test_the_counter_example_is_in_range():
-    assert COUNTER_EXAMPLE is not None, "Problem 2.3: COUNTER_EXAMPLE is still None"
+    assert COUNTER_EXAMPLE is not None, "Problem 13.3: COUNTER_EXAMPLE is still None"
     assert all(0 <= value < LIMIT for value in COUNTER_EXAMPLE), (
         f"all three values must fit in {UNSIGNED_BITS} bits — the bug needs no help from you"
     )
@@ -29,7 +29,7 @@ def test_the_counter_example_is_in_range():
 
 @pytest.mark.problem
 def test_the_function_is_wrong_about_it():
-    assert COUNTER_EXAMPLE is not None, "Problem 2.3: COUNTER_EXAMPLE is still None"
+    assert COUNTER_EXAMPLE is not None, "Problem 13.3: COUNTER_EXAMPLE is still None"
     start, length, size = COUNTER_EXAMPLE
     assert fits_as_written(start, length, size), (
         "the function has to answer *yes* for your triple — an input it correctly rejects is not "

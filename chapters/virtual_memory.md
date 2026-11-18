@@ -1,19 +1,19 @@
 ---
-title: "Virtual Memory"
+title: "17 · Virtual Memory"
 short_title: "17 · Virtual Memory"
 ---
 
 (virtual-memory)=
 # 17 · Virtual Memory
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch16](#traps-and-system-calls) |
-| **What it measures** | The page-table shape of a running process: levels, entries, and physical pages consumed per mapping: `bench/results/pagetable-xv6.json` |
+| **Evidence** | Page-table levels, entries and storage counted by the model and an xv6 table walk. |
 :::
 
 ## The question
@@ -27,7 +27,8 @@ address means different things to different programs, and it does. This chapter 
 page tables that arrange it, and about what they cost — not in time, which this target
 cannot tell you, but in the memory it takes to say where memory is.
 
-## The material
+(virtual-memory-example)=
+## Walk the tables for a mapped address
 
 ### An address is a question
 
@@ -180,10 +181,13 @@ chapter spent a section arriving at:
 ./run sv39 tables 0x0:4 0x3fffffe000:2
 ```
 
-The two answers come from opposite ends — one from inspecting a running system, the other from a
-specification — and the runner refuses to record a result in which they disagree. The figures
-above are therefore not merely a reproducible measurement: they are two derivations agreeing, and
-if a future xv6 changes its layout, CI will report the disagreement.
+Find `l2`, `l1`, `l0` and `total` on the `tables` line. These are counts of pages used for
+table levels, including the root at `l2`. Compare `total` with the init table-page count from
+the recorded xv6 walk above. The command computes the required shape from the given virtual
+addresses. The xv6 result counts the tables present in the emulated kernel.
+
+Run the command again with `0x0:1` in place of `0x0:4` and leave the second range unchanged.
+Does mapping fewer nearby pages change `total`, or do they use the same tables?
 
 ## What we measured
 
@@ -224,44 +228,29 @@ hand.
 
 ## Problems
 
-Three, and they are one program: `tests/virtual_memory/walk.c` builds a page table, follows it, and reports
-where following it stops. Nothing in `sysfs/` does any of those, so the repository contains no
-answer to any of them.
+Edit `tests/virtual_memory/walk.c` in your checkout. Run each test command from the repository
+root.
 
 **17.1 — Build a page table, and no more of one than the addresses require.**
-Write `walk_map`, allocating interior tables as you need them.
-
-The test does not compare your table with a stored one. It counts how many pages you took from the
-allocator and compares that with what this chapter's own model derives from the addresses. Three
-address spaces are used, each with the same number of pages arranged differently, and they cost
-three different amounts. An implementation that allocates eagerly maps everything correctly and
-still fails — which is this chapter's claim, turned into a check.
+Complete `walk_map`. Reuse existing intermediate tables, allocate missing tables and add a
+leaf for the requested page. The test checks mappings, permission bits and allocated page
+counts.
 
 ```bash
 python3 -m pytest tests/virtual_memory/test_problem_1_map.py
 ```
 
 **17.2 — Follow it.**
-Write `walk_translate`. The expected answers are the mappings the test asked problem 17.1 to
-make, so the target moves with your implementation rather than being a constant. Two things are easy to
-get wrong and are checked: the offset must survive, and an address that was never mapped must
-fault rather than return something plausible.
-
-Handle a leaf found above the bottom level even though problem 17.1 never creates one. The format allows
-it, and code that assumes otherwise is wrong in a way that will not show up until it meets a
-kernel that uses superpages.
+Complete `walk_translate`. Preserve the address offset, handle leaves above the lowest level
+and report a missing mapping. The test checks the translated address for each mapping shape.
 
 ```bash
 python3 -m pytest tests/virtual_memory/test_problem_2_translate.py
 ```
 
 **17.3 — Say where it stopped.**
-Write `walk_first_missing_level`. Four probes: one mapped, and one each for a walk that fails at
-the top, the middle and the bottom. Each answer follows from where the test put the mappings, so
-there is nothing to look up.
-
-This is the function a page-fault handler needs before it can decide anything, and [ch18](#page-faults-as-a-feature)
-is about the decisions.
+Complete `walk_first_missing_level`. Return the walk result specified in the stub for a mapped
+address and for a missing entry. The test checks all three levels.
 
 ```bash
 python3 -m pytest tests/virtual_memory/test_problem_3_fault.py

@@ -1,4 +1,4 @@
-"""Problem 18.3 — the same requirement, in two architectures' words.
+"""Problem 28.3 — the same requirement, in two architectures' words.
 
 The table is in the stub; the point is not memorising it. It is that the requirement is one thing
 and the spellings are two, and that AArch64's release is not an instruction between two others at

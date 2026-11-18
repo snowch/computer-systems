@@ -1,4 +1,4 @@
-"""Checks Problem 6.3 against the chapter's own committed run, so the reversal is measured."""
+"""Checks Problem 8.3 against the chapter's own committed run, so the reversal is measured."""
 
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ def test_the_chapter_loses_exactly_one_update():
 def test_the_other_hart_is_the_one_that_lost(tmp_path):
     if bare.problems():
         pytest.skip("; ".join(bare.problems()))
-    assert ANSWER.exists(), f"Problem 6.3: put your program in {ANSWER.name} beside this test"
+    assert ANSWER.exists(), f"Problem 8.3: put your program in {ANSWER.name} beside this test"
 
     source = ANSWER.read_text()
     assert "bare_secondary" in source, "the program still needs a second hart"
@@ -42,5 +42,5 @@ def test_the_other_hart_is_the_one_that_lost(tmp_path):
 @pytest.mark.problem
 def test_the_reader_named_the_instruction_that_moved():
     assert WHICH_INSTRUCTION_MOVED.strip().lower() in {"load", "add", "store"}, (
-        "Problem 6.3: WHICH_INSTRUCTION_MOVED should name one of the three"
+        "Problem 8.3: WHICH_INSTRUCTION_MOVED should name one of the three"
     )

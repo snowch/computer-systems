@@ -1,4 +1,4 @@
-"""Problem 7.1 — build a page table, and no more of one than the addresses require.
+"""Problem 17.1 — build a page table, and no more of one than the addresses require.
 
 Graded against `sysfs/tools/sv39.c`, which counts what a set of runs costs without knowing how to
 build anything. So the target is not a stored number: it is derived, at test time, from the same

@@ -1,4 +1,4 @@
-"""Problem 17.3 — how many does a two-bit predictor get wrong?
+"""Problem 27.3 — how many does a two-bit predictor get wrong?
 
 Simulated by the test from the same rules the stub states, so the key is derived. The alternating
 sequence is the one that matters: it is why two bits rather than one.

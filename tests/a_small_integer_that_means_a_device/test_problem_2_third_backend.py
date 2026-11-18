@@ -1,4 +1,4 @@
-"""Checks Problem 8.2: three destinations, one caller, and the discard really discards."""
+"""Checks Problem 10.2: three destinations, one caller, and the discard really discards."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ ANSWER = Path(__file__).parent / "answer_third.c"
 def test_three_backends_one_caller(tmp_path):
     if bare.problems():
         pytest.skip("; ".join(bare.problems()))
-    assert ANSWER.exists(), f"Problem 8.2: put your program in {ANSWER.name} beside this test"
+    assert ANSWER.exists(), f"Problem 10.2: put your program in {ANSWER.name} beside this test"
 
     image = bare.build_from([ANSWER], "problem_third", build_dir=tmp_path)
     fields = bare.run("descriptors", image=image, timeout=30).fields()

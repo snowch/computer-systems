@@ -1,19 +1,19 @@
 ---
-title: "What a Computer Does With a Program"
+title: "12 · What a Computer Does With a Program"
 short_title: "12 · What a Computer Does With a Program"
 ---
 
 (what-a-computer-does-with-a-program)=
 # 12 · What a Computer Does With a Program
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `xv6` and `host` — every example says which |
 | **Prerequisites** | [ch00](#prerequisites-and-setup) |
-| **What it measures** | What each toolchain stage produced, and what linking added: `bench/results/stagewalk-riscv64.json`. Nothing here is timed on either target. |
+| **Evidence** | Files and symbols produced as the toolchain turns source into a program. |
 | **What it captures** | What the compiler emits for the same loop twice: `bench/results/stages-riscv64.json` |
 :::
 
@@ -27,7 +27,8 @@ source suggests. Separating the two is the skill the rest of [Part III](#part3) 
 because you cannot ask what a program costs until you know which parts of it still exist at the
 time it runs.
 
-## The material
+(what-a-computer-does-with-a-program-example)=
+## Keep and inspect the toolchain outputs
 
 ### One command is four programs
 
@@ -51,13 +52,18 @@ yourself:
 :end-before: for stage in
 ```
 
-Four commands differing only in where `gcc` is told to stop. Run it on the program this chapter
-uses:
+The script uses the Linux RISC-V GCC toolchain and retains the intermediate files. From your
+repository root, run it on the original program. Use a new temporary directory for this run:
 
 ```bash
-sysfs/tools/stages.sh sysfs/tools/sameanswer.c /tmp/walk
-ls -l /tmp/walk
+walk_dir=$(mktemp -d)
+sysfs/tools/stages.sh sysfs/tools/sameanswer.c "$walk_dir"
+ls -l "$walk_dir"
 ```
+
+Read the `stage` lines for the stage name, file size in bytes and newline count. Match
+`sameanswer.i`, `sameanswer.s`, `sameanswer.o` and `sameanswer` to those stages. The first two
+are text files. The last two are ELF binary files.
 
 ### What each stage is allowed to know
 
@@ -131,12 +137,13 @@ is why the answer to "is this fast?" is so often "show me the rest of the file".
 Compile the program but do not link it, and it is incomplete in a specific and visible way:
 
 ```bash
-riscv64-linux-gnu-nm -u /tmp/walk/sameanswer.o
+riscv64-linux-gnu-nm -u "$walk_dir/sameanswer.o"
 ```
 
-`-u` lists undefined symbols — names the object uses and cannot supply. The program calls
-`printf`, which lives somewhere else entirely, so the assembler left a hole. After linking there
-are none: every name has been resolved to an address, which is most of what "linking" means.
+`-u` lists undefined symbols — names the object uses and cannot supply. The output marks each undefined symbol with `U`. Names such as `__printf_chk` or `puts` can
+appear when this compiler translates a source-level `printf` call. Check the script's
+`undefined_in_object` and `undefined_in_program` lines to see whether the static linker
+resolved those references.
 
 ## What we measured
 
@@ -175,19 +182,17 @@ up and says where it all went.
 
 ### The same program in both worlds
 
-Build it for each target and run it:
+From your repository root, run both original versions. The first uses your local C compiler.
+The second builds and boots xv6 and types `sameanswer` at its shell.
 
 ```bash
-make xv6-qemu                 # then, at the xv6 prompt: sameanswer
-python3 -m pytest tests/test_stages.py -q
+./run sameanswer --target host
+./run sameanswer --target xv6
 ```
 
-Both print the same six lines. The folded route and the counted route agree, as they must — they
-compute the same sum, and the compiler is not permitted to change the answer, only the work.
-
-What the two targets will not tell you is which route was faster. QEMU has no opinion about time
-worth listening to, and the board is not attached to this chapter. [ch23](#the-same-program-on-both-targets) puts that
-question properly, and [ch26](#optimising-code) answers it.
+For each run, compare `folded` and `counted`, then read `agree`. Do both routes return the
+same sum on each environment? These are arithmetic results. [ch23](#the-same-program-on-both-targets)
+compares execution time on native hardware for a separate program.
 
 ## What this cannot tell you
 
@@ -225,42 +230,35 @@ and the paths are part of the text.
 
 ## Problems
 
-Three. Each has a test that passes only when you have solved it, and none of them has an answer
-stored anywhere in this repository.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **12.1 — Which stage produced this?**
-`tests/what_a_computer_does_with_a_program/problem_1_stages.py` gives you fragments of the four files and asks which program
-wrote each one. The fragments are real. The fastest way to solve it is not to stare at them but
-to run `sysfs/tools/stages.sh` yourself and look at your own.
+Open `tests/what_a_computer_does_with_a_program/problem_1_stages.py`. Complete
+`which_stage_wrote_this`. Use the stage command above and compare its generated files with the
+fragments in the test.
 
 ```bash
 python3 -m pytest tests/what_a_computer_does_with_a_program/test_problem_1_stages.py
 ```
 
 **12.2 — Predict the ripple.**
-Four edits to the program. For each one, say which stages produce a different file afterwards.
-
-This test stores no expected answers. It makes each change, runs the toolchain, and compares the
-bytes — so you are not being marked against an answer key, you are being marked against a
-compiler. When you disagree with it, it is right, and the interesting question is what you
-believed that was not true.
+Open `tests/what_a_computer_does_with_a_program/problem_2_ripple.py`. Complete
+`stages_disturbed_by`. For each proposed edit, predict which stages will produce different
+files. The test applies the edits to temporary files and reports which predictions differ from
+the compiler output.
 
 ```bash
 python3 -m pytest tests/what_a_computer_does_with_a_program/test_problem_2_ripple.py
 ```
 
 **12.3 — Take the folding away.**
-Write a function that computes the same sum and that the compiler *cannot* evaluate for you. It
-must still contain a loop, and the machine must actually run it — the test disassembles what came
-out and looks for a backward branch, so returning a constant will not pass and neither will a
-loop the optimiser can see through.
+Open `tests/what_a_computer_does_with_a_program/problem_3_unfold.py`. Edit the C function in
+`UNFOLDABLE_SUM`. It should sum the integers below `span` and keep a loop in the compiled
+result. The test checks the returned sum and looks for a backward branch.
 
 ```bash
 python3 -m pytest tests/what_a_computer_does_with_a_program/test_problem_3_unfold.py
 ```
-
-There is more than one way to do it and they are not equally good. The section on the same loop
-twice says what the compiler has to be able to prove; take away whichever of those you like.
 
 ## Where to go next
 

@@ -1,4 +1,4 @@
-"""Checks Problem 6.1 by booting the reader's kernel and running the reader's program.
+"""Checks Problem 16.1 by booting the reader's kernel and running the reader's program.
 
 The test cannot check that the number is *correct* without reimplementing the counter, so it
 checks the two things that distinguish a real system call from a plausible stub: that the value
@@ -24,7 +24,7 @@ pytestmark = pytest.mark.xv6
 @pytest.fixture(scope="module")
 def transcript():
     if PROGRAM is None:
-        pytest.fail("Problem 6.1: PROGRAM is still None")
+        pytest.fail("Problem 16.1: PROGRAM is still None")
     if not (ROOT / "xv6" / "apps" / f"{PROGRAM}.c").exists():
         pytest.fail(f"xv6/apps/{PROGRAM}.c does not exist")
     result = xv6.boot([PROGRAM, PROGRAM])

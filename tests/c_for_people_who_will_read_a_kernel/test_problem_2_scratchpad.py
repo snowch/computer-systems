@@ -1,4 +1,4 @@
-"""Checks Problem 3.2 by running the program and reading what it printed.
+"""Checks Problem 5.2 by running the program and reading what it printed.
 
 One assertion, and it is the one the reader cannot satisfy by accident: both descriptions have to
 survive to the `printf`. Storage duration is the subject — where a thing lives and how long it

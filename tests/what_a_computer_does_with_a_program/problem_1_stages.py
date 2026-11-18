@@ -1,4 +1,4 @@
-"""Problem 1.1 — which stage produced this?
+"""Problem 12.1 — which stage produced this?
 
 Four programs run when you type one command, and each leaves a file behind. Given a fragment of
 one of those files, say which stage wrote it.
@@ -23,5 +23,5 @@ def which_stage_wrote_this(fragment: str) -> str:
     heard of an address, and the assembler knows the addresses inside one file and no others.
     """
     raise NotImplementedError(
-        "Problem 1.1 — see the Problems section of the whole-program chapter."
+        "Problem 12.1 — see the Problems section of the whole-program chapter."
     )

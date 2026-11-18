@@ -1,4 +1,4 @@
-"""Checks Problem 4.1 by compiling both and comparing instruction for instruction.
+"""Checks Problem 14.1 by compiling both and comparing instruction for instruction.
 
 The target is compiled from a source the reader never sees, printed as a listing, and the
 reader's attempt is compiled the same way. Offsets are stripped before comparing: two functions

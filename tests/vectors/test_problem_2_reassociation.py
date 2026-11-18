@@ -1,4 +1,4 @@
-"""Problem 21.2 — the same numbers, added in two orders, giving two answers.
+"""Problem 31.2 — the same numbers, added in two orders, giving two answers.
 
 Everything here is computed in single precision by the test, one addition at a time, so the key is
 derived rather than stored — and the two orders are required to produce exactly the bit patterns

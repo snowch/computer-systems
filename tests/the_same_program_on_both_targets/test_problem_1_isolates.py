@@ -1,4 +1,4 @@
-"""Problem 13.1 — what does comparing these two configurations isolate?
+"""Problem 23.1 — what does comparing these two configurations isolate?
 
 The expected answers are derived from the configuration table rather than written out, so the test
 and the problem cannot drift apart and there is no key to read. Every pair of the six is asked

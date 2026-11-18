@@ -1,19 +1,19 @@
 ---
-title: "A System Call of Your Own"
+title: "09 · A System Call of Your Own"
 short_title: "09 · A System Call of Your Own"
 ---
 
 (a-system-call-of-your-own)=
 # 09 · A System Call of Your Own
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
-| **Target** | `bare` — the same machine under QEMU with no operating system on it |
+| **Target** | `bare` — a RISC-V machine in QEMU without an operating system |
 | **Prerequisites** | [ch08](#one-page-table-two-harts) |
-| **What it measures** | A call number, arguments and a return value crossing the boundary, and the count of registers a handler saves when the saved registers are its interface. |
+| **Evidence** | Call numbers, arguments, return values and saved registers in one bare-metal trace. |
 :::
 
 ## The question
@@ -27,7 +27,8 @@ to put arguments, somewhere to put a result, and a dispatch. A fifth is missing 
 expensive one: the arguments and the result live in the caller's registers, so the handler has to
 save every register somewhere it can read and write them.
 
-## The material
+(a-system-call-of-your-own-example)=
+## Pass call numbers, arguments and results
 
 ### The saved registers are the interface
 
@@ -113,12 +114,15 @@ still holds what it put there.
 
 ## What we measured
 
-Run it yourself before reading the table — the rows below are what you should see, and a
-figure you have reproduced is worth more than one you have been shown:
+From your checkout, run the original bare-metal system call example:
 
 ```bash
 ./run syscall
 ```
+
+Compare `result_returned` with the two input arguments in the listing. Check
+`unknown_call_refused` and `unknown_returned_error` to see how the separate call number was
+handled. The table shows the outcome from the recorded bare run.
 
 ```{include} _generated/a-system-call-of-your-own-syscall.md
 ```
@@ -146,30 +150,33 @@ untrusted code, and everything about that is [ch16](#traps-and-system-calls)'s p
 
 ## Problems
 
-Three, in `tests/a_system_call_of_your_own/`.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **9.1 — Add a call, and an error.**
-Add a call that can fail for a reason other than being unknown, and return something the caller can
-distinguish from a valid result. Say why your choice of sentinel is safe. The test exercises both
-the success and the failure and checks the two cannot be confused.
+Open `tests/a_system_call_of_your_own/problem_1_add_a_call.py`. Explain why your error value
+cannot be a successful return value. Copy `sysfs/bare/syscall.c` to
+`tests/a_system_call_of_your_own/answer_call.c` and add the call there. The test runs a
+successful call and a failing call and compares their return values.
 
 ```bash
 python3 -m pytest tests/a_system_call_of_your_own/test_problem_1_add_a_call.py
 ```
 
 **9.2 — Save one register fewer.**
-Remove exactly one store and its matching load from the entry stub, and produce a program in which
-that omission is visible in the output. The test checks that the register you dropped is the one
-your program shows being corrupted.
+Open `tests/a_system_call_of_your_own/problem_2_one_fewer.py`. Record the register you will
+stop saving. Copy `sysfs/bare/syscall.c` to `tests/a_system_call_of_your_own/answer_fewer.c`.
+Remove its store and matching load in the copy, then print the value that changes on return.
+The test checks that the reported register matches your prediction.
 
 ```bash
 python3 -m pytest tests/a_system_call_of_your_own/test_problem_2_one_fewer.py
 ```
 
 **9.3 — Where does the frame live?**
-The stub puts the frame on whatever stack the caller was using. Say what goes wrong if the caller
-arrives with a stack pointer it does not own, and change the stub so the kernel uses a stack of its
-own instead. The test checks the frame is no longer on the caller's stack.
+Open `tests/a_system_call_of_your_own/problem_3_whose_stack.py`. Describe what using a bad
+caller stack pointer could do and identify the register used to switch stacks. Copy
+`sysfs/bare/syscall.c` to `tests/a_system_call_of_your_own/answer_stack.c`. Use the handler’s
+stack and print the values named in the stub so the test can check where the frame landed.
 
 ```bash
 python3 -m pytest tests/a_system_call_of_your_own/test_problem_3_whose_stack.py

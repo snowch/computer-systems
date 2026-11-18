@@ -1,19 +1,19 @@
 ---
-title: "Locks and Memory Ordering"
+title: "20 · Locks and Memory Ordering"
 short_title: "20 · Locks and Memory Ordering"
 ---
 
 (locks-and-memory-ordering)=
 # 20 · Locks and Memory Ordering
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch19](#interrupts-and-drivers) |
-| **What it measures** | What a lock is made of, in instructions: `bench/results/locks-xv6.json`, `bench/results/ordering-riscv64.json` |
+| **Evidence** | The instructions xv6 uses to acquire and release a lock. |
 :::
 
 ## The question
@@ -25,7 +25,8 @@ and from process context, on three harts, with no lock anywhere — and the patc
 comment that amounts to *this is fine*. Either that is defensible or the book has been printing
 numbers from a data structure that races, so this chapter has to settle it.
 
-## The material
+(locks-and-memory-ordering-example)=
+## Follow a lock acquire and release
 
 ### A race is three instructions
 
@@ -187,37 +188,31 @@ rather than beside it. [ch21](#scheduling-and-context-switches) has the schedule
 
 ## Problems
 
-Three, in `tests/locks_and_memory_ordering/locking.c`. The first is the only one in this book that is graded by running
-it under real concurrency, because a lock is the one thing that cannot be checked by reading it.
+Edit `tests/locks_and_memory_ordering/locking.c` in your checkout. Run each test command from
+the repository root.
 
 **20.1 — Write a correct lock.**
-Four threads take it eight hundred thousand times between them, incrementing an ordinary
-non-atomic counter inside. If the lock works the total is exact; the empty stub loses most of them.
-
-You have `<stdatomic.h>` and not `pthread_mutex`. Two things to get right, and only the first is
-about exclusion: taking the lock must be one indivisible operation, and the ordering must be such
-that work done inside is visible to the next thread in. A correct exchange with the wrong memory
-order passes on a strongly ordered machine and protects nothing on a weak one.
+Implement `locking_acquire` and `locking_release` using atomics. The test compares the total
+from several threads with the number of increments requested. Use the acquire and release
+rules above to reason about visibility.
 
 ```bash
 python3 -m pytest tests/locks_and_memory_ordering/test_problem_1_lock.py
 ```
 
 **20.2 — Which reorderings does each barrier actually prevent?**
-Eighteen cases. The four that matter are the ones where the annotation is on the operation it does
-not help — an acquire on the second access, a release on the first — and the ones where the two
-accesses touch the same address, which settles the question before any barrier is consulted.
+Complete `locking_may_reorder`. Consider whether the operations touch the same address and
+where the acquire or release appears. The test checks each proposed pair against the
+simplified model in the stub.
 
 ```bash
 python3 -m pytest tests/locks_and_memory_ordering/test_problem_2_reorder.py
 ```
 
 **20.3 — Do these two paths disagree about lock order?**
-Given the locks each path takes in order, say whether there is a pair taken both ways round.
-
-Deliberately not "will this hang". A conflicting pair is forbidden whether or not you can build a
-schedule that hangs today, because tomorrow's schedule is not yours to choose — and two paths can
-share every lock they use and be perfectly safe.
+Complete `locking_order_conflicts`. Report whether two paths acquire any pair of locks in
+opposite orders. The test checks for a conflicting order, which can permit a deadlock under
+some schedules.
 
 ```bash
 python3 -m pytest tests/locks_and_memory_ordering/test_problem_3_order.py

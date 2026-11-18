@@ -1,4 +1,4 @@
-"""Checks Problem 1.2 by doing the experiment.
+"""Checks Problem 12.2 by doing the experiment.
 
 No expected answers are stored here, deliberately. The test copies the program, makes the change,
 runs the toolchain, and compares the bytes each stage produced. Whatever the compiler does is the

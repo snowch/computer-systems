@@ -1,16 +1,14 @@
 ---
-title: "Appendix G — Reading xv6 Alongside This Book"
+title: "Appendix G · Reading xv6 Alongside This Book"
 short_title: "Appendix G"
 ---
 
 (appendix-g)=
 # Appendix G · Reading xv6 Alongside This Book
 
-An appendix in this book is a reference, not a chapter: no argument, no narrative, and everything
-in it either cites a primary source or comes from a stamped result under `bench/results/`.
-
-Everything below was read out of the submodule at its pinned commit rather than recalled, so it
-describes the code you have checked out. [Appendix D](#appendix-d) says what else is in that tree.
+Use the table to find the xv6 authors' explanation @xv6-book of a mechanism used here. The
+walk-through follows `fork` in the repository's pinned xv6 version. [Appendix D](#appendix-d)
+identifies where to find the source files.
 
 ## The two books ask different questions
 

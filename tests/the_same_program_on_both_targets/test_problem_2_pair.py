@@ -1,4 +1,4 @@
-"""Problem 13.2 — which configuration would test this claim?
+"""Problem 23.2 — which configuration would test this claim?
 
 Also derived from the table. Some claims cannot be tested from some starting points with the six
 configurations available, and returning "you cannot" is the right answer rather than a failure.

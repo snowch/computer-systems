@@ -1,4 +1,4 @@
-"""Problem 12.1 — how many block writes does a transaction cost?
+"""Problem 22.1 — how many block writes does a transaction cost?
 
 Graded against the chapter's own measurement as well as against arithmetic: the number this model
 gives for the blocks the book's one-byte write logged has to be the number of writes the book

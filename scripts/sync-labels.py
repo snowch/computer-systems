@@ -186,6 +186,13 @@ def sync_page(path: Path, text: str) -> str:
         # A stub marks itself [DRAFT] in its frontmatter title; the heading must agree.
         draft = " [DRAFT]" if re.search(r'^title: ".*\[DRAFT\]"$', text, re.M) else ""
         text = re.sub(
+            r'^title: ".*"$',
+            f'title: "{chapter.display} · {chapter.title}{draft}"',
+            text,
+            count=1,
+            flags=re.MULTILINE,
+        )
+        text = re.sub(
             r'^short_title: ".*"$',
             f'short_title: "{chapter.display} · {chapter.title}"',
             text,

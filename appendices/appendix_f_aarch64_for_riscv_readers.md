@@ -1,18 +1,14 @@
 ---
-title: "Appendix F — AArch64 for RISC-V Readers"
+title: "Appendix F · AArch64 for RISC-V Readers"
 short_title: "Appendix F"
 ---
 
 (appendix-f)=
 # Appendix F · AArch64 for RISC-V Readers
 
-An appendix in this book is a reference, not a chapter: no argument, no narrative, and everything
-in it either cites a primary source or comes from a stamped result under `bench/results/`.
-
-This is a translation rather than a reference. It is written for someone who has read
-[ch14](#machine-level-code-on-riscv) and is about to read [ch26](#optimising-code), and it is organised as *you know this already,
-here it is again*. For anything not in the book's path, the architecture reference manual
-@arm-arm is the document; this page will not substitute for it and does not try.
+Use this reference when moving from the RISC-V listings in [ch14](#machine-level-code-on-riscv)
+to the AArch64 listings in [ch26](#optimising-code). Compare register names and syntax for
+each operation. The Arm reference manual @arm-arm covers the instruction set in full.
 
 ## Why there are two
 

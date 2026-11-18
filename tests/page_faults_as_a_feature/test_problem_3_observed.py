@@ -1,4 +1,4 @@
-"""Problem 8.3 — when does a program that asks for too much find out?
+"""Problem 18.3 — when does a program that asks for too much find out?
 
 This is the cost of laziness that is not measured in faults, and the reason an operating system
 that overcommits needs something to kill processes with. Each answer follows from the numbers the

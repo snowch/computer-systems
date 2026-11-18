@@ -1,19 +1,19 @@
 ---
-title: "Traps and System Calls"
+title: "16 · Traps and System Calls"
 short_title: "16 · Traps and System Calls"
 ---
 
 (traps-and-system-calls)=
 # 16 · Traps and System Calls
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch15](#linking-and-loading) |
-| **What it measures** | The length of the trap path, and what a fixed workload asks the kernel for: `bench/results/traps-xv6.json` |
+| **Evidence** | Instructions on the trap path and system call counts for a fixed workload. |
 :::
 
 ## The question
@@ -25,7 +25,8 @@ useful on its own — it cannot read a file, write to the console, or obtain mor
 none of those are things a user program is permitted to do. Everything interesting requires asking
 the kernel, and this chapter follows one such request all the way in and back out.
 
-## The material
+(traps-and-system-calls-example)=
+## Trace and count the xv6 trap path
 
 ### A trap is not a call
 
@@ -132,16 +133,17 @@ program that removes the question:
 :start-at: int main(void)
 ```
 
-Build it into the kernel, boot, and run it:
+Run this from your local checkout. The wrapper stages the program, boots xv6, and runs
+`trapload` at the xv6 shell:
 
 ```bash
 ./run trapload
 ```
 
-Nothing else in the system calls `getpid`, so that row of the census is a number this program
-decided and the shell's noise lands elsewhere. It asks a thousand times and the kernel counts a
-thousand — which is a much smaller claim than the one that was almost printed, and unlike it, true
-on every machine.
+The `trapload` line reports the number of calls requested by the program and the returned process
+ID. The table above was made by a separate run that also read the kernel census. Compare the
+reported call count with the `getpid` row. For this image and workload, this program accounts
+for all counted `getpid` calls.
 
 This is where [ch00](#prerequisites-and-setup)'s discipline costs something. The large number
 was easy, impressive, and meaningless. [ch29](#the-os-layers-cost) counts the lot, on a machine where elapsed
@@ -189,31 +191,22 @@ and what happens when one arrives at the wrong moment, are [ch19](#interrupts-an
 
 ## Problems
 
-Two, and the first is the one every xv6 reader should do once.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **16.1 — Add a system call, end to end.**
-The census is printed on Ctrl-T, which is no use to a program. Add `trapcount()` and a user program
-that calls it.
-
-Five files have to agree before this works, and finding all five is the exercise: the number that
-identifies the call, the table that dispatches on it, the declaration the user program compiles
-against, the stub that issues `ecall`, and the kernel function itself. Leaving any one out produces
-an error that does not mention the others.
-
-The test cannot check that your number is *correct* without reimplementing your counter, so it
-checks the two things that separate a working system call from a plausible stub: the value is not
-zero, and it grows between two runs. No constant passes both.
+Open `tests/traps_and_system_calls/problem_1_addcall.py`. Add a patch under `xv6/patches/` for
+`trapcount()` and a user program under `xv6/apps/`. Put the program’s name in `PROGRAM`. The
+test builds the patched kernel and runs your program twice. It checks that the two `trapcount`
+lines contain rising counts.
 
 ```bash
 python3 -m pytest tests/traps_and_system_calls/test_problem_1_addcall.py
 ```
 
 **16.2 — Which registers must be saved, and which need not be?**
-Count them, then say which ones `uservec` leaves alone and why each is allowed. There is more than
-one reason a register can end up on that list, and this chapter has given you two of them.
-
-The test reads the count out of the kernel as built, so if you patch the trampoline you are graded
-against your own kernel rather than against the book's.
+Open `tests/traps_and_system_calls/problem_2_registers.py`. Fill in `TOTAL_REGISTERS`,
+`SAVED_BY_USERVEC` and `NOT_SAVED`. Inspect the stores in the xv6 trampoline. The test checks
+the saves against the built kernel.
 
 ```bash
 python3 -m pytest tests/traps_and_system_calls/test_problem_2_registers.py

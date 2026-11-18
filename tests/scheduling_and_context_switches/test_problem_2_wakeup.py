@@ -1,4 +1,4 @@
-"""Problem 11.2 — does the sleeper wake, or was the wakeup aimed at nobody?
+"""Problem 21.2 — does the sleeper wake, or was the wakeup aimed at nobody?
 
 Each sequence is one the test wrote, so every answer follows from it. The pair that matters is the
 two orderings of the same six events: one loses the wakeup and one cannot.

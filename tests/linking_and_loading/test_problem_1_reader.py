@@ -1,4 +1,4 @@
-"""Checks Problem 5.1 against the book's own reader, on a real xv6 binary.
+"""Checks Problem 15.1 against the book's own reader, on a real xv6 binary.
 
 The expected answers are not stored. They are computed by `sysfs/tools/elfdump.c` — which does not
 contain either of the functions the reader is writing — so the target moves with the binary rather

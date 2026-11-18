@@ -1,4 +1,4 @@
-"""Problem 1.1 — how long is each instruction?
+"""Problem 2.1 — how long is each instruction?
 
 A listing's left-hand column is an address counted from the start of the function, so the distance
 to the next one is how many bytes the instruction took. RISC-V has short forms of its commonest
@@ -20,4 +20,4 @@ def instruction_lengths(addresses: list[int], end: int) -> list[int]:
     :param end: the address one past the last instruction — where the next function begins.
     :returns: one length per address, in the same order.
     """
-    raise NotImplementedError("Problem 1.1 — see the docstring above")
+    raise NotImplementedError("Problem 2.1 — see the docstring above")

@@ -44,6 +44,9 @@ SEPARATOR = re.compile(r"\s*(?:—|:|\s-\s)\s*")
 #: a program that does not say it wants two harts should not silently be given them.
 HARTS = {"harts": 2}
 
+# These two programs expand the same shared function definitions as their xv6 versions.
+EMBEDDED_LIBRARY = {"sameanswer": "stages", "bridgerun": "bridge"}
+
 
 @dataclass(frozen=True)
 class Program:
@@ -133,4 +136,5 @@ def find(name: str, target: str | None = None) -> Program:
 
 
 def libraries_for(program: Program) -> list[Path]:
-    return _libraries(program.source)
+    embedded = EMBEDDED_LIBRARY.get(program.name)
+    return [source for source in _libraries(program.source) if source.stem != embedded]

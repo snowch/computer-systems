@@ -33,7 +33,9 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+from bench.measure import ToolchainMissingError, resolve_host_target  # noqa: E402
 from bench.outline import PARTS, in_part  # noqa: E402
+from bench.run_setup import perf_can_sample  # noqa: E402
 from bench.stamp import classify_machine, compiler_version, cpuinfo_fields  # noqa: E402
 
 
@@ -203,7 +205,7 @@ def check_bare_target(report: Report) -> bool:
 
 def check_host_target(report: Report) -> bool:
     """Is this the board? If not, say what this machine can and cannot stand in for."""
-    print("\nTarget `host` — Linux on real hardware, natively (every number about cost)")
+    print("\nTarget `host` — native Linux for timing experiments")
     kind = classify_machine()
     report.facts["machine_kind"] = kind
 
@@ -229,9 +231,13 @@ def check_host_target(report: Report) -> bool:
             report.block("the board needs build-essential")
 
         check_perf(report)
-        report.facts["host_ready"] = True
-        report.say(OK, "target `host`: ready — this machine may record timings")
-        return True
+        ready = bool(report.facts.get("perf") and shutil.which("gcc"))
+        report.facts["host_ready"] = ready
+        report.say(
+            OK if ready else WARN,
+            "target `host`: ready for timing" if ready else "target `host`: see the failures above",
+        )
+        return ready
 
     explanation = {
         "qemu": "this is a Linux guest inside QEMU, which models no cache and no pipeline",
@@ -243,30 +249,21 @@ def check_host_target(report: Report) -> bool:
     report.say(WARN, f"not the board: {explanation}")
     report.say(
         WARN,
-        "target `host`: read-only here. Every figure in Part V is measured natively on the "
-        "machine itself over SSH; `make bench-board` refuses to run anywhere else.",
+        "target `host`: native timing is unavailable here. See Appendix H for board requirements.",
     )
-    report.say(WARN, "  what a board has to be able to do, and how to find one: hardware/README.md")
-
-    # An x86-64 laptop or CI runner can still *check* RV64 code, which is most of what a
-    # chapter's tests assert. Worth saying, because it is the difference between "I can work on
-    # Part V from the train" and "I cannot".
-    if find_cross_compiler() and (
-        shutil.which("qemu-riscv64-static") or shutil.which("qemu-riscv64")
-    ):
+    try:
+        execution = resolve_host_target()
+    except ToolchainMissingError:
+        execution = None
+    if execution and execution.runner:
         report.say(
             OK,
-            "host-target correctness path available (cross compiler + user-mode QEMU): every "
-            "host example can be built and its answers checked here, just never timed",
+            f"Cross-architecture correctness checks: {execution.cc} and {execution.runner[0]}",
         )
-        report.facts["riscv_correctness_path"] = True
-    else:
-        report.say(
-            WARN,
-            "no host-target correctness path: install gcc-aarch64-linux-gnu and "
-            "qemu-user-static to run host-target tests off the machine",
-        )
-        report.facts["riscv_correctness_path"] = False
+    report.facts["riscv_correctness_path"] = bool(
+        shutil.which("riscv64-linux-gnu-gcc")
+        and (shutil.which("qemu-riscv64-static") or shutil.which("qemu-riscv64"))
+    )
 
     report.facts["host_ready"] = False
     return False
@@ -299,16 +296,18 @@ def check_perf(report: Report) -> None:
         if len(fields) >= 3 and fields[0].strip().isdigit():
             counted[fields[2].strip()] = int(fields[0])
 
-    if counted and all(value > 0 for value in counted.values()):
+    if probe.returncode == 0 and all(
+        counted.get(event, 0) > 0 for event in ("cycles", "instructions")
+    ):
         report.say(OK, f"perf reads hardware counters: {counted}")
         report.facts["perf"] = counted
         check_sampling(report)
     else:
-        report.say(FAIL, "perf ran but no event reached hardware (<not supported>)")
+        report.say(FAIL, "perf did not report positive counts for both cycles and instructions")
         report.say(
             WARN,
-            "  on ARM check the device tree has a PMU node (dmesg | grep -i pmu); on RISC-V "
-            "check CONFIG_RISCV_PMU_SBI and the firmware's SBI PMU extension. The board chapter has both",
+            "  run `perf stat -e cycles,instructions -- true` to see the tool's message. "
+            "Check the board setup chapter for device tree, firmware and permission errors.",
         )
         report.block("perf cannot read counters on this board")
 
@@ -321,25 +320,17 @@ def check_sampling(report: Report) -> None:
     a failure — most of Part V counts rather than samples — but the profiling chapter is about sampling, so the
     reader is better told here than three hundred pages in.
     """
-    probe = subprocess.run(
-        ["perf", "record", "-q", "-o", "/dev/null", "--", "true"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    text = (probe.stderr + probe.stdout).lower()
-    can_sample = probe.returncode == 0 and "not supported" not in text
-    report.facts["perf_can_sample"] = can_sample
-    if can_sample:
+    sampling = perf_can_sample()
+    report.facts.update(sampling)
+    if sampling["perf_can_sample"]:
         report.say(
-            OK, "perf can sample (`perf record`) — the profiling chapter works fully on this board"
+            OK, f"perf can sample (`perf record` collected {sampling['perf_samples']} samples)"
         )
     else:
         report.say(
             WARN,
-            "perf counts but cannot sample (`perf record`). This needs the Sscofpmf extension, "
-            "which the SiFive U74 does not have. Everything in Part V that counts is fine; "
-            "the profiling chapter says what it cannot show you.",
+            "perf counts, but the recording produced no samples. Check the sampling steps "
+            "in the board chapter before running the profiling experiments.",
         )
 
 
@@ -388,6 +379,15 @@ def main() -> int:
         report.render()
         report.lines.clear()
 
+    report.facts["portable_c"] = bool(shutil.which("cc"))
+    if report.facts["portable_c"]:
+        report.say(OK, "Portable C examples: `cc` is available. Try `./run firstc`.")
+    else:
+        report.say(WARN, "Portable C examples need a local compiler available as `cc`.")
+    if not args.json:
+        report.render()
+        report.lines.clear()
+
     check_book_tooling(report)
     if args.json:
         report.facts["blockers"] = report.blockers
@@ -419,7 +419,7 @@ def main() -> int:
             f"Install a cross compiler and QEMU to work through {emulated} as well."
         )
     else:
-        print("No target is ready yet. The two setup chapters walk through all three.")
+        print("The emulated examples and native timing need the setup steps above.")
     return 0
 
 

@@ -1,4 +1,4 @@
-"""Checks Problem 7.1 by running the reader's program and comparing its two outcomes."""
+"""Checks Problem 9.1 by running the reader's program and comparing its two outcomes."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ def test_the_chapter_already_refuses_an_unknown_number():
 def test_success_and_failure_are_distinguishable(tmp_path):
     if bare.problems():
         pytest.skip("; ".join(bare.problems()))
-    assert ANSWER.exists(), f"Problem 7.1: put your program in {ANSWER.name} beside this test"
+    assert ANSWER.exists(), f"Problem 9.1: put your program in {ANSWER.name} beside this test"
 
     image = bare.build_from([ANSWER], "problem_call", build_dir=tmp_path)
     fields = bare.run("syscall", image=image, timeout=30).fields()
@@ -36,5 +36,5 @@ def test_success_and_failure_are_distinguishable(tmp_path):
 @pytest.mark.problem
 def test_the_reader_justified_the_sentinel():
     assert len(WHY_THE_SENTINEL_IS_SAFE.split()) >= 8, (
-        "Problem 7.1: WHY_THE_SENTINEL_IS_SAFE wants a sentence"
+        "Problem 9.1: WHY_THE_SENTINEL_IS_SAFE wants a sentence"
     )

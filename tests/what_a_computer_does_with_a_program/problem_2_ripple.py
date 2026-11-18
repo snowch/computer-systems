@@ -24,7 +24,7 @@ def stages_disturbed_by(change: str) -> set[str]:
     empty if nothing downstream can tell the difference at all.
     """
     raise NotImplementedError(
-        "Problem 1.2 — see the Problems section of the whole-program chapter."
+        "Problem 12.2 — see the Problems section of the whole-program chapter."
     )
 
 

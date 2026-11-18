@@ -1,4 +1,4 @@
-"""Problem 1.2 — the three routines the kernel writes for itself.
+"""Problem 3.2 — the three routines the kernel writes for itself.
 
 Every key is computed by the test from the same bytes the program is given, so nothing is stored.
 The copy is checked against a sum the harness takes itself rather than through the reader's own

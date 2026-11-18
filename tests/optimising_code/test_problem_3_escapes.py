@@ -1,4 +1,4 @@
-"""Checks Problem 16.3 by compiling the file and counting.
+"""Checks Problem 26.3 by compiling the file and counting.
 
 The key is the compiler's own behaviour, obtained at test time. A function whose loop survived is
 many instructions long; one whose loop was removed is a handful. The threshold is set from the

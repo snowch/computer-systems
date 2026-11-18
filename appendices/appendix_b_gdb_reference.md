@@ -1,34 +1,32 @@
 ---
-title: "Appendix B — gdb for Kernels and RISC-V"
+title: "Appendix B · gdb for Kernels and RISC-V"
 short_title: "Appendix B"
 ---
 
 (appendix-b)=
 # Appendix B · gdb for Kernels and RISC-V
 
-An appendix in this book is a reference, not a chapter: no argument, no narrative, and everything
-in it either cites a primary source or comes from a stamped result under `bench/results/`.
-
-Every sequence on this page has been run against this repository's own `make xv6-gdb`, on the
-submodule at its pinned commit. Where something does not work, that is recorded too, because the
-things that do not work are what cost the afternoon.
+Use this reference to stop xv6 in QEMU, inspect registers and follow kernel code. Work from
+the repository root with the tools checked in [ch00](#prerequisites-and-setup). The sessions
+below were recorded with the repository's pinned xv6 source. Addresses and thread numbers
+in your session can differ.
 
 ## Getting attached
 
-Two terminals. In the first:
+Open two terminals at the repository root. Start QEMU in the first:
 
 ```bash
 make xv6-gdb
 ```
 
-That stages the kernel, builds it, and starts QEMU halted before its first instruction with a
-debug stub listening. In the second:
+The command stages and builds the kernel, then starts QEMU paused with the debugger port
+listening. Start GDB in the second terminal:
 
 ```bash
 gdb-multiarch xv6/stage/kernel/kernel
 ```
 
-and then, inside gdb:
+At the GDB prompt, enter each command:
 
 ```
 set architecture riscv:rv64
@@ -36,7 +34,7 @@ directory xv6/stage
 target remote localhost:26000
 ```
 
-**`gdb-multiarch`, not `gdb`.** This is the first thing that goes wrong and it goes wrong quietly.
+**Choose a debugger with RISC-V support.**
 A distribution's plain `gdb` is on every `PATH` and is almost always built for the host
 architecture only. It connects to QEMU quite happily, and then fails on the first register read
 with
@@ -54,14 +52,13 @@ repository root, so without this every stop reports `No such file or directory` 
 source. It is not that the debug information is missing; it is that the paths in it are relative to
 somewhere else.
 
-**The terminal will look frozen, and it is not.** `make xv6-gdb` starts QEMU halted before the
+**QEMU is paused while the debugger connects.** `make xv6-gdb` starts QEMU halted before the
 first instruction, so there is no boot log and no prompt — that is the `-S` doing its job. `Ctrl-A`
 then `C` switches to QEMU's monitor, where `info registers` answers and confirms the machine is
 alive and stopped; `Ctrl-A` then `C` returns. `Ctrl-A` then `X` exits, and works whether or not
 gdb is attached.
 
-**Port 26000.** Not 1234. xv6's own `.gdbinit` template says 1234 and this repository does not use
-it, because a fixed well-known port makes it easy to attach to somebody else's QEMU by mistake.
+**Use port 26000.** That is the port opened by this repository’s wrapper.
 
 ## One hart, unless you mean it
 

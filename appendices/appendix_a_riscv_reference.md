@@ -1,17 +1,15 @@
 ---
-title: "Appendix A — RISC-V Registers and CSRs"
+title: "Appendix A · RISC-V Registers and CSRs"
 short_title: "Appendix A"
 ---
 
 (appendix-a)=
 # Appendix A · RISC-V Registers and CSRs
 
-An appendix in this book is a reference, not a chapter: no argument, no narrative, and everything
-in it either cites a primary source or comes from a stamped result under `bench/results/`.
-
-Everything on this page is from the RISC-V unprivileged @riscv-isa-unprivileged and privileged
-@riscv-isa-privileged specifications and the psABI @riscv-psabi, restated for the subset this book
-uses. It is not a substitute for reading them; it is what to have open while you do.
+Use these tables to look up RISC-V registers when reading a listing or a debugger trace.
+The integer register names and calling rules come from the unprivileged specification
+@riscv-isa-unprivileged and the ABI @riscv-psabi. The control and status registers (CSRs)
+come from the privileged specification @riscv-isa-privileged.
 
 ## The integer registers
 

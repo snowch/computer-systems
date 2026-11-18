@@ -1,21 +1,21 @@
 ---
-title: "The CPU"
+title: "27 · The CPU"
 short_title: "27 · The CPU"
 ---
 
 (the-cpu)=
 # 27 · The CPU
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
-| **Target** | `host` — the reference machine, natively |
+| **Target** | `host` — native Linux on real hardware |
 | **Answers the cost of** | [ch14](#machine-level-code-on-riscv) |
 | **Prerequisites** | [ch26](#optimising-code) |
-| **Assumes** | An out-of-order core (Cortex-A76) and its performance counters. An in-order core would make this easier to read; see [Appendix H](#appendix-h). |
-| **What it measures** | What the core is given to work with: `bench/results/pipeline-shapes.json`; and what it does with it: `bench/results/pipeline-host.json` |
+| **Assumes** | An out-of-order core and usable performance counters. See [Appendix H](#appendix-h) for hardware requirements. |
+| **Evidence** | Instructions in each loop and native counts of cycles, instructions and branch events. |
 :::
 
 ## The question
@@ -27,7 +27,8 @@ slower one. The reason is that a modern core does not execute instructions one a
 order they appear, and the two things it does instead — overlapping independent work, and guessing
 which way a branch will go — are what decide the answer.
 
-## The material
+(the-cpu-example)=
+## Compare branches and independent instruction chains
 
 ### The branch that was not there
 
@@ -112,10 +113,11 @@ slope between them. A derived quantity is a fine thing to publish and a bad thin
 without the word "derived" next to it — and this one rests on the rate column, so whatever makes
 that column flatten at the bottom is inside the number.
 
-The predictor itself is a small saturating counter per branch, and problem 27.3 is simulating one.
-The alternating pattern is the case that explains the design: a one-bit predictor gets *every*
-branch of `TNTNTN` wrong, because it always predicts what happened last time, and two bits fixes
-exactly that by requiring two surprises before it changes its mind.
+Problem 27.3 uses a simplified predictor with a two-bit counter for one branch. The counter
+increments or decrements with each outcome and stays at its limit if another step would go
+past it. Compare its miss count on an alternating sequence with a model that predicts the
+previous outcome. That comparison illustrates why the counter changes direction more slowly.
+The board's measured miss rate does not identify how its predictor is implemented.
 
 ### Counters that are not counters
 
@@ -165,27 +167,30 @@ when told the reordering is permitted. Which is a flag, and a decision, and not 
 
 ## Problems
 
-Three.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **27.1 — Which of these loops still contains a branch?**
-Predict before compiling, and be graded against the compiler. The stub records that this book
-predicted wrongly.
+Open `tests/the_cpu/problem_1_branchy.py`. Fill in `KEEPS_A_BRANCH` before looking at the
+compiler output. The test compares your choices with the recorded instructions for each
+candidate loop.
 
 ```bash
 python3 -m pytest tests/the_cpu/test_problem_1_branchy.py
 ```
 
 **27.2 — How long is the critical path?**
-Each accumulator's share plus the combining tree. Then notice what the model predicts and what
-actually stops it.
+Open `tests/the_cpu/predictor.c`. Complete `p_critical_path`. Use each accumulator’s share of
+the elements and the final combining tree. The test checks the simplified model, which leaves
+out register pressure.
 
 ```bash
 python3 -m pytest tests/the_cpu/test_problem_2_path.py
 ```
 
 **27.3 — How many does a two-bit predictor get wrong?**
-Simulate the saturating counter. The alternating sequence is the one that explains why two bits
-and not one.
+Open `tests/the_cpu/predictor.c`. Complete `p_mispredicts`. Keep the two-bit counter within
+the limits specified in the stub and update it for each branch outcome. The test compares
+misprediction counts for repeated and alternating sequences.
 
 ```bash
 python3 -m pytest tests/the_cpu/test_problem_3_predictor.py

@@ -1,4 +1,4 @@
-"""Problem 8.2 — what should the handler do about this fault?
+"""Problem 18.2 — what should the handler do about this fault?
 
 Every answer follows from where the test put the process's boundary and from whether it says the
 page is already there, so nothing is stored. Three of the cases are the ones a handler written

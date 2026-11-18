@@ -1,114 +1,93 @@
 ---
-title: "Memory Is One Array"
+title: "03 · Memory Is One Array"
 short_title: "03 · Memory Is One Array"
 ---
 
 (memory-is-one-array)=
 # 03 · Memory Is One Array
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
-| **Target** | `xv6` — the teaching kernel under QEMU |
-| **Prerequisites** | [ch00](#prerequisites-and-setup) |
-| **What it measures** | What one complete program prints: `bench/results/firstc.json`; what `p + 1` and `->` become: `bench/results/declarations-riscv64.json` |
+| **Target** | `xv6` for the kernel context. Your computer’s C compiler for the first run, and RISC-V for the recorded instruction listings. |
+| **Prerequisites** | A local checkout from [ch00](#prerequisites-and-setup) and a C compiler available as `cc`. |
+| **Evidence** | Printed values and byte distances, then RISC-V instructions for pointer and member access. |
 :::
 
 ## The question
 
-If memory is one array of bytes, what is a C declaration saying about it?
+What can a C declaration tell you about the size, location and lifetime of a value?
 
-A declaration is not read left to right, and every piece of one turns into something concrete — an
-amount of storage, a width to step by, an instruction the compiler emits. This chapter takes
-declarations a few at a time and checks what each one means against what the compiler emitted,
-rather than against a rule for reading them.
+Start with a complete program. Use its output to distinguish the value a pointer reaches from
+the byte distance between array elements. Then look for that distance in the compiler's
+instructions.
 
-Change the program as you go. `./run firstc` builds and runs it, and the fastest way to find out
-whether you have the model is to predict what an edit will print before you make it.
+(memory-is-one-array-example)=
+## Trace values and addresses in C
 
-If you are not sure whether you want this chapter or [ch04](#c-without-a-runtime), [Part I](#part1) routes you.
+(one-whole-program)=
+### Run your first C program
 
-## The material
-
-### One whole program
-
-Every piece of C you have seen in this book so far has been a fragment — lifted out of a file,
-with no beginning and no end. Here is a complete one, and it is the shortest complete one
-this book has.
+The checkout contains `sysfs/tools/firstc.c`. The listing below shows that file. Run the
+original from your local checkout before you edit it.
 
 ```{literalinclude} ../sysfs/tools/firstc.c
 :language: c
 ```
 
-Four things in it are not the subject of this chapter and are worth naming once so they stop being
-in the way.
+The `#include` lines bring in declarations for `printf` and the integer types. Execution
+starts in `main`. The `printf` calls write values to the terminal, and `return 0` reports
+successful completion to the shell.
 
-`#include` pastes in a file of declarations, so that `printf` is a name the compiler has heard of
-before you use it. `main` is where a program starts, and there is exactly one. `printf` writes to
-the terminal, and the `%d` in its first argument is a hole the next argument fills. `return 0` at
-the end of `main` is the program's exit status, and zero means nothing went wrong.
-
-Build it and run it:
+From your repository root, run:
 
 ```bash
 ./run firstc
 ```
 
-That is the whole loop this part asks you to get into: change the source, run it again, look at
-what came out. `./run` knows how every program in this book is built — which compiler, which
-flags, which machine — so the only thing you have to think about is the source. `./run --list`
-shows the lot.
+`./run` builds and runs the program with your local `cc`. In the terminal, compare `value`
+with `roundtrip`. Then compare the byte distances on the `step int32` and `step int64` lines.
+Which numbers describe stored values, and which describe the distance between elements?
+
+The table is a saved correctness run of the original program. Its conditions identify an
+AArch64 cross-build executed using user-mode QEMU.
 
 ```{include} _generated/memory-is-one-array-firstc.md
 ```
 
-The rest of the chapter explains why those four numbers are what they are.
+Now open `sysfs/tools/firstc.c` in your text editor. Change `int value = 42;` to
+`int value = 17;` and run `./run firstc` again. Check whether `value` and `roundtrip` both
+become 17. Do the `step int32` and `step int64` fields change with them?
 
-### Memory is one array, and everything has an index
+(memory-is-one-array-and-everything-has-an-index)=
+### Model memory as numbered bytes
 
-The language you already use has named things that hold values, and a runtime that knows where
-they are. C has one array of bytes, numbered from zero, and everything you declare is a stretch of
-it. That is the model, not a simplification for teaching, and every difficulty later in the book
-is a difficulty about it.
+Picture the address space available to the program as numbered bytes. In this model, a C
+object occupies a region and its address identifies where the region starts. The model helps you
+reason about sizes and offsets. The C rules determine which objects a pointer may access and
+how far it may move within an array.
 
-Three questions follow, and they are the ones worth asking of any C you read:
-
-- **Where does this live?** In the current call's region, in one that lasts the whole run, or in
-  memory somebody asked for.
-- **How long does it stay there?** Until the function returns, for ever, or until somebody says
-  otherwise.
-- **How big is it?** A question about its *type*, and the reason types exist at all.
-
-"Where" has a coarse answer and a precise one. The coarse one is the region. The precise one is
-an index — the position of the thing's first byte in that one array — and an address is that
-index, and nothing else.
+For any declaration, ask where the object lives, how long it stays there and how large it is.
+For this example, the address of a value identifies its first byte. Later, [ch17](#virtual-memory)
+shows how the processor translates a program's addresses to physical memory.
 
 ### `&` and `*`, watched rather than described
 
-Two operators, and they are inverses.
+`&x` gives the address of `x`. A *pointer* is a value that can refer to an object or function.
+When `p` points to an object, `*p` designates that object. In the `printf` call, evaluating
+`*where` reads the object originally named `value`. That is why the printed values agree.
 
-`&x` gives the index of where `x` lives. `*p` goes to the index held in `p` — a *pointer*, a
-variable whose value is an index — and reads what is there. So `*&x` is `x` again, which is the
-second row of the table above, printed by a program rather than asserted by a paragraph.
+The program prints relative distances. The addresses of the arrays can vary between runs.
+The distance between consecutive elements of an array follows the element type. In the recorded
+run the two distances differ even though both arrays contain the same number of elements.
 
-**The program never prints an address**, because an address is different every time the program
-runs and means nothing by itself; there is no fact in it. What is the same every time — and what is
-worth knowing — is the *relationship* between two addresses. The
-last two rows are that relationship, and they are the whole of pointer arithmetic.
+(a-pointer-is-an-index-with-a-type-stapled-to-it)=
+### The pointer's type determines the step
 
-Two arrays, both of two elements. The distance from the first element to the second is four bytes
-in one and eight in the other, and nothing in the expression that computed it said four or eight.
-The type did.
-
-### A pointer is an index with a type stapled to it
-
-`int *p` says: `p` holds an index, and what lives at that index is an `int`. The type is not
-decoration. It is how the compiler knows how many bytes to take, how to interpret them, and — this
-is the part that surprises people — **how far one step is**.
-
-That is the fact from the outside. Here it is from underneath.
+`int *p` declares a pointer to an `int`. When it points into an array of integers, `p + 1`
+advances by one element. The type tells the compiler how many bytes that step spans.
 
 Two functions, each taking a pointer and returning the element after the one it points at. The
 source of each is the same three characters, `p + 1`.
@@ -272,34 +251,35 @@ here can show.
 does not say how the offsets were chosen, and the answer is not "add up the sizes" —
 [ch13](#representing-information) takes it apart.
 
-**Whether your pointer is valid.** C has no answer to this and neither does the hardware, until
-[ch18](#page-faults-as-a-feature). A pointer is an index; nothing checks that the index means anything.
+**Whether a pointer is safe to use.** C's rules require a live object of a suitable type for
+these accesses. A numerically plausible address can still violate those rules. The processor's
+page checks, described in [ch18](#page-faults-as-a-feature), enforce which memory is mapped and
+accessible at page granularity.
 
 ## Problems
 
-Three, in `tests/memory_is_one_array/declarations.c`.
+Edit `tests/memory_is_one_array/declarations.c` in your checkout. Run each test command from
+the repository root.
 
 **3.1 — Say what each declaration names.**
-The test generates declarations and asks you to classify them. The two that differ only by
-parentheses are the point of the exercise, and they are the two you will meet again in
-[ch19](#interrupts-and-drivers).
+Complete `d_classify`. Use the declaration to tell what each name denotes. For declarations
+that differ only in parentheses, identify what the parentheses make the pointer refer to.
 
 ```bash
 python3 -m pytest tests/memory_is_one_array/test_problem_1_declarations.py
 ```
 
 **3.2 — Walk a buffer without an index.**
-Reimplement three of the routines the kernel supplies for itself, using pointers that move rather
-than a subscript. The versions in `kernel/string.c` are written this way, and the exercise is so
-that you can read them.
+Complete `d_length`, `d_copy` and `d_compare`. Move pointers through the buffer without using
+a subscript. The test checks the returned length, copied bytes and comparison result.
 
 ```bash
 python3 -m pytest tests/memory_is_one_array/test_problem_2_walking.py
 ```
 
 **3.3 — Round an address both ways.**
-Given an address and a power-of-two alignment, round up and round down. Address arithmetic, not
-pointer arithmetic, and the kernel does this on every page it touches.
+Complete `d_round_down` and `d_round_up`. Round an integer address to the adjacent boundaries
+for the given power-of-two alignment. Check both reported addresses for any failing input.
 
 ```bash
 python3 -m pytest tests/memory_is_one_array/test_problem_3_rounding.py

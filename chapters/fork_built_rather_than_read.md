@@ -1,19 +1,19 @@
 ---
-title: "fork, Built Rather Than Read"
+title: "11 · fork, Built Rather Than Read"
 short_title: "11 · fork, Built Rather Than Read"
 ---
 
 (fork-built-rather-than-read)=
 # 11 · fork, Built Rather Than Read
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
-| **Target** | `bare` — the same machine under QEMU with no operating system on it |
+| **Target** | `bare` — a RISC-V machine in QEMU without an operating system |
 | **Prerequisites** | [ch10](#a-small-integer-that-means-a-device) |
-| **What it measures** | Two address spaces from one, a return value that differs between them, and the count of pages copied — beside what xv6 copies for the same call. |
+| **Evidence** | Parent and child return values, and pages copied in the example and in xv6. |
 :::
 
 ## The question
@@ -30,7 +30,8 @@ Everything this chapter needs already exists. [ch08](#one-page-table-two-harts) 
 [ch09](#a-system-call-of-your-own) saved a caller's registers into a frame. A process is those
 two things kept together, and `fork` is a copy.
 
-## The material
+(fork-built-rather-than-read-example)=
+## Make the parent and child return separately
 
 ### What a process is, here
 
@@ -130,12 +131,15 @@ and this is why it exists.
 
 ## What we measured
 
-Run it yourself before reading the table — the rows below are what you should see, and a
-figure you have reproduced is worth more than one you have been shown:
+From your checkout, run the supplied bare-metal `fork` program:
 
 ```bash
 ./run fork
 ```
+
+Compare `parent_result` and `child_result`. Then compare `child_inherited` with `parent_after`
+and check `childs_write_stayed_in_its_own_page`. What evidence shows the child received a copy
+of the parent’s data and could change its own copy independently?
 
 ```{include} _generated/fork-built-rather-than-read-fork.md
 ```
@@ -167,31 +171,32 @@ face.
 
 ## Problems
 
-Three, in `tests/fork_built_rather_than_read/`.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **11.1 — Make the child run first.**
-The parent continues and the child waits. Swap it, so the child runs to completion before the
-parent resumes, without changing what either prints. The test checks the order and that both still
-report correctly.
+Open `tests/fork_built_rather_than_read/problem_1_child_first.py`. Copy `sysfs/bare/fork.c` to
+`tests/fork_built_rather_than_read/answer_child_first.c`. Change when the parent resumes so
+the child prints first. The test checks the order and both return values.
 
 ```bash
 python3 -m pytest tests/fork_built_rather_than_read/test_problem_1_child_first.py
 ```
 
 **11.2 — Run out of processes.**
-Call `fork` until the table is full. Decide what it returns then, implement it, and show the caller
-handling it. The test checks the failure is distinguishable from a successful `fork` and that the
-machine survives it.
+Open `tests/fork_built_rather_than_read/problem_2_full_table.py`. Choose a return value for a
+full process table. Implement the case in `tests/fork_built_rather_than_read/answer_full.c`,
+starting from `sysfs/bare/fork.c`. Show the caller handling the failure and print the values
+specified in the stub.
 
 ```bash
 python3 -m pytest tests/fork_built_rather_than_read/test_problem_2_full_table.py
 ```
 
 **11.3 — Count what a lazy fork would save.**
-Do not implement copy-on-write — sharing the parent's pages and copying one only when somebody
-writes to it. Instead, say exactly which of this program's steps it would remove,
-what it would add, and what new trap the handler would have to deal with. The test asks for the
-cause code of that trap and for which page-table bit changes, both of which you have met.
+Open `tests/fork_built_rather_than_read/problem_3_lazy.py`. Predict which operations copy-on-
+write would avoid, what the handler would need to do, and the fault and page-table bit
+involved. In `tests/fork_built_rather_than_read/answer_lazy.c`, report the count of pages the
+original copies using the format specified in the stub.
 
 ```bash
 python3 -m pytest tests/fork_built_rather_than_read/test_problem_3_lazy.py

@@ -1,4 +1,4 @@
-"""Checks Problem 1.3 by compiling the reader's function and reading what came out.
+"""Checks Problem 12.3 by compiling the reader's function and reading what came out.
 
 Two assertions, and both are needed. That it computes the right answer is the easy half; that the
 compiler still emitted a loop is the half the problem is about, and it can only be checked by

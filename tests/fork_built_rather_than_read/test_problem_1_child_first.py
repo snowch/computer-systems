@@ -1,4 +1,4 @@
-"""Checks Problem 9.1 by running the reader's program: the order changed, the results did not."""
+"""Checks Problem 11.1 by running the reader's program: the order changed, the results did not."""
 
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ def test_the_chapters_fork_returned_two_answers():
 def test_the_child_finished_first_and_nothing_else_changed(tmp_path):
     if bare.problems():
         pytest.skip("; ".join(bare.problems()))
-    assert ANSWER.exists(), f"Problem 9.1: put your program in {ANSWER.name} beside this test"
+    assert ANSWER.exists(), f"Problem 11.1: put your program in {ANSWER.name} beside this test"
 
     committed = load_result("fork-bare")["summary"]
     image = bare.build_from([ANSWER], "problem_child_first", build_dir=tmp_path)
@@ -45,5 +45,5 @@ def test_the_child_finished_first_and_nothing_else_changed(tmp_path):
 @pytest.mark.problem
 def test_the_reader_said_what_must_be_saved():
     assert len(WHAT_HAS_TO_BE_SAVED.split()) >= 6, (
-        "Problem 9.1: WHAT_HAS_TO_BE_SAVED wants a sentence"
+        "Problem 11.1: WHAT_HAS_TO_BE_SAVED wants a sentence"
     )

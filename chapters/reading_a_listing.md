@@ -1,38 +1,36 @@
 ---
-title: "Reading a Listing"
+title: "02 · Reading a Listing"
 short_title: "02 · Reading a Listing"
 ---
 
 (reading-a-listing)=
 # 02 · Reading a Listing
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `xv6` and `host` — the same function compiled for each, and nothing executed |
 | **Prerequisites** | [ch00](#prerequisites-and-setup) |
-| **What it measures** | What the compiler made of one small function on each architecture: `bench/results/shapes-riscv64.json`, `bench/results/shapes-aarch64.json` |
+| **Evidence** | Disassembly of the same function on RISC-V and AArch64. |
 :::
 
 ## The question
 
-What is the compiler telling me, and what is it not?
+What can you learn about a C function by reading the instructions the compiler emitted?
 
-Almost every chapter from here on puts a listing in front of you — the instructions a compiler
-produced from source you can read beside it. Three of them are in the next chapter. You are never
-asked to write assembly, and you are never asked to know every mnemonic; you are asked to say what
-the compiler did, which is a much smaller skill and takes one chapter to acquire.
+A *listing* here shows a compiled function as machine instructions. Use the addresses, names
+and operands to follow the function's decisions. The examples use the same C function and two
+instruction sets.
 
-Acquire it now rather than in passing, because the notation that carries most of the
-weight — parentheses, which mean memory — is also the most likely to be read as something else.
-
-## The material
+(reading-a-listing-example)=
+## Read the same function in two instruction sets
 
 ### One function, two instruction sets
 
-Here is a function with no cleverness in it at all:
+The function below bounds a value. Read what it returns for an input below, within or above
+the bounds, then look for those decisions in the listings:
 
 ```{literalinclude} ../sysfs/lib/shapes.c
 :language: c
@@ -40,14 +38,12 @@ Here is a function with no cleverness in it at all:
 :end-before: /* A loop with a carried dependency
 ```
 
-Compiled for each of the book's two architectures, at the same optimisation level — how hard the
-compiler was asked to try — by the same version of the same compiler. The conditions line under
-each listing says exactly which:
+The book provides recorded RISC-V and AArch64 listings for the same source. Both were compiled
+at the same optimisation level. The conditions under each listing identify the compiler and
+flags.
 
 ```{include} _generated/reading-a-listing-clamp.md
 ```
-
-The rest of this chapter is how to read those two.
 
 ### How a listing is laid out
 
@@ -82,8 +78,8 @@ argued about.
 
 ### What the two disagree about
 
-Read the second comparison in each. AArch64 settles it with `csel` — compute both candidates,
-select one, never branch. RV64GC — the particular set of RISC-V instructions xv6 is built for,
+Find `csel` in the AArch64 listing and the conditional branch in the corresponding part of
+the RISC-V listing. Which returns a selected value without branching at that comparison? RV64GC — the particular set of RISC-V instructions xv6 is built for,
 and the one every RISC-V listing in this book was compiled for — has no conditional select
 @riscv-isa-unprivileged, so the same decision has to be a branch, and the function comes out with
 three separate exits.
@@ -142,28 +138,30 @@ a curiosity and starts being a thing you read to answer a question.
 
 ## Problems
 
-Three, in `tests/reading_a_listing/`. Each is a Python stub: this chapter comes before any C.
+Use the files below in your local checkout. Run each test command from the repository root.
 
 **2.1 — How long is each instruction?**
-Given the address column of a listing, say how many bytes each instruction occupied. RISC-V has
-short forms of its commonest instructions and the compiler uses them unasked, so the answer is not
-the same number every time.
+Open `tests/reading_a_listing/problem_1_lengths.py`. Complete `instruction_lengths` using the
+instruction start addresses and the end address of the function. The assertion reports the
+expected and submitted byte lengths.
 
 ```bash
 python3 -m pytest tests/reading_a_listing/test_problem_1_lengths.py
 ```
 
 **2.2 — Does this operand touch memory?**
-Eleven operands drawn from both instruction sets. Say which of them name a register or a literal,
-and which reach memory. One pair differs only by punctuation and disagrees.
+Open `tests/reading_a_listing/problem_2_memory.py`. Complete `reaches_memory`. Classify each
+operand as a memory reference or another kind, such as a register or literal. If the test
+fails, inspect the operand and its instruction set’s syntax.
 
 ```bash
 python3 -m pytest tests/reading_a_listing/test_problem_2_memory.py
 ```
 
 **2.3 — How wide was the element?**
-Given a load and its offset, say how many bytes wide the thing being stepped over was. This is the
-same fact the next chapter opens on, approached from the instruction rather than from the C.
+Open `tests/reading_a_listing/problem_3_width.py`. Complete `element_width`. Use the byte
+offset and number of elements stepped over to infer the size of one element. The assertion
+reports the width your function returned.
 
 ```bash
 python3 -m pytest tests/reading_a_listing/test_problem_3_width.py

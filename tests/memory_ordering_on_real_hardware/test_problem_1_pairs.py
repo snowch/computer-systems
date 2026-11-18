@@ -1,4 +1,4 @@
-"""Problem 18.1 — which fields will two cores fight over?
+"""Problem 28.1 — which fields will two cores fight over?
 
 Computed from the layouts the test wrote, so the key is derived. The case that matters is two
 fields on one line written by the *same* thread: they share a line and cost nothing, because

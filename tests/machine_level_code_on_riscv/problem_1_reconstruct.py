@@ -19,7 +19,7 @@ SIGNATURE = "long reader_target(long a, long b)"
 #: Your reconstruction: the whole function, including the signature above.
 RECONSTRUCTION = """
 long reader_target(long a, long b) {
-  /* Problem 4.1 — see the Problems section of the machine-code chapter. */
+  /* Problem 14.1 — see the Problems section of the machine-code chapter. */
   return 0;
 }
 """

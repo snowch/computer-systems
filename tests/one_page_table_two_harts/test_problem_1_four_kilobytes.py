@@ -1,4 +1,4 @@
-"""Checks Problem 6.1 by running the reader's program and reading its own report."""
+"""Checks Problem 8.1 by running the reader's program and reading its own report."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ def test_the_chapters_table_used_three_entries():
 def test_the_alias_still_works_through_a_real_walk(tmp_path):
     if bare.problems():
         pytest.skip("; ".join(bare.problems()))
-    assert ANSWER.exists(), f"Problem 6.1: put your program in {ANSWER.name} beside this test"
+    assert ANSWER.exists(), f"Problem 8.1: put your program in {ANSWER.name} beside this test"
 
     image = bare.build_from([ANSWER], "problem_page", build_dir=tmp_path)
     fields = bare.run("paging", image=image, timeout=30).fields()
@@ -36,5 +36,5 @@ def test_the_alias_still_works_through_a_real_walk(tmp_path):
 @pytest.mark.problem
 def test_the_reader_can_say_what_a_leaf_is():
     assert len(WHAT_MAKES_AN_ENTRY_A_LEAF.split()) >= 4, (
-        "Problem 6.1: WHAT_MAKES_AN_ENTRY_A_LEAF wants a phrase"
+        "Problem 8.1: WHAT_MAKES_AN_ENTRY_A_LEAF wants a phrase"
     )

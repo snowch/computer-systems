@@ -13,7 +13,7 @@ it and the test tells you.
 
 from __future__ import annotations
 
-#: Problem 16.1 — at -O2, which of the five compile to the *same* number of instructions?
+#: Problem 26.1 — at -O2, which of the five compile to the *same* number of instructions?
 #:
 #: Give the groups: a list of lists, each holding the variant names that came out identical. Every
 #: variant appears exactly once, and a variant that matches nothing is a group of one. Order does

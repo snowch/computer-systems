@@ -1,4 +1,4 @@
-"""Checks Problem 3.3 by building the reader's table into a real C program and calling through it.
+"""Checks Problem 5.3 by building the reader's table into a real C program and calling through it.
 
 The table is generated from the reader's answer rather than written by them, because the exercise
 is choosing what goes in each slot and knowing what the declaration has to say — not retyping an
@@ -30,7 +30,7 @@ pytestmark = pytest.mark.hostcode
 @pytest.fixture(scope="module")
 def dispatched(host_target, build_dir):
     if not TABLE:
-        pytest.fail("Problem 3.3: TABLE is still empty")
+        pytest.fail("Problem 5.3: TABLE is still empty")
     missing = set(ORDER) - set(TABLE)
     assert not missing, f"no function chosen for {sorted(missing)}"
 

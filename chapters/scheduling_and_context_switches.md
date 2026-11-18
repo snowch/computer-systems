@@ -1,19 +1,19 @@
 ---
-title: "Scheduling and Context Switches"
+title: "21 · Scheduling and Context Switches"
 short_title: "21 · Scheduling and Context Switches"
 ---
 
 (scheduling-and-context-switches)=
 # 21 · Scheduling and Context Switches
 
-:::{note} Chapter header
-:class: dropdown
+:::{note} Before you start
+:class: chapter-header
 
 | | |
 |---|---|
 | **Target** | `xv6` — the teaching kernel under QEMU |
 | **Prerequisites** | [ch20](#locks-and-memory-ordering) |
-| **What it measures** | What a context switch moves, and the one switch count a workload decides: `bench/results/switch-xv6.json` |
+| **Evidence** | Registers saved during a switch and switch counts from a fixed workload. |
 :::
 
 ## The question
@@ -25,7 +25,8 @@ A process gives up the CPU while holding its own lock, another hart picks it up 
 release happens on a different core from the acquire. That is not a bug, it is the design, and
 understanding why needs a precise account of what a switch actually moves.
 
-## The material
+(scheduling-and-context-switches-example)=
+## Trace which state moves during a switch
 
 ### A switch is a function call, and that is the whole saving
 
@@ -141,34 +142,29 @@ tried to prove the locking correct.
 
 ## Problems
 
-Three, in `tests/scheduling_and_context_switches/scheduling.c`.
+Edit `tests/scheduling_and_context_switches/scheduling.c` in your checkout. Run each test
+command from the repository root.
 
 **21.1 — Must the switch save this register?**
-Given the register's role under [ch14](#machine-level-code-on-riscv)'s convention and whether the value is still needed,
-say whether `swtch` itself has to preserve it.
-
-A context switch is an ordinary call, so most of the answer is already in the calling convention.
-Getting it right is what makes the fourteen against thirty-one above obvious rather than surprising.
+Complete `sched_must_save`. Use the register’s calling-convention role and whether the value
+is needed after the switch. The test checks which values `swtch` must preserve.
 
 ```bash
 python3 -m pytest tests/scheduling_and_context_switches/test_problem_1_save.py
 ```
 
 **21.2 — Does the sleeper wake?**
-Six event sequences; say which loses a wakeup. Two of them use exactly the same six events in
-different orders and have different answers, which is the entire lesson.
+Complete `sched_wakeup_lost`. Follow the order of events in each sequence. The test checks
+whether the wakeup can occur before the process has registered that it is sleeping.
 
 ```bash
 python3 -m pytest tests/scheduling_and_context_switches/test_problem_2_wakeup.py
 ```
 
 **21.3 — What order does each policy run them in?**
-Three jobs, three policies, three different answers. First-come-first-served, shortest-job-first
-and round-robin with a quantum — a slice — of one, on burst lengths chosen so that no two
-policies agree.
-
-Producing the orders is mechanical; the value is in noticing what each one optimises and what it
-gives up, and that shortest-job-first needs to know something the kernel cannot generally find out.
+Complete `sched_order` for first-come-first-served, shortest-job-first and round-robin with
+the stated time slice. The test compares execution order. Consider what each policy needs to
+know about a job.
 
 ```bash
 python3 -m pytest tests/scheduling_and_context_switches/test_problem_3_policy.py

@@ -1,4 +1,4 @@
-"""Problem 8.1 — how many faults will these accesses cause?
+"""Problem 18.1 — how many faults will these accesses cause?
 
 Every answer follows from where the test put the bytes, so nothing is stored. The cases are chosen
 around the one thing that makes this harder than counting: the program says bytes and the machine

@@ -1,4 +1,4 @@
-"""Problem 12.2 — what must recovery do after a crash at each stage?
+"""Problem 22.2 — what must recovery do after a crash at each stage?
 
 Five stages, and the answer changes exactly once. Finding where is the problem, and where it is is
 the entire design.
