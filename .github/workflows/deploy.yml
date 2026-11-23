@@ -82,6 +82,13 @@ jobs:
           BASE_URL: ${{ steps.pages.outputs.base_path == '/' && '' || steps.pages.outputs.base_path }}
         run: myst build --html --strict
 
+      - name: Bundle browser assets from pinned upstream packages
+        env:
+          BASE_URL: ${{ steps.pages.outputs.base_path }}
+        run: |
+          python3 scripts/vendor-browser-assets.py _build/html "$BASE_URL"
+          python3 scripts/check-browser-assets.py _build/html
+
       # The theme emits one icon link and has no option for the rest, so the tags that decide
       # what a phone shows when the page is saved to a home screen are added here. Before
       # check-built-links below, deliberately: two of the tags are `href="....png"` and

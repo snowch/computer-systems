@@ -1,0 +1,32 @@
+[
+  {
+    "name": "jupyter-matplotlib",
+    "version": "0.11.3",
+    "url": "https://registry.npmjs.org/jupyter-matplotlib/-/jupyter-matplotlib-0.11.3.tgz",
+    "sha256": "753d841d4bf7278c37877767eab8b5fec8616891e224a7568fac4a1d5fb46ac2"
+  },
+  {
+    "name": "font-awesome",
+    "version": "4.7.0",
+    "url": "https://registry.npmjs.org/font-awesome/-/font-awesome-4.7.0.tgz",
+    "sha256": "92042b715919e17499ded134884b0318fd88041efac9b0f3204069df52222a61"
+  },
+  {
+    "name": "katex",
+    "version": "0.15.2",
+    "url": "https://registry.npmjs.org/katex/-/katex-0.15.2.tgz",
+    "sha256": "6267c706f9e7c1301b9bbd38d7bc5abd8b7da4398dba05c67733687b3da8c7d1"
+  },
+  {
+    "name": "requirejs",
+    "version": "2.3.6",
+    "url": "https://registry.npmjs.org/requirejs/-/requirejs-2.3.6.tgz",
+    "sha256": "1d1a8a5ea21b941f5c80f7caf3ac7f3e1cb8cf2903a706d5c0d15434eaedd326"
+  },
+  {
+    "name": "mathjax",
+    "version": "2.7.5",
+    "url": "https://registry.npmjs.org/mathjax/-/mathjax-2.7.5.tgz",
+    "sha256": "7fc8acc02a4930cdc59983ba4003686208af39fc855245fa8ae8d4b27fab781b"
+  }
+]
